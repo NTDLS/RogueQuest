@@ -179,7 +179,7 @@ namespace LevelEditor
 
             if (hoverObjects.Count > 0)
             {
-                var firstObj = hoverObjects.Last() as TerrainEditorTile;
+                var firstObj = hoverObjects.Last();
                 toolStripStatusLabelHoverObject.Text = $"[{firstObj.TileTypeKey}]";
             }
             else
@@ -263,7 +263,7 @@ namespace LevelEditor
 
             var selectedItem = listViewTiles.SelectedItems[0];
 
-            _core.AddNewTerrain<TerrainEditorTile>(x, y, selectedItem.ImageKey);
+            _core.AddNewTerrain<TerrainBase>(x, y, selectedItem.ImageKey);
 
             drawLastLocation = new Point<double>(x, y);
         }

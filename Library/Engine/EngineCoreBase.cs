@@ -1,4 +1,5 @@
-﻿using Library.Engine;
+﻿using Assets;
+using Library.Engine;
 using Library.Types;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace Library.Engine
         public object CollectionSemaphore { get; private set; } = new object();
         public object DrawingSemaphore { get; set; } = new object();
         public List<ActorBase> Actors { get; private set; }
-        public List<TerrainBase> Terrains { get; private set; }
+        public List<TerrainBase> TerrainTiles { get; private set; }
         public List<MapBase> Maps { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
 
@@ -45,7 +46,7 @@ namespace Library.Engine
             lock (CollectionSemaphore)
             {
                 Actors = new List<ActorBase>();
-                Terrains = new List<TerrainBase>();
+                TerrainTiles = new List<TerrainBase>();
                 Maps = new List<MapBase>();
             }
         }
@@ -72,7 +73,7 @@ namespace Library.Engine
         {
             var list = new List<TerrainBase>();
 
-            foreach (var obj in Terrains.Where(o => o.Visible == true))
+            foreach (var obj in TerrainTiles.Where(o => o.Visible == true))
             {
                 if (obj.Intersects(location, size))
                 {
@@ -82,7 +83,25 @@ namespace Library.Engine
             return list;
         }
 
-        public T AddNewTerrain<T>(double x, double y) where T : TerrainBase
+        public T AddNewTerrain<T>(double x, double y, string tileTypeKey) where T : TerrainBase
+        {
+            lock (CollectionSemaphore)
+            {
+                var bitmap = SpriteCache.GetBitmapCached($"{tileTypeKey}.png");
+                object[] param = { this };
+                var obj = (TerrainBase)Activator.CreateInstance(typeof(T), param);
+
+                obj.TileTypeKey = tileTypeKey;
+                obj.SetImage(bitmap);
+
+                obj.X = x;
+                obj.Y = y;
+                TerrainTiles.Add(obj);
+                return (T)obj;
+            }
+        }
+
+        public T AddNewTerrainTile<T>(double x, double y) where T : TerrainBase
         {
             lock (CollectionSemaphore)
             {
@@ -90,7 +109,7 @@ namespace Library.Engine
                 var obj = (TerrainBase)Activator.CreateInstance(typeof(T), param);
                 obj.X = x;
                 obj.Y = y;
-                Terrains.Add(obj);
+                TerrainTiles.Add(obj);
                 return (T)obj;
             }
         }
@@ -183,7 +202,7 @@ namespace Library.Engine
                     {
                         _ScreenDC.Clear(BackgroundColor);
 
-                        foreach (var actor in Terrains.Where(o => o.Visible == true))
+                        foreach (var actor in TerrainTiles.Where(o => o.Visible == true))
                         {
                             if (Display.VisibleBounds.IntersectsWith(actor.Bounds))
                             {

@@ -34,12 +34,11 @@ namespace Game.Maps
             _core = core;
             //DrawIntroScreen();
 
-            DrawPath(0, 200, PathDirection.Right);
+            //DrawPath(0, 200, PathDirection.Right);
         }
 
         #region Perlin.
-
-
+        /*
         public int cubesToGenerate = 50;
 
         float[] GetEmptyArray(int width)
@@ -130,7 +129,6 @@ namespace Game.Maps
             int tileHeight = dirtTile.Size.Height;
             int tileWidth = dirtTile.Size.Width;
 
-
             for (int i = 0; i < cubesToGenerate; i++)
             {
                 double thisX = startX + (i * tileWidth);
@@ -146,7 +144,7 @@ namespace Game.Maps
                 }
             }
         }
-
+        */
         #endregion
 
         private void _DrawPath(double startX, double startY, PathDirection direction)
@@ -161,10 +159,10 @@ namespace Game.Maps
                 {
                     double startYGitter = startY + MathUtility.RandomNumberNegative(-tileHeight, tileHeight) * 2;
 
-                    DrawPath(x, startYGitter, direction);
+                    //DrawPath(x, startYGitter, direction);
                 }
 
-                var dirt = _core.AddNewTerrain<TerrainDirt>(x, startY);
+                //var dirt = _core.AddNewTerrain<TerrainDirt>(x, startY);
             }
         }
 
@@ -176,7 +174,7 @@ namespace Game.Maps
             {
                 for (int x = 100; x < _core.Display.DrawingSurface.Width - 100; x += dirtTile.Size.Width)
                 {
-                    var dirt = _core.AddNewTerrain<TerrainDirt>(x, y);
+                    //var dirt = _core.AddNewTerrain<TerrainDirt>(x, y);
                 }
             }
 

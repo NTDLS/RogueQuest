@@ -63,6 +63,8 @@ namespace RougueQuest
 
             _core.OnStop += _core_OnStop;
             _core.OnStart += _core_OnStart;
+
+            MapPersistence.Load(_core, @"C:\\map.txt");
         }
 
         private void _core_OnStart(EngineCoreBase sender)

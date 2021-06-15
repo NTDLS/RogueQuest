@@ -1,26 +1,19 @@
-﻿using LevelEditor.Engine;
-using Library.Engine;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LevelEditor
+namespace Library.Engine
 {
     public static class MapPersistence
     {
-        public static void Save(EngineCore core, string fileName)
+        public static void Save(EngineCoreBase core, string fileName)
         {
             var map = new PersistMap();
 
-            foreach (var obj in core.Terrains.Where(o => o.Visible))
+            foreach (var obj in core.TerrainTiles.Where(o => o.Visible))
             {
-
                 map.Chunks.Add(new PersistMapEntity
                 {
-                    TileTypeKey = (obj as TerrainEditorTile).TileTypeKey,
+                    TileTypeKey = obj.TileTypeKey,
                     X = obj.X,
                     Y = obj.Y,
                 });
@@ -31,7 +24,7 @@ namespace LevelEditor
             System.IO.File.WriteAllText(fileName, json);
         }
 
-        public static void Load(EngineCore core, string fileName)
+        public static void Load(EngineCoreBase core, string fileName)
         {
             var json = System.IO.File.ReadAllText(fileName);
 
@@ -39,7 +32,7 @@ namespace LevelEditor
 
             foreach (var chunk in map.Chunks)
             {
-                core.AddNewTerrain<TerrainEditorTile>(chunk.X, chunk.Y, chunk.TileTypeKey);
+                core.AddNewTerrain<TerrainBase>(chunk.X, chunk.Y, chunk.TileTypeKey);
             }
         }
     }

@@ -11,6 +11,10 @@ namespace Library.Engine
     {
         #region Public properties. 
 
+        /// <summary>
+        /// Kind of redundant, but allows us to easily persist tiles to json.
+        /// </summary>
+        public string TileTypeKey { get; set; }
         public RotationMode RotationMode { get; set; }
         public Angle<double> Angle { get; set; } = new Angle<double>();
         public string Tag { get; set; }
