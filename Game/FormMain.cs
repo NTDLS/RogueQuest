@@ -1,5 +1,6 @@
-﻿using RougueQuest.Engine;
-using RougueQuest.Maps;
+﻿using Game.Engine;
+using Game.Maps;
+using Library.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
