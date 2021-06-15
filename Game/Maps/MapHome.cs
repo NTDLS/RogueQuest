@@ -29,7 +29,7 @@ namespace Game.Maps
         }
 
         public MapHome(EngineCore core)
-            : base()
+            : base(core)
         {
             _core = core;
             //DrawIntroScreen();

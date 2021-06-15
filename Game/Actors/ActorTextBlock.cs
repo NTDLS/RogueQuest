@@ -68,6 +68,7 @@ namespace Game.Actors
         #endregion
 
         public ActorTextBlock(EngineCore core, string font, Brush color, double size, Point<double> location, bool isPositionStatic)
+            : base(core)
         {
             IsPositionStatic = isPositionStatic;
             Location = new Point<double>(location);

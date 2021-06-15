@@ -5,14 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Utility
+namespace Assets
 {
     public static class SpriteCache
     {
+        public static string BasePath { get; set; } = @".\..\..\..\..\Assets\";
+
         private static Dictionary<string, Bitmap> _bitmapCache = new Dictionary<string, Bitmap>();
 
         public static Bitmap GetBitmapCached(string path)
         {
+            path = BasePath + path;
+
             Bitmap result = null;
 
             path = path.ToLower();
@@ -36,7 +40,5 @@ namespace Library.Utility
 
             return result;
         }
-
-
     }
 }

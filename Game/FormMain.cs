@@ -39,8 +39,6 @@ namespace RougueQuest
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            InitializeComponent();
-
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             this.UpdateStyles();

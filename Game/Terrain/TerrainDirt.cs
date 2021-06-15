@@ -12,8 +12,9 @@ namespace Game.Terrain
     public class TerrainDirt : TerrainBase
     {
         public TerrainDirt(EngineCore core)
+            : base(core)
         {
-            this.SetImage(@".\..\..\..\..\Assets\Terrain\Dirt.png");
+            this.SetImage(@"Terrain\Dirt.png");
         }
     }
 }

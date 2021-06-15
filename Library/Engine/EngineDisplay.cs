@@ -11,7 +11,7 @@ namespace Library.Engine
     {
         public Dictionary<Point, Quadrant> Quadrants = new Dictionary<Point, Quadrant>();
         public Quadrant CurrentQuadrant { get; set; }
-        public Point<double> BackgroundOffset { get; set; } = new Point<double>(); //Offset of background, all cals must take into account.
+        public Point<double> BackgroundOffset { get; set; } = new Point<double>(); //Offset of background, all calls must take into account.
         public RectangleF VisibleBounds { get; private set; }
 
         private Size _visibleSize;

@@ -1,4 +1,5 @@
-﻿using Library.Types;
+﻿using Assets;
+using Library.Types;
 using Library.Utility;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace Library.Engine
         public string Tag { get; set; }
         public Guid UID { get; private set; } = Guid.NewGuid();
         public List<ActorBase> Children { get; set; }
+        public EngineCoreBase Core { get; set; }
 
         #endregion
 
-        public ActorBase()
+        public ActorBase(EngineCoreBase core)
         {
+            Core = core;
             UID = Guid.NewGuid();
             Children = new List<ActorBase>();
             this.Visible = true;
@@ -50,11 +53,22 @@ namespace Library.Engine
             }
 
             _size = new Size(_image.Size.Width, _image.Size.Height);
+
+            Invalidate();
         }
 
         public Image GetImage()
         {
             return _image;
+        }
+
+        public void Invalidate()
+        {
+            var invalidRect = new Rectangle(
+                (int)(X - (Size.Width / 2.0)),
+                (int)(Y - (Size.Height / 2.0)),
+                Size.Width, Size.Height);
+            Core.Display.DrawingSurface.Invalidate(invalidRect);
         }
 
         public void Render(Graphics dc)
@@ -115,6 +129,7 @@ namespace Library.Engine
                 {
                     _Visible = value;
                     VisibilityChanged();
+                    Invalidate();
                 }
             }
         }
@@ -176,6 +191,7 @@ namespace Library.Engine
             set
             {
                 _location = value;
+                Invalidate();
             }
         }
 
@@ -189,6 +205,7 @@ namespace Library.Engine
             {
                 _location.X = value;
                 PositionChanged();
+                Invalidate();
             }
         }
 
@@ -202,6 +219,7 @@ namespace Library.Engine
             {
                 _location.Y = value;
                 PositionChanged();
+                Invalidate();
             }
         }
 
