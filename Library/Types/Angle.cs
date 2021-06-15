@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RougueQuest.Types
+namespace Library.Types
 {
     public class Angle<T>
     {

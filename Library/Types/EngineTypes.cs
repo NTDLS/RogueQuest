@@ -1,4 +1,4 @@
-﻿namespace RougueQuest.Types
+﻿namespace Library.Types
 {
     public enum KeyPressState
     {

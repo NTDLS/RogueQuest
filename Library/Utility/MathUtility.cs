@@ -1,11 +1,11 @@
-﻿using RougueQuest.Actors;
-using RougueQuest.Types;
+﻿using Library.Actors;
+using Library.Types;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-namespace RougueQuest.Utility
+namespace Library.Utility
 {
     public class MathUtility
     {
@@ -126,12 +126,6 @@ namespace RougueQuest.Utility
             return Random.Next(0, 1000) % max;
         }
 
-        /// <summary>
-        /// This POS is just awful. It doesnt even accept negative input. Or respect it
-        /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
         public static int RandomNumberNegative(int min, int max)
         {
             if (FlipCoin())

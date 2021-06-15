@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace RougueQuest.Types
+namespace Library.Types
 {
     public class Point<T>
     {

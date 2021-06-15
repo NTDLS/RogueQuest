@@ -1,5 +1,4 @@
 ﻿using RougueQuest.Engine;
-using RougueQuest.Maps;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,11 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RougueQuest
+namespace LevelEditor
 {
     public partial class FormMain : Form
     {
-        private EngineCore _core;
+
+        private EngineCoreBase _core;
         private bool _fullScreen = false;
 
         //This really shouldn't be necessary! :(
@@ -60,39 +60,11 @@ namespace RougueQuest
 
             this.BackColor = Color.FromArgb(60, 60, 60);
 
-            _core = new EngineCore(this, new Size(this.Width, this.Height));
+            _core = new EngineCoreBase(this, new Size(this.Width, this.Height));
 
-            _core.OnStop += _core_OnStop;
-            _core.OnStart += _core_OnStart;
+            //_core.OnStop +
+            //_core.OnStart +
         }
 
-        private void _core_OnStart(EngineCoreBase sender)
-        {
-            sender.AddNewMap<MapHome>();
-        }
-
-        private void _core_OnStop(EngineCoreBase sender)
-        {
-            this.Invoke((MethodInvoker)delegate
-            {
-                this.Close();
-            });
-        }
-
-        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            _core.Stop();
-
-        }
-
-        private void FormMain_Shown(object sender, EventArgs e)
-        {
-            _core.Start();
-        }
-
-        private void FormMain_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawImage(_core.Render(), 0, 0);
-        }
     }
 }

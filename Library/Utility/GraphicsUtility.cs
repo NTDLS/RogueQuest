@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-namespace RougueQuest.Utility
+namespace Library.Utility
 {
     public static class GraphicsUtility
     {

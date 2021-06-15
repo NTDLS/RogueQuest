@@ -1,5 +1,4 @@
-﻿using RougueQuest.Engine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +11,11 @@ namespace RougueQuest.Maps
         #region Public properties.
         public string Tag { get; set; }
         public Guid UID { get; private set; } = Guid.NewGuid();
-        public EngineCore Core { get; set; }
 
         #endregion
 
-        public MapBase(EngineCore core)
+        public MapBase()
         {
-            this.Core = core;
             UID = Guid.NewGuid();
         }
     }

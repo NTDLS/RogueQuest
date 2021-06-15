@@ -1,5 +1,6 @@
-﻿using RougueQuest.Engine;
-using RougueQuest.Types;
+﻿using Library.Actors;
+using Library.Types;
+using RougueQuest.Engine;
 using System;
 using System.Drawing;
 
@@ -57,30 +58,22 @@ namespace RougueQuest.Actors
             {
                 _text = value;
 
-                //If we have previously drawn text, then we need to invalidate the entire region which it occupied.
-                if (_prevRegion != null)
-                {
-                    Core.Display.DrawingSurface.Invalidate((Rectangle)_prevRegion);
-                }
-
                 //Now that we have used _prevRegion to invaldate the previous region, set it to the new region coords.
                 //And invalidate them for the new text.
                 var stringSize = _genericDC.MeasureString(_text, _font);
                 _prevRegion = new Rectangle((int)X, (int)Y, (int)stringSize.Width, (int)stringSize.Height);
-                Core.Display.DrawingSurface.Invalidate((Rectangle)_prevRegion);
             }
         }
 
         #endregion
 
         public ActorTextBlock(EngineCore core, string font, Brush color, double size, Point<double> location, bool isPositionStatic)
-            : base(core)
         {
             IsPositionStatic = isPositionStatic;
             Location = new Point<double>(location);
             _color = color;
             _font = new Font(font, (float)size);
-            _genericDC = Core.Display.DrawingSurface.CreateGraphics();
+            _genericDC = core.Display.DrawingSurface.CreateGraphics();
         }
 
         public new void Render(Graphics dc)

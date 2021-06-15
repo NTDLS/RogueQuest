@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RougueQuest.Engine
+namespace Library.Engine
 {
     public static class Types
     {

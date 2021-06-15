@@ -1,29 +1,27 @@
-﻿using RougueQuest.Engine;
-using RougueQuest.Types;
-using RougueQuest.Utility;
+﻿using Library.Types;
+using Library.Utility;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
-namespace RougueQuest.Actors
+namespace RougueQuest.Terrain
 {
-    public class ActorBase
+    public class TerrainBase
     {
-        #region Public properties.
+        #region Public properties. 
         public RotationMode RotationMode { get; set; }
+        public Angle<double> Angle { get; set; } = new Angle<double>();
         public string Tag { get; set; }
         public Guid UID { get; private set; } = Guid.NewGuid();
-        public EngineCore Core { get; set; }
-        public List<ActorBase> Children { get; set; }
+        public List<TerrainBase> Children { get; set; }
 
         #endregion
 
-        public ActorBase(EngineCore core)
+        public TerrainBase()
         {
-            this.Core = core;
             UID = Guid.NewGuid();
-            Children = new List<ActorBase>();
+            Children = new List<TerrainBase>();
+            _size = new Size(0, 0);
             this.Visible = true;
             RotationMode = RotationMode.Upsize;
         }
@@ -32,25 +30,29 @@ namespace RougueQuest.Actors
 
         public Image _image = null;
 
-        public void SetImage(Image image, Size? size = null)
+        public void SetImage(Image image)
         {
             _image = image;
 
+            /*
             if (size != null)
             {
                 _image = Utility.GraphicsUtility.ResizeImage(_image, ((Size)size).Width, ((Size)size).Height);
             }
+            */
             _size = new Size(_image.Size.Width, _image.Size.Height);
         }
 
-        public void SetImage(string imagePath, Size? size = null)
+        public void SetImage(string imagePath)
         {
-            _image = Core.GetBitmapCached(imagePath);
+            _image = SpriteCache.GetBitmapCached(imagePath);
 
+            /*
             if (size != null)
             {
                 _image = Utility.GraphicsUtility.ResizeImage(_image, ((Size)size).Width, ((Size)size).Height);
             }
+            */
 
             _size = new Size(_image.Size.Width, _image.Size.Height);
         }
@@ -67,10 +69,10 @@ namespace RougueQuest.Actors
                 DrawImage(dc, _image);
             }
         }
-   
+
         private void DrawImage(Graphics dc, Image rawImage, double? angleInDegrees = null)
         {
-            double angle = (double)(angleInDegrees == null ? Velocity.Angle.Degrees : angleInDegrees);
+            double angle = (double)(angleInDegrees == null ? Angle.Degrees : angleInDegrees);
 
             Bitmap bitmap = new Bitmap(rawImage);
 
@@ -155,14 +157,6 @@ namespace RougueQuest.Actors
 
         #region Location.
 
-        public bool IsOnScreen
-        {
-            get
-            {
-                return Core.Display.VisibleBounds.IntersectsWith(Bounds);
-            }
-        }
-
         private Point<double> _location = new Point<double>();
 
         /// <summary>
@@ -215,29 +209,6 @@ namespace RougueQuest.Actors
         }
 
         public virtual void PositionChanged()
-        {
-        }
-
-        #endregion
-
-        #region Velocity.
-
-        private Velocity<double> _velocity;
-        public Velocity<double> Velocity
-        {
-            get
-            {
-                return _velocity;
-            }
-            set
-            {
-                _velocity = value;
-                VelocityChanged();
-            }
-        }
-
-
-        public virtual void VelocityChanged()
         {
         }
 

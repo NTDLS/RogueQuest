@@ -1,11 +1,11 @@
-﻿using AI2D.Engine;
-using RougueQuest.Types;
-using RougueQuest.Utility;
+﻿using Library.Engine;
+using Library.Types;
+using Library.Utility;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace RougueQuest.Engine
+namespace Library.Engine
 {
     public class EngineDisplay
     {
