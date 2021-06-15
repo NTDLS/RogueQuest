@@ -13,7 +13,6 @@ namespace Library.Engine
         #region Public properties.
         public RotationMode RotationMode { get; set; }
         public string Tag { get; set; }
-        public Guid UID { get; private set; } = Guid.NewGuid();
         public List<ActorBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
 
@@ -22,7 +21,6 @@ namespace Library.Engine
         public ActorBase(EngineCoreBase core)
         {
             Core = core;
-            UID = Guid.NewGuid();
             Children = new List<ActorBase>();
             this.Visible = true;
             RotationMode = RotationMode.Upsize;

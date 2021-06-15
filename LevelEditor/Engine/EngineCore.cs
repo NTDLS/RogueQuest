@@ -20,12 +20,12 @@ namespace LevelEditor.Engine
         }
 
 
-        public T AddNewTerrain<T>(double x, double y, string tileNameKey) where T : TerrainEditorTile
+        public T AddNewTerrain<T>(double x, double y, string tileTypeKey) where T : TerrainEditorTile
         {
             lock (CollectionSemaphore)
             {
-                var bitmap = SpriteCache.GetBitmapCached($"{tileNameKey}.png");
-                object[] param = { this, tileNameKey, bitmap };
+                var bitmap = SpriteCache.GetBitmapCached($"{tileTypeKey}.png");
+                object[] param = { this, tileTypeKey, bitmap };
                 var obj = (TerrainBase)Activator.CreateInstance(typeof(T), param);
                 obj.X = x;
                 obj.Y = y;

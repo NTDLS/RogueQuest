@@ -10,7 +10,6 @@ namespace Library.Engine
     {
         #region Public properties.
         public string Tag { get; set; }
-        public Guid UID { get; private set; } = Guid.NewGuid();
         public EngineCoreBase Core { get; set; }
 
         #endregion
@@ -18,7 +17,6 @@ namespace Library.Engine
         public MapBase(EngineCoreBase core)
         {
             Core = core;
-            UID = Guid.NewGuid();
         }
     }
 }

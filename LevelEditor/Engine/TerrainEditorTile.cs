@@ -10,12 +10,12 @@ namespace LevelEditor.Engine
 {
     public class TerrainEditorTile : TerrainBase
     {
-        public string TileNameKey { get; set; }
+        public string TileTypeKey { get; set; }
 
-        public TerrainEditorTile(EngineCore core, string tileNameKey, Bitmap bitmap)
+        public TerrainEditorTile(EngineCore core, string tileTypeKey, Bitmap bitmap)
             : base(core)
         {
-            TileNameKey = tileNameKey;
+            TileTypeKey = tileTypeKey;
             this.SetImage(bitmap);
         }
     }

@@ -14,7 +14,6 @@ namespace Library.Engine
         public RotationMode RotationMode { get; set; }
         public Angle<double> Angle { get; set; } = new Angle<double>();
         public string Tag { get; set; }
-        public Guid UID { get; private set; } = Guid.NewGuid();
         public List<TerrainBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
 
@@ -23,7 +22,6 @@ namespace Library.Engine
         public TerrainBase(EngineCoreBase core)
         {
             Core = core;
-            UID = Guid.NewGuid();
             Children = new List<TerrainBase>();
             _size = new Size(0, 0);
             this.Visible = true;
@@ -205,6 +203,7 @@ namespace Library.Engine
             }
             set
             {
+                Invalidate();
                 _location = value;
                 Invalidate();
             }
@@ -218,6 +217,7 @@ namespace Library.Engine
             }
             set
             {
+                Invalidate();
                 _location.X = value;
                 PositionChanged();
                 Invalidate();
@@ -232,6 +232,7 @@ namespace Library.Engine
             }
             set
             {
+                Invalidate();
                 _location.Y = value;
                 PositionChanged();
                 Invalidate();
