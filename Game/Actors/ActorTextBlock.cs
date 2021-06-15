@@ -1,10 +1,10 @@
-﻿using Library.Actors;
-using Library.Types;
-using RougueQuest.Engine;
+﻿using Library.Types;
+using Game.Engine;
 using System;
 using System.Drawing;
+using Library.Engine;
 
-namespace RougueQuest.Actors
+namespace Game.Actors
 {
     public class ActorTextBlock : ActorBase
     {

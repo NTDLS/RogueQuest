@@ -1,14 +1,15 @@
 ﻿using Library.Utility;
-using RougueQuest.Engine;
-using RougueQuest.Terrain;
+using Game.Engine;
+using Game.Terrain;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Library.Engine;
 
-namespace RougueQuest.Maps
+namespace Game.Maps
 {
     public class MapHome : MapBase
     {

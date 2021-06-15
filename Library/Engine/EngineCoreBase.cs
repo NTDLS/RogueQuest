@@ -1,8 +1,5 @@
-﻿using Library.Actors;
-using Library.Engine;
+﻿using Library.Engine;
 using Library.Types;
-using RougueQuest.Maps;
-using RougueQuest.Terrain;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace RougueQuest.Engine
+namespace Library.Engine
 {
     public class EngineCoreBase
     {
@@ -176,14 +173,14 @@ namespace RougueQuest.Engine
                         {
                             if (Display.VisibleBounds.IntersectsWith(actor.Bounds))
                             {
-                                Types.DynamicCast(actor, actor.GetType()).Render(_ScreenDC);
+                                Utility.Types.DynamicCast(actor, actor.GetType()).Render(_ScreenDC);
                             }
                         }
                         foreach (var actor in Actors.Where(o => o.Visible == true))
                         {
                             if (Display.VisibleBounds.IntersectsWith(actor.Bounds))
                             {
-                                Types.DynamicCast(actor, actor.GetType()).Render(_ScreenDC);
+                                Utility.Types.DynamicCast(actor, actor.GetType()).Render(_ScreenDC);
                             }
                         }
 

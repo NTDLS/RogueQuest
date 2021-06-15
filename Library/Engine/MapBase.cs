@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RougueQuest.Maps
+namespace Library.Engine
 {
     public class MapBase
     {

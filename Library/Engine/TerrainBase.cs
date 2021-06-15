@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace RougueQuest.Terrain
+namespace Library.Engine
 {
     public class TerrainBase
     {

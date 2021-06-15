@@ -1,5 +1,5 @@
 ﻿using Library.Types;
-using RougueQuest.Actors;
+using Game.Actors;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Library.Engine;
 
-namespace RougueQuest.Engine
+namespace Game.Engine
 {
     public class EngineCore : EngineCoreBase
     {

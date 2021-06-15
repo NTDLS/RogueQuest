@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.Engine
+namespace Library.Utility
 {
     public static class Types
     {

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Library.Engine
+namespace Library.Types
 {
     public class Quadrant
     {
