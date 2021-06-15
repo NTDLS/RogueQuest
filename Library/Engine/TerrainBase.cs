@@ -77,6 +77,8 @@ namespace Library.Engine
             Core.Display.DrawingSurface.Invalidate(invalidRect);
         }
 
+
+
         public void Render(Graphics dc)
         {
             if (Visible && _image != null)
@@ -172,6 +174,23 @@ namespace Library.Engine
         #endregion
 
         #region Location.
+        public bool IsOnScreen
+        {
+            get
+            {
+                return Core.Display.VisibleBounds.IntersectsWith(Bounds);
+            }
+        }
+
+        public bool Intersects(Point<double> location, Point<double> size)
+        {
+            var alteredHitBox = new RectangleF(
+                (float)(location.X),
+                (float)(location.Y),
+                (float)(size.X), (float)(size.Y));
+
+            return this.Bounds.IntersectsWith(alteredHitBox);
+        }
 
         private Point<double> _location = new Point<double>();
 
@@ -244,19 +263,18 @@ namespace Library.Engine
             }
         }
 
+        /// <summary>
+        /// Returns the right angle rectangle that the image occupies.
+        /// </summary>
         public RectangleF Bounds
         {
             get
             {
-                return new RectangleF((float)(_location.X), (float)(_location.Y), Size.Width, Size.Height);
-            }
-        }
-
-        public Rectangle BoundsI
-        {
-            get
-            {
-                return new Rectangle((int)(_location.X), (int)(_location.Y), Size.Width, Size.Height);
+                return new RectangleF(
+                    (float)(_location.X) - (Size.Width / 2),
+                    (float)(_location.Y - (Size.Height / 2)),
+                    (float)(Size.Width),
+                    (float)(Size.Height));
             }
         }
 

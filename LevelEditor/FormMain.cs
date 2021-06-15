@@ -131,6 +131,19 @@ namespace LevelEditor
 
             statusLabelMouseXY.Text = $"Mouse: x{e.X},y{e.Y} World: x{x},y{y}";
 
+            var hoverObjects = _core.TerrainIntersections(new Point<double>(x, y), new Point<double>(1, 1));
+
+            if (hoverObjects.Count > 0)
+            {
+                var firstObj = hoverObjects.Last() as TerrainEditorTile;
+                toolStripStatusLabelHoverObject.Text = $"[{firstObj.TileNameKey}]";
+            }
+            else
+            {
+                toolStripStatusLabelHoverObject.Text = "";
+            }
+
+            //Paint with left button.
             if (e.Button == MouseButtons.Left)
             {
                 double drawDeltaX = e.X - drawLastLocation.X;
@@ -139,6 +152,14 @@ namespace LevelEditor
                 if (Math.Abs(drawDeltaX) > 10 || Math.Abs(drawDeltaY) > 10)
                 {
                     PlaceSelectedItem(x, y);
+                }
+            }
+            //Paint deletion with right button.
+            else if (e.Button == MouseButtons.Right)
+            {
+                if(hoverObjects.Count > 0)
+                {
+                    hoverObjects.Last().QueueForDelete();
                 }
             }
         }
@@ -150,6 +171,7 @@ namespace LevelEditor
                 dragStartMouse = new Point<double>(e.X, e.Y);
                 dragStartOffset = new Point<double>(_core.Display.BackgroundOffset);
             }
+            //Single item placement with left button.
             else if (e.Button == MouseButtons.Left)
             {
                 drawStartMouse = new Point<double>(e.X, e.Y);
@@ -157,6 +179,18 @@ namespace LevelEditor
                 double x = _core.Display.BackgroundOffset.X + e.X;
                 double y = _core.Display.BackgroundOffset.Y + e.Y;
                 PlaceSelectedItem(x, y);
+            }
+            //Single item deletion with right button.
+            else if (e.Button == MouseButtons.Right)
+            {
+                double x = _core.Display.BackgroundOffset.X + e.X;
+                double y = _core.Display.BackgroundOffset.Y + e.Y;
+
+                var objs = _core.TerrainIntersections(new Point<double>(x, y), new Point<double>(1, 1));
+                foreach (var obj in objs)
+                {
+                    obj.QueueForDelete();
+                }
             }
         }
 
@@ -172,16 +206,6 @@ namespace LevelEditor
             _core.AddNewTerrain<TerrainEditorTile>(x, y, selectedItem.ImageKey);
 
             drawLastLocation = new Point<double>(x, y);
-        }
-
-        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void pictureBox_MouseLeave(object sender, EventArgs e)
-        {
-
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)

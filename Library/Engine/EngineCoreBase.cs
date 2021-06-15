@@ -68,6 +68,20 @@ namespace Library.Engine
             OnStop?.Invoke(this);
         }
 
+        public List<TerrainBase> TerrainIntersections(Point<double> location, Point<double> size)
+        {
+            var list = new List<TerrainBase>();
+
+            foreach (var obj in Terrains.Where(o => o.Visible == true))
+            {
+                if (obj.Intersects(location, size))
+                {
+                    list.Add(obj);
+                }
+            }
+            return list;
+        }
+
         public T AddNewTerrain<T>(double x, double y) where T : TerrainBase
         {
             lock (CollectionSemaphore)

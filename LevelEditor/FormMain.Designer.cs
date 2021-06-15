@@ -35,6 +35,7 @@ namespace LevelEditor
             this.listViewTiles = new System.Windows.Forms.ListView();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabelMouseXY = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelHoverObject = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -76,9 +77,7 @@ namespace LevelEditor
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Paint);
             this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
-            this.pictureBox.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
             this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
-            this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             // 
             // splitContainerTools
             // 
@@ -109,7 +108,8 @@ namespace LevelEditor
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabelMouseXY});
+            this.statusLabelMouseXY,
+            this.toolStripStatusLabelHoverObject});
             this.statusStrip.Location = new System.Drawing.Point(0, 539);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(784, 22);
@@ -119,8 +119,14 @@ namespace LevelEditor
             // statusLabelMouseXY
             // 
             this.statusLabelMouseXY.Name = "statusLabelMouseXY";
-            this.statusLabelMouseXY.Size = new System.Drawing.Size(118, 17);
-            this.statusLabelMouseXY.Text = "toolStripStatusLabel1";
+            this.statusLabelMouseXY.Size = new System.Drawing.Size(43, 17);
+            this.statusLabelMouseXY.Text = "coords";
+            // 
+            // toolStripStatusLabelHoverObject
+            // 
+            this.toolStripStatusLabelHoverObject.Name = "toolStripStatusLabelHoverObject";
+            this.toolStripStatusLabelHoverObject.Size = new System.Drawing.Size(72, 17);
+            this.toolStripStatusLabelHoverObject.Text = "hoverObject";
             // 
             // FormMain
             // 
@@ -158,6 +164,7 @@ namespace LevelEditor
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabelMouseXY;
         private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelHoverObject;
     }
 }
 
