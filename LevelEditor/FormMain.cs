@@ -245,7 +245,7 @@ namespace LevelEditor
 
             foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
             {
-                if (f.StartsWith("@"))
+                if (Path.GetFileName(f).StartsWith("@"))
                 {
                     continue;
                 }
@@ -255,7 +255,7 @@ namespace LevelEditor
 
                 imageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
 
-                node.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey);
+                node.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey, fileKey);
             }
             foreach (string d in Directory.GetDirectories(basePath + partialPath))
             {
