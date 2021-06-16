@@ -104,7 +104,7 @@ namespace LevelEditor
 
             toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
 
-            //MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
+            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
         }
 
         #region Menu Clicks.
@@ -115,7 +115,7 @@ namespace LevelEditor
         /// <returns></returns>
         bool CheckForNeededSave()
         {
-            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false && _hasBeenModified)
+            if (_hasBeenModified)
             {
                 var result = MessageBox.Show("The current file has been modified. Save it first?",
                     "Save before continuing?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -230,56 +230,52 @@ namespace LevelEditor
 
         #endregion
 
-        public static void PopulateImageList(ImageList imageList, string basePath, string partialPath)
+        public void CreateImageListAndAssets(ImageList imageList, TreeNode parent, string basePath, string partialPath)
         {
+            TreeNode node = null;
+
+            if (parent == null)
+            {
+                node = treeViewTiles.Nodes.Add(Path.GetFileName(partialPath));
+            }
+            else
+            {
+                node = parent.Nodes.Add(Path.GetFileName(partialPath));
+            }
+
             foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
             {
+                if (f.StartsWith("@"))
+                {
+                    continue;
+                }
                 var file = new FileInfo(f);
 
-                imageList.Images.Add($"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}",
-                    SpriteCache.GetBitmapCached(file.FullName));
+                string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
 
+                imageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
+
+                node.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey);
             }
             foreach (string d in Directory.GetDirectories(basePath + partialPath))
             {
                 var directory = Path.GetFileName(d);
-
-                PopulateImageList(imageList, basePath, partialPath + "\\" + directory);
+                if (directory.StartsWith("@"))
+                {
+                    continue;
+                }
+                CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
             }
         }
 
         void PopulateMaterials()
         {
             ImageList imageList = new ImageList();
-
-            PopulateImageList(imageList, Assets.Constants.BasePath, "Terrain");
-
-/*
-            var directory = new DirectoryInfo(Assets.Constants.GetAssetPath(assetKey));
-            foreach (var file in directory.GetFiles("*.png"))
+            treeViewTiles.ImageList = imageList;
+            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Terrain");
+            if (treeViewTiles.Nodes.Count > 0)
             {
-                imageList.Images.Add($"{assetKey}\\{Path.GetFileNameWithoutExtension(file.Name)}",
-                    SpriteCache.GetBitmapCached(file.FullName));
-            }
-*/
-
-            listViewTiles.LargeImageList = imageList;
-            listViewTiles.SmallImageList = imageList;
-            listViewTiles.View = View.Details;
-
-            listViewTiles.Columns.Add("Item");
-            listViewTiles.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewTiles.HideSelection = false;
-            listViewTiles.Columns[0].Width = 250;
-
-            foreach (var key in imageList.Images.Keys)
-            {
-                listViewTiles.Items.Add(key, key);
-
-                if (key == @"Terrain\Dirt")
-                {
-                    listViewTiles.Items[listViewTiles.Items.Count - 1].Selected = true;
-                }
+                treeViewTiles.Nodes[0].Expand();
             }
         }
 
@@ -383,14 +379,14 @@ namespace LevelEditor
         {
             _hasBeenModified = true;
 
-            if (listViewTiles.SelectedItems?.Count != 1)
+            if (treeViewTiles.SelectedNode == null)
             {
                 return;
             }
 
-            var selectedItem = listViewTiles.SelectedItems[0];
+            var selectedItem = treeViewTiles.SelectedNode;
 
-            _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.ImageKey);
+            _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath);
 
             drawLastLocation = new Point<double>(x, y);
         }
