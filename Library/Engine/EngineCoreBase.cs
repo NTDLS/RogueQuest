@@ -20,8 +20,8 @@ namespace Library.Engine
         public EngineDisplay Display { get; set; }
         public object CollectionSemaphore { get; private set; } = new object();
         public object DrawingSemaphore { get; set; } = new object();
-        public List<ActorBase> Actors { get; private set; }
-        public List<TerrainBase> TerrainTiles { get; private set; }
+        public ActorController Actors { get; private set; }
+        public TerrainController Terrain { get; set; }
         public List<MapBase> Maps { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
 
@@ -38,15 +38,15 @@ namespace Library.Engine
         public event StopEvent OnStop;
 
         #endregion
-
+        
         public EngineCoreBase(Control drawingSurface, Size visibleSize)
         {
             Display = new EngineDisplay(drawingSurface, visibleSize);
 
             lock (CollectionSemaphore)
             {
-                Actors = new List<ActorBase>();
-                TerrainTiles = new List<TerrainBase>();
+                Actors = new ActorController(this);
+                Terrain = new TerrainController(this);
                 Maps = new List<MapBase>();
             }
         }
@@ -69,48 +69,12 @@ namespace Library.Engine
             OnStop?.Invoke(this);
         }
 
-        public List<TerrainBase> TerrainIntersections(Point<double> location, Point<double> size)
+        public void QueueAllForDelete()
         {
-            var list = new List<TerrainBase>();
-
-            foreach (var obj in TerrainTiles.Where(o => o.Visible == true))
+            lock (this.CollectionSemaphore)
             {
-                if (obj.Intersects(location, size))
-                {
-                    list.Add(obj);
-                }
-            }
-            return list;
-        }
-
-        public T AddNewTerrain<T>(double x, double y, string tileTypeKey) where T : TerrainBase
-        {
-            lock (CollectionSemaphore)
-            {
-                var bitmap = SpriteCache.GetBitmapCached($"{tileTypeKey}.png");
-                object[] param = { this };
-                var obj = (TerrainBase)Activator.CreateInstance(typeof(T), param);
-
-                obj.TileTypeKey = tileTypeKey;
-                obj.SetImage(bitmap);
-
-                obj.X = x;
-                obj.Y = y;
-                TerrainTiles.Add(obj);
-                return (T)obj;
-            }
-        }
-
-        public T AddNewTerrainTile<T>(double x, double y) where T : TerrainBase
-        {
-            lock (CollectionSemaphore)
-            {
-                object[] param = { this };
-                var obj = (TerrainBase)Activator.CreateInstance(typeof(T), param);
-                obj.X = x;
-                obj.Y = y;
-                TerrainTiles.Add(obj);
-                return (T)obj;
+                Terrain.QueueAllForDelete();
+                Actors.QueueAllForDelete();
             }
         }
 
@@ -123,44 +87,6 @@ namespace Library.Engine
                 Maps.Add(obj);
                 return (T)obj;
             }
-        }
-
-        public T AddNewActor<T>() where T : ActorBase
-        {
-            lock (CollectionSemaphore)
-            {
-                object[] param = { this };
-                var obj = (ActorBase)Activator.CreateInstance(typeof(T), param);
-                obj.Location = Display.RandomOffScreenLocation(100, 100);
-                Actors.Add(obj);
-                return (T)obj;
-            }
-        }
-
-        public Bitmap GetBitmapCached(string path)
-        {
-            Bitmap result = null;
-
-            path = path.ToLower();
-
-            lock (_bitmapCache)
-            {
-                if (_bitmapCache.ContainsKey(path))
-                {
-                    result = _bitmapCache[path].Clone() as Bitmap;
-                }
-                else
-                {
-                    using (var image = Image.FromFile(path))
-                    using (var newbitmap = new Bitmap(image))
-                    {
-                        result = newbitmap.Clone() as Bitmap;
-                        _bitmapCache.Add(path, result);
-                    }
-                }
-            }
-
-            return result;
         }
 
         private Bitmap _ScreenBitmap = null;
@@ -202,20 +128,8 @@ namespace Library.Engine
                     {
                         _ScreenDC.Clear(BackgroundColor);
 
-                        foreach (var actor in TerrainTiles.Where(o => o.Visible == true))
-                        {
-                            if (Display.VisibleBounds.IntersectsWith(actor.Bounds))
-                            {
-                                Utility.Types.DynamicCast(actor, actor.GetType()).Render(_ScreenDC);
-                            }
-                        }
-                        foreach (var actor in Actors.Where(o => o.Visible == true))
-                        {
-                            if (Display.VisibleBounds.IntersectsWith(actor.Bounds))
-                            {
-                                Utility.Types.DynamicCast(actor, actor.GetType()).Render(_ScreenDC);
-                            }
-                        }
+                        Terrain.Render(_ScreenDC);
+                        Actors.Render(_ScreenDC);
 
                         //Player?.Render(_ScreenDC);
                     }

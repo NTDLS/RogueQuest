@@ -27,6 +27,9 @@ namespace LevelEditor
 
         private EngineCore _core;
         private bool _fullScreen = false;
+        private bool _hasBeenModified = false;
+        private string _currentMapFilename = string.Empty;
+        private int _newFilenameIncrement = 1;
 
         /// <summary>
         /// Where the mouse was when the user started dragging the map.
@@ -91,18 +94,111 @@ namespace LevelEditor
             toolStripButtonInsertMode.Click += ToolStripButtonInsertMode_Click;
             toolStripButtonSelectMode.Click += ToolStripButtonSelectMode_Click;
             saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
+            exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
+            newToolStripMenuItem.Click += NewToolStripMenuItem_Click;
+            saveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
+            openToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
 
             PopulateMaterials();
 
             toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
 
-            MapPersistence.Load(_core, @"C:\\map.txt");
+            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
         }
 
         #region Menu Clicks.
+
+        /// <summary>
+        /// Do not continue if this returns false.
+        /// </summary>
+        /// <returns></returns>
+        bool CheckForNeededSave()
+        {
+            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false && _hasBeenModified)
+            {
+                var result = MessageBox.Show("The current file has been modified. Save it first?",
+                    "Save before continuing?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    SaveToolStripMenuItem_Click(new object(), new EventArgs());
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CheckForNeededSave() == false)
+            {
+                return;
+            }
+
+            using (var dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "RogueQuest Maps (*.qrm)|*.rqm|All files (*.*)|*.*";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _currentMapFilename = dialog.FileName;
+                    MapPersistence.Load(_core, _currentMapFilename);
+                    _hasBeenModified = false;
+                }
+            }
+        }
+
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MapPersistence.Save(_core, @"C:\\map.txt");
+            //If we already have an open file, then just save it.
+            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
+            {
+                MapPersistence.Save(_core, _currentMapFilename);
+                _hasBeenModified = false;
+            }
+            else //If we do not have a current open file, then we need to "Save As".
+            {
+                SaveAsToolStripMenuItem_Click(sender, e);
+            }
+        }
+
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.FileName = $"Newfile {_newFilenameIncrement++}";
+                dialog.Filter = "RQ Map (*.qrm)|*.rqm|All files (*.*)|*.*";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _currentMapFilename = dialog.FileName;
+
+                    MapPersistence.Save(_core, _currentMapFilename);
+                    _hasBeenModified = false;
+                }
+            }
+        }
+
+        private void NewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CheckForNeededSave() == false)
+            {
+                return;
+            }
+
+            _core.QueueAllForDelete();
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CheckForNeededSave() == false)
+            {
+                return;
+            }
         }
 
         private void ToolStripButtonSelectMode_Click(object sender, EventArgs e)
@@ -115,6 +211,20 @@ namespace LevelEditor
         {
             CurrentPrimaryMode = PrimaryMode.Insert;
             toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
+        }
+
+        private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            //e.ClickedItem
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (CheckForNeededSave() == false)
+            {
+                e.Cancel = true;
+                return;
+            }
         }
 
         #endregion
@@ -174,7 +284,7 @@ namespace LevelEditor
 
             toolStripStatusLabelMouseXY.Text = $"Mouse: x{e.X},y{e.Y} World: x{x},y{y}";
 
-            var hoverObjects = _core.TerrainIntersections(new Point<double>(x, y), new Point<double>(1, 1));
+            var hoverObjects = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
             var singleHoverItem = hoverObjects?.LastOrDefault();
 
             if (hoverObjects.Count > 0)
@@ -206,6 +316,7 @@ namespace LevelEditor
                 {
                     singleHoverItem.X = x;
                     singleHoverItem.Y = y;
+                    _hasBeenModified = true;
                 }
             }
 
@@ -215,6 +326,7 @@ namespace LevelEditor
                 if (singleHoverItem != null)
                 {
                     singleHoverItem.QueueForDelete();
+                    _hasBeenModified = true;
                 }
             }
         }
@@ -246,16 +358,19 @@ namespace LevelEditor
                 double x = _core.Display.BackgroundOffset.X + e.X;
                 double y = _core.Display.BackgroundOffset.Y + e.Y;
 
-                var objs = _core.TerrainIntersections(new Point<double>(x, y), new Point<double>(1, 1));
+                var objs = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
                 foreach (var obj in objs)
                 {
                     obj.QueueForDelete();
+                    _hasBeenModified = true;
                 }
             }
         }
 
         void PlaceSelectedItem(double x, double y)
         {
+            _hasBeenModified = true;
+
             if (listViewTiles.SelectedItems?.Count != 1)
             {
                 return;
@@ -263,7 +378,7 @@ namespace LevelEditor
 
             var selectedItem = listViewTiles.SelectedItems[0];
 
-            _core.AddNewTerrain<TerrainBase>(x, y, selectedItem.ImageKey);
+            _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.ImageKey);
 
             drawLastLocation = new Point<double>(x, y);
         }
@@ -271,11 +386,6 @@ namespace LevelEditor
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(_core.Render(), 0, 0);
-        }
-
-        private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            //e.ClickedItem
         }
     }
 }

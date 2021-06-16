@@ -9,13 +9,11 @@ namespace Assets
 {
     public static class SpriteCache
     {
-        public static string BasePath { get; set; } = @".\..\..\..\..\Assets\";
-
         private static Dictionary<string, Bitmap> _bitmapCache = new Dictionary<string, Bitmap>();
 
         public static Bitmap GetBitmapCached(string path)
         {
-            path = BasePath + path;
+            path = Constants.BasePath + path;
 
             Bitmap result = null;
 

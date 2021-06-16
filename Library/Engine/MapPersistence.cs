@@ -9,7 +9,7 @@ namespace Library.Engine
         {
             var map = new PersistMap();
 
-            foreach (var obj in core.TerrainTiles.Where(o => o.Visible))
+            foreach (var obj in core.Terrain.Tiles.Where(o => o.Visible))
             {
                 map.Chunks.Add(new PersistMapEntity
                 {
@@ -30,9 +30,11 @@ namespace Library.Engine
 
             var map = JsonConvert.DeserializeObject<PersistMap>(json);
 
+            core.QueueAllForDelete();
+
             foreach (var chunk in map.Chunks)
             {
-                core.AddNewTerrain<TerrainBase>(chunk.X, chunk.Y, chunk.TileTypeKey);
+                core.Terrain.AddNew<TerrainBase>(chunk.X, chunk.Y, chunk.TileTypeKey);
             }
         }
     }

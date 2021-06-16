@@ -381,6 +381,7 @@ namespace LevelEditor
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "RougueQuest : LevelEditor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.splitContainerBody.Panel1.ResumeLayout(false);
             this.splitContainerBody.Panel2.ResumeLayout(false);
