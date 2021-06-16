@@ -1,0 +1,14 @@
+These are the abilities the Thundermaker does:
+
+Energy Cell
+-Enabled by default
+-Costs 75 magic
+-Freezes the enemy unit for a while
+
+Energy Forcefield
+-Costs 120 magic
+-Protects units (yours and enemies) from long range attacks, not melee attacks (it's like Dark Swarm from the Starcraft Zerg Defiler)
+
+Energy Storm
+-Costs 100 magic
+-Casts a single shock storm over the desired area, causing damage over all units

@@ -2,11 +2,13 @@
 using LevelEditor.Engine;
 using Library.Engine;
 using Library.Types;
+using Library.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -104,7 +106,7 @@ namespace LevelEditor
 
             toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
 
-            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
+            //MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
         }
 
         #region Menu Clicks.
@@ -230,7 +232,7 @@ namespace LevelEditor
 
         #endregion
 
-        public void CreateImageListAndAssets(ImageList imageList, TreeNode parent, string basePath, string partialPath)
+        public TreeNode CreateImageListAndAssets(ImageList imageList, TreeNode parent, string basePath, string partialPath)
         {
             TreeNode node = null;
 
@@ -264,8 +266,25 @@ namespace LevelEditor
                 {
                     continue;
                 }
-                CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
+                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
+
+                //Set the folder image to the first image in the children.
+                TreeNode imageFind = addedNode;
+                while (String.IsNullOrWhiteSpace(imageFind.ImageKey))
+                {
+                    if (imageFind.Nodes.Count > 0)
+                    {
+                        imageFind = imageFind.Nodes[0];
+                    }
+                }
+                if (imageFind != null)
+                {
+                    addedNode.ImageKey = imageFind.ImageKey;
+                    addedNode.SelectedImageKey = imageFind.SelectedImageKey;
+                }
             }
+
+            return node;
         }
 
         void PopulateMaterials()
@@ -375,6 +394,21 @@ namespace LevelEditor
             }
         }
 
+        TreeNode GetRandomChildNode(TreeNode node)
+        {
+            if (node.Nodes.Count > 0)
+            {
+                int nodeIndex = MathUtility.RandomNumber(0, node.Nodes.Count);
+
+                if (node.Nodes[nodeIndex].Nodes.Count > 0)
+                {
+                    return GetRandomChildNode(node.Nodes[nodeIndex]);
+                }
+            }
+
+            return null;
+        }
+
         void PlaceSelectedItem(double x, double y)
         {
             _hasBeenModified = true;
@@ -384,11 +418,12 @@ namespace LevelEditor
                 return;
             }
 
-            var selectedItem = treeViewTiles.SelectedNode;
-
-            _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath);
-
-            drawLastLocation = new Point<double>(x, y);
+            var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
+            if (selectedItem != null)
+            {
+                _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath);
+                drawLastLocation = new Point<double>(x, y);
+            }
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)

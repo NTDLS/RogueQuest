@@ -1,0 +1,31 @@
+Cost = C
+Time = T (refers to units of time, not necessarily seconds or minutes, for example, one unit of time could equal to 27 seconds... the important thing here is proportion)
+Effect = E
+
+-----
+
+Experimental Storm Bay:
+
+-Energy Cooldown (C = 200; T = 5; E = +50 magic for Thunder Maker)
+
+-Develop Energy Forcefield (C = 225; T = 4; E = you can cast forcefields with the Thunder Maker)
+
+-Develop Energy Shockwave (C = 250; T = 4; E = let's you cast storms with the Thunder Maker)
+
+Energy Engineering Node:
+
+-Nova Shields (C = 250; T = 6; E = +1 shields for units)
+
+-Tera Shields (C = 325; T = 7; E = +1 shields for units, you can upgrade this after the first one)
+
+-Colomerix Energy Handler (C = 275; T = 6; E = +1 attack for units)
+
+-Orcut Energy Handler (C = 350; T = 7; E = +1 attack for units)
+
+Quantum Dispatcher
+
+-Density Injection (C = 250; T = 5; E = Solar Bird can shoot further)
+
+Pulsar Facility
+
+-Adrenaline Shot (C = 250; T = 5; E = Light Warrior walks faster)

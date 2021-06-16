@@ -1,0 +1,42 @@
+Shield and Damage upgrades increases +X with every buy
+
+Worker
+-Time = 1
+-HP = 40
+-Damage = 5 (Low Frequency Beam)
+-Shield = 0+1(2)
+-Cost = 60
+-Supply = 1
+
+Light Warrior
+-Time = 2
+-HP = 60
+-Damage = 12+1(2) (Energy Sword)
+-Shield = 0+1(2)
+-Cost = 100
+-Supply = 2
+
+Solar Bird
+-Time = 2,6
+-HP = 90
+-Damage = 8/14+1(2) (Solar Impact)
+-Shield = 1+1(2)
+-Cost = 160
+-Supply = 2
+
+Thundermaker
+-Time = 3
+-HP = 50
+-Damage = 6+1(2) (Impulse Ray)
+-Shield = 0
+-Cost = 225
+-Supply = 2
+-Magic = 200
+
+Pulse Cannon
+-Time = 3,5
+-HP = 115
+-Damage = 23+2(2) (Pulse Shoot)
+-Shield = 2+1(2)
+-Cost = 280
+-Supply = 3

@@ -1,0 +1,19 @@
+If you have any problem or want to know more information, send me an email to mariano.hayon@gmail.com
+
+
+This is for a strategy game, like Warcraft or Starcraft, it's should be grid based like Warcraft II, all units occupy one square, except buildings (there's an image that explains how much they occupy)...
+
+There are graphics for the red and blue players only...
+
+These are the units you can use:
+
+Worker = used to harvest minerals and create buildings, it can attack but it's very weak...
+
+Light Warrior = the first line of defense, it attacks with a sword with low range of course
+
+Solar Bird = it attacks from mid-range, it throws energy rays..
+
+Thunder Maker = This is the mage of the game, attacks with small rays that are casted directly over the enemy unit,  cast storms, energy shields and freezes enemies...
+
+Pulse Cannon = a very powerful enemy, it shoots like the Zerg Guardian from Starcraft, from long range... it moves slow...
+

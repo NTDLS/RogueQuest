@@ -1,0 +1,42 @@
+Central Refinery
+Time = 5
+HP = 1000
+Cost = 400
+Supply Given = 10
+
+Experimental Storm Bay
+Time = 3,7 
+HP = 600
+Cost = 280
+
+Energy Core
+Time = 1,8 
+HP = 300
+Cost = 125
+Supply Given = 8
+
+Barracks
+Time = 3 
+HP = 800
+Cost = 250
+
+Energy Engineering Node
+Time = 2 
+HP = 500
+Cost = 175
+
+Solar Tower
+Time = 2,3
+HP = 150
+Cost = 150
+Damage = 14
+
+Quantum Dispatcher
+Time =  3,5
+HP = 700
+Cost = 300
+
+Pulsar Facility
+Time = 4 
+HP = 700
+Cost = 300
