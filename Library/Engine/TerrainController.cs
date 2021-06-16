@@ -72,7 +72,7 @@ namespace Library.Engine
         {
             lock (Core.CollectionSemaphore)
             {
-                var bitmap = SpriteCache.GetBitmapCached($"{tileTypeKey}.png");
+                var bitmap = SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{tileTypeKey}.png"));
                 object[] param = { Core };
                 var obj = (TerrainBase)Activator.CreateInstance(typeof(T), param);
 

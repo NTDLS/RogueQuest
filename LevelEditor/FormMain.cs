@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -103,7 +104,7 @@ namespace LevelEditor
 
             toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
 
-            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
+            //MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
         }
 
         #region Menu Clicks.
@@ -229,27 +230,38 @@ namespace LevelEditor
 
         #endregion
 
+        public static void PopulateImageList(ImageList imageList, string basePath, string partialPath)
+        {
+            foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
+            {
+                var file = new FileInfo(f);
+
+                imageList.Images.Add($"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}",
+                    SpriteCache.GetBitmapCached(file.FullName));
+
+            }
+            foreach (string d in Directory.GetDirectories(basePath + partialPath))
+            {
+                var directory = Path.GetFileName(d);
+
+                PopulateImageList(imageList, basePath, partialPath + "\\" + directory);
+            }
+        }
+
         void PopulateMaterials()
         {
             ImageList imageList = new ImageList();
 
-            imageList.Images.Add(@"Terrain\BoderTree", SpriteCache.GetBitmapCached(@"Terrain\BoderTree.png"));
-            imageList.Images.Add(@"Terrain\Bush", SpriteCache.GetBitmapCached(@"Terrain\Bush.png"));
-            imageList.Images.Add(@"Terrain\Dirt", SpriteCache.GetBitmapCached(@"Terrain\Dirt.png"));
-            imageList.Images.Add(@"Terrain\FallenTreeStump", SpriteCache.GetBitmapCached(@"Terrain\FallenTreeStump.png"));
-            imageList.Images.Add(@"Terrain\Flowers", SpriteCache.GetBitmapCached(@"Terrain\Flowers.png"));
-            imageList.Images.Add(@"Terrain\RiverFlowFromBottomToRight", SpriteCache.GetBitmapCached(@"Terrain\RiverFlowFromBottomToRight.png"));
-            imageList.Images.Add(@"Terrain\RiverFlowFromLeftToBottom", SpriteCache.GetBitmapCached(@"Terrain\RiverFlowFromLeftToBottom.png"));
-            imageList.Images.Add(@"Terrain\RiverFlowFromLeftToRight", SpriteCache.GetBitmapCached(@"Terrain\RiverFlowFromLeftToRight.png"));
-            imageList.Images.Add(@"Terrain\RiverFlowFromLeftToTop", SpriteCache.GetBitmapCached(@"Terrain\RiverFlowFromLeftToTop.png"));
-            imageList.Images.Add(@"Terrain\RiverFlowFromToBottom", SpriteCache.GetBitmapCached(@"Terrain\RiverFlowFromToBottom.png"));
-            imageList.Images.Add(@"Terrain\RiverFlowFromTopToRight", SpriteCache.GetBitmapCached(@"Terrain\RiverFlowFromTopToRight.png"));
-            imageList.Images.Add(@"Terrain\ShortTree", SpriteCache.GetBitmapCached(@"Terrain\ShortTree.png"));
-            imageList.Images.Add(@"Terrain\SmallEntrance", SpriteCache.GetBitmapCached(@"Terrain\SmallEntrance.png"));
-            imageList.Images.Add(@"Terrain\TallTree", SpriteCache.GetBitmapCached(@"Terrain\TallTree.png"));
-            imageList.Images.Add(@"Terrain\TreeStump", SpriteCache.GetBitmapCached(@"Terrain\TreeStump.png"));
-            imageList.Images.Add(@"Terrain\WaterPuddle", SpriteCache.GetBitmapCached(@"Terrain\WaterPuddle.png"));
-            imageList.Images.Add(@"Terrain\WideTree", SpriteCache.GetBitmapCached(@"Terrain\WideTree.png"));
+            PopulateImageList(imageList, Assets.Constants.BasePath, "Terrain");
+
+/*
+            var directory = new DirectoryInfo(Assets.Constants.GetAssetPath(assetKey));
+            foreach (var file in directory.GetFiles("*.png"))
+            {
+                imageList.Images.Add($"{assetKey}\\{Path.GetFileNameWithoutExtension(file.Name)}",
+                    SpriteCache.GetBitmapCached(file.FullName));
+            }
+*/
 
             listViewTiles.LargeImageList = imageList;
             listViewTiles.SmallImageList = imageList;

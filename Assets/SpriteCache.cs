@@ -13,8 +13,6 @@ namespace Assets
 
         public static Bitmap GetBitmapCached(string path)
         {
-            path = Constants.BasePath + path;
-
             Bitmap result = null;
 
             path = path.ToLower();
