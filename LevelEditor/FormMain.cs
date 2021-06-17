@@ -34,7 +34,6 @@ namespace LevelEditor
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
 
-
         #region Settings.
 
         private int tilePaintOverlap = 5;
@@ -625,6 +624,11 @@ namespace LevelEditor
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(_core.Render(), 0, 0);
+        }
+
+        private void FormMain_SizeChanged(object sender, EventArgs e)
+        {
+            _core.ResizeDrawingSurface(new Size(pictureBox.Width, pictureBox.Height));
         }
     }
 }

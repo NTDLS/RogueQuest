@@ -80,6 +80,11 @@ namespace Library.Engine
             VisibleBounds = new RectangleF(0, 0, visibleSize.Width, visibleSize.Height);
         }
 
+        public void ResizeDrawingSurface(Size visibleSize)
+        {
+            VisibleBounds = new RectangleF(0, 0, visibleSize.Width, visibleSize.Height);
+        }
+
         public Quadrant GetQuadrant(double x, double y)
         {
             var coord = new Point(

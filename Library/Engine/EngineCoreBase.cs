@@ -38,7 +38,7 @@ namespace Library.Engine
         public event StopEvent OnStop;
 
         #endregion
-        
+
         public EngineCoreBase(Control drawingSurface, Size visibleSize)
         {
             Display = new EngineDisplay(drawingSurface, visibleSize);
@@ -67,6 +67,16 @@ namespace Library.Engine
             IsRunning = false;
 
             OnStop?.Invoke(this);
+        }
+
+        public void ResizeDrawingSurface(Size visibleSize)
+        {
+            Display.ResizeDrawingSurface(visibleSize);
+
+            lock (CollectionSemaphore)
+            {
+                _ScreenBitmap = null;
+            }
         }
 
         public void QueueAllForDelete()
@@ -103,20 +113,8 @@ namespace Library.Engine
         {
             IsRendering = true;
 
-            var timeout = TimeSpan.FromMilliseconds(1);
             bool lockTaken = false;
-
-            if (_ScreenBitmap == null)
-            {
-                _ScreenBitmap = new Bitmap(Display.DrawingSurface.Width, Display.DrawingSurface.Height);
-
-                _ScreenDC = Graphics.FromImage(_ScreenBitmap);
-                _ScreenDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                _ScreenDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                _ScreenDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                _ScreenDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                _ScreenDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-            }
+            var timeout = TimeSpan.FromMilliseconds(1);
 
             try
             {
@@ -126,6 +124,18 @@ namespace Library.Engine
                 {
                     lock (CollectionSemaphore)
                     {
+                        if (_ScreenBitmap == null)
+                        {
+                            _ScreenBitmap = new Bitmap(Display.DrawingSurface.Width, Display.DrawingSurface.Height);
+
+                            _ScreenDC = Graphics.FromImage(_ScreenBitmap);
+                            _ScreenDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                            _ScreenDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                            _ScreenDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                            _ScreenDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                            _ScreenDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                        }
+
                         _ScreenDC.Clear(BackgroundColor);
 
                         Terrain.Render(_ScreenDC);
