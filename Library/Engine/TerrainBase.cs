@@ -19,9 +19,6 @@ namespace Library.Engine
         public string Tag { get; set; }
         public List<TerrainBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
-        public bool HoverHighlight { get; set; }
-        public bool SelectedHighlight { get; set; }
-
         #endregion
 
         public TerrainBase(EngineCoreBase core)
@@ -42,6 +39,34 @@ namespace Library.Engine
         #region Image.
 
         public Image _image = null;
+
+        private bool _hoverHighlight = false;
+        public bool HoverHighlight
+        {
+            get
+            {
+                return _hoverHighlight;
+            }
+            set
+            {
+                _hoverHighlight = value;
+                Invalidate();
+            }
+        }
+
+        private bool _selectedHighlight = false;
+        public bool SelectedHighlight
+        {
+            get
+            {
+                return _selectedHighlight;
+            }
+            set
+            {
+                _selectedHighlight = value;
+                Invalidate();
+            }
+        }
 
         public void SetImage(Image image)
         {

@@ -65,6 +65,11 @@ namespace Library.Engine
             return objs;
         }
 
+        public List<TerrainBase> Intersections(double x, double y, double width, double height)
+        {
+            return Intersections(new Point<double>(x, y), new Point<double>(width, height));
+        }
+
         public List<TerrainBase> Intersections(Point<double> location, Point<double> size)
         {
             lock (Core.CollectionSemaphore)

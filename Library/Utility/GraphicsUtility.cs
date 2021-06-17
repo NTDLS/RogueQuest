@@ -7,6 +7,26 @@ namespace Library.Utility
 {
     public static class GraphicsUtility
     {
+        /// <summary>
+        /// Returns a proper rectange that has a negative height or width.
+        /// </summary>
+        /// <param name="rc"></param>
+        /// <returns></returns>
+        public static Rectangle SortRectangle(Rectangle rc)
+        {
+            if (rc.Width < 0)
+            {
+                rc.Width = -rc.Width;
+                rc.X = rc.X - rc.Width;
+            }
+            if (rc.Height < 0)
+            {
+                rc.Height = -rc.Height;
+                rc.Y = rc.Y - rc.Height;
+            }
+            return rc;
+        }
+
         public static Bitmap RotateImageWithClipping(Bitmap bmp, double angle, Color backgroundColor)
         {
             Bitmap rotatedImage = new Bitmap(bmp.Width, bmp.Height, backgroundColor == Color.Transparent ?

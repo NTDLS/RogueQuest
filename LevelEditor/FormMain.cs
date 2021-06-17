@@ -25,7 +25,14 @@ namespace LevelEditor
         public enum PrimaryMode
         {
             Insert,
-            Select
+            Select,
+            Shape
+        }
+
+        public enum ShapeFillMode
+        {
+            Insert,
+            Delete
         }
 
         private EngineCore _core;
@@ -49,7 +56,11 @@ namespace LevelEditor
         /// <summary>
         /// Where the mouse was when the user started drawing
         /// </summary>
-        private Point<double> drawStartMouse = new Point<double>();
+        private Point<double> insertStartMousePosition = new Point<double>();
+        /// <summary>
+        /// Where the mouse was when the user started drawing a fill shape.
+        /// </summary>
+        private Point<double> shapeInsertStartMousePosition = new Point<double>();
         /// <summary>
         /// What the background offset was then the user started dragging the map.
         /// </summary>
@@ -58,6 +69,10 @@ namespace LevelEditor
         /// The location that the last block was placed (real world location).
         /// </summary>
         private Point<double> drawLastLocation = new Point<double>();
+        /// <summary>
+        /// Whether the user is dragging with the right or left mouse buttons when in shape fill mode
+        /// </summary>
+        private ShapeFillMode shapeFillMode = ShapeFillMode.Insert;
         private Size lastPlacedItemSize = new Size(0, 0);
         private TerrainBase selectedTile = null;
         private TerrainBase previousHoverTile = null;
@@ -116,9 +131,9 @@ namespace LevelEditor
             toolStripButtonOpen.Click += ToolStripButtonOpen_Click;
             toolStripButtonClose.Click += ToolStripButtonClose_Click;
             toolStripButtonNew.Click += ToolStripButtonNew_Click;
-
             toolStripButtonMoveTileUp.Click += ToolStripButtonMoveTileUp_Click;
             toolStripButtonMoveTileDown.Click += ToolStripButtonMoveTileDown_Click;
+            toolStripButtonShapeMode.Click += ToolStripButtonShapeMode_Click;
 
             PopulateMaterials();
 
@@ -269,11 +284,24 @@ namespace LevelEditor
             }
         }
 
+        private void ToolStripButtonShapeMode_Click(object sender, EventArgs e)
+        {
+            CurrentPrimaryMode = PrimaryMode.Shape;
+            toolStripButtonInsertMode.Checked = false;
+            toolStripButtonSelectMode.Checked = false;
+            toolStripButtonShapeMode.Checked = true;
+
+            if (selectedTile != null) selectedTile.SelectedHighlight = false;
+        }
+
         private void ToolStripButtonSelectMode_Click(object sender, EventArgs e)
         {
             CurrentPrimaryMode = PrimaryMode.Select;
             toolStripButtonInsertMode.Checked = false;
             toolStripButtonSelectMode.Checked = true;
+            toolStripButtonShapeMode.Checked = false;
+
+            if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
         private void ToolStripButtonInsertMode_Click(object sender, EventArgs e)
@@ -281,6 +309,9 @@ namespace LevelEditor
             CurrentPrimaryMode = PrimaryMode.Insert;
             toolStripButtonInsertMode.Checked = true;
             toolStripButtonSelectMode.Checked = false;
+            toolStripButtonShapeMode.Checked = false;
+
+            if(selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -365,6 +396,9 @@ namespace LevelEditor
             }
         }
 
+        Rectangle? shapeSelectionRect = null;
+
+
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
             double x = e.X + _core.Display.BackgroundOffset.X;
@@ -388,16 +422,15 @@ namespace LevelEditor
                     if (previousHoverTile != null && highlightHoverTile)
                     {
                         previousHoverTile.HoverHighlight = false;
-                        previousHoverTile.Invalidate();
                     }
 
                     if (hoverTile != null)
                     {
                         toolStripStatusLabelHoverObject.Text = $"[{hoverTile.TileTypeKey}]";
-                        if (highlightHoverTile)
+
+                        if (highlightHoverTile && CurrentPrimaryMode != PrimaryMode.Shape)
                         {
                             hoverTile.HoverHighlight = true;
-                            hoverTile.Invalidate();
                         }
 
                         previousHoverTile = hoverTile;
@@ -405,6 +438,31 @@ namespace LevelEditor
                     else
                     {
                         toolStripStatusLabelHoverObject.Text = "";
+                    }
+                }
+
+                if (CurrentPrimaryMode == PrimaryMode.Shape)
+                {
+                    if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
+                    {
+                        shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
+                                            (int)shapeInsertStartMousePosition.X,
+                                            (int)shapeInsertStartMousePosition.Y,
+                                            (int)(e.X - shapeInsertStartMousePosition.X),
+                                            (int)(e.Y - shapeInsertStartMousePosition.Y)));
+
+                        var rc = (Rectangle)shapeSelectionRect;
+                        pictureBox.Invalidate();
+                        toolStripStatusLabelDebug.Text = $"{rc.X}x,{rc.Y}y->{rc.Width}x,{rc.Height}y";
+                    }
+
+                    if (e.Button == MouseButtons.Left)
+                    {
+                        shapeFillMode = ShapeFillMode.Insert;
+                    }
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        shapeFillMode = ShapeFillMode.Delete;
                     }
                 }
 
@@ -441,7 +499,7 @@ namespace LevelEditor
                 }
 
                 //Paint deletion with right button.
-                if (e.Button == MouseButtons.Right)
+                if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
                 {
                     if (hoverTile != null)
                     {
@@ -455,6 +513,56 @@ namespace LevelEditor
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             PopulateSelectedItemProperties();
+
+            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+            {
+                if (shapeFillMode == ShapeFillMode.Insert)
+                {
+                    var rc = (Rectangle)shapeSelectionRect;
+                    double x = rc.X + _core.Display.BackgroundOffset.X;
+                    double y = rc.Y + _core.Display.BackgroundOffset.Y;
+
+                    int minHeight = 0;
+
+                    for (int py = 0; py < rc.Height;)
+                    {
+                        for (int px = 0; px < rc.Width;)
+                        {
+                            var placedTile = PlaceSelectedItem(x + px, y + py);
+                            if (placedTile == null) //No tiles are selected in the explorer.
+                            {
+                                shapeSelectionRect = null;
+                                pictureBox.Invalidate();
+                                return;
+                            }
+
+                            px += placedTile.Size.Width;
+                            //We keep track of the min height because I perfer overlap over gaps if the tiles are irregular.
+                            if (placedTile.Size.Height > minHeight)
+                            {
+                                minHeight = placedTile.Size.Height;
+                            }
+                        }
+                        py += minHeight;
+                    }
+                }
+                else if (shapeFillMode == ShapeFillMode.Delete)
+                {
+                    var rc = (Rectangle)shapeSelectionRect;
+                    double x = rc.X + _core.Display.BackgroundOffset.X;
+                    double y = rc.Y + _core.Display.BackgroundOffset.Y;
+
+                    var intersections = _core.Terrain.Intersections(x, y, rc.Width, rc.Height);
+
+                    foreach (var obj in intersections)
+                    {
+                        obj.QueueForDelete();
+                    }
+                }
+
+                shapeSelectionRect = null;
+                pictureBox.Invalidate();
+            }
         }
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -470,10 +578,15 @@ namespace LevelEditor
                 dragStartMouse = new Point<double>(e.X, e.Y);
             }
 
+            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+            {
+                shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
+            }
+
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
             {
                 //Single item placement with left button.
-                drawStartMouse = new Point<double>(e.X, e.Y);
+                insertStartMousePosition = new Point<double>(e.X, e.Y);
                 PlaceSelectedItem(x, y);
             }
 
@@ -484,7 +597,6 @@ namespace LevelEditor
                     if (selectedTile != null && highlightSelectedTile)
                     {
                         selectedTile.SelectedHighlight = false;
-                        selectedTile.Invalidate();
                     }
 
                     selectedTile = hoverTile;
@@ -494,7 +606,6 @@ namespace LevelEditor
                 if (selectedTile != null && highlightSelectedTile)
                 {
                     selectedTile.SelectedHighlight = true;
-                    selectedTile.Invalidate();
                 }
             }
         }
@@ -575,7 +686,7 @@ namespace LevelEditor
             var hoverTile = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
             //Single item deletion with right button.
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
             {
                 if(hoverTile != null)
                 {
@@ -604,26 +715,45 @@ namespace LevelEditor
             return node;
         }
 
-        void PlaceSelectedItem(double x, double y)
+        private TerrainBase PlaceSelectedItem(double x, double y)
         {
+            TerrainBase insertedTile = null;
+
             _hasBeenModified = true;
 
             if (treeViewTiles.SelectedNode == null)
             {
-                return;
+                return null;
             }
 
             var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
             if (selectedItem != null)
             {
-                lastPlacedItemSize = _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath).Size;
+                insertedTile = _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath);
+                lastPlacedItemSize = insertedTile.Size;
                 drawLastLocation = new Point<double>(x, y);
             }
+
+            return insertedTile;
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawImage(_core.Render(), 0, 0);
+            var image = _core.Render();
+
+            e.Graphics.DrawImage(image, 0, 0);
+
+            if (shapeSelectionRect != null)
+            {
+                Pen pen = new Pen(Color.Yellow, 2);
+
+                if (shapeFillMode == ShapeFillMode.Delete)
+                {
+                    pen = new Pen(Color.Red, 2);
+                }
+
+                e.Graphics.DrawRectangle(pen, (Rectangle)shapeSelectionRect);
+            }
         }
 
         private void FormMain_SizeChanged(object sender, EventArgs e)

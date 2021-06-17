@@ -74,6 +74,7 @@ namespace LevelEditor
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonMoveTileUp = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonShapeMode = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -393,6 +394,7 @@ namespace LevelEditor
             this.toolStripLabelMode,
             this.toolStripButtonInsertMode,
             this.toolStripButtonSelectMode,
+            this.toolStripButtonShapeMode,
             this.toolStripSeparator5,
             this.toolStripButtonMoveTileUp,
             this.toolStripButtonMoveTileDown});
@@ -491,6 +493,16 @@ namespace LevelEditor
             this.toolStripButtonMoveTileDown.Text = "Move Tile Down";
             this.toolStripButtonMoveTileDown.ToolTipText = "Move Tile Down";
             // 
+            // toolStripButtonShapeMode
+            // 
+            this.toolStripButtonShapeMode.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonShapeMode.Image")));
+            this.toolStripButtonShapeMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonShapeMode.Name = "toolStripButtonShapeMode";
+            this.toolStripButtonShapeMode.Size = new System.Drawing.Size(43, 38);
+            this.toolStripButtonShapeMode.Text = "Shape";
+            this.toolStripButtonShapeMode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonShapeMode.ToolTipText = "Shape";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -574,6 +586,7 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonClose;
         private System.Windows.Forms.ToolStripButton toolStripButtonMoveTileUp;
         private System.Windows.Forms.ToolStripButton toolStripButtonMoveTileDown;
+        private System.Windows.Forms.ToolStripButton toolStripButtonShapeMode;
     }
 }
 
