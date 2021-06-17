@@ -116,6 +116,9 @@ namespace Library.Types
 
         #endregion
 
+        public delegate void ChangeEvent(Angle<T> sender);
+        public event ChangeEvent OnChange;
+
         public override int GetHashCode()
         {
             return this.ToString().GetHashCode();
@@ -144,6 +147,8 @@ namespace Library.Types
                 {
                     _degrees = ((dynamic)value) % 360;
                 }
+
+                OnChange?.Invoke(this);
             }
         }
 

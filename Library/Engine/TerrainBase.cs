@@ -16,7 +16,7 @@ namespace Library.Engine
         /// </summary>
         public string TileTypeKey { get; set; }
         public RotationMode RotationMode { get; set; }
-        public Angle<double> Angle { get; set; } = new Angle<double>();
+        public Angle<double> Angle { get; private set; } = new Angle<double>();
         public string Tag { get; set; }
         public List<TerrainBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
@@ -30,6 +30,13 @@ namespace Library.Engine
             _size = new Size(0, 0);
             this.Visible = true;
             RotationMode = RotationMode.Upsize;
+
+            Angle.OnChange += Angle_OnChange;
+        }
+
+        private void Angle_OnChange(Angle<double> sender)
+        {
+            this.Invalidate();
         }
 
         #region Image.
@@ -78,8 +85,6 @@ namespace Library.Engine
                 Size.Width, Size.Height);
             Core.Display.DrawingSurface.Invalidate(invalidRect);
         }
-
-
 
         public void Render(Graphics dc)
         {

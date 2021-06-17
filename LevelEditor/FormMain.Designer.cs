@@ -33,6 +33,11 @@ namespace LevelEditor
             this.splitContainerBody = new System.Windows.Forms.SplitContainer();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.splitContainerTools = new System.Windows.Forms.SplitContainer();
+            this.treeViewTiles = new System.Windows.Forms.TreeView();
+            this.groupBoxProperties = new System.Windows.Forms.GroupBox();
+            this.listViewProperties = new System.Windows.Forms.ListView();
+            this.columnHeaderPropertiesName = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderPropertiesValue = new System.Windows.Forms.ColumnHeader();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelMouseXY = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelHoverObject = new System.Windows.Forms.ToolStripStatusLabel();
@@ -59,10 +64,10 @@ namespace LevelEditor
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabelMode = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonInsertMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSelectMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.treeViewTiles = new System.Windows.Forms.TreeView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -70,7 +75,9 @@ namespace LevelEditor
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools)).BeginInit();
             this.splitContainerTools.Panel1.SuspendLayout();
+            this.splitContainerTools.Panel2.SuspendLayout();
             this.splitContainerTools.SuspendLayout();
+            this.groupBoxProperties.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -81,7 +88,7 @@ namespace LevelEditor
             this.splitContainerBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerBody.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainerBody.IsSplitterFixed = true;
-            this.splitContainerBody.Location = new System.Drawing.Point(0, 49);
+            this.splitContainerBody.Location = new System.Drawing.Point(0, 65);
             this.splitContainerBody.Name = "splitContainerBody";
             // 
             // splitContainerBody.Panel1
@@ -91,7 +98,7 @@ namespace LevelEditor
             // splitContainerBody.Panel2
             // 
             this.splitContainerBody.Panel2.Controls.Add(this.splitContainerTools);
-            this.splitContainerBody.Size = new System.Drawing.Size(784, 512);
+            this.splitContainerBody.Size = new System.Drawing.Size(784, 474);
             this.splitContainerBody.SplitterDistance = 500;
             this.splitContainerBody.TabIndex = 0;
             // 
@@ -101,12 +108,14 @@ namespace LevelEditor
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(500, 512);
+            this.pictureBox.Size = new System.Drawing.Size(500, 474);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Paint);
+            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseClick);
             this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
             this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
+            this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             // 
             // splitContainerTools
             // 
@@ -118,9 +127,61 @@ namespace LevelEditor
             // splitContainerTools.Panel1
             // 
             this.splitContainerTools.Panel1.Controls.Add(this.treeViewTiles);
-            this.splitContainerTools.Size = new System.Drawing.Size(280, 512);
-            this.splitContainerTools.SplitterDistance = 255;
+            // 
+            // splitContainerTools.Panel2
+            // 
+            this.splitContainerTools.Panel2.Controls.Add(this.groupBoxProperties);
+            this.splitContainerTools.Size = new System.Drawing.Size(280, 474);
+            this.splitContainerTools.SplitterDistance = 236;
             this.splitContainerTools.TabIndex = 1;
+            // 
+            // treeViewTiles
+            // 
+            this.treeViewTiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewTiles.Location = new System.Drawing.Point(0, 0);
+            this.treeViewTiles.Name = "treeViewTiles";
+            this.treeViewTiles.Size = new System.Drawing.Size(280, 236);
+            this.treeViewTiles.TabIndex = 0;
+            // 
+            // groupBoxProperties
+            // 
+            this.groupBoxProperties.Controls.Add(this.listViewProperties);
+            this.groupBoxProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBoxProperties.Location = new System.Drawing.Point(0, 0);
+            this.groupBoxProperties.Name = "groupBoxProperties";
+            this.groupBoxProperties.Size = new System.Drawing.Size(280, 234);
+            this.groupBoxProperties.TabIndex = 1;
+            this.groupBoxProperties.TabStop = false;
+            this.groupBoxProperties.Text = "Properties";
+            // 
+            // listViewProperties
+            // 
+            this.listViewProperties.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderPropertiesName,
+            this.columnHeaderPropertiesValue});
+            this.listViewProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewProperties.FullRowSelect = true;
+            this.listViewProperties.GridLines = true;
+            this.listViewProperties.HideSelection = false;
+            this.listViewProperties.LabelEdit = true;
+            this.listViewProperties.Location = new System.Drawing.Point(3, 19);
+            this.listViewProperties.MultiSelect = false;
+            this.listViewProperties.Name = "listViewProperties";
+            this.listViewProperties.Size = new System.Drawing.Size(274, 212);
+            this.listViewProperties.TabIndex = 0;
+            this.listViewProperties.UseCompatibleStateImageBehavior = false;
+            this.listViewProperties.View = System.Windows.Forms.View.Details;
+            this.listViewProperties.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewProperties_MouseDoubleClick);
+            // 
+            // columnHeaderPropertiesName
+            // 
+            this.columnHeaderPropertiesName.Text = "Name";
+            this.columnHeaderPropertiesName.Width = 100;
+            // 
+            // columnHeaderPropertiesValue
+            // 
+            this.columnHeaderPropertiesValue.Text = "Value";
+            this.columnHeaderPropertiesValue.Width = 250;
             // 
             // statusStrip
             // 
@@ -316,52 +377,52 @@ namespace LevelEditor
             // 
             // toolStrip
             // 
+            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator2,
+            this.toolStripLabelMode,
             this.toolStripButtonInsertMode,
             this.toolStripButtonSelectMode,
             this.toolStripSeparator5});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(784, 25);
+            this.toolStrip.Size = new System.Drawing.Size(784, 41);
             this.toolStrip.TabIndex = 3;
-            this.toolStrip.Text = "toolStrip";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 41);
+            // 
+            // toolStripLabelMode
+            // 
+            this.toolStripLabelMode.Name = "toolStripLabelMode";
+            this.toolStripLabelMode.Size = new System.Drawing.Size(15, 38);
+            this.toolStripLabelMode.Text = "Mode";
+            this.toolStripLabelMode.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical270;
             // 
             // toolStripButtonInsertMode
             // 
-            this.toolStripButtonInsertMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonInsertMode.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonInsertMode.Image")));
             this.toolStripButtonInsertMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonInsertMode.Name = "toolStripButtonInsertMode";
-            this.toolStripButtonInsertMode.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonInsertMode.Text = "Insert Mode";
+            this.toolStripButtonInsertMode.Size = new System.Drawing.Size(40, 38);
+            this.toolStripButtonInsertMode.Text = "Insert";
+            this.toolStripButtonInsertMode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             // 
             // toolStripButtonSelectMode
             // 
-            this.toolStripButtonSelectMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonSelectMode.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSelectMode.Image")));
             this.toolStripButtonSelectMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSelectMode.Name = "toolStripButtonSelectMode";
-            this.toolStripButtonSelectMode.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonSelectMode.Text = "Select Mode";
+            this.toolStripButtonSelectMode.Size = new System.Drawing.Size(42, 38);
+            this.toolStripButtonSelectMode.Text = "Select";
+            this.toolStripButtonSelectMode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // treeViewTiles
-            // 
-            this.treeViewTiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewTiles.Location = new System.Drawing.Point(0, 0);
-            this.treeViewTiles.Name = "treeViewTiles";
-            this.treeViewTiles.Size = new System.Drawing.Size(280, 255);
-            this.treeViewTiles.TabIndex = 0;
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 41);
             // 
             // FormMain
             // 
@@ -369,10 +430,10 @@ namespace LevelEditor
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(784, 561);
-            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.splitContainerBody);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.statusStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -385,8 +446,10 @@ namespace LevelEditor
             this.splitContainerBody.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.splitContainerTools.Panel1.ResumeLayout(false);
+            this.splitContainerTools.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools)).EndInit();
             this.splitContainerTools.ResumeLayout(false);
+            this.groupBoxProperties.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.menuStrip.ResumeLayout(false);
@@ -433,6 +496,11 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelPrimaryMode;
         private System.Windows.Forms.TreeView treeViewTiles;
+        private System.Windows.Forms.GroupBox groupBoxProperties;
+        private System.Windows.Forms.ListView listViewProperties;
+        private System.Windows.Forms.ToolStripLabel toolStripLabelMode;
+        private System.Windows.Forms.ColumnHeader columnHeaderPropertiesName;
+        private System.Windows.Forms.ColumnHeader columnHeaderPropertiesValue;
     }
 }
 

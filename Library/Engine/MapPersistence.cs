@@ -16,6 +16,7 @@ namespace Library.Engine
                     TileTypeKey = obj.TileTypeKey,
                     X = obj.X,
                     Y = obj.Y,
+                    Angle = obj.Angle.Degrees
                 });
             }
 
@@ -34,7 +35,9 @@ namespace Library.Engine
 
             foreach (var chunk in map.Chunks)
             {
-                core.Terrain.AddNew<TerrainBase>(chunk.X, chunk.Y, chunk.TileTypeKey);
+                var obj = core.Terrain.AddNew<TerrainBase>(chunk.X, chunk.Y, chunk.TileTypeKey);
+
+                obj.Angle.Degrees = chunk.Angle;
             }
         }
     }

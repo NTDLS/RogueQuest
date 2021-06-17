@@ -50,6 +50,8 @@ namespace LevelEditor
         /// The location that the last block was placed (real world location).
         /// </summary>
         Point<double> drawLastLocation = new Point<double>();
+        Size lastPlacedItemSize = new Size(0, 0);
+        TerrainBase selectedTile = null;
         public PrimaryMode CurrentPrimaryMode { get; set; } = PrimaryMode.Insert;
 
         //This really shouldn't be necessary! :(
@@ -106,7 +108,7 @@ namespace LevelEditor
 
             toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
 
-            //MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Meadow.rqm"));
+            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Newfile 1.rqm"));
         }
 
         #region Menu Clicks.
@@ -330,19 +332,27 @@ namespace LevelEditor
                 double drawDeltaX = e.X - drawLastLocation.X;
                 double drawDeltaY = e.Y - drawLastLocation.Y;
 
-                if (Math.Abs(drawDeltaX) > 10 || Math.Abs(drawDeltaY) > 10)
+                if (lastPlacedItemSize.Width > 0)
                 {
-                    PlaceSelectedItem(x, y);
+                    if (Math.Abs(drawDeltaX) > lastPlacedItemSize.Width - 2 || Math.Abs(drawDeltaY) > lastPlacedItemSize.Height - 1)
+                    {
+                        PlaceSelectedItem(x, y);
+                    }
                 }
             }
 
             //Drag item.
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
             {
-                if (singleHoverItem != null)
+                if (selectedTile == null)
                 {
-                    singleHoverItem.X = x;
-                    singleHoverItem.Y = y;
+                    selectedTile = singleHoverItem;
+                }
+
+                if (selectedTile != null)
+                {
+                    selectedTile.X = x;
+                    selectedTile.Y = y;
                     _hasBeenModified = true;
                 }
             }
@@ -358,37 +368,120 @@ namespace LevelEditor
             }
         }
 
+        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            PopulateSelectedItemProperties();
+        }
+
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
+            double x = _core.Display.BackgroundOffset.X + e.X;
+            double y = _core.Display.BackgroundOffset.Y + e.Y;
+
+            var objs = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
+            var lastObject = objs.LastOrDefault();
+
             if (e.Button == MouseButtons.Middle)
             {
                 dragStartMouse = new Point<double>(e.X, e.Y);
                 dragStartOffset = new Point<double>(_core.Display.BackgroundOffset);
             }
 
-            if (CurrentPrimaryMode == PrimaryMode.Insert)
+            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
             {
                 //Single item placement with left button.
-                if (e.Button == MouseButtons.Left)
-                {
-                    drawStartMouse = new Point<double>(e.X, e.Y);
+                drawStartMouse = new Point<double>(e.X, e.Y);
+                PlaceSelectedItem(x, y);
+            }
 
-                    double x = _core.Display.BackgroundOffset.X + e.X;
-                    double y = _core.Display.BackgroundOffset.Y + e.Y;
-                    PlaceSelectedItem(x, y);
+            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
+            {
+                if (selectedTile != lastObject)
+                {
+                    selectedTile = lastObject;
+                    PopulateSelectedItemProperties();
                 }
             }
+        }
+
+        void PopulateSelectedItemProperties()
+        {
+            listViewProperties.Items.Clear();
+
+            if (selectedTile != null && selectedTile.Visible)
+            {
+                listViewProperties.Items.Add("Type").SubItems.Add(selectedTile.TileTypeKey).Tag = new TPTag { ReadOnly = true };
+
+                listViewProperties.Items.Add("Location").SubItems.Add(
+                    $"{selectedTile.Location.X},{selectedTile.Location.Y}").Tag = new TPTag { ReadOnly = false };
+
+                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Angle.Degrees.ToString()).Tag = new TPTag { ReadOnly = false };
+                listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString()).Tag = new TPTag { ReadOnly = true };
+                listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
+        }
+
+        private void listViewProperties_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (listViewProperties.SelectedItems?.Count > 0)
+                {
+                    var selectedRow = listViewProperties.SelectedItems[0];
+
+                    using (var dialog = new FormTileProperties(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
+                    {
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            if (selectedRow.Text == "Location")
+                            {
+                                var coords = dialog.PropertyValue.Split(",");
+                                if (coords.Length == 2)
+                                {
+                                    double x = double.Parse(coords[0]);
+                                    double y = double.Parse(coords[1]);
+
+                                    selectedTile.X = x;
+                                    selectedTile.Y = y;
+                                }
+                            }
+                            if (selectedRow.Text == "Angle")
+                            {
+                                double degrees = double.Parse(dialog.PropertyValue);
+                                selectedTile.Angle.Degrees = degrees;
+                            }
+
+                            PopulateSelectedItemProperties();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        public class TPTag //Tile properties tag
+        {
+            public bool ReadOnly { get; set; } = true;
+
+        }
+
+
+        private void pictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            double x = _core.Display.BackgroundOffset.X + e.X;
+            double y = _core.Display.BackgroundOffset.Y + e.Y;
+
+            var objs = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
+            var lastObject = objs.LastOrDefault();
 
             //Single item deletion with right button.
             if (e.Button == MouseButtons.Right)
             {
-                double x = _core.Display.BackgroundOffset.X + e.X;
-                double y = _core.Display.BackgroundOffset.Y + e.Y;
-
-                var objs = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
-                foreach (var obj in objs)
+                if(lastObject != null)
                 {
-                    obj.QueueForDelete();
+                    lastObject.QueueForDelete();
                     _hasBeenModified = true;
                 }
             }
@@ -404,9 +497,13 @@ namespace LevelEditor
                 {
                     return GetRandomChildNode(node.Nodes[nodeIndex]);
                 }
+                else
+                {
+                    return node.Nodes[nodeIndex];
+                }
             }
 
-            return null;
+            return node;
         }
 
         void PlaceSelectedItem(double x, double y)
@@ -421,7 +518,7 @@ namespace LevelEditor
             var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
             if (selectedItem != null)
             {
-                _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath);
+                lastPlacedItemSize = _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath).Size;
                 drawLastLocation = new Point<double>(x, y);
             }
         }
