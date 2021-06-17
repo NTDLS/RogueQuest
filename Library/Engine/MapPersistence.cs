@@ -16,18 +16,23 @@ namespace Library.Engine
                     TileTypeKey = obj.TileTypeKey,
                     X = obj.X,
                     Y = obj.Y,
-                    Angle = obj.Angle.Degrees
+                    Angle = obj.Angle.Degrees,
+                    DrawOrder = obj.DrawOrder
                 });
             }
 
             var json = JsonConvert.SerializeObject(map);
 
-            System.IO.File.WriteAllText(fileName, json);
+            var compressed = Utility.Compress.Zip(json);
+
+            System.IO.File.WriteAllBytes(fileName, compressed);
         }
 
         public static void Load(EngineCoreBase core, string fileName)
         {
-            var json = System.IO.File.ReadAllText(fileName);
+            var compressed = System.IO.File.ReadAllBytes(fileName);
+
+            var json = Utility.Compress.Unzip(compressed);
 
             var map = JsonConvert.DeserializeObject<PersistMap>(json);
 
@@ -38,6 +43,7 @@ namespace Library.Engine
                 var obj = core.Terrain.AddNew<TerrainBase>(chunk.X, chunk.Y, chunk.TileTypeKey);
 
                 obj.Angle.Degrees = chunk.Angle;
+                obj.DrawOrder = chunk.DrawOrder;
             }
         }
     }

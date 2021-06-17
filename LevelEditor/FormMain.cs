@@ -34,25 +34,35 @@ namespace LevelEditor
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
 
+
+        #region Settings.
+
+        private int tilePaintOverlap = 5;
+        private bool highlightSelectedTile = true;
+        private bool highlightHoverTile = true;
+
+        #endregion
+
         /// <summary>
         /// Where the mouse was when the user started dragging the map.
         /// </summary>
-        Point<double> dragStartMouse = new Point<double>();
-        /// <summary>
-        /// What the background offset was then the user started dragging the map.
-        /// </summary>
-        Point<double> dragStartOffset = new Point<double>();
+        private Point<double> dragStartMouse = new Point<double>();
         /// <summary>
         /// Where the mouse was when the user started drawing
         /// </summary>
-        Point<double> drawStartMouse = new Point<double>();
+        private Point<double> drawStartMouse = new Point<double>();
+        /// <summary>
+        /// What the background offset was then the user started dragging the map.
+        /// </summary>
+        private Point<double> dragStartOffset = new Point<double>();
         /// <summary>
         /// The location that the last block was placed (real world location).
         /// </summary>
-        Point<double> drawLastLocation = new Point<double>();
-        Size lastPlacedItemSize = new Size(0, 0);
-        TerrainBase selectedTile = null;
-        public PrimaryMode CurrentPrimaryMode { get; set; } = PrimaryMode.Insert;
+        private Point<double> drawLastLocation = new Point<double>();
+        private Size lastPlacedItemSize = new Size(0, 0);
+        private TerrainBase selectedTile = null;
+        private TerrainBase previousHoverTile = null;
+        private PrimaryMode CurrentPrimaryMode { get; set; } = PrimaryMode.Insert;
 
         //This really shouldn't be necessary! :(
         protected override CreateParams CreateParams
@@ -108,14 +118,35 @@ namespace LevelEditor
             toolStripButtonClose.Click += ToolStripButtonClose_Click;
             toolStripButtonNew.Click += ToolStripButtonNew_Click;
 
+            toolStripButtonMoveTileUp.Click += ToolStripButtonMoveTileUp_Click;
+            toolStripButtonMoveTileDown.Click += ToolStripButtonMoveTileDown_Click;
+
             PopulateMaterials();
 
-            toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
+            ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
-            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Newfile 1.rqm"));
+            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Test.rqm"));
         }
 
         #region Menu Clicks.
+
+        private void ToolStripButtonMoveTileDown_Click(object sender, EventArgs e)
+        {
+            if (selectedTile != null)
+            {
+                selectedTile.DrawOrder--;
+                PopulateSelectedItemProperties();
+            }
+        }
+
+        private void ToolStripButtonMoveTileUp_Click(object sender, EventArgs e)
+        {
+            if (selectedTile != null)
+            {
+                selectedTile.DrawOrder++;
+                PopulateSelectedItemProperties();
+            }
+        }
 
         /// <summary>
         /// Do not continue if this returns false.
@@ -130,7 +161,7 @@ namespace LevelEditor
 
                 if (result == DialogResult.Yes)
                 {
-                    SaveToolStripMenuItem_Click(new object(), new EventArgs());
+                    return TrySave();
                 }
                 else if (result == DialogResult.Cancel)
                 {
@@ -191,11 +222,11 @@ namespace LevelEditor
             }
             else //If we do not have a current open file, then we need to "Save As".
             {
-                SaveAsToolStripMenuItem_Click(sender, e);
+                TrySave();
             }
         }
 
-        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        bool TrySave()
         {
             using (var dialog = new SaveFileDialog())
             {
@@ -208,8 +239,16 @@ namespace LevelEditor
 
                     MapPersistence.Save(_core, _currentMapFilename);
                     _hasBeenModified = false;
+                    return true;
                 }
             }
+            return false;
+        }
+
+
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TrySave();
         }
 
         private void NewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -220,6 +259,7 @@ namespace LevelEditor
             }
 
             _core.QueueAllForDelete();
+            _core.Display.BackgroundOffset = new Point<double>();
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -233,13 +273,15 @@ namespace LevelEditor
         private void ToolStripButtonSelectMode_Click(object sender, EventArgs e)
         {
             CurrentPrimaryMode = PrimaryMode.Select;
-            toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
+            toolStripButtonInsertMode.Checked = false;
+            toolStripButtonSelectMode.Checked = true;
         }
 
         private void ToolStripButtonInsertMode_Click(object sender, EventArgs e)
         {
             CurrentPrimaryMode = PrimaryMode.Insert;
-            toolStripStatusLabelPrimaryMode.Text = $"Mode: {CurrentPrimaryMode.ToString()}";
+            toolStripButtonInsertMode.Checked = true;
+            toolStripButtonSelectMode.Checked = false;
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -326,68 +368,87 @@ namespace LevelEditor
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+            toolStripStatusLabelMouseXY.Text = $"{x}x,{y}y";
+
             if (e.Button == MouseButtons.Middle)
             {
-                _core.Display.BackgroundOffset.X = dragStartOffset.X - dragStartMouse.X;
-                _core.Display.BackgroundOffset.Y = dragStartOffset.Y - dragStartMouse.Y;
-            }
-
-            double x = _core.Display.BackgroundOffset.X + e.X;
-            double y = _core.Display.BackgroundOffset.Y + e.Y;
-
-            toolStripStatusLabelMouseXY.Text = $"Mouse: x{e.X},y{e.Y} World: x{x},y{y}";
-
-            var hoverObjects = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
-            var singleHoverItem = hoverObjects?.LastOrDefault();
-
-            if (hoverObjects.Count > 0)
-            {
-                var firstObj = hoverObjects.Last();
-                toolStripStatusLabelHoverObject.Text = $"[{firstObj.TileTypeKey}]";
+                _core.Display.BackgroundOffset.X = dragStartOffset.X - (e.X - dragStartMouse.X);
+                _core.Display.BackgroundOffset.Y = dragStartOffset.Y - (e.Y - dragStartMouse.Y);
+                _core.Display.DrawingSurface.Invalidate();
             }
             else
             {
-                toolStripStatusLabelHoverObject.Text = "";
-            }
+                var hoverTile = _core.Terrain.Intersections(new Point<double>(x, y),
+                    new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
-            //Paint with left button.
-            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
-            {
-                double drawDeltaX = e.X - drawLastLocation.X;
-                double drawDeltaY = e.Y - drawLastLocation.Y;
-
-                if (lastPlacedItemSize.Width > 0)
+                if (e.Button != MouseButtons.Left) //Dont change the selection based on hover location while dragging.
                 {
-                    if (Math.Abs(drawDeltaX) > lastPlacedItemSize.Width - 2 || Math.Abs(drawDeltaY) > lastPlacedItemSize.Height - 1)
+                    if (previousHoverTile != null && highlightHoverTile)
                     {
-                        PlaceSelectedItem(x, y);
+                        previousHoverTile.HoverHighlight = false;
+                        previousHoverTile.Invalidate();
+                    }
+
+                    if (hoverTile != null)
+                    {
+                        toolStripStatusLabelHoverObject.Text = $"[{hoverTile.TileTypeKey}]";
+                        if (highlightHoverTile)
+                        {
+                            hoverTile.HoverHighlight = true;
+                            hoverTile.Invalidate();
+                        }
+
+                        previousHoverTile = hoverTile;
+                    }
+                    else
+                    {
+                        toolStripStatusLabelHoverObject.Text = "";
                     }
                 }
-            }
 
-            //Drag item.
-            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
-            {
-                if (selectedTile == null)
+                //Paint with left button.
+                if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
                 {
-                    selectedTile = singleHoverItem;
+                    double drawDeltaX = e.X - (drawLastLocation.X - _core.Display.BackgroundOffset.X);
+                    double drawDeltaY = e.Y - (drawLastLocation.Y - _core.Display.BackgroundOffset.Y);
+
+                    if (lastPlacedItemSize.Width > 0)
+                    {
+                        if (Math.Abs(drawDeltaX) > lastPlacedItemSize.Width - tilePaintOverlap
+                            || Math.Abs(drawDeltaY) > lastPlacedItemSize.Height - tilePaintOverlap)
+                        {
+                            PlaceSelectedItem(x, y);
+                        }
+                    }
                 }
 
-                if (selectedTile != null)
+                //Drag item.
+                if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
                 {
-                    selectedTile.X = x;
-                    selectedTile.Y = y;
-                    _hasBeenModified = true;
-                }
-            }
+                    if (selectedTile == null)
+                    {
+                        selectedTile = hoverTile;
+                    }
 
-            //Paint deletion with right button.
-            if (e.Button == MouseButtons.Right)
-            {
-                if (singleHoverItem != null)
+                    if (selectedTile != null)
+                    {
+                        selectedTile.X = x;
+                        selectedTile.Y = y;
+                        _hasBeenModified = true;
+                    }
+                }
+
+                //Paint deletion with right button.
+                if (e.Button == MouseButtons.Right)
                 {
-                    singleHoverItem.QueueForDelete();
-                    _hasBeenModified = true;
+                    if (hoverTile != null)
+                    {
+                        hoverTile.QueueForDelete();
+                        _hasBeenModified = true;
+                    }
                 }
             }
         }
@@ -399,16 +460,15 @@ namespace LevelEditor
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            double x = _core.Display.BackgroundOffset.X + e.X;
-            double y = _core.Display.BackgroundOffset.Y + e.Y;
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var objs = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
-            var lastObject = objs.LastOrDefault();
+            var hoverTile = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
             if (e.Button == MouseButtons.Middle)
             {
+                dragStartOffset = new Point<double>(_core.Display.BackgroundOffset.X, _core.Display.BackgroundOffset.Y);
                 dragStartMouse = new Point<double>(e.X, e.Y);
-                dragStartOffset = new Point<double>(_core.Display.BackgroundOffset);
             }
 
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
@@ -420,10 +480,22 @@ namespace LevelEditor
 
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
             {
-                if (selectedTile != lastObject)
+                if (selectedTile != hoverTile)
                 {
-                    selectedTile = lastObject;
+                    if (selectedTile != null && highlightSelectedTile)
+                    {
+                        selectedTile.SelectedHighlight = false;
+                        selectedTile.Invalidate();
+                    }
+
+                    selectedTile = hoverTile;
                     PopulateSelectedItemProperties();
+                }
+
+                if (selectedTile != null && highlightSelectedTile)
+                {
+                    selectedTile.SelectedHighlight = true;
+                    selectedTile.Invalidate();
                 }
             }
         }
@@ -440,6 +512,7 @@ namespace LevelEditor
                     $"{selectedTile.Location.X},{selectedTile.Location.Y}").Tag = new TPTag { ReadOnly = false };
 
                 listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Angle.Degrees.ToString()).Tag = new TPTag { ReadOnly = false };
+                listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString()).Tag = new TPTag { ReadOnly = false };
                 listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString()).Tag = new TPTag { ReadOnly = true };
                 listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
@@ -462,8 +535,8 @@ namespace LevelEditor
                                 var coords = dialog.PropertyValue.Split(",");
                                 if (coords.Length == 2)
                                 {
-                                    double x = double.Parse(coords[0]);
-                                    double y = double.Parse(coords[1]);
+                                    var x = double.Parse(coords[0]);
+                                    var y = double.Parse(coords[1]);
 
                                     selectedTile.X = x;
                                     selectedTile.Y = y;
@@ -471,8 +544,13 @@ namespace LevelEditor
                             }
                             if (selectedRow.Text == "Angle")
                             {
-                                double degrees = double.Parse(dialog.PropertyValue);
+                                var degrees = double.Parse(dialog.PropertyValue);
                                 selectedTile.Angle.Degrees = degrees;
+                            }
+                            if (selectedRow.Text == "z-Order")
+                            {
+                                var order = int.Parse(dialog.PropertyValue);
+                                selectedTile.DrawOrder = order;
                             }
 
                             PopulateSelectedItemProperties();
@@ -488,24 +566,21 @@ namespace LevelEditor
         public class TPTag //Tile properties tag
         {
             public bool ReadOnly { get; set; } = true;
-
         }
-
 
         private void pictureBox_MouseClick(object sender, MouseEventArgs e)
         {
-            double x = _core.Display.BackgroundOffset.X + e.X;
-            double y = _core.Display.BackgroundOffset.Y + e.Y;
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var objs = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1));
-            var lastObject = objs.LastOrDefault();
+            var hoverTile = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
             //Single item deletion with right button.
             if (e.Button == MouseButtons.Right)
             {
-                if(lastObject != null)
+                if(hoverTile != null)
                 {
-                    lastObject.QueueForDelete();
+                    hoverTile.QueueForDelete();
                     _hasBeenModified = true;
                 }
             }

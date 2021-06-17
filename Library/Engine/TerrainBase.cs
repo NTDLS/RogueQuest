@@ -1,7 +1,6 @@
 ﻿using Assets;
 using Library.Types;
 using Library.Utility;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -9,7 +8,7 @@ namespace Library.Engine
 {
     public class TerrainBase
     {
-        #region Public properties. 
+        #region Public properties.
 
         /// <summary>
         /// Kind of redundant, but allows us to easily persist tiles to json.
@@ -20,6 +19,8 @@ namespace Library.Engine
         public string Tag { get; set; }
         public List<TerrainBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
+        public bool HoverHighlight { get; set; }
+        public bool SelectedHighlight { get; set; }
 
         #endregion
 
@@ -30,7 +31,6 @@ namespace Library.Engine
             _size = new Size(0, 0);
             this.Visible = true;
             RotationMode = RotationMode.Upsize;
-
             Angle.OnChange += Angle_OnChange;
         }
 
@@ -46,29 +46,13 @@ namespace Library.Engine
         public void SetImage(Image image)
         {
             _image = image;
-
-            /*
-            if (size != null)
-            {
-                _image = Utility.GraphicsUtility.ResizeImage(_image, ((Size)size).Width, ((Size)size).Height);
-            }
-            */
             _size = new Size(_image.Size.Width, _image.Size.Height);
         }
 
         public void SetImage(string imagePath)
         {
             _image = SpriteCache.GetBitmapCached(imagePath);
-
-            /*
-            if (size != null)
-            {
-                _image = Utility.GraphicsUtility.ResizeImage(_image, ((Size)size).Width, ((Size)size).Height);
-            }
-            */
-
             _size = new Size(_image.Size.Width, _image.Size.Height);
-
             Invalidate();
         }
 
@@ -79,11 +63,18 @@ namespace Library.Engine
 
         public void Invalidate()
         {
-            var invalidRect = new Rectangle(
-                (int)(X - (Size.Width / 2.0)),
-                (int)(Y - (Size.Height / 2.0)),
-                Size.Width, Size.Height);
-            Core.Display.DrawingSurface.Invalidate(invalidRect);
+            int slop = 1;
+
+            var x = X - Core.Display.BackgroundOffset.X;
+            var y = Y - Core.Display.BackgroundOffset.Y;
+
+            Rectangle rect = new Rectangle(
+                (int)(x - (Size.Width / 2.0)) - slop,
+                (int)(y - (Size.Height / 2.0)) - slop,
+                Size.Width + (slop * 2),
+                Size.Height + (slop * 2));
+
+            Core.Display.DrawingSurface.Invalidate(rect);
         }
 
         public void Render(Graphics dc)
@@ -100,12 +91,15 @@ namespace Library.Engine
 
             Bitmap bitmap = new Bitmap(rawImage);
 
+            var x = _location.X - Core.Display.BackgroundOffset.X;
+            var y = _location.Y - Core.Display.BackgroundOffset.Y;
+
             if (angle != 0 && RotationMode != RotationMode.None)
             {
                 if (RotationMode == RotationMode.Upsize) //Very expensize
                 {
                     var image = GraphicsUtility.RotateImageWithUpsize(bitmap, angle, Color.Transparent);
-                    Rectangle rect = new Rectangle((int)(_location.X - (image.Width / 2.0)), (int)(_location.Y - (image.Height / 2.0)), image.Width, image.Height);
+                    Rectangle rect = new Rectangle((int)(x - (image.Width / 2.0)), (int)(y - (image.Height / 2.0)), image.Width, image.Height);
                     dc.DrawImage(image, rect);
                     _size.Height = image.Height;
                     _size.Width = image.Width;
@@ -113,7 +107,7 @@ namespace Library.Engine
                 else if (RotationMode == RotationMode.Clip) //Much less expensive.
                 {
                     var image = GraphicsUtility.RotateImageWithClipping(bitmap, angle, Color.Transparent);
-                    Rectangle rect = new Rectangle((int)(_location.X - (image.Width / 2.0)), (int)(_location.Y - (image.Height / 2.0)), image.Width, image.Height);
+                    Rectangle rect = new Rectangle((int)(x - (image.Width / 2.0)), (int)(y - (image.Height / 2.0)), image.Width, image.Height);
                     dc.DrawImage(image, rect);
 
                     _size.Height = image.Height;
@@ -122,8 +116,36 @@ namespace Library.Engine
             }
             else //Almost free.
             {
-                Rectangle rect = new Rectangle((int)(_location.X - (bitmap.Width / 2.0)), (int)(_location.Y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
+                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
                 dc.DrawImage(bitmap, rect);
+            }
+
+            if (HoverHighlight)
+            {
+                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
+                Pen pen = new Pen(Color.Yellow, 2);
+                dc.DrawRectangle(pen, rect);
+            }
+
+            if (SelectedHighlight)
+            {
+                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
+                Pen pen = new Pen(Color.Red, 2);
+                dc.DrawRectangle(pen, rect);
+            }
+        }
+
+        private int _drawOrder = 0;
+        public int DrawOrder
+        {
+            get
+            {
+                return _drawOrder;
+            }
+            set
+            {
+                _drawOrder = value;
+                Invalidate();
             }
         }
 

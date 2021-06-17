@@ -26,9 +26,16 @@ namespace Library.Engine
         {
             lock (Core.CollectionSemaphore)
             {
-                foreach (var obj in Tiles.Where(o => o.Visible == true))
+                foreach (var obj in Tiles.Where(o => o.Visible == true).OrderBy(o => o.DrawOrder))
                 {
-                    if (Core.Display.VisibleBounds.IntersectsWith(obj.Bounds))
+                    RectangleF window = new RectangleF(
+                        (int)Core.Display.BackgroundOffset.X,
+                        (int)Core.Display.BackgroundOffset.Y,
+                        Core.Display.DrawingSurface.Width,
+                        Core.Display.DrawingSurface.Height);
+
+                    //if (Core.Display.VisibleBounds.IntersectsWith(obj.Bounds))
+                    if (window.IntersectsWith(obj.Bounds))
                     {
                         Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);
                     }
@@ -44,20 +51,34 @@ namespace Library.Engine
             }
         }
 
+        public List<TerrainBase> Intersections(TerrainBase with)
+        {
+            var objs = new List<TerrainBase>();
+
+            foreach (var obj in Tiles.Where(o => o.Visible == true))
+            {
+                if (obj.Intersects(with.Location, new Point<double>(with.Size.Width, with.Size.Height)))
+                {
+                    objs.Add(obj);
+                }
+            }
+            return objs;
+        }
+
         public List<TerrainBase> Intersections(Point<double> location, Point<double> size)
         {
             lock (Core.CollectionSemaphore)
             {
-                var list = new List<TerrainBase>();
+                var objs = new List<TerrainBase>();
 
                 foreach (var obj in Tiles.Where(o => o.Visible == true))
                 {
                     if (obj.Intersects(location, size))
                     {
-                        list.Add(obj);
+                        objs.Add(obj);
                     }
                 }
-                return list;
+                return objs;
             }
         }
         public void Add(TerrainBase obj)

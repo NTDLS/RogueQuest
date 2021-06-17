@@ -41,7 +41,7 @@ namespace LevelEditor
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelMouseXY = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelHoverObject = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabelPrimaryMode = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,15 +63,17 @@ namespace LevelEditor
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonNew = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelMode = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonInsertMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSelectMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonClose = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonNew = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonMoveTileUp = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -192,7 +194,7 @@ namespace LevelEditor
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabelMouseXY,
             this.toolStripStatusLabelHoverObject,
-            this.toolStripStatusLabelPrimaryMode});
+            this.toolStripStatusLabelDebug});
             this.statusStrip.Location = new System.Drawing.Point(0, 539);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(784, 22);
@@ -202,20 +204,20 @@ namespace LevelEditor
             // toolStripStatusLabelMouseXY
             // 
             this.toolStripStatusLabelMouseXY.Name = "toolStripStatusLabelMouseXY";
-            this.toolStripStatusLabelMouseXY.Size = new System.Drawing.Size(162, 17);
-            this.toolStripStatusLabelMouseXY.Text = "toolStripStatusLabelMouseXY";
+            this.toolStripStatusLabelMouseXY.Size = new System.Drawing.Size(34, 17);
+            this.toolStripStatusLabelMouseXY.Text = "0x,0y";
             // 
             // toolStripStatusLabelHoverObject
             // 
             this.toolStripStatusLabelHoverObject.Name = "toolStripStatusLabelHoverObject";
-            this.toolStripStatusLabelHoverObject.Size = new System.Drawing.Size(72, 17);
-            this.toolStripStatusLabelHoverObject.Text = "hoverObject";
+            this.toolStripStatusLabelHoverObject.Size = new System.Drawing.Size(50, 17);
+            this.toolStripStatusLabelHoverObject.Text = "<none>";
             // 
-            // toolStripStatusLabelPrimaryMode
+            // toolStripStatusLabelDebug
             // 
-            this.toolStripStatusLabelPrimaryMode.Name = "toolStripStatusLabelPrimaryMode";
-            this.toolStripStatusLabelPrimaryMode.Size = new System.Drawing.Size(184, 17);
-            this.toolStripStatusLabelPrimaryMode.Text = "toolStripStatusLabelPrimaryMode";
+            this.toolStripStatusLabelDebug.Name = "toolStripStatusLabelDebug";
+            this.toolStripStatusLabelDebug.Size = new System.Drawing.Size(57, 17);
+            this.toolStripStatusLabelDebug.Text = "<debug>";
             // 
             // menuStrip
             // 
@@ -391,11 +393,49 @@ namespace LevelEditor
             this.toolStripLabelMode,
             this.toolStripButtonInsertMode,
             this.toolStripButtonSelectMode,
-            this.toolStripSeparator5});
+            this.toolStripSeparator5,
+            this.toolStripButtonMoveTileUp,
+            this.toolStripButtonMoveTileDown});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(784, 41);
             this.toolStrip.TabIndex = 3;
+            // 
+            // toolStripButtonNew
+            // 
+            this.toolStripButtonNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonNew.Image")));
+            this.toolStripButtonNew.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonNew.Name = "toolStripButtonNew";
+            this.toolStripButtonNew.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonNew.Text = "New";
+            // 
+            // toolStripButtonSave
+            // 
+            this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonSave.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSave.Image")));
+            this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonSave.Name = "toolStripButtonSave";
+            this.toolStripButtonSave.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonSave.Text = "Save";
+            // 
+            // toolStripButtonOpen
+            // 
+            this.toolStripButtonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonOpen.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOpen.Image")));
+            this.toolStripButtonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonOpen.Name = "toolStripButtonOpen";
+            this.toolStripButtonOpen.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonOpen.Text = "Open";
+            // 
+            // toolStripButtonClose
+            // 
+            this.toolStripButtonClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonClose.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClose.Image")));
+            this.toolStripButtonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonClose.Name = "toolStripButtonClose";
+            this.toolStripButtonClose.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonClose.Text = "Close";
             // 
             // toolStripSeparator2
             // 
@@ -432,41 +472,24 @@ namespace LevelEditor
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 41);
             // 
-            // toolStripButtonSave
+            // toolStripButtonMoveTileUp
             // 
-            this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonSave.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSave.Image")));
-            this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonSave.Name = "toolStripButtonSave";
-            this.toolStripButtonSave.Size = new System.Drawing.Size(23, 38);
-            this.toolStripButtonSave.Text = "Save";
+            this.toolStripButtonMoveTileUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonMoveTileUp.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonMoveTileUp.Image")));
+            this.toolStripButtonMoveTileUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonMoveTileUp.Name = "toolStripButtonMoveTileUp";
+            this.toolStripButtonMoveTileUp.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonMoveTileUp.Text = "Move Tile Up";
             // 
-            // toolStripButtonOpen
+            // toolStripButtonMoveTileDown
             // 
-            this.toolStripButtonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonOpen.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOpen.Image")));
-            this.toolStripButtonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonOpen.Name = "toolStripButtonOpen";
-            this.toolStripButtonOpen.Size = new System.Drawing.Size(23, 38);
-            this.toolStripButtonOpen.Text = "Open";
-            // 
-            // toolStripButtonClose
-            // 
-            this.toolStripButtonClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonClose.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClose.Image")));
-            this.toolStripButtonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonClose.Name = "toolStripButtonClose";
-            this.toolStripButtonClose.Size = new System.Drawing.Size(23, 38);
-            this.toolStripButtonClose.Text = "Close";
-            // 
-            // toolStripButtonNew
-            // 
-            this.toolStripButtonNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonNew.Image")));
-            this.toolStripButtonNew.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonNew.Name = "toolStripButtonNew";
-            this.toolStripButtonNew.Size = new System.Drawing.Size(23, 38);
-            this.toolStripButtonNew.Text = "New";
+            this.toolStripButtonMoveTileDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonMoveTileDown.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonMoveTileDown.Image")));
+            this.toolStripButtonMoveTileDown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonMoveTileDown.Name = "toolStripButtonMoveTileDown";
+            this.toolStripButtonMoveTileDown.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonMoveTileDown.Text = "Move Tile Down";
+            this.toolStripButtonMoveTileDown.ToolTipText = "Move Tile Down";
             // 
             // FormMain
             // 
@@ -538,7 +561,7 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonInsertMode;
         private System.Windows.Forms.ToolStripButton toolStripButtonSelectMode;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelPrimaryMode;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelDebug;
         private System.Windows.Forms.TreeView treeViewTiles;
         private System.Windows.Forms.GroupBox groupBoxProperties;
         private System.Windows.Forms.ListView listViewProperties;
@@ -549,6 +572,8 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonSave;
         private System.Windows.Forms.ToolStripButton toolStripButtonOpen;
         private System.Windows.Forms.ToolStripButton toolStripButtonClose;
+        private System.Windows.Forms.ToolStripButton toolStripButtonMoveTileUp;
+        private System.Windows.Forms.ToolStripButton toolStripButtonMoveTileDown;
     }
 }
 
