@@ -103,6 +103,10 @@ namespace LevelEditor
             newToolStripMenuItem.Click += NewToolStripMenuItem_Click;
             saveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
             openToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
+            toolStripButtonSave.Click += ToolStripButtonSave_Click;
+            toolStripButtonOpen.Click += ToolStripButtonOpen_Click;
+            toolStripButtonClose.Click += ToolStripButtonClose_Click;
+            toolStripButtonNew.Click += ToolStripButtonNew_Click;
 
             PopulateMaterials();
 
@@ -135,6 +139,26 @@ namespace LevelEditor
             }
 
             return true;
+        }
+
+        private void ToolStripButtonNew_Click(object sender, EventArgs e)
+        {
+            NewToolStripMenuItem_Click(sender, e);
+        }
+
+        private void ToolStripButtonClose_Click(object sender, EventArgs e)
+        {
+            NewToolStripMenuItem_Click(sender, e);
+        }
+
+        private void ToolStripButtonOpen_Click(object sender, EventArgs e)
+        {
+            OpenToolStripMenuItem_Click(sender, e);
+        }
+
+        private void ToolStripButtonSave_Click(object sender, EventArgs e)
+        {
+            SaveToolStripMenuItem_Click(sender, e);
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
