@@ -46,17 +46,5 @@ namespace Game.Engine
 
             Tick.Advance(input);
         }
-
-        public ActorPlayer CreatePlayer()
-        {
-            if (this.Player != null)
-            {
-                this.Player.QueueForDelete();
-            }
-
-            this.Player = Actors.AddNew<ActorPlayer>();
-
-            return this.Player;
-        }
     }
 }

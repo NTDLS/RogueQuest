@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Assets;
+using Newtonsoft.Json;
+using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Library.Engine
 {
@@ -9,14 +12,14 @@ namespace Library.Engine
         {
             var map = new PersistMap();
 
-            foreach (var obj in core.Terrain.Tiles.Where(o => o.Visible))
+            foreach (var obj in core.Actors.Tiles.Where(o => o.Visible))
             {
                 map.Chunks.Add(new PersistMapEntity
                 {
-                    TileTypeKey = obj.TileTypeKey,
+                    TilePath = obj.TilePath,
                     X = obj.X,
                     Y = obj.Y,
-                    Angle = obj.Angle.Degrees,
+                    Angle = obj.Velocity.Angle.Degrees,
                     DrawOrder = obj.DrawOrder,
                     Meta = obj.Meta
                 });
@@ -41,18 +44,49 @@ namespace Library.Engine
 
             core.QueueAllForDelete();
 
+            Assembly gameAssembly = null;
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            var assemblies = currentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                if (assembly.FullName.StartsWith("Game,"))
+                {
+                    gameAssembly = Assembly.Load("Game");
+                }
+            }
+
             foreach (var chunk in map.Chunks)
             {
-                var obj = core.Terrain.AddNew<TerrainBase>(chunk.X, chunk.Y, chunk.TileTypeKey);
+                ActorBase tile = null;
 
-                obj.Angle.Degrees = chunk.Angle;
-                obj.DrawOrder = chunk.DrawOrder;
-                obj.Meta = chunk.Meta;
+                object[] param = { core };
+
+                if (gameAssembly != null)
+                {
+                    var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.BasicType}");
+                    tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                }
+
+                if (tile == null)
+                {
+                    tile = (ActorBase)Activator.CreateInstance(Type.GetType("Library.Engine.ActorBase"), param);
+                }
+
+                tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
+                tile.X = chunk.X;
+                tile.Y = chunk.Y;
+                tile.TilePath = chunk.TilePath;
+                tile.Velocity.Angle.Degrees = chunk.Angle;
+                tile.DrawOrder = chunk.DrawOrder;
+                tile.Meta = chunk.Meta;
 
                 if (refreshMetadata)
                 {
-                    obj.RefreshMetadata();
+                    tile.RefreshMetadata();
                 }
+
+                core.Actors.Add(tile);
             }
         }
     }

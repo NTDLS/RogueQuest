@@ -44,6 +44,21 @@ namespace Library.Engine
             }
         }
 
+        public List<T> VisibleOfType<T>() where T : class
+        {
+            return (from o in Tiles
+                    where o is T
+                    && o.Visible == true
+                    select o as T).ToList();
+        }
+
+        public List<T> OfType<T>() where T : class
+        {
+            return (from o in Tiles
+                    where o is T
+                    select o as T).ToList();
+        }
+
         public void QueueAllForDelete()
         {
             foreach (var obj in this.Tiles)
@@ -52,29 +67,18 @@ namespace Library.Engine
             }
         }
 
-        public List<ActorBase> Intersections(TerrainBase with)
-        {
-            var objs = new List<ActorBase>();
-
-            foreach (var obj in Tiles.Where(o => o.Visible == true))
-            {
-                if (obj.Intersects(with.Location, new Point<double>(with.Size.Width, with.Size.Height)))
-                {
-                    objs.Add(obj);
-                }
-            }
-            return objs;
-        }
-
         public List<ActorBase> Intersections(ActorBase with)
         {
             var objs = new List<ActorBase>();
 
             foreach (var obj in Tiles.Where(o => o.Visible == true))
             {
-                if (obj.Intersects(with.Location, new Point<double>(with.Size.Width, with.Size.Height)))
+                if (obj != with)
                 {
-                    objs.Add(obj);
+                    if (obj.Intersects(with.Location, new Point<double>(with.Size.Width, with.Size.Height)))
+                    {
+                        objs.Add(obj);
+                    }
                 }
             }
             return objs;
@@ -107,6 +111,24 @@ namespace Library.Engine
             lock (Core.CollectionSemaphore)
             {
                 Tiles.Add(obj);
+            }
+        }
+
+        public T AddNew<T>(double x, double y, string TilePath) where T : ActorBase
+        {
+            lock (Core.CollectionSemaphore)
+            {
+                var bitmap = SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{TilePath}.png"));
+                object[] param = { Core };
+                var obj = (ActorBase)Activator.CreateInstance(typeof(T), param);
+
+                obj.TilePath = TilePath;
+                obj.SetImage(bitmap);
+
+                obj.X = x;
+                obj.Y = y;
+                Tiles.Add(obj);
+                return (T)obj;
             }
         }
 

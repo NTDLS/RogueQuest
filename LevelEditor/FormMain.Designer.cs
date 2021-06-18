@@ -71,10 +71,12 @@ namespace LevelEditor
             this.toolStripLabelMode = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonInsertMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSelectMode = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonShapeMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonMoveTileUp = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonShapeMode = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -397,7 +399,9 @@ namespace LevelEditor
             this.toolStripButtonShapeMode,
             this.toolStripSeparator5,
             this.toolStripButtonMoveTileUp,
-            this.toolStripButtonMoveTileDown});
+            this.toolStripButtonMoveTileDown,
+            this.toolStripSeparator6,
+            this.toolStripButtonPlayMap});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(784, 41);
@@ -469,6 +473,16 @@ namespace LevelEditor
             this.toolStripButtonSelectMode.Text = "Select";
             this.toolStripButtonSelectMode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             // 
+            // toolStripButtonShapeMode
+            // 
+            this.toolStripButtonShapeMode.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonShapeMode.Image")));
+            this.toolStripButtonShapeMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonShapeMode.Name = "toolStripButtonShapeMode";
+            this.toolStripButtonShapeMode.Size = new System.Drawing.Size(43, 38);
+            this.toolStripButtonShapeMode.Text = "Shape";
+            this.toolStripButtonShapeMode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonShapeMode.ToolTipText = "Shape";
+            // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
@@ -493,15 +507,20 @@ namespace LevelEditor
             this.toolStripButtonMoveTileDown.Text = "Move Tile Down";
             this.toolStripButtonMoveTileDown.ToolTipText = "Move Tile Down";
             // 
-            // toolStripButtonShapeMode
+            // toolStripButtonPlayMap
             // 
-            this.toolStripButtonShapeMode.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonShapeMode.Image")));
-            this.toolStripButtonShapeMode.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonShapeMode.Name = "toolStripButtonShapeMode";
-            this.toolStripButtonShapeMode.Size = new System.Drawing.Size(43, 38);
-            this.toolStripButtonShapeMode.Text = "Shape";
-            this.toolStripButtonShapeMode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolStripButtonShapeMode.ToolTipText = "Shape";
+            this.toolStripButtonPlayMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonPlayMap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonPlayMap.Image")));
+            this.toolStripButtonPlayMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonPlayMap.Name = "toolStripButtonPlayMap";
+            this.toolStripButtonPlayMap.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonPlayMap.Text = "Play Map";
+            this.toolStripButtonPlayMap.ToolTipText = "Play Map";
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 41);
             // 
             // FormMain
             // 
@@ -587,6 +606,8 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonMoveTileUp;
         private System.Windows.Forms.ToolStripButton toolStripButtonMoveTileDown;
         private System.Windows.Forms.ToolStripButton toolStripButtonShapeMode;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton toolStripButtonPlayMap;
     }
 }
 

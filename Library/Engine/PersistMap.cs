@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Library.Engine
 {
@@ -10,7 +6,6 @@ namespace Library.Engine
     {
         public string Name { get; set; }
         public List<PersistMapEntity> Chunks { get; set; }
-
         public PersistMap()
         {
             Chunks = new List<PersistMapEntity>();

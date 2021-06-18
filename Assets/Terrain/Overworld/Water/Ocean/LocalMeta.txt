@@ -1,5 +1,0 @@
-{
-  "CanTakeDamage": "False",
-  "HitPoints": "0",
-  "CanWalkOn": "False",
-}

@@ -69,7 +69,7 @@ namespace Game.Engine
             Core.Player.X += appliedOffset.X;
             Core.Player.Y += appliedOffset.Y;
 
-            var intersection = Core.Terrain.Intersections(Core.Player).OrderBy(o => o.DrawOrder).LastOrDefault();
+            var intersection = Core.Actors.Intersections(Core.Player).OrderBy(o => o.DrawOrder).LastOrDefault();
             if (intersection == null || intersection.Meta.CanWalkOn == false)
             {
                 Core.Player.X -= appliedOffset.X;

@@ -2,14 +2,10 @@
 using Game.Engine;
 using Game.Maps;
 using Library.Engine;
+using Library.Engine.Types;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RougueQuest
@@ -18,6 +14,11 @@ namespace RougueQuest
     {
         private EngineCore _core;
         private bool _fullScreen = false;
+
+        /// <summary>
+        /// Really just for debugging.
+        /// </summary>
+        public string _mapPathPassedToGame { get; set; }
 
         //This really shouldn't be necessary! :(
         protected override CreateParams CreateParams
@@ -30,6 +31,12 @@ namespace RougueQuest
                 handleParam.ExStyle |= 0x02000000; //WS_EX_COMPOSITED       
                 return handleParam;
             }
+        }
+
+        public FormMain(string mapPath)
+        {
+            InitializeComponent();
+            _mapPathPassedToGame = mapPath;
         }
 
         public FormMain()
@@ -67,6 +74,13 @@ namespace RougueQuest
         private void _core_OnStart(EngineCoreBase sender)
         {
             sender.AddNewMap<MapHome>();
+
+            if (string.IsNullOrWhiteSpace(_mapPathPassedToGame) == false)
+            {
+                MapPersistence.Load(_core, _mapPathPassedToGame);
+
+                _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
+            }
         }
 
         private void _core_OnStop(EngineCoreBase sender)
@@ -90,36 +104,36 @@ namespace RougueQuest
 
         private void FormMain_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(Library.Types.PlayerKey.SpeedBoost, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Forward, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(Library.Types.PlayerKey.RotateCounterClockwise, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.S) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Reverse, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.D) _core.Input.KeyStateChanged(Library.Types.PlayerKey.RotateClockwise, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.Space) _core.Input.KeyStateChanged(Library.Types.PlayerKey.PrimaryFire, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.ControlKey) _core.Input.KeyStateChanged(Library.Types.PlayerKey.SecondaryFire, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.Escape) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Escape, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.Left) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Left, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.Right) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Right, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Up, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Down, Library.Types.KeyPressState.Up);
-            if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Enter, Library.Types.KeyPressState.Up);
+            if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Up);
+            if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Up);
+            if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Up);
+            if (e.KeyCode == Keys.S) _core.Input.KeyStateChanged(PlayerKey.Reverse, KeyPressState.Up);
+            if (e.KeyCode == Keys.D) _core.Input.KeyStateChanged(PlayerKey.RotateClockwise, KeyPressState.Up);
+            if (e.KeyCode == Keys.Space) _core.Input.KeyStateChanged(PlayerKey.PrimaryFire, KeyPressState.Up);
+            if (e.KeyCode == Keys.ControlKey) _core.Input.KeyStateChanged(PlayerKey.SecondaryFire, KeyPressState.Up);
+            if (e.KeyCode == Keys.Escape) _core.Input.KeyStateChanged(PlayerKey.Escape, KeyPressState.Up);
+            if (e.KeyCode == Keys.Left) _core.Input.KeyStateChanged(PlayerKey.Left, KeyPressState.Up);
+            if (e.KeyCode == Keys.Right) _core.Input.KeyStateChanged(PlayerKey.Right, KeyPressState.Up);
+            if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(PlayerKey.Up, KeyPressState.Up);
+            if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(PlayerKey.Down, KeyPressState.Up);
+            if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(PlayerKey.Enter, KeyPressState.Up);
         }
 
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(Library.Types.PlayerKey.SpeedBoost, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Forward, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(Library.Types.PlayerKey.RotateCounterClockwise, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.S) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Reverse, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.D) _core.Input.KeyStateChanged(Library.Types.PlayerKey.RotateClockwise, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.Space) _core.Input.KeyStateChanged(Library.Types.PlayerKey.PrimaryFire, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.ControlKey) _core.Input.KeyStateChanged(Library.Types.PlayerKey.SecondaryFire, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.Escape) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Escape, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.Left) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Left, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.Right) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Right, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Up, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Down, Library.Types.KeyPressState.Down);
-            if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Enter, Library.Types.KeyPressState.Down);
+            if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Down);
+            if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Down);
+            if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Down);
+            if (e.KeyCode == Keys.S) _core.Input.KeyStateChanged(PlayerKey.Reverse, KeyPressState.Down);
+            if (e.KeyCode == Keys.D) _core.Input.KeyStateChanged(PlayerKey.RotateClockwise, KeyPressState.Down);
+            if (e.KeyCode == Keys.Space) _core.Input.KeyStateChanged(PlayerKey.PrimaryFire, KeyPressState.Down);
+            if (e.KeyCode == Keys.ControlKey) _core.Input.KeyStateChanged(PlayerKey.SecondaryFire, KeyPressState.Down);
+            if (e.KeyCode == Keys.Escape) _core.Input.KeyStateChanged(PlayerKey.Escape, KeyPressState.Down);
+            if (e.KeyCode == Keys.Left) _core.Input.KeyStateChanged(PlayerKey.Left, KeyPressState.Down);
+            if (e.KeyCode == Keys.Right) _core.Input.KeyStateChanged(PlayerKey.Right, KeyPressState.Down);
+            if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(PlayerKey.Up, KeyPressState.Down);
+            if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(PlayerKey.Down, KeyPressState.Down);
+            if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(PlayerKey.Enter, KeyPressState.Down);
 
             _core.Input.HandleSingleKeyPress(e.KeyCode);
         }

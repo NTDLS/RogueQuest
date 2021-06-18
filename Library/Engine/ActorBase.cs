@@ -1,20 +1,35 @@
 ﻿using Assets;
+using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.IO;
 
 namespace Library.Engine
 {
     public class ActorBase
     {
         #region Public properties.
+
+        /// <summary>
+        /// Tells us exactly which tile this is. For terrain, it could be so many - so this allows us to differentiate.
+        /// </summary>
+        public string TilePath { get; set; }
         public RotationMode RotationMode { get; set; }
         public string Tag { get; set; }
         public List<ActorBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
+        public TileMetadata Meta { get; set; } = new TileMetadata();
+        private Velocity<double> _velocity = new Velocity<double>();
+        public Velocity<double> Velocity
+        {
+            get
+            {
+                return _velocity;
+            }
+        }
 
         #endregion
 
@@ -22,6 +37,7 @@ namespace Library.Engine
         {
             Core = core;
             Children = new List<ActorBase>();
+            _size = new Size(0, 0);
             this.Visible = true;
             RotationMode = RotationMode.Upsize;
             Velocity.OnChange += Velocity_OnChange;
@@ -32,9 +48,42 @@ namespace Library.Engine
             this.Invalidate();
         }
 
+        private void Angle_OnChange(Angle<double> sender)
+        {
+            this.Invalidate();
+        }
+
         #region Image.
 
         public Image _image = null;
+
+        private bool _hoverHighlight = false;
+        public bool HoverHighlight
+        {
+            get
+            {
+                return _hoverHighlight;
+            }
+            set
+            {
+                _hoverHighlight = value;
+                Invalidate();
+            }
+        }
+
+        private bool _selectedHighlight = false;
+        public bool SelectedHighlight
+        {
+            get
+            {
+                return _selectedHighlight;
+            }
+            set
+            {
+                _selectedHighlight = value;
+                Invalidate();
+            }
+        }
 
         public void SetImage(Image image)
         {
@@ -112,6 +161,20 @@ namespace Library.Engine
                 Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
                 dc.DrawImage(bitmap, rect);
             }
+
+            if (HoverHighlight)
+            {
+                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
+                Pen pen = new Pen(Color.Yellow, 2);
+                dc.DrawRectangle(pen, rect);
+            }
+
+            if (SelectedHighlight)
+            {
+                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
+                Pen pen = new Pen(Color.Red, 2);
+                dc.DrawRectangle(pen, rect);
+            }
         }
 
         private int _drawOrder = 0;
@@ -182,7 +245,6 @@ namespace Library.Engine
         #endregion
 
         #region Location.
-
         public bool IsOnScreen
         {
             get
@@ -264,19 +326,6 @@ namespace Library.Engine
 
         #endregion
 
-        #region Velocity.
-
-        private Velocity<double> _velocity = new Velocity<double>();
-        public Velocity<double> Velocity
-        {
-            get
-            {
-                return _velocity;
-            }
-        }
-
-        #endregion
-
         #region Size.
 
         private Size _size;
@@ -304,5 +353,50 @@ namespace Library.Engine
         }
 
         #endregion
+
+        private TileMetadata FindFirstMetafile(string tilePath, string fileName)
+        {
+            string globalMetaFile = Path.Combine(tilePath, fileName);
+
+            if (File.Exists(globalMetaFile))
+            {
+                var text = File.ReadAllText(globalMetaFile);
+                return JsonConvert.DeserializeObject<TileMetadata>(text);
+            }
+            else
+            {
+                string parentPath = System.IO.Directory.GetParent(tilePath)?.FullName;
+                if (string.IsNullOrWhiteSpace(parentPath) == false)
+                {
+                    return FindFirstMetafile(parentPath, fileName);
+                }
+            }
+
+            return null;
+        }
+
+        public void RefreshMetadata()
+        {
+            string tilePath = Path.GetDirectoryName(Constants.GetAssetPath($"{TilePath}"));
+            string exactMetaFileName = Constants.GetAssetPath($"{TilePath}.txt");
+
+            this.Meta = FindFirstMetafile(tilePath, "_GlobalMeta.txt") ?? new TileMetadata();
+
+            var localMeta = FindFirstMetafile(tilePath, "_LocalMeta.txt");
+            if (localMeta != null)
+            {
+                this.Meta.OverrideWith(localMeta);
+            }
+
+            if (File.Exists(exactMetaFileName))
+            {
+                var text = File.ReadAllText(exactMetaFileName);
+                var exactMeta = JsonConvert.DeserializeObject<TileMetadata>(text);
+                if (exactMeta != null)
+                {
+                    this.Meta.OverrideWith(exactMeta);
+                }
+            }
+        }
     }
 }

@@ -12,12 +12,20 @@ namespace RougueQuest
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string []arg)
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMain());
+
+            if (arg.Count() > 0)
+            {
+                Application.Run(new FormMain(arg[0]));
+            }
+            else
+            {
+                Application.Run(new FormMain());
+            }
         }
     }
 }

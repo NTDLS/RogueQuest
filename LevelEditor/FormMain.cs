@@ -3,17 +3,11 @@ using LevelEditor.Engine;
 using Library.Engine;
 using Library.Types;
 using Library.Utility;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LevelEditor
@@ -75,8 +69,8 @@ namespace LevelEditor
         /// </summary>
         private ShapeFillMode shapeFillMode = ShapeFillMode.Insert;
         private Size lastPlacedItemSize = new Size(0, 0);
-        private TerrainBase selectedTile = null;
-        private TerrainBase previousHoverTile = null;
+        private ActorBase selectedTile = null;
+        private ActorBase previousHoverTile = null;
         private PrimaryMode CurrentPrimaryMode { get; set; } = PrimaryMode.Insert;
 
         //This really shouldn't be necessary! :(
@@ -135,15 +129,33 @@ namespace LevelEditor
             toolStripButtonMoveTileUp.Click += ToolStripButtonMoveTileUp_Click;
             toolStripButtonMoveTileDown.Click += ToolStripButtonMoveTileDown_Click;
             toolStripButtonShapeMode.Click += ToolStripButtonShapeMode_Click;
+            toolStripButtonPlayMap.Click += ToolStripButtonPlayMap_Click;
 
             PopulateMaterials();
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
-            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Test.rqm"), true);
+            MapPersistence.Load(_core, Constants.GetAssetPath(@"Maps\Test.rqm"));
         }
 
+
         #region Menu Clicks.
+
+        private void ToolStripButtonPlayMap_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_currentMapFilename))
+            {
+                _hasBeenModified = true;
+            }
+
+            if (CheckForNeededSave())
+            {
+                var gameApp = new System.Diagnostics.Process();
+                gameApp.StartInfo.FileName = @"..\..\..\..\Game\bin\Debug\net5.0-windows\Game.exe";
+                gameApp.StartInfo.Arguments = _currentMapFilename;
+                gameApp.Start();
+            }
+        }
 
         private void ToolStripButtonMoveTileDown_Click(object sender, EventArgs e)
         {
@@ -394,7 +406,7 @@ namespace LevelEditor
         {
             ImageList imageList = new ImageList();
             treeViewTiles.ImageList = imageList;
-            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Terrain");
+            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Tiles");
             if (treeViewTiles.Nodes.Count > 0)
             {
                 treeViewTiles.Nodes[0].Expand();
@@ -419,7 +431,7 @@ namespace LevelEditor
             }
             else
             {
-                var hoverTile = _core.Terrain.Intersections(new Point<double>(x, y),
+                var hoverTile = _core.Actors.Intersections(new Point<double>(x, y),
                     new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
                 if (e.Button != MouseButtons.Left) //Dont change the selection based on hover location while dragging.
@@ -431,7 +443,7 @@ namespace LevelEditor
 
                     if (hoverTile != null)
                     {
-                        toolStripStatusLabelHoverObject.Text = $"[{hoverTile.TileTypeKey}]";
+                        toolStripStatusLabelHoverObject.Text = $"[{hoverTile.TilePath}]";
 
                         if (highlightHoverTile && CurrentPrimaryMode != PrimaryMode.Shape)
                         {
@@ -560,7 +572,7 @@ namespace LevelEditor
                     double x = rc.X + _core.Display.BackgroundOffset.X;
                     double y = rc.Y + _core.Display.BackgroundOffset.Y;
 
-                    var intersections = _core.Terrain.Intersections(x, y, rc.Width, rc.Height);
+                    var intersections = _core.Actors.Intersections(x, y, rc.Width, rc.Height);
 
                     foreach (var obj in intersections)
                     {
@@ -578,7 +590,7 @@ namespace LevelEditor
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var hoverTile = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
             if (e.Button == MouseButtons.Middle)
             {
@@ -624,14 +636,20 @@ namespace LevelEditor
 
             if (selectedTile != null && selectedTile.Visible)
             {
-                listViewProperties.Items.Add("Type").SubItems.Add(selectedTile.TileTypeKey).Tag = new TPTag { ReadOnly = true };
+                listViewProperties.Items.Add("Name").SubItems.Add(selectedTile.Meta?.Name);
+                listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
+                listViewProperties.Items.Add("CanTakeDamage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
+                listViewProperties.Items.Add("HitPoints").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
+                listViewProperties.Items.Add("CanWalkOn").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
+                listViewProperties.Items.Add("BasicType").SubItems.Add(selectedTile.Meta?.BasicType.ToString());
+                listViewProperties.Items.Add("TilePath").SubItems.Add(selectedTile.TilePath);
 
                 listViewProperties.Items.Add("Location").SubItems.Add(
-                    $"{selectedTile.Location.X},{selectedTile.Location.Y}").Tag = new TPTag { ReadOnly = false };
+                    $"{selectedTile.Location.X},{selectedTile.Location.Y}");
 
-                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Angle.Degrees.ToString()).Tag = new TPTag { ReadOnly = false };
-                listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString()).Tag = new TPTag { ReadOnly = false };
-                listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString()).Tag = new TPTag { ReadOnly = true };
+                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
+                listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
+                listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
                 listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
         }
@@ -660,15 +678,47 @@ namespace LevelEditor
                                     selectedTile.Y = y;
                                 }
                             }
-                            if (selectedRow.Text == "Angle")
+                            else if (selectedRow.Text == "CanTakeDamage")
                             {
-                                var degrees = double.Parse(dialog.PropertyValue);
-                                selectedTile.Angle.Degrees = degrees;
+                                bool result = false;
+
+                                if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                                {
+                                    result = int.Parse(dialog.PropertyValue) != 0;
+                                }
+
+                                selectedTile.Meta.CanTakeDamage = result;
                             }
-                            if (selectedRow.Text == "z-Order")
+                            else if (selectedRow.Text == "CanWalkOn")
                             {
-                                var order = int.Parse(dialog.PropertyValue);
-                                selectedTile.DrawOrder = order;
+                                bool result = false;
+
+                                if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                                {
+                                    result = int.Parse(dialog.PropertyValue) != 0;
+                                }
+
+                                selectedTile.Meta.CanWalkOn = result;
+                            }
+                            else if (selectedRow.Text == "Name")
+                            {
+                                selectedTile.Meta.Name = dialog.PropertyValue;
+                            }
+                            else if (selectedRow.Text == "Tag")
+                            {
+                                selectedTile.Meta.Tag = dialog.PropertyValue;
+                            }
+                            if (selectedRow.Text == "HitPoints")
+                            {
+                                selectedTile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
+                            }
+                            else if (selectedRow.Text == "Angle")
+                            {
+                                selectedTile.Velocity.Angle.Degrees = double.Parse(dialog.PropertyValue);
+                            }
+                            else if (selectedRow.Text == "z-Order")
+                            {
+                                selectedTile.DrawOrder = int.Parse(dialog.PropertyValue);
                             }
 
                             PopulateSelectedItemProperties();
@@ -691,7 +741,7 @@ namespace LevelEditor
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var hoverTile = _core.Terrain.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
             //Single item deletion with right button.
             if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
@@ -723,10 +773,9 @@ namespace LevelEditor
             return node;
         }
 
-
-        private TerrainBase PlaceSelectedItem(double x, double y)
+        private ActorBase PlaceSelectedItem(double x, double y)
         {
-            TerrainBase insertedTile = null;
+            ActorBase insertedTile = null;
 
             _hasBeenModified = true;
 
@@ -738,7 +787,7 @@ namespace LevelEditor
             var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
             if (selectedItem != null)
             {
-                insertedTile = _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath);
+                insertedTile = _core.Actors.AddNew<ActorBase>(x, y, selectedItem.FullPath);
                 insertedTile.RefreshMetadata();
                 lastPlacedItemSize = insertedTile.Size;
                 drawLastLocation = new Point<double>(x, y);

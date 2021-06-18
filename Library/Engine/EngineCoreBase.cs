@@ -21,7 +21,6 @@ namespace Library.Engine
         public object CollectionSemaphore { get; private set; } = new object();
         public object DrawingSemaphore { get; set; } = new object();
         public ActorController Actors { get; private set; }
-        public TerrainController Terrain { get; set; }
         public InputController Input { get; set; }
         public List<MapBase> Maps { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
@@ -47,7 +46,6 @@ namespace Library.Engine
             lock (CollectionSemaphore)
             {
                 Actors = new ActorController(this);
-                Terrain = new TerrainController(this);
                 Input = new InputController(this);
                 Maps = new List<MapBase>();
             }
@@ -89,7 +87,6 @@ namespace Library.Engine
         {
             lock (this.CollectionSemaphore)
             {
-                Terrain.QueueAllForDelete();
                 Actors.QueueAllForDelete();
             }
         }
@@ -144,10 +141,7 @@ namespace Library.Engine
 
                         _ScreenDC.Clear(BackgroundColor);
 
-                        Terrain.Render(_ScreenDC);
                         Actors.Render(_ScreenDC);
-
-                        //Player?.Render(_ScreenDC);
                     }
                 }
             }
