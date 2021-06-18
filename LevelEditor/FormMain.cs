@@ -138,7 +138,6 @@ namespace LevelEditor
             MapPersistence.Load(_core, Constants.GetAssetPath(@"Maps\Test.rqm"));
         }
 
-
         #region Menu Clicks.
 
         private void ToolStripButtonPlayMap_Click(object sender, EventArgs e)

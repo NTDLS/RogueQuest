@@ -1,4 +1,5 @@
-﻿using Game.Actors;
+﻿using Game.Extensions;
+using Game.Actors;
 using Game.Engine;
 using Game.Maps;
 using Library.Engine;
@@ -65,10 +66,43 @@ namespace RougueQuest
             SetStyle(ControlStyles.UserPaint, true);
 
             _core = new EngineCore(this.pictureBox, new Size(this.pictureBox.Width, this.pictureBox.Height));
-
             _core.OnStop += _core_OnStop;
             _core.OnStart += _core_OnStart;
+            _core.AfterTick += _core_AfterTick;
+            _core.Tick.OnLog += _core_OnLog;
 
+            //Yea, this is stupid but the richtextbox steals the keyboard focus from the form. :(
+            splitContainerHoriz.Focus();
+            splitContainerHoriz.KeyUp += FormMain_KeyUp;
+            splitContainerHoriz.KeyDown += FormMain_KeyDown;
+            richTextBoxLog.KeyUp += FormMain_KeyUp;
+            richTextBoxLog.KeyDown += FormMain_KeyDown;
+
+            pictureBox.Paint += PictureBox_Paint;
+            pictureBox.SizeChanged += PictureBox_SizeChanged;
+        }
+        private void SplitContainerHoriz_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PictureBox_SizeChanged(object sender, EventArgs e)
+        {
+            _core.ResizeDrawingSurface(new Size(pictureBox.Width, pictureBox.Height));
+
+        }
+
+        private void _core_OnLog(EngineCore core, string text, Color color)
+        {
+            richTextBoxLog.AppendText(text, color);
+        }
+
+        private void _core_AfterTick(EngineCore core, Types.TickInput input, Library.Types.Point<double> offsetApplied)
+        {
+            var time = TimeSpan.FromMinutes(core.Tick.TimePassed);
+
+            toolStripStatusLabelDebug.Text = $"{_core.Player.X},{_core.Player.Y} {_core.Player.Meta.HitPoints}hp"
+                + " " + time.ToString(@"dd\:hh\:mm\:ss");
         }
 
         private void _core_OnStart(EngineCoreBase sender)
@@ -138,7 +172,7 @@ namespace RougueQuest
             _core.Input.HandleSingleKeyPress(e.KeyCode);
         }
 
-        private void pictureBox_Paint(object sender, PaintEventArgs e)
+        private void PictureBox_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(_core.Render(), 0, 0);
         }

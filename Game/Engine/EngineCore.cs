@@ -13,6 +13,12 @@ namespace Game.Engine
 {
     public class EngineCore : EngineCoreBase
     {
+        public delegate void BeforeTickEvent(EngineCore core, Types.TickInput input);
+        public event BeforeTickEvent BeforeTick;
+
+        public delegate void AfterTickEvent(EngineCore core, Types.TickInput input, Point<double> offsetApplied);
+        public event AfterTickEvent AfterTick;
+
         public EngineTickController Tick { get; set; }
 
         public ActorPlayer Player { get; set; }
@@ -44,7 +50,9 @@ namespace Game.Engine
                 Key = key
             };
 
-            Tick.Advance(input);
+            BeforeTick?.Invoke(this, input);
+            var offsetApplied = Tick.Advance(input);
+            AfterTick?.Invoke(this, input, offsetApplied);
         }
     }
 }

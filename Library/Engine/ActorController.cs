@@ -67,6 +67,25 @@ namespace Library.Engine
             }
         }
 
+        public List<ActorBase> Intersections(ActorBase with, int distance)
+        {
+            var objs = new List<ActorBase>();
+
+            Point<double> withLocation = new Point<double>(with.Location.X - distance, with.Location.Y - distance);
+
+            foreach (var obj in Tiles.Where(o => o.Visible == true))
+            {
+                if (obj != with)
+                {
+                    if (obj.Intersects(withLocation, new Point<double>(with.Size.Width + (distance * 2), with.Size.Height + (distance * 2))))
+                    {
+                        objs.Add(obj);
+                    }
+                }
+            }
+            return objs;
+        }
+
         public List<ActorBase> Intersections(ActorBase with)
         {
             var objs = new List<ActorBase>();
@@ -75,7 +94,7 @@ namespace Library.Engine
             {
                 if (obj != with)
                 {
-                    if (obj.Intersects(with.Location, new Point<double>(with.Size.Width, with.Size.Height)))
+                    if (obj.Intersects(with.BoundLocation, new Point<double>(with.Size.Width, with.Size.Height)))
                     {
                         objs.Add(obj);
                     }

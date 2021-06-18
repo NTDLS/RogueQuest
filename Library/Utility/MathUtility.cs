@@ -123,7 +123,7 @@ namespace Library.Utility
 
         public static int RandomNumber(int min, int max)
         {
-            return Random.Next(0, 1000) % max;
+            return Random.Next(min, max);
         }
 
         public static int RandomNumberNegative(int min, int max)

@@ -53,6 +53,21 @@ namespace Library.Engine
             this.Invalidate();
         }
 
+        /// <summary>
+        /// Removes hitpoints and returns true if killed.
+        /// </summary>
+        /// <returns></returns>
+        public bool Hit(int points)
+        {
+            this.Meta.HitPoints -= points;
+            if (this.Meta.HitPoints <= 0)
+            {
+                this.QueueForDelete();
+                return true;
+            }
+            return false;
+        }
+
         #region Image.
 
         public Image _image = null;
@@ -245,6 +260,17 @@ namespace Library.Engine
         #endregion
 
         #region Location.
+
+        public double AngleTo(ActorBase to)
+        {
+            return MathUtility.AngleTo(this, to);
+        }
+
+        public double DistanceTo(ActorBase to)
+        {
+            return MathUtility.DistanceTo(this, to);
+        }
+
         public bool IsOnScreen
         {
             get
@@ -266,7 +292,7 @@ namespace Library.Engine
         private Point<double> _location = new Point<double>();
 
         /// <summary>
-        /// Do not modify this location, it will not have any affect.
+        /// The xy of the center of the image. Do not modify the return location, it will not have any affect.
         /// </summary>
         public Point<double> Location
         {
@@ -279,6 +305,19 @@ namespace Library.Engine
                 Invalidate();
                 _location = value;
                 Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The x,y of the image.
+        /// </summary>
+        public Point<double> BoundLocation
+        {
+            get
+            {
+                return new Point<double>(
+                    (float)(_location.X) - (Size.Width / 2),
+                    (float)(_location.Y - (Size.Height / 2)));
             }
         }
 
