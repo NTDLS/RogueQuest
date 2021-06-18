@@ -375,6 +375,10 @@ namespace LevelEditor
                     {
                         imageFind = imageFind.Nodes[0];
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
                 if (imageFind != null)
                 {
@@ -523,28 +527,31 @@ namespace LevelEditor
                     double x = rc.X + _core.Display.BackgroundOffset.X;
                     double y = rc.Y + _core.Display.BackgroundOffset.Y;
 
-                    int minHeight = 0;
-
-                    for (int py = 0; py < rc.Height;)
+                    if (rc.Height > 0 && rc.Width > 0)
                     {
-                        for (int px = 0; px < rc.Width;)
-                        {
-                            var placedTile = PlaceSelectedItem(x + px, y + py);
-                            if (placedTile == null) //No tiles are selected in the explorer.
-                            {
-                                shapeSelectionRect = null;
-                                pictureBox.Invalidate();
-                                return;
-                            }
+                        int minHeight = 0;
 
-                            px += placedTile.Size.Width;
-                            //We keep track of the min height because I perfer overlap over gaps if the tiles are irregular.
-                            if (placedTile.Size.Height > minHeight)
+                        for (int py = 0; py < rc.Height;)
+                        {
+                            for (int px = 0; px < rc.Width;)
                             {
-                                minHeight = placedTile.Size.Height;
+                                var placedTile = PlaceSelectedItem(x + px, y + py);
+                                if (placedTile == null) //No tiles are selected in the explorer.
+                                {
+                                    shapeSelectionRect = null;
+                                    pictureBox.Invalidate();
+                                    return;
+                                }
+
+                                px += placedTile.Size.Width;
+                                //We keep track of the min height because I perfer overlap over gaps if the tiles are irregular.
+                                if (placedTile.Size.Height > minHeight)
+                                {
+                                    minHeight = placedTile.Size.Height;
+                                }
                             }
+                            py += minHeight;
                         }
-                        py += minHeight;
                     }
                 }
                 else if (shapeFillMode == ShapeFillMode.Delete)
