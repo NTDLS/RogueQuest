@@ -1,8 +1,10 @@
 ﻿using Assets;
 using Library.Types;
 using Library.Utility;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace Library.Engine
 {
@@ -19,6 +21,8 @@ namespace Library.Engine
         public string Tag { get; set; }
         public List<TerrainBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
+        public TerrainMetadata Meta { get; set; } = new TerrainMetadata();
+
         #endregion
 
         public TerrainBase(EngineCoreBase core)
@@ -336,5 +340,22 @@ namespace Library.Engine
         }
 
         #endregion
+
+        public void RefreshMetadata()
+        {
+            string localMetaFileName = Path.Combine(Path.GetDirectoryName(Constants.GetAssetPath($"{TileTypeKey}")), "LocalMeta.txt");
+            string exactMetaFileName = Constants.GetAssetPath($"{TileTypeKey}.txt");
+
+            if (File.Exists(exactMetaFileName))
+            {
+                var text = File.ReadAllText(exactMetaFileName);
+                this.Meta = JsonConvert.DeserializeObject<TerrainMetadata>(text);
+            }
+            else if (File.Exists(localMetaFileName))
+            {
+                var text = File.ReadAllText(localMetaFileName);
+                this.Meta = JsonConvert.DeserializeObject<TerrainMetadata>(text);
+            }
+        }
     }
 }

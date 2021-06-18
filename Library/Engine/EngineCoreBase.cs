@@ -22,6 +22,7 @@ namespace Library.Engine
         public object DrawingSemaphore { get; set; } = new object();
         public ActorController Actors { get; private set; }
         public TerrainController Terrain { get; set; }
+        public InputController Input { get; set; }
         public List<MapBase> Maps { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
 
@@ -47,6 +48,7 @@ namespace Library.Engine
             {
                 Actors = new ActorController(this);
                 Terrain = new TerrainController(this);
+                Input = new InputController(this);
                 Maps = new List<MapBase>();
             }
         }
@@ -67,6 +69,10 @@ namespace Library.Engine
             IsRunning = false;
 
             OnStop?.Invoke(this);
+        }
+
+        public virtual void HandleSingleKeyPress(Keys key)
+        {
         }
 
         public void ResizeDrawingSurface(Size visibleSize)

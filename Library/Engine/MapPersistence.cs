@@ -17,22 +17,25 @@ namespace Library.Engine
                     X = obj.X,
                     Y = obj.Y,
                     Angle = obj.Angle.Degrees,
-                    DrawOrder = obj.DrawOrder
+                    DrawOrder = obj.DrawOrder,
+                    Meta = obj.Meta
                 });
             }
 
             var json = JsonConvert.SerializeObject(map);
 
-            var compressed = Utility.Compress.Zip(json);
+            System.IO.File.WriteAllText(fileName, json);
 
-            System.IO.File.WriteAllBytes(fileName, compressed);
+            //var compressed = Utility.Compress.Zip(json);
+            //System.IO.File.WriteAllBytes(fileName, compressed);
         }
 
-        public static void Load(EngineCoreBase core, string fileName)
+        public static void Load(EngineCoreBase core, string fileName, bool refreshMetadata = false)
         {
-            var compressed = System.IO.File.ReadAllBytes(fileName);
+            //var compressed = System.IO.File.ReadAllBytes(fileName);
+            //var json = Utility.Compress.Unzip(compressed);
 
-            var json = Utility.Compress.Unzip(compressed);
+            var json = System.IO.File.ReadAllText(fileName);
 
             var map = JsonConvert.DeserializeObject<PersistMap>(json);
 
@@ -44,6 +47,12 @@ namespace Library.Engine
 
                 obj.Angle.Degrees = chunk.Angle;
                 obj.DrawOrder = chunk.DrawOrder;
+                obj.Meta = chunk.Meta;
+
+                if (refreshMetadata)
+                {
+                    obj.RefreshMetadata();
+                }
             }
         }
     }

@@ -2,7 +2,10 @@
 {
     public class Velocity<T>
     {
-        public Angle<T> Angle { get; set; } = new Angle<T>();
+        public delegate void ChangeEvent(Velocity<T> sender);
+        public event ChangeEvent OnChange;
+
+        public Angle<T> Angle { get; private set; } = new Angle<T>();
         public T MaxSpeed { get; set; }
         public T MaxRotationSpeed { get; set; }
 
@@ -21,6 +24,16 @@
 
                 ThrottleChanged();
             }
+        }
+
+        public Velocity()
+        {
+            Angle.OnChange += Angle_OnChange;
+        }
+
+        private void Angle_OnChange(Angle<T> sender)
+        {
+            OnChange?.Invoke(this);
         }
 
         public virtual void ThrottleChanged()

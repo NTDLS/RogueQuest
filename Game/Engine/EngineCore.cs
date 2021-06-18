@@ -13,10 +13,14 @@ namespace Game.Engine
 {
     public class EngineCore : EngineCoreBase
     {
+        public EngineTickController Tick { get; set; }
+
+        public ActorPlayer Player { get; set; }
+
         public EngineCore(Control drawingSurface, Size visibleSize)
             : base (drawingSurface, visibleSize)
         {
-
+            Tick = new EngineTickController(this);
         }
 
         public ActorTextBlock AddNewTextBlock(string font, Brush color, double size, double x, double y, bool isPositionStatic, string text = "")
@@ -30,6 +34,29 @@ namespace Game.Engine
                 Actors.Add(obj);
                 return obj;
             }
+        }
+
+        public override void HandleSingleKeyPress(Keys key)
+        {
+            var input = new Types.TickInput()
+            {
+                InputType = Types.TickInputType.Keyboard,
+                Key = key
+            };
+
+            Tick.Advance(input);
+        }
+
+        public ActorPlayer CreatePlayer()
+        {
+            if (this.Player != null)
+            {
+                this.Player.QueueForDelete();
+            }
+
+            this.Player = Actors.AddNew<ActorPlayer>();
+
+            return this.Player;
         }
     }
 }

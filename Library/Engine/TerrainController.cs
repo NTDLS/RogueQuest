@@ -51,6 +51,20 @@ namespace Library.Engine
             }
         }
 
+        public List<TerrainBase> Intersections(ActorBase with)
+        {
+            var objs = new List<TerrainBase>();
+
+            foreach (var obj in Tiles.Where(o => o.Visible == true))
+            {
+                if (obj.Intersects(with.Location, new Point<double>(with.Size.Width, with.Size.Height)))
+                {
+                    objs.Add(obj);
+                }
+            }
+            return objs;
+        }
+
         public List<TerrainBase> Intersections(TerrainBase with)
         {
             var objs = new List<TerrainBase>();
@@ -86,6 +100,7 @@ namespace Library.Engine
                 return objs;
             }
         }
+
         public void Add(TerrainBase obj)
         {
             lock (Core.CollectionSemaphore)

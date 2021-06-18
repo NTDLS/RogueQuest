@@ -3,6 +3,7 @@ using LevelEditor.Engine;
 using Library.Engine;
 using Library.Types;
 using Library.Utility;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -139,7 +140,7 @@ namespace LevelEditor
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
-            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Test.rqm"));
+            MapPersistence.Load(_core, Assets.Constants.GetAssetPath(@"Maps\Test.rqm"), true);
         }
 
         #region Menu Clicks.
@@ -514,7 +515,7 @@ namespace LevelEditor
         {
             PopulateSelectedItemProperties();
 
-            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) && shapeSelectionRect != null)
             {
                 if (shapeFillMode == ShapeFillMode.Insert)
                 {
@@ -715,6 +716,7 @@ namespace LevelEditor
             return node;
         }
 
+
         private TerrainBase PlaceSelectedItem(double x, double y)
         {
             TerrainBase insertedTile = null;
@@ -730,6 +732,7 @@ namespace LevelEditor
             if (selectedItem != null)
             {
                 insertedTile = _core.Terrain.AddNew<TerrainBase>(x, y, selectedItem.FullPath);
+                insertedTile.RefreshMetadata();
                 lastPlacedItemSize = insertedTile.Size;
                 drawLastLocation = new Point<double>(x, y);
             }
