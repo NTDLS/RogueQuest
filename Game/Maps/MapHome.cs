@@ -21,12 +21,12 @@ namespace Game.Maps
         {
             Core = core;
 
-            MapPersistence.Load(core, Assets.Constants.GetAssetPath(@"Maps\Test.rqm"));
+            MapPersistence.Load(core, Assets.Constants.GetAssetPath(@"Maps\Test.rqm"), true);
 
             var player = core.CreatePlayer();
 
             player.X = 100;
-            player.Y = 100;
+            player.Y = 150;
 
         }
     }

@@ -102,6 +102,7 @@ namespace LevelEditor
             this.Controls.Add(this.label3);
             this.Controls.Add(this.labelPropertyName);
             this.Controls.Add(this.label1);
+            this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;

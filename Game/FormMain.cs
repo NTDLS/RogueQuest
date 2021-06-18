@@ -32,7 +32,6 @@ namespace RougueQuest
             }
         }
 
-
         public FormMain()
         {
             InitializeComponent();
@@ -58,9 +57,7 @@ namespace RougueQuest
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.UserPaint, true);
 
-            this.BackColor = Color.FromArgb(60, 60, 60);
-
-            _core = new EngineCore(this, new Size(this.Width, this.Height));
+            _core = new EngineCore(this.pictureBox, new Size(this.pictureBox.Width, this.pictureBox.Height));
 
             _core.OnStop += _core_OnStop;
             _core.OnStart += _core_OnStart;
@@ -89,11 +86,6 @@ namespace RougueQuest
         private void FormMain_Shown(object sender, EventArgs e)
         {
             _core.Start();
-        }
-
-        private void FormMain_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawImage(_core.Render(), 0, 0);
         }
 
         private void FormMain_KeyUp(object sender, KeyEventArgs e)
@@ -130,6 +122,11 @@ namespace RougueQuest
             if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(Library.Types.PlayerKey.Enter, Library.Types.KeyPressState.Down);
 
             _core.Input.HandleSingleKeyPress(e.KeyCode);
+        }
+
+        private void pictureBox_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawImage(_core.Render(), 0, 0);
         }
     }
 }
