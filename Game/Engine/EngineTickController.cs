@@ -22,44 +22,46 @@ namespace Game.Engine
         {
             Point<double> appliedOffset = new Point<double>();
 
+            int movementSpeed = 5;
+
             #region Keyboard handler.
             if (Input.InputType == TickInputType.Keyboard)
             {
                 if (Input.Key == Keys.NumPad1 || Input.Key == Keys.Z)
                 {
-                    appliedOffset.X -= 10;
-                    appliedOffset.Y += 10;
+                    appliedOffset.X -= movementSpeed;
+                    appliedOffset.Y += movementSpeed;
                 }
                 else if (Input.Key == Keys.NumPad2 || Input.Key == Keys.Down || Input.Key == Keys.S)
                 {
-                    appliedOffset.Y += 10;
+                    appliedOffset.Y += movementSpeed;
                 }
                 else if (Input.Key == Keys.NumPad3 || Input.Key == Keys.X)
                 {
-                    appliedOffset.X += 10;
-                    appliedOffset.Y += 10;
+                    appliedOffset.X += movementSpeed;
+                    appliedOffset.Y += movementSpeed;
                 }
                 else if (Input.Key == Keys.NumPad4 || Input.Key == Keys.Left || Input.Key == Keys.A)
                 {
-                    appliedOffset.X -= 10;
+                    appliedOffset.X -= movementSpeed;
                 }
                 else if (Input.Key == Keys.NumPad6 || Input.Key == Keys.Right || Input.Key == Keys.D)
                 {
-                    appliedOffset.X += 10;
+                    appliedOffset.X += movementSpeed;
                 }
                 else if (Input.Key == Keys.NumPad7 || Input.Key == Keys.Q)
                 {
-                    appliedOffset.X -= 10;
-                    appliedOffset.Y -= 10;
+                    appliedOffset.X -= movementSpeed;
+                    appliedOffset.Y -= movementSpeed;
                 }
                 else if (Input.Key == Keys.NumPad8 || Input.Key == Keys.Up || Input.Key == Keys.W)
                 {
-                    appliedOffset.Y -= 10;
+                    appliedOffset.Y -= movementSpeed;
                 }
                 else if (Input.Key == Keys.NumPad9 || Input.Key == Keys.E)
                 {
-                    appliedOffset.X += 10;
-                    appliedOffset.Y -= 10;
+                    appliedOffset.X += movementSpeed;
+                    appliedOffset.Y -= movementSpeed;
                 }
             }
             #endregion
@@ -88,22 +90,22 @@ namespace Game.Engine
 
             if (appliedOffset.X > 0 && (Core.Player.X - Core.Display.BackgroundOffset.X) > Core.Display.VisibleSize.Width - boxSize)
             {
-                Core.Display.BackgroundOffset.X += 10;
+                Core.Display.BackgroundOffset.X += Math.Abs(appliedOffset.X);
                 Core.Display.DrawingSurface.Invalidate();
             }
             if (appliedOffset.Y > 0 && (Core.Player.Y - Core.Display.BackgroundOffset.Y) > Core.Display.VisibleSize.Height - boxSize)
             {
-                Core.Display.BackgroundOffset.Y += 10;
+                Core.Display.BackgroundOffset.Y += Math.Abs(appliedOffset.Y);
                 Core.Display.DrawingSurface.Invalidate();
             }
             if (appliedOffset.X < 0 && (Core.Player.X - Core.Display.BackgroundOffset.X) < boxSize)
             {
-                Core.Display.BackgroundOffset.X -= 10;
+                Core.Display.BackgroundOffset.X -= Math.Abs(appliedOffset.X);
                 Core.Display.DrawingSurface.Invalidate();
             }
             if (appliedOffset.Y < 0 && (Core.Player.Y - Core.Display.BackgroundOffset.Y) < boxSize)
             {
-                Core.Display.BackgroundOffset.Y -= 10;
+                Core.Display.BackgroundOffset.Y -= Math.Abs(appliedOffset.Y);
                 Core.Display.DrawingSurface.Invalidate();
             }
         }
