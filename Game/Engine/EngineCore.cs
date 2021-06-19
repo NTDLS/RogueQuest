@@ -44,6 +44,11 @@ namespace Game.Engine
 
         public override void HandleSingleKeyPress(Keys key)
         {
+            if (Player == null || Player.Visible == false)
+            {
+                return;
+            }
+
             var input = new Types.TickInput()
             {
                 InputType = Types.TickInputType.Keyboard,

@@ -114,6 +114,11 @@ namespace RougueQuest
                 MapPersistence.Load(_core, _mapPathPassedToGame);
 
                 _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
+
+                if (_core.Player == null)
+                {
+                    MessageBox.Show("This map has no player.");
+                }
             }
         }
 
@@ -155,6 +160,7 @@ namespace RougueQuest
 
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
         {
+            splitContainerHoriz.Focus();
             if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Down);
             if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Down);
             if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Down);

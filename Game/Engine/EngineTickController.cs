@@ -119,7 +119,7 @@ namespace Game.Engine
 
         void GameLogic()
         {
-            var withinVisibleRange = Core.Actors.Intersections(Core.Player, 50)
+            var withinVisibleRange = Core.Actors.Intersections(Core.Player, 150)
                 .Where(o => o.Meta.BasicType == BasicTileType.ActorHostileBeing);
 
             var interactions = new List<Interactions>();
@@ -136,8 +136,8 @@ namespace Game.Engine
                 if (distance > (playerSize + objSize) + 10)
                 {
                     obj.Velocity.Angle.Degrees = obj.AngleTo(Core.Player);
-                    obj.X += (obj.Velocity.Angle.X * obj.Velocity.ThrottlePercentage);
-                    obj.Y += (obj.Velocity.Angle.Y * obj.Velocity.ThrottlePercentage);
+                    obj.X += (obj.Velocity.Angle.X * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
+                    obj.Y += (obj.Velocity.Angle.Y * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
                 }
 
                 //these are the hostiles that are close enough for melee attacks.

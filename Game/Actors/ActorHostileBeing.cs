@@ -10,7 +10,7 @@ namespace Game.Actors
             : base(core)
         {
             RotationMode = RotationMode.None;
-            Velocity.MaxSpeed = 10;
+            Velocity.MaxSpeed = 8;
             Velocity.ThrottlePercentage = 100;
         }
     }
