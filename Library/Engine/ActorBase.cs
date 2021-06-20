@@ -48,11 +48,6 @@ namespace Library.Engine
             this.Invalidate();
         }
 
-        private void Angle_OnChange(Angle<double> sender)
-        {
-            this.Invalidate();
-        }
-
         /// <summary>
         /// Removes hitpoints and returns true if killed.
         /// </summary>
@@ -120,16 +115,13 @@ namespace Library.Engine
 
         public void Invalidate()
         {
-            int slop = 1;
+            int slop = 3; //This i just to take care of the debuging highlighting rectangles.
 
-            var x = X - Core.Display.BackgroundOffset.X;
-            var y = Y - Core.Display.BackgroundOffset.Y;
-
-            Rectangle rect = new Rectangle(
-                (int)(x - (Size.Width / 2.0)) - slop,
-                (int)(y - (Size.Height / 2.0)) - slop,
-                Size.Width + (slop * 2),
-                Size.Height + (slop * 2));
+            var rect = new Rectangle(
+                ScreenBounds.X - slop,
+                ScreenBounds.Y - slop,
+                ScreenBounds.Width + (slop * 2),
+                ScreenBounds.Height + (slop * 2));
 
             Core.Display.DrawingSurface.Invalidate(rect);
         }
@@ -148,24 +140,19 @@ namespace Library.Engine
 
             Bitmap bitmap = new Bitmap(rawImage);
 
-            var x = _location.X - Core.Display.BackgroundOffset.X;
-            var y = _location.Y - Core.Display.BackgroundOffset.Y;
-
             if (angle != 0 && RotationMode != RotationMode.None)
             {
                 if (RotationMode == RotationMode.Upsize) //Very expensize
                 {
                     var image = GraphicsUtility.RotateImageWithUpsize(bitmap, angle, Color.Transparent);
-                    Rectangle rect = new Rectangle((int)(x - (image.Width / 2.0)), (int)(y - (image.Height / 2.0)), image.Width, image.Height);
-                    dc.DrawImage(image, rect);
+                    dc.DrawImage(image, ScreenBounds);
                     _size.Height = image.Height;
                     _size.Width = image.Width;
                 }
                 else if (RotationMode == RotationMode.Clip) //Much less expensive.
                 {
                     var image = GraphicsUtility.RotateImageWithClipping(bitmap, angle, Color.Transparent);
-                    Rectangle rect = new Rectangle((int)(x - (image.Width / 2.0)), (int)(y - (image.Height / 2.0)), image.Width, image.Height);
-                    dc.DrawImage(image, rect);
+                    dc.DrawImage(image, ScreenBounds);
 
                     _size.Height = image.Height;
                     _size.Width = image.Width;
@@ -173,22 +160,36 @@ namespace Library.Engine
             }
             else //Almost free.
             {
-                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
-                dc.DrawImage(bitmap, rect);
+                dc.DrawImage(bitmap, ScreenBounds);
+            }
+
+
+            if (this.GetType().ToString().Contains("Hostile"))
+            {
+                Pen pen = new Pen(Color.Red, 1);
+                dc.DrawRectangle(pen, this.ScreenBounds);
+            }
+            if (this.GetType().ToString().Contains("Friendly"))
+            {
+                Pen pen = new Pen(Color.Yellow, 1);
+                dc.DrawRectangle(pen, this.ScreenBounds);
+            }
+            if (this.GetType().ToString().Contains("Player"))
+            {
+                Pen pen = new Pen(Color.Red, 4);
+                dc.DrawRectangle(pen, ScreenBounds);
             }
 
             if (HoverHighlight)
             {
-                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
-                Pen pen = new Pen(Color.Yellow, 2);
-                dc.DrawRectangle(pen, rect);
+                Pen pen = new Pen(Color.Yellow, 1);
+                dc.DrawRectangle(pen, ScreenBounds);
             }
 
             if (SelectedHighlight)
             {
-                Rectangle rect = new Rectangle((int)(x - (bitmap.Width / 2.0)), (int)(y - (bitmap.Height / 2.0)), bitmap.Width, bitmap.Height);
                 Pen pen = new Pen(Color.Red, 2);
-                dc.DrawRectangle(pen, rect);
+                dc.DrawRectangle(pen, ScreenBounds);
             }
         }
 
@@ -309,7 +310,18 @@ namespace Library.Engine
         }
 
         /// <summary>
-        /// The x,y of the image.
+        /// The location of the center of the actor on the screen with BackgroundOffset taken into account.
+        /// </summary>
+        public Point<double> ScreenLocation
+        {
+            get
+            {
+                return new Point<double>(ScreenX, ScreenY);
+            }
+        }
+
+        /// <summary>
+        /// The absolute x,y of the upper left corner of the actor.
         /// </summary>
         public Point<double> BoundLocation
         {
@@ -321,6 +333,9 @@ namespace Library.Engine
             }
         }
 
+        /// <summary>
+        /// The absolute X location of the center of the actor.
+        /// </summary>
         public double X
         {
             get
@@ -336,6 +351,9 @@ namespace Library.Engine
             }
         }
 
+        /// <summary>
+        /// The absolute Y location of the center of the actor.
+        /// </summary>
         public double Y
         {
             get
@@ -351,11 +369,25 @@ namespace Library.Engine
             }
         }
 
-        public Point<double> LocationCenter
+        /// <summary>
+        /// /// The X location of the center of the actor on the screen with BackgroundOffset taken into account.
+        /// </summary>
+        public double ScreenX
         {
             get
             {
-                return new Point<double>(_location.X - (Size.Width / 2.0), _location.Y - (Size.Height / 2.0));
+                return _location.X - Core.Display.BackgroundOffset.X;
+            }
+        }
+
+        /// <summary>
+        /// /// The Y location of the center of the actor on the screen with BackgroundOffset taken into account.
+        /// </summary>
+        public double ScreenY
+        {
+            get
+            {
+                return _location.Y - Core.Display.BackgroundOffset.Y;
             }
         }
 
@@ -377,7 +409,7 @@ namespace Library.Engine
         }
 
         /// <summary>
-        /// Returns the right angle rectangle that the image occupies.
+        /// The absolute location of the actors bounds.
         /// </summary>
         public RectangleF Bounds
         {
@@ -391,8 +423,46 @@ namespace Library.Engine
             }
         }
 
+        /// <summary>
+        /// The absolute location of the actors bounds (as an interger).
+        /// </summary>
+        public Rectangle BoundsI
+        {
+            get
+            {
+                return new Rectangle(
+                    (int)(_location.X) - (int)(Size.Width / 2.0),
+                    (int)(_location.Y - (int)(Size.Height / 2.0)),
+                    (int)(Size.Width),
+                    (int)(Size.Height));
+            }
+        }
+
+
+        /// <summary>
+        /// The bounds of the actor on the screen with BackgroundOffset taken into account.
+        /// </summary>
+        public Rectangle ScreenBounds
+        {
+            get
+            {
+                return new Rectangle(
+                    (int)(ScreenX) - (int)(Size.Width / 2.0),
+                    (int)(ScreenY) - (int)(Size.Height / 2.0),
+                    (int)(Size.Width),
+                    (int)(Size.Height));
+            }
+        }
+
         #endregion
 
+
+        /// <summary>
+        /// Traverses up the directories looking for metadata files that describe the assets and allowing for overriding of metadat values.
+        /// </summary>
+        /// <param name="tilePath"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         private TileMetadata FindFirstMetafile(string tilePath, string fileName)
         {
             string globalMetaFile = Path.Combine(tilePath, fileName);
@@ -414,6 +484,9 @@ namespace Library.Engine
             return null;
         }
 
+        /// <summary>
+        /// Reads metadata from the asset directories and refreshes the values stored with the actor.
+        /// </summary>
         public void RefreshMetadata()
         {
             string tilePath = Path.GetDirectoryName(Constants.GetAssetPath($"{TilePath}"));

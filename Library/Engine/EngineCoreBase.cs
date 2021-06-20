@@ -25,6 +25,8 @@ namespace Library.Engine
         public List<MapBase> Maps { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
 
+        public List<Rectangle> debugRects = new List<Rectangle>();
+
         #endregion
 
         private Dictionary<string, Bitmap> _bitmapCache = new Dictionary<string, Bitmap>();
@@ -142,6 +144,12 @@ namespace Library.Engine
                         _ScreenDC.Clear(BackgroundColor);
 
                         Actors.Render(_ScreenDC);
+
+                        foreach (var rc in debugRects)
+                        {
+                            Pen pen = new Pen(Color.Orange, 2);
+                            _ScreenDC.DrawRectangle(pen, rc);
+                        }
                     }
                 }
             }

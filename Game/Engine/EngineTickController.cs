@@ -1,4 +1,5 @@
 ﻿using Game.Actors;
+using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
@@ -30,6 +31,8 @@ namespace Game.Engine
 
         public Point<double> Advance(TickInput Input)
         {
+            Core.debugRects.Clear();
+
             Point<double> appliedOffset = new Point<double>();
 
             int movementSpeed = 10;
@@ -94,84 +97,124 @@ namespace Game.Engine
             Core.Player.X += appliedOffset.X;
             Core.Player.Y += appliedOffset.Y;
 
-            var intersection = Core.Actors.Intersections(Core.Player).OrderBy(o => o.DrawOrder).LastOrDefault();
-            if (intersection == null || intersection.Meta.CanWalkOn == false)
+            var intersections = Core.Actors.Intersections(Core.Player)
+                .Where(o => o.Meta.BasicType != BasicTileType.ActorTerrain)
+                .Where(o => o.Meta.CanWalkOn == false).ToList();
+
+            //Only get the top terrain block, we dont want to dig to the ocean.
+            var topTerrainBlock = Core.Actors.Intersections(Core.Player)
+                .Where(o => o.Meta.BasicType == BasicTileType.ActorTerrain)
+                .OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            //Only act on the top terrain block if it turns out to be one we cant walk on.
+            if (topTerrainBlock.Meta.CanWalkOn == false)
             {
-                //Back the player off of the collision and zero out the applied offset.
+                intersections.Add(topTerrainBlock);
+            }
+
+            //Do basic collision detection and back off the player movement
+            //from any that might have caused an overlap with tiles that can not be walked on.
+            //This includes both terrain and beings.
+            foreach (var intersection in intersections)
+            {
+                //Figure out how much overlap we have.
+                var delta = Core.Player.ScreenBounds.GetIntersection(intersection.ScreenBounds);
+
+                //Back the player off of the overalpping collision.
                 Core.Player.X -= appliedOffset.X;
                 Core.Player.Y -= appliedOffset.Y;
-                appliedOffset = new Point<double>(0, 0);
+
+                //Butt the rectangles up against each other and adjust the applied offset to what was actually done.
+                if (delta.X > 0 && delta.Y > 0)
+                {
+                    Core.debugRects.Add(new Rectangle((int)delta.X, (int)delta.Y, (int)delta.Width, (int)delta.Height));
+
+                    if (appliedOffset.X > 0)
+                    {
+                        appliedOffset.X -= delta.Width;
+                    }
+                    if (appliedOffset.X < 0)
+                    {
+                        appliedOffset.X += delta.Width;
+                    }
+                    if (appliedOffset.Y > 0)
+                    {
+                        appliedOffset.Y -= delta.Height;
+                    }
+                    if (appliedOffset.Y < 0)
+                    {
+                        appliedOffset.Y += delta.Height;
+                    }
+                }
+
+                Core.Player.X += appliedOffset.X;
+                Core.Player.Y += appliedOffset.Y;
             }
 
             ScrollBackground(appliedOffset);
             TimePassed++;
 
-            GameLogic();
+            GameLogic(intersections);
 
             return appliedOffset;
         }
 
-        public class Interactions
+        /// <summary>
+        /// Intersections contains all objects that the player collided with during their turn. If this
+        /// contains actors that can be damaged, then these  would be the melee attack target for the player.
+        /// </summary>
+        /// <param name="intersections"></param>
+        void GameLogic(List<ActorBase> intersections)
         {
-            public ActorHostileBeing Actor { get; set; }
-            public double Distance { get; set; }
-        }
+            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 150)
+                .Where(o => o.Meta.CanTakeDamage == true);
 
-        void GameLogic()
-        {
-            var withinVisibleRange = Core.Actors.Intersections(Core.Player, 150)
-                .Where(o => o.Meta.BasicType == BasicTileType.ActorHostileBeing);
+            var hostileInteractions = new List<ActorHostileBeing>();
 
-            var interactions = new List<Interactions>();
-
-            foreach (var obj in withinVisibleRange)
+            //Find out which of the hostile beings in visible range are touching the
+            //  player bounds (not intersecting, because these should be none, but just touching.
+            foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.BasicType == BasicTileType.ActorHostileBeing))
             {
-                double playerSize = ((Core.Player.Size.Height / 2) + (Core.Player.Size.Width / 2)) / 2;
-                double objSize = ((obj.Size.Height / 2) + (obj.Size.Width / 2)) / 2;
-                double interactionDistance = (playerSize + objSize + 20);
+                var largerBounds = new Rectangle(obj.ScreenBounds.X - 1, obj.ScreenBounds.Y - 1, obj.ScreenBounds.Width + 2, obj.ScreenBounds.Height + 2);
+                if (Core.Player.ScreenBounds.IntersectsWith(largerBounds))
+                {
+                    hostileInteractions.Add(obj as ActorHostileBeing);
+                }
+            }
 
+            //Hostile actors will follow player.
+            foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.BasicType == BasicTileType.ActorHostileBeing))
+            {
                 double distance = Core.Player.DistanceTo(obj);
 
-                //Follow the player, but don't pile on top of them.
-                if (distance > (playerSize + objSize) + 10)
+                if (distance > 200)
                 {
-                    obj.Velocity.Angle.Degrees = obj.AngleTo(Core.Player);
-                    obj.X += (obj.Velocity.Angle.X * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
-                    obj.Y += (obj.Velocity.Angle.Y * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
-                }
-
-                //these are the hostiles that are close enough for melee attacks.
-                if (distance <= interactionDistance)
-                {
-                    interactions.Add(new Interactions()
-                    {
-                        Actor = obj as ActorHostileBeing,
-                        Distance = distance
-                    });
+                    //obj.Velocity.Angle.Degrees = obj.AngleTo(Core.Player);
+                    //obj.X += (obj.Velocity.Angle.X * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
+                    //obj.Y += (obj.Velocity.Angle.Y * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
                 }
             }
 
-            if (interactions.Count == 0)
+            //Player attack other actor.
+            var actorToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).FirstOrDefault();
+            if (actorToAttack != null)
             {
-                return;
+                int playerHitsFor = MathUtility.RandomNumber(1, 5);
+
+                if (MathUtility.ChanceIn(4))
+                {
+                    //actorToAttack.Hit(playerHitsFor);
+                    OnLog?.Invoke(Core, $"Player attacks for {playerHitsFor} and HITS!\r\n", Color.DarkGreen);
+                }
+                else
+                {
+                    OnLog?.Invoke(Core, $"Player attacks for {playerHitsFor} and MISSES!\r\n", Color.DarkRed);
+                }
             }
 
-            var actorToAttack = interactions.OrderByDescending(o => o.Distance).First();
 
-            int playerHitsFor = MathUtility.RandomNumber(1, 5);
-
-            //Player hit hostile
-            if (MathUtility.ChanceIn(4))
-            {
-                actorToAttack.Actor.Hit(playerHitsFor);
-                OnLog?.Invoke(Core, $"Player attacks for {playerHitsFor} and HITS!\r\n", Color.DarkGreen);
-            }
-            else
-            {
-                OnLog?.Invoke(Core, $"Player attacks for {playerHitsFor} and MISSES!\r\n", Color.DarkRed);
-            }
-
-            foreach (var actor in interactions.Where(o => o.Actor.Visible))
+            //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
+            foreach (var actor in hostileInteractions.Where(o => o.Visible))
             {
                 int actorHitsFor = MathUtility.RandomNumber(1, 5);
 
@@ -179,7 +222,7 @@ namespace Game.Engine
                 if (MathUtility.ChanceIn(4))
                 {
                     OnLog?.Invoke(Core, $"Monster attacks for {actorHitsFor} and HITS!\r\n", Color.DarkRed);
-                    Core.Player.Hit(actorHitsFor);
+                    //Core.Player.Hit(actorHitsFor);
                 }
                 else
                 {
