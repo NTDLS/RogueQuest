@@ -27,7 +27,21 @@ namespace Library.Engine
 
             lock (Core.CollectionSemaphore)
             {
-                foreach (var obj in Tiles.Where(o => o.Visible == true).OrderBy(o => o.DrawOrder))
+                List<ActorBase> renderTiles = new List<ActorBase>();
+
+                renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
+                    .Where(o => o.Meta.BasicType != Types.BasicTileType.ActorFriendyBeing
+                        && o.Meta.BasicType != Types.BasicTileType.ActorHostileBeing
+                        && o.Meta.BasicType != Types.BasicTileType.ActorPlayer)
+                    .OrderBy(o => o.DrawOrder).ToList());
+
+                renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
+                    .Where(o => o.Meta.BasicType == Types.BasicTileType.ActorFriendyBeing
+                        || o.Meta.BasicType == Types.BasicTileType.ActorHostileBeing
+                        || o.Meta.BasicType == Types.BasicTileType.ActorPlayer)
+                    .OrderBy(o => o.DrawOrder).ToList());
+
+                foreach (var obj in renderTiles)
                 {
                     RectangleF window = new RectangleF(
                         (int)Core.Display.BackgroundOffset.X,
@@ -35,7 +49,6 @@ namespace Library.Engine
                         Core.Display.DrawingSurface.Width,
                         Core.Display.DrawingSurface.Height);
 
-                    //if (Core.Display.VisibleBounds.IntersectsWith(obj.Bounds))
                     if (window.IntersectsWith(obj.Bounds))
                     {
                         Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);

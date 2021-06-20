@@ -376,7 +376,6 @@ namespace RougueQuest
             this.splitContainerHoriz.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

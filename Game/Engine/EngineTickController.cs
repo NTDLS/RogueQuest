@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Game.Engine.Types;
 
@@ -144,7 +142,7 @@ namespace Game.Engine
 
                 if (MathUtility.ChanceIn(4))
                 {
-                    //actorToAttack.Hit(playerHitsFor);
+                    actorToAttack.Hit(playerHitsFor);
                     OnLog?.Invoke(Core, $"\r\nPlayer attacks for {playerHitsFor} and HITS!", Color.DarkGreen);
                 }
                 else
@@ -162,7 +160,7 @@ namespace Game.Engine
                 if (MathUtility.ChanceIn(4))
                 {
                     OnLog?.Invoke(Core, $"\r\nMonster attacks for {actorHitsFor} and HITS!", Color.DarkRed);
-                    //Core.Player.Hit(actorHitsFor);
+                    Core.Player.Hit(actorHitsFor);
                 }
                 else
                 {

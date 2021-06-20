@@ -66,12 +66,6 @@ namespace RougueQuest
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.UserPaint, true);
 
-            _core = new EngineCore(this.drawingsurface, new Size(this.drawingsurface.Width, this.drawingsurface.Height));
-            _core.OnStop += _core_OnStop;
-            _core.OnStart += _core_OnStart;
-            _core.AfterTick += _core_AfterTick;
-            _core.Tick.OnLog += _core_OnLog;
-
             //Yea, this is stupid but the richtextbox steals the keyboard focus from the form. :(
             System.Reflection.PropertyInfo controlProperty = typeof(System.Windows.Forms.Control)
                     .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -88,6 +82,12 @@ namespace RougueQuest
 
             drawingsurface.Select();
             drawingsurface.Focus();
+
+            _core = new EngineCore(this.drawingsurface, new Size(this.drawingsurface.Width, this.drawingsurface.Height));
+            _core.OnStop += _core_OnStop;
+            _core.OnStart += _core_OnStart;
+            _core.AfterTick += _core_AfterTick;
+            _core.Tick.OnLog += _core_OnLog;
         }
 
         private void RichTextBoxLog_Click(object sender, EventArgs e)
