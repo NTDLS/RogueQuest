@@ -1,9 +1,8 @@
-﻿using Game.Extensions;
-using Game.Actors;
+﻿using Game.Actors;
 using Game.Engine;
+using Game.Extensions;
 using Game.Maps;
 using Library.Engine;
-using Library.Engine.Types;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -45,6 +44,8 @@ namespace RougueQuest
             InitializeComponent();
         }
 
+        private Control drawingsurface = new Control();
+
         private void FormMain_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
@@ -65,31 +66,38 @@ namespace RougueQuest
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.UserPaint, true);
 
-            _core = new EngineCore(this.pictureBox, new Size(this.pictureBox.Width, this.pictureBox.Height));
+            _core = new EngineCore(this.drawingsurface, new Size(this.drawingsurface.Width, this.drawingsurface.Height));
             _core.OnStop += _core_OnStop;
             _core.OnStart += _core_OnStart;
             _core.AfterTick += _core_AfterTick;
             _core.Tick.OnLog += _core_OnLog;
 
             //Yea, this is stupid but the richtextbox steals the keyboard focus from the form. :(
-            //splitContainerHoriz.KeyUp += FormMain_KeyUp;
-            splitContainerHoriz.KeyDown += FormMain_KeyDown;
-            richTextBoxLog.Click += RichTextBoxLog_Click;
-            richTextBoxLog.KeyDown += FormMain_KeyDown;
-            pictureBox.Paint += PictureBox_Paint;
-            pictureBox.SizeChanged += PictureBox_SizeChanged;
+            System.Reflection.PropertyInfo controlProperty = typeof(System.Windows.Forms.Control)
+                    .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            controlProperty.SetValue(drawingsurface, true, null);
 
-            pictureBox.Focus();
+            splitContainerHoriz.Panel1.Controls.Add(drawingsurface);
+            drawingsurface.Dock = DockStyle.Fill;
+
+            drawingsurface.KeyUp += drawingsurface_KeyUp;
+            richTextBoxLog.Click += RichTextBoxLog_Click;
+            drawingsurface.KeyDown += drawingsurface_KeyDown;
+            drawingsurface.Paint += drawingsurface_Paint;
+            drawingsurface.SizeChanged += drawingsurface_SizeChanged;
+
+            drawingsurface.Select();
+            drawingsurface.Focus();
         }
 
         private void RichTextBoxLog_Click(object sender, EventArgs e)
         {
-            pictureBox.Focus();
+            drawingsurface.Focus();
         }
 
-        private void PictureBox_SizeChanged(object sender, EventArgs e)
+        private void drawingsurface_SizeChanged(object sender, EventArgs e)
         {
-            _core.ResizeDrawingSurface(new Size(pictureBox.Width, pictureBox.Height));
+            _core.ResizeDrawingSurface(new Size(drawingsurface.Width, drawingsurface.Height));
         }
 
         private void _core_OnLog(EngineCore core, string text, Color color)
@@ -104,8 +112,8 @@ namespace RougueQuest
         {
             var time = TimeSpan.FromMinutes(core.Tick.TimePassed);
 
-            toolStripStatusLabelDebug.Text = $"{_core.Player.X},{_core.Player.Y} {_core.Player.Meta.HitPoints}hp"
-                + " " + time.ToString(@"dd\:hh\:mm\:ss");
+            //toolStripStatusLabelDebug.Text = $"{_core.Player.X},{_core.Player.Y} {_core.Player.Meta.HitPoints}hp"
+                //+ " " + time.ToString(@"dd\:hh\:mm\:ss");
         }
 
         private void _core_OnStart(EngineCoreBase sender)
@@ -143,8 +151,9 @@ namespace RougueQuest
             _core.Start();
         }
 
-        private void FormMain_KeyUp(object sender, KeyEventArgs e)
+        private void drawingsurface_KeyUp(object sender, KeyEventArgs e)
         {
+            /*
             if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Up);
             if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Up);
             if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Up);
@@ -158,10 +167,12 @@ namespace RougueQuest
             if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(PlayerKey.Up, KeyPressState.Up);
             if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(PlayerKey.Down, KeyPressState.Up);
             if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(PlayerKey.Enter, KeyPressState.Up);
+            */
         }
 
-        private void FormMain_KeyDown(object sender, KeyEventArgs e)
+        private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
+            /*
             if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Down);
             if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Down);
             if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Down);
@@ -175,18 +186,19 @@ namespace RougueQuest
             if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(PlayerKey.Up, KeyPressState.Down);
             if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(PlayerKey.Down, KeyPressState.Down);
             if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(PlayerKey.Enter, KeyPressState.Down);
+            */
 
             _core.Input.HandleSingleKeyPress(e.KeyCode);
         }
 
-        private void PictureBox_Paint(object sender, PaintEventArgs e)
+        private void drawingsurface_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(_core.Render(), 0, 0);
         }
 
-        private void pictureBox_Click(object sender, EventArgs e)
+        private void drawingsurface_Click(object sender, EventArgs e)
         {
-            pictureBox.Focus();
+            drawingsurface.Focus();
         }
     }
 }
