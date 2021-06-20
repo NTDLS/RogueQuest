@@ -6,6 +6,8 @@ namespace Game.Actors
 {
     public class ActorHostileBeing : ActorBase
     {
+        public int MaxFollowDistance { get; set; } = 100;
+
         public ActorHostileBeing(EngineCore core)
             : base(core)
         {

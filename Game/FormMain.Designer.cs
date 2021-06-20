@@ -63,7 +63,7 @@ namespace RougueQuest
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainerHoriz = new System.Windows.Forms.SplitContainer();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.pictureBox = new System.Windows.Forms.Label();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -71,7 +71,6 @@ namespace RougueQuest
             this.splitContainerHoriz.Panel1.SuspendLayout();
             this.splitContainerHoriz.Panel2.SuspendLayout();
             this.splitContainerHoriz.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -343,7 +342,7 @@ namespace RougueQuest
             // 
             this.splitContainerHoriz.Panel2.Controls.Add(this.richTextBoxLog);
             this.splitContainerHoriz.Size = new System.Drawing.Size(784, 515);
-            this.splitContainerHoriz.SplitterDistance = 461;
+            this.splitContainerHoriz.SplitterDistance = 464;
             this.splitContainerHoriz.SplitterWidth = 3;
             this.splitContainerHoriz.TabIndex = 3;
             // 
@@ -352,9 +351,10 @@ namespace RougueQuest
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(784, 461);
-            this.pictureBox.TabIndex = 4;
-            this.pictureBox.TabStop = false;
+            this.pictureBox.Size = new System.Drawing.Size(784, 464);
+            this.pictureBox.TabIndex = 0;
+            this.pictureBox.Text = "Yea, so this is a lable.";
+            this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
             // 
             // richTextBoxLog
             // 
@@ -362,7 +362,7 @@ namespace RougueQuest
             this.richTextBoxLog.Location = new System.Drawing.Point(0, 0);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.ReadOnly = true;
-            this.richTextBoxLog.Size = new System.Drawing.Size(784, 51);
+            this.richTextBoxLog.Size = new System.Drawing.Size(784, 48);
             this.richTextBoxLog.TabIndex = 0;
             this.richTextBoxLog.Text = "";
             // 
@@ -393,7 +393,6 @@ namespace RougueQuest
             this.splitContainerHoriz.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHoriz)).EndInit();
             this.splitContainerHoriz.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -405,7 +404,6 @@ namespace RougueQuest
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelDebug;
         private System.Windows.Forms.SplitContainer splitContainerHoriz;
-        private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
@@ -436,6 +434,7 @@ namespace RougueQuest
         private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Label pictureBox;
     }
 }
 

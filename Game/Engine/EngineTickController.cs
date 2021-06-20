@@ -33,10 +33,6 @@ namespace Game.Engine
         {
             Core.debugRects.Clear();
 
-            Point<double> appliedOffset = new Point<double>();
-
-            int movementSpeed = 10;
-
             bool isValidInput = false;
 
             #region Keyboard handler.
@@ -44,46 +40,42 @@ namespace Game.Engine
             {
                 if (Input.Key == Keys.NumPad1 || Input.Key == Keys.Z)
                 {
-                    appliedOffset.X -= movementSpeed;
-                    appliedOffset.Y += movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 225;
                     isValidInput = true;
                 }
                 else if (Input.Key == Keys.NumPad2 || Input.Key == Keys.Down || Input.Key == Keys.S)
                 {
-                    appliedOffset.Y += movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 180;
                     isValidInput = true;
                 }
                 else if (Input.Key == Keys.NumPad3 || Input.Key == Keys.X)
                 {
-                    appliedOffset.X += movementSpeed;
-                    appliedOffset.Y += movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 135;
                     isValidInput = true;
                 }
                 else if (Input.Key == Keys.NumPad4 || Input.Key == Keys.Left || Input.Key == Keys.A)
                 {
-                    appliedOffset.X -= movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 270;
                     isValidInput = true;
                 }
                 else if (Input.Key == Keys.NumPad6 || Input.Key == Keys.Right || Input.Key == Keys.D)
                 {
-                    appliedOffset.X += movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 90;
                     isValidInput = true;
                 }
                 else if (Input.Key == Keys.NumPad7 || Input.Key == Keys.Q)
                 {
-                    appliedOffset.X -= movementSpeed;
-                    appliedOffset.Y -= movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 315;
                     isValidInput = true;
                 }
                 else if (Input.Key == Keys.NumPad8 || Input.Key == Keys.Up || Input.Key == Keys.W)
                 {
-                    appliedOffset.Y -= movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 0;
                     isValidInput = true;
                 }
                 else if (Input.Key == Keys.NumPad9 || Input.Key == Keys.E)
                 {
-                    appliedOffset.X += movementSpeed;
-                    appliedOffset.Y -= movementSpeed;
+                    Core.Player.Velocity.Angle.Degrees = 45;
                     isValidInput = true;
                 }
             }
@@ -94,63 +86,10 @@ namespace Game.Engine
                 return new Point<double>(0, 0);
             }
 
-            Core.Player.X += appliedOffset.X;
-            Core.Player.Y += appliedOffset.Y;
+            Point<double> appliedOffset = new Point<double>();
 
-            var intersections = Core.Actors.Intersections(Core.Player)
-                .Where(o => o.Meta.BasicType != BasicTileType.ActorTerrain)
-                .Where(o => o.Meta.CanWalkOn == false).ToList();
-
-            //Only get the top terrain block, we dont want to dig to the ocean.
-            var topTerrainBlock = Core.Actors.Intersections(Core.Player)
-                .Where(o => o.Meta.BasicType == BasicTileType.ActorTerrain)
-                .OrderBy(o => o.DrawOrder).LastOrDefault();
-
-            //Only act on the top terrain block if it turns out to be one we cant walk on.
-            if (topTerrainBlock.Meta.CanWalkOn == false)
-            {
-                intersections.Add(topTerrainBlock);
-            }
-
-            //Do basic collision detection and back off the player movement
-            //from any that might have caused an overlap with tiles that can not be walked on.
-            //This includes both terrain and beings.
-            foreach (var intersection in intersections)
-            {
-                //Figure out how much overlap we have.
-                var delta = Core.Player.ScreenBounds.GetIntersection(intersection.ScreenBounds);
-
-                //Back the player off of the overalpping collision.
-                Core.Player.X -= appliedOffset.X;
-                Core.Player.Y -= appliedOffset.Y;
-
-                //Butt the rectangles up against each other and adjust the applied offset to what was actually done.
-                if (delta.X > 0 && delta.Y > 0)
-                {
-                    Core.debugRects.Add(new Rectangle((int)delta.X, (int)delta.Y, (int)delta.Width, (int)delta.Height));
-
-                    if (appliedOffset.X > 0)
-                    {
-                        appliedOffset.X -= delta.Width;
-                    }
-                    if (appliedOffset.X < 0)
-                    {
-                        appliedOffset.X += delta.Width;
-                    }
-                    if (appliedOffset.Y > 0)
-                    {
-                        appliedOffset.Y -= delta.Height;
-                    }
-                    if (appliedOffset.Y < 0)
-                    {
-                        appliedOffset.Y += delta.Height;
-                    }
-                }
-
-                Core.Player.X += appliedOffset.X;
-                Core.Player.Y += appliedOffset.Y;
-            }
-
+            var intersections = MoveActor(Core.Player, out appliedOffset);
+            
             ScrollBackground(appliedOffset);
             TimePassed++;
 
@@ -185,13 +124,15 @@ namespace Game.Engine
             //Hostile actors will follow player.
             foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.BasicType == BasicTileType.ActorHostileBeing))
             {
+                var actor = obj as ActorHostileBeing;
+
                 double distance = Core.Player.DistanceTo(obj);
 
-                if (distance > 200)
+                if (distance < actor.MaxFollowDistance)
                 {
-                    //obj.Velocity.Angle.Degrees = obj.AngleTo(Core.Player);
-                    //obj.X += (obj.Velocity.Angle.X * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
-                    //obj.Y += (obj.Velocity.Angle.Y * obj.Velocity.MaxSpeed * obj.Velocity.ThrottlePercentage);
+                    Point<double> appliedOtherOffset = new Point<double>();
+                    obj.Velocity.Angle.Degrees = actor.AngleTo(Core.Player);
+                    MoveActor(actor, out appliedOtherOffset);
                 }
             }
 
@@ -204,14 +145,13 @@ namespace Game.Engine
                 if (MathUtility.ChanceIn(4))
                 {
                     //actorToAttack.Hit(playerHitsFor);
-                    OnLog?.Invoke(Core, $"Player attacks for {playerHitsFor} and HITS!\r\n", Color.DarkGreen);
+                    OnLog?.Invoke(Core, $"\r\nPlayer attacks for {playerHitsFor} and HITS!", Color.DarkGreen);
                 }
                 else
                 {
-                    OnLog?.Invoke(Core, $"Player attacks for {playerHitsFor} and MISSES!\r\n", Color.DarkRed);
+                    OnLog?.Invoke(Core, $"\r\nPlayer attacks for {playerHitsFor} and MISSES!", Color.DarkRed);
                 }
             }
-
 
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
             foreach (var actor in hostileInteractions.Where(o => o.Visible))
@@ -221,14 +161,124 @@ namespace Game.Engine
                 //Monster hit player.
                 if (MathUtility.ChanceIn(4))
                 {
-                    OnLog?.Invoke(Core, $"Monster attacks for {actorHitsFor} and HITS!\r\n", Color.DarkRed);
+                    OnLog?.Invoke(Core, $"\r\nMonster attacks for {actorHitsFor} and HITS!", Color.DarkRed);
                     //Core.Player.Hit(actorHitsFor);
                 }
                 else
                 {
-                    OnLog?.Invoke(Core, $"Monster attacks for {actorHitsFor} and Misses!\r\n", Color.DarkGreen);
+                    OnLog?.Invoke(Core, $"\r\nMonster attacks for {actorHitsFor} and Misses!", Color.DarkGreen);
                 }
             }
+        }
+        
+        /// <summary>
+        /// Moves an actor in the direction of their vector and returns a list of any
+        /// encountered colissions as well as passes back distanct the axtor was moved.
+        /// </summary>
+        public List<ActorBase> MoveActor(ActorBase actor, out Point<double> finalAppliedOffset)
+        {
+            Point<double> appliedOffset = new Point<double>(
+                (int)(actor.Velocity.Angle.X * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage),
+                (int)(actor.Velocity.Angle.Y * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage));
+
+            actor.X += appliedOffset.X;
+            actor.Y += appliedOffset.Y;
+
+            var intersections = Core.Actors.Intersections(actor)
+                .Where(o => o.Meta.BasicType != BasicTileType.ActorTerrain)
+                .Where(o => o.Meta.CanWalkOn == false).ToList();
+
+            //Only get the top terrain block, we dont want to dig to the ocean.
+            var topTerrainBlock = Core.Actors.Intersections(actor)
+                .Where(o => o.Meta.BasicType == BasicTileType.ActorTerrain)
+                .OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            //Only act on the top terrain block if it turns out to be one we cant walk on.
+            if (topTerrainBlock.Meta.CanWalkOn == false)
+            {
+                intersections.Add(topTerrainBlock);
+            }
+
+            //Do basic collision detection and back off the player movement
+            //from any that might have caused an overlap with tiles that can not be walked on.
+            //This includes both terrain and beings.
+            foreach (var intersection in intersections)
+            {
+                //We have to keep checking for collisions as we back the actor off
+                //  because the actor is moving. Some intersections may no longer be valid.
+                if (actor.Bounds.IntersectsWith(intersection.Bounds) == false)
+                {
+                    continue;
+                }
+
+                //Figure out how much overlap we have.
+                var delta = actor.ScreenBounds.GetIntersection(intersection.ScreenBounds);
+
+                //Back the player off of the overalpping collision.
+                actor.X -= appliedOffset.X;
+                actor.Y -= appliedOffset.Y;
+
+                //Butt the rectangles up against each other and adjust the applied offset to what was actually done.
+                if (delta.X > 0 && delta.Y > 0)
+                {
+                    Core.debugRects.Add(new Rectangle((int)delta.X, (int)delta.Y, (int)delta.Width, (int)delta.Height));
+
+                    if (appliedOffset.X > 0)
+                    {
+                        if (Math.Abs(delta.Width) > Math.Abs(appliedOffset.X))
+                        {
+                            appliedOffset.X = 0;
+                        }
+                        else
+                        {
+                            appliedOffset.X -= delta.Width;
+                        }
+                    }
+
+                    if (appliedOffset.X < 0)
+                    {
+                        if (Math.Abs(delta.Width) > Math.Abs(appliedOffset.X))
+                        {
+                            appliedOffset.X = 0;
+                        }
+                        else
+                        {
+                            appliedOffset.X += delta.Width;
+                        }
+                    }
+
+                    if (appliedOffset.Y > 0)
+                    {
+                        if (Math.Abs(delta.Height) > Math.Abs(appliedOffset.Y))
+                        {
+                            appliedOffset.Y = 0;
+                        }
+                        else
+                        {
+                            appliedOffset.Y -= delta.Height;
+                        }
+                    }
+
+                    if (appliedOffset.Y < 0)
+                    {
+                        if (Math.Abs(delta.Height) > Math.Abs(appliedOffset.Y))
+                        {
+                            appliedOffset.Y = 0;
+                        }
+                        else
+                        {
+                            appliedOffset.Y += delta.Height;
+                        }
+                    }
+                }
+
+                actor.X += appliedOffset.X;
+                actor.Y += appliedOffset.Y;
+            }
+
+            finalAppliedOffset = new Point<double>(appliedOffset);
+
+            return intersections;
         }
 
         /// <summary>

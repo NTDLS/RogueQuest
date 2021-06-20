@@ -1,10 +1,7 @@
 ﻿using Game.Engine;
 using Library.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Library.Engine.Types;
+
 
 namespace Game.Actors
 {
@@ -13,6 +10,9 @@ namespace Game.Actors
         public ActorFriendyBeing(EngineCore core)
             : base(core)
         {
+            RotationMode = RotationMode.None;
+            Velocity.MaxSpeed = 8;
+            Velocity.ThrottlePercentage = 100;
         }
     }
 }

@@ -72,29 +72,32 @@ namespace RougueQuest
             _core.Tick.OnLog += _core_OnLog;
 
             //Yea, this is stupid but the richtextbox steals the keyboard focus from the form. :(
-            splitContainerHoriz.Focus();
-            splitContainerHoriz.KeyUp += FormMain_KeyUp;
+            //splitContainerHoriz.KeyUp += FormMain_KeyUp;
             splitContainerHoriz.KeyDown += FormMain_KeyDown;
-            richTextBoxLog.KeyUp += FormMain_KeyUp;
+            richTextBoxLog.Click += RichTextBoxLog_Click;
             richTextBoxLog.KeyDown += FormMain_KeyDown;
-
             pictureBox.Paint += PictureBox_Paint;
             pictureBox.SizeChanged += PictureBox_SizeChanged;
+
+            pictureBox.Focus();
         }
-        private void SplitContainerHoriz_KeyPress(object sender, KeyPressEventArgs e)
+
+        private void RichTextBoxLog_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            pictureBox.Focus();
         }
 
         private void PictureBox_SizeChanged(object sender, EventArgs e)
         {
             _core.ResizeDrawingSurface(new Size(pictureBox.Width, pictureBox.Height));
-
         }
 
         private void _core_OnLog(EngineCore core, string text, Color color)
         {
             richTextBoxLog.AppendText(text, color);
+            richTextBoxLog.HideSelection = true;
+            richTextBoxLog.SelectionStart = richTextBoxLog.Text.Length;
+            richTextBoxLog.ScrollToCaret();
         }
 
         private void _core_AfterTick(EngineCore core, Types.TickInput input, Library.Types.Point<double> offsetApplied)
@@ -133,7 +136,6 @@ namespace RougueQuest
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             _core.Stop();
-
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
@@ -160,7 +162,6 @@ namespace RougueQuest
 
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
         {
-            splitContainerHoriz.Focus();
             if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Down);
             if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Down);
             if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Down);
@@ -181,6 +182,11 @@ namespace RougueQuest
         private void PictureBox_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(_core.Render(), 0, 0);
+        }
+
+        private void pictureBox_Click(object sender, EventArgs e)
+        {
+            pictureBox.Focus();
         }
     }
 }
