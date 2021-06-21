@@ -135,7 +135,7 @@ namespace MapEditor
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
-            MapPersistence.Load(_core, Constants.GetAssetPath(@"Maps\Test.rqm"));
+            MapPersistence.Load(_core, Constants.GetAssetPath(@"Maps\MapHome.rqm"));
         }
 
         #region Menu Clicks.
@@ -151,7 +151,7 @@ namespace MapEditor
             {
                 var gameApp = new System.Diagnostics.Process();
                 gameApp.StartInfo.FileName = @"..\..\..\..\Game\bin\Debug\net5.0-windows\Game.exe";
-                gameApp.StartInfo.Arguments = _currentMapFilename;
+                gameApp.StartInfo.Arguments = $"/map:{_currentMapFilename}";
                 gameApp.Start();
             }
         }
@@ -338,6 +338,8 @@ namespace MapEditor
                 e.Cancel = true;
                 return;
             }
+
+            _core.Stop();
         }
 
         #endregion
@@ -792,6 +794,19 @@ namespace MapEditor
                 if (insertedTile.Meta.BasicType != Library.Engine.Types.BasicTileType.ActorTerrain)
                 {
                     insertedTile.Meta.UID = Guid.NewGuid();
+                }
+
+                if (insertedTile.Meta.CanTakeDamage != null && ((bool)insertedTile.Meta.CanTakeDamage) == true)
+                {
+                    if (insertedTile.Meta.HitPoints == null)
+                    {
+                        insertedTile.Meta.HitPoints = 10;
+                    }
+
+                    if (insertedTile.Meta.Experience == null)
+                    {
+                        insertedTile.Meta.Experience = 10;
+                    }
                 }
 
                 insertedTile.RefreshMetadata();

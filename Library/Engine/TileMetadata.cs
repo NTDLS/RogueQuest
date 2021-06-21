@@ -15,6 +15,7 @@ namespace Library.Engine
         public string Tag { get; set; }
         public bool? CanWalkOn { get; set; }
         public bool? CanTakeDamage { get; set; }
+        public int? Experience { get; set; }
         public int? HitPoints { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public BasicTileType? BasicType { get; set; }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RougueQuest
+namespace Game
 {
     static class Program
     {
@@ -12,19 +12,34 @@ namespace RougueQuest
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string []arg)
+        static void Main(string[] args)
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            if (arg.Count() > 0)
-            {
-                Application.Run(new FormMain(arg[0]));
-            }
-            else
+            if (args.Count() == 0)
             {
                 Application.Run(new FormMain());
+                return;
+            }
+
+            string testFor = "";
+
+            foreach (var arg in args)
+            {
+                testFor = "/map:";
+                if (arg.ToLower().StartsWith(testFor))
+                {
+                    string value = arg.Substring(testFor.Length);
+                    Application.Run(new FormMain(mapPath: value));
+                }
+                testFor = "/game:";
+                if (arg.ToLower().StartsWith(testFor))
+                {
+                    string value = arg.Substring(testFor.Length);
+                    Application.Run(new FormMain(gamePath: value));
+                }
             }
         }
     }

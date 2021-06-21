@@ -15,6 +15,7 @@ namespace Library.Engine
     {
         #region Public properties.
 
+        public GameState State { get; set; }
         public bool IsRendering { get; private set; }
         public bool IsRunning { get; private set; }
         public EngineDisplay Display { get; set; }
@@ -90,6 +91,14 @@ namespace Library.Engine
             lock (this.CollectionSemaphore)
             {
                 Actors.QueueAllForDelete();
+            }
+        }
+
+        public void PurgeAllDeletedTiles()
+        {
+            lock (this.CollectionSemaphore)
+            {
+                Actors.Tiles.RemoveAll(o => o.ReadyForDeletion);
             }
         }
 

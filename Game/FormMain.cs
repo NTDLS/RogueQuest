@@ -8,17 +8,22 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace RougueQuest
+namespace Game
 {
     public partial class FormMain : Form
     {
         private EngineCore _core;
         private bool _fullScreen = false;
 
+        private bool _hasBeenModified = false;
+        private string _currentMapFilename = string.Empty;
+        private int _newFilenameIncrement = 1;
+
         /// <summary>
         /// Really just for debugging.
         /// </summary>
         public string _mapPathPassedToGame { get; set; }
+        public string _gamePathPassedToGame { get; set; }
 
         //This really shouldn't be necessary! :(
         protected override CreateParams CreateParams
@@ -33,10 +38,11 @@ namespace RougueQuest
             }
         }
 
-        public FormMain(string mapPath)
+        public FormMain(string mapPath = null, string gamePath = null)
         {
             InitializeComponent();
             _mapPathPassedToGame = mapPath;
+            _gamePathPassedToGame = gamePath;
         }
 
         public FormMain()
@@ -66,6 +72,10 @@ namespace RougueQuest
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.UserPaint, true);
 
+            newToolStripMenuItem.Click += NewToolStripMenuItem_Click;
+            saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
+            openToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
+
             //Yea, this is stupid but the richtextbox steals the keyboard focus from the form. :(
             System.Reflection.PropertyInfo controlProperty = typeof(System.Windows.Forms.Control)
                     .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -89,6 +99,103 @@ namespace RougueQuest
             _core.AfterTick += _core_AfterTick;
             _core.Tick.OnLog += _core_OnLog;
         }
+
+        #region Menu Clicks.
+
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CheckForNeededSave() == false)
+            {
+                return;
+            }
+
+            using (var dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "RogueQuest Games (*.rqg)|*.rqg|All files (*.*)|*.*";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _currentMapFilename = dialog.FileName;
+                    _core.LoadGame(_currentMapFilename);
+                    _hasBeenModified = false;
+                }
+            }
+        }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //If we already have an open file, then just save it.
+            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
+            {
+                _core.SaveGame(_currentMapFilename);
+                _hasBeenModified = false;
+            }
+            else //If we do not have a current open file, then we need to "Save As".
+            {
+                TrySave();
+            }
+        }
+
+        /// <summary>
+        /// Do not continue if this returns false.
+        /// </summary>
+        /// <returns></returns>
+        bool CheckForNeededSave()
+        {
+            if (_hasBeenModified)
+            {
+                var result = MessageBox.Show("The game has been played since it was last saved. Save it now?",
+                    "Save before continuing?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    return TrySave();
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        bool TrySave()
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.FileName = $"Game {_newFilenameIncrement++}";
+                dialog.Filter = "RogueQuest Games (*.rqg)|*.rqg|All files (*.*)|*.*";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _currentMapFilename = dialog.FileName;
+
+                    _core.SaveGame(_currentMapFilename);
+                    _hasBeenModified = false;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void NewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormNewCharacter())
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    _core.NewGame(
+                        form.CharacterName,
+                        form.Dexterity,
+                        form.Constitution,
+                        form.Intelligence,
+                        form.Strength);
+                }
+            }
+        }
+
+        #endregion
 
         private void RichTextBoxLog_Click(object sender, EventArgs e)
         {
@@ -120,6 +227,16 @@ namespace RougueQuest
         {
             sender.AddNewMap<MapHome>();
 
+            if (string.IsNullOrWhiteSpace(_gamePathPassedToGame) == false)
+            {
+                _core.LoadGame(_gamePathPassedToGame);
+
+                if (_core.Player == null)
+                {
+                    MessageBox.Show("This map has no player.");
+                }
+            }
+
             if (string.IsNullOrWhiteSpace(_mapPathPassedToGame) == false)
             {
                 MapPersistence.Load(_core, _mapPathPassedToGame);
@@ -143,6 +260,12 @@ namespace RougueQuest
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (CheckForNeededSave() == false)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             _core.Stop();
         }
 
@@ -172,6 +295,7 @@ namespace RougueQuest
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
+            _hasBeenModified = true;
             /*
             if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Down);
             if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Down);

@@ -93,6 +93,8 @@ namespace Game.Engine
 
             GameLogic(intersections);
 
+            Core.PurgeAllDeletedTiles();
+
             return appliedOffset;
         }
 
@@ -142,12 +144,18 @@ namespace Game.Engine
 
                 if (MathUtility.ChanceIn(4))
                 {
-                    actorToAttack.Hit(playerHitsFor);
-                    OnLog?.Invoke(Core, $"\r\nPlayer attacks for {playerHitsFor} and HITS!", Color.DarkGreen);
+                    OnLog?.Invoke(Core, $"\r\n{Core.State.Character.Name} attacks for {playerHitsFor} and HITS!", Color.DarkGreen);
+
+                    if (actorToAttack.Hit(playerHitsFor))
+                    {
+                        OnLog?.Invoke(Core, $"\r\n{Core.State.Character.Name} kills opponent!", Color.DarkGreen);
+
+                        Core.State.Character.Experience += (int)actorToAttack.Meta.Experience;
+                    }
                 }
                 else
                 {
-                    OnLog?.Invoke(Core, $"\r\nPlayer attacks for {playerHitsFor} and MISSES!", Color.DarkRed);
+                    OnLog?.Invoke(Core, $"\r\n{Core.State.Character.Name} attacks for {playerHitsFor} and MISSES!", Color.DarkRed);
                 }
             }
 
@@ -159,12 +167,12 @@ namespace Game.Engine
                 //Monster hit player.
                 if (MathUtility.ChanceIn(4))
                 {
-                    OnLog?.Invoke(Core, $"\r\nMonster attacks for {actorHitsFor} and HITS!", Color.DarkRed);
+                    OnLog?.Invoke(Core, $"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor} and HITS!", Color.DarkRed);
                     Core.Player.Hit(actorHitsFor);
                 }
                 else
                 {
-                    OnLog?.Invoke(Core, $"\r\nMonster attacks for {actorHitsFor} and Misses!", Color.DarkGreen);
+                    OnLog?.Invoke(Core, $"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor} and MISSES!", Color.DarkGreen);
                 }
             }
         }

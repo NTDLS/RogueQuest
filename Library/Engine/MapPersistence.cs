@@ -8,9 +8,19 @@ namespace Library.Engine
 {
     public static class MapPersistence
     {
-        public static void Save(EngineCoreBase core, string fileName)
+
+        /// <summary>
+        /// Saves a map and optionally a game state.
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="fileName"></param>
+        /// <param name="state"></param>
+        public static void Save(EngineCoreBase core, string fileName, GameState state = null)
         {
-            var map = new PersistMap();
+            var map = new PersistMap()
+            {
+                State = state
+            };
 
             foreach (var obj in core.Actors.Tiles.Where(o => o.Visible))
             {
@@ -27,20 +37,31 @@ namespace Library.Engine
 
             var json = JsonConvert.SerializeObject(map);
 
-            //System.IO.File.WriteAllText(fileName, json);
+            System.IO.File.WriteAllText(fileName, json);
 
-            var compressed = Utility.Compress.Zip(json);
-            System.IO.File.WriteAllBytes(fileName, compressed);
+            //var compressed = Utility.Compress.Zip(json);
+            //System.IO.File.WriteAllBytes(fileName, compressed);
         }
 
         public static void Load(EngineCoreBase core, string fileName, bool refreshMetadata = false)
         {
-            var compressed = System.IO.File.ReadAllBytes(fileName);
-            var json = Utility.Compress.Unzip(compressed);
+            //var compressed = System.IO.File.ReadAllBytes(fileName);
+            //var json = Utility.Compress.Unzip(compressed);
 
-            //var json = System.IO.File.ReadAllText(fileName);
+            var json = System.IO.File.ReadAllText(fileName);
 
             var map = JsonConvert.DeserializeObject<PersistMap>(json);
+
+            core.State = map.State;
+
+            if (core.State == null)
+            {
+                core.State = new GameState();
+            }
+            if (core.State.Character == null)
+            {
+                core.State.Character = new PlayerCharacter();
+            }
 
             core.QueueAllForDelete();
 

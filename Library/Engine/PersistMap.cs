@@ -6,6 +6,7 @@ namespace Library.Engine
     {
         public string Name { get; set; }
         public List<PersistMapChunk> Chunks { get; set; }
+        public GameState State { get; set; }
         public PersistMap()
         {
             Chunks = new List<PersistMapChunk>();

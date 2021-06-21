@@ -29,6 +29,46 @@ namespace Game.Engine
             Tick = new EngineTickController(this);
         }
 
+        public void NewGame(string characterName, int dexterity, int constitution, int intelligence, int strength)
+        {
+            this.QueueAllForDelete();
+            this.PurgeAllDeletedTiles();
+
+            MapPersistence.Load(this, Assets.Constants.GetAssetPath(@"Maps\MapHome.rqm"), true);
+
+            this.State = new GameState()
+            {
+                CurrentMap = "MapHome"
+            };
+
+            this.State.Character = new PlayerCharacter()
+            {
+                UID = Guid.NewGuid(),
+                Experience = 0,
+                Name = characterName,
+                Level = 1,
+                StartingDexterity = dexterity,
+                StartingConstitution = constitution,
+                StartingIntelligence = intelligence,
+                StartingStrength = strength
+            };
+
+            this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+        }
+
+        public void LoadGame(string fileName)
+        {
+            this.QueueAllForDelete();
+            this.PurgeAllDeletedTiles();
+            MapPersistence.Load(this, fileName);
+            this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+        }
+
+        public void SaveGame(string fileName)
+        {
+            MapPersistence.Save(this, fileName, this.State);
+        }
+
         public ActorTextBlock AddNewTextBlock(string font, Brush color, double size, double x, double y, bool isPositionStatic, string text = "")
         {
             lock (CollectionSemaphore)

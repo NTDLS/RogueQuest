@@ -1,5 +1,5 @@
 ﻿
-namespace RougueQuest
+namespace Game
 {
     partial class FormMain
     {

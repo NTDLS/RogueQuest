@@ -20,11 +20,7 @@ namespace Game.Maps
             : base(core)
         {
             Core = core;
-
-            //MapPersistence.Load(core, Assets.Constants.GetAssetPath(@"Maps\Test.rqm"), true);
-            //var player = core.CreatePlayer();
-            //player.X = 100;
-            //player.Y = 150;
+            //MapPersistence.Load(core, Assets.Constants.GetAssetPath(@"Maps\Home.rqm"), true);
         }
     }
 }
