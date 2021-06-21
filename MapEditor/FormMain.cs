@@ -1,5 +1,5 @@
 ﻿using Assets;
-using LevelEditor.Engine;
+using MapEditor.Engine;
 using Library.Engine;
 using Library.Types;
 using Library.Utility;
@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace LevelEditor
+namespace MapEditor
 {
     public partial class FormMain : Form
     {
@@ -787,6 +787,13 @@ namespace LevelEditor
             if (selectedItem != null)
             {
                 insertedTile = _core.Actors.AddNew<ActorBase>(x, y, selectedItem.FullPath);
+
+                //No need to create GUIDs for every terrain tile.
+                if (insertedTile.Meta.BasicType != Library.Engine.Types.BasicTileType.ActorTerrain)
+                {
+                    insertedTile.Meta.UID = Guid.NewGuid();
+                }
+
                 insertedTile.RefreshMetadata();
                 lastPlacedItemSize = insertedTile.Size;
                 drawLastLocation = new Point<double>(x, y);

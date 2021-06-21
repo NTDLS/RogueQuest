@@ -1,11 +1,16 @@
 ﻿using Library.Engine.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
 namespace Library.Engine
 {
     public class TileMetadata
     {
+        /// <summary>
+        /// This is only populated for tiles that need it.
+        /// </summary>
+        public Guid UID { get; set; }
         public string Name { get; set; }
         public string Tag { get; set; }
         public bool? CanWalkOn { get; set; }

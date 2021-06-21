@@ -14,7 +14,7 @@ namespace Library.Engine
 
             foreach (var obj in core.Actors.Tiles.Where(o => o.Visible))
             {
-                map.Chunks.Add(new PersistMapEntity
+                map.Chunks.Add(new PersistMapChunk
                 {
                     TilePath = obj.TilePath,
                     X = obj.X,

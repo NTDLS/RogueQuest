@@ -5,10 +5,10 @@ namespace Library.Engine
     public class PersistMap
     {
         public string Name { get; set; }
-        public List<PersistMapEntity> Chunks { get; set; }
+        public List<PersistMapChunk> Chunks { get; set; }
         public PersistMap()
         {
-            Chunks = new List<PersistMapEntity>();
+            Chunks = new List<PersistMapChunk>();
         }
     }
 }

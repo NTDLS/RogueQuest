@@ -1,5 +1,5 @@
 ﻿
-namespace LevelEditor
+namespace MapEditor
 {
     partial class FormTileProperties
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace LevelEditor
+namespace MapEditor
 {
     partial class FormMain
     {
@@ -534,7 +534,7 @@ namespace LevelEditor
             this.Controls.Add(this.statusStrip);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "RougueQuest : LevelEditor";
+            this.Text = "RougueQuest : MapEditor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);
