@@ -245,7 +245,7 @@ namespace Game.Engine
             }
 
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
-                foreach (var actor in hostileInteractions.Where(o => o.Visible))
+            foreach (var actor in hostileInteractions.Where(o => o.Visible))
             {
                 int actorHitsFor = MathUtility.RandomNumber(1, 5);
 
@@ -261,7 +261,7 @@ namespace Game.Engine
                 }
                 else
                 {
-                    Core.Log($"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor}hp and misses!", Color.DarkGreen);
+                    Core.Log($"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor}hp but misses!", Color.DarkGreen);
                 }
             }
         }

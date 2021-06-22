@@ -17,6 +17,7 @@ namespace Library.Engine
         public bool? CanTakeDamage { get; set; }
         public int? Experience { get; set; }
         public int? HitPoints { get; set; }
+        public int? OriginalHitPoints { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public BasicTileType? BasicType { get; set; }

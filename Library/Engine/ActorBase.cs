@@ -510,6 +510,8 @@ namespace Library.Engine
                     this.Meta.OverrideWith(exactMeta);
                 }
             }
+
+            Meta.OriginalHitPoints = Meta.HitPoints;
         }
     }
 }

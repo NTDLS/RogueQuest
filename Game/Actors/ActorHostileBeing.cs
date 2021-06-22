@@ -15,5 +15,36 @@ namespace Game.Actors
             Velocity.MaxSpeed = 8;
             Velocity.ThrottlePercentage = 100;
         }
+
+        public string DamageText
+        {
+            get
+            {
+                double damage = ((double)this.Meta.HitPoints / (double)this.Meta.OriginalHitPoints) * 100.0;
+
+                if (damage >= 100)
+                {
+                    return "Uninjured";
+                }
+                else if (damage >= 80)
+                {
+                    return "Barely Injured";
+                }
+                else if (damage >= 60)
+                {
+                    return "Injured";
+                }
+                else if (damage >= 40)
+                {
+                    return "Badly Injured";
+                }
+                else if (damage > 0)
+                {
+                    return "Near Death";
+                }
+
+                return "Godlike"; //:D
+            }
+        }
     }
 }

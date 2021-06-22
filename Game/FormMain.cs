@@ -3,6 +3,7 @@ using Game.Engine;
 using Game.Extensions;
 using Game.Maps;
 using Library.Engine;
+using Library.Types;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Game
     {
         private EngineCore _core;
         private bool _fullScreen = false;
+        private ToolTip _interrogationTip = new ToolTip();
 
         private bool _hasBeenModified = false;
         private string _currentMapFilename = string.Empty;
@@ -89,6 +91,9 @@ namespace Game
             drawingsurface.KeyDown += drawingsurface_KeyDown;
             drawingsurface.Paint += drawingsurface_Paint;
             drawingsurface.SizeChanged += drawingsurface_SizeChanged;
+            drawingsurface.MouseDown += Drawingsurface_MouseDown;
+            drawingsurface.MouseUp += Drawingsurface_MouseUp;
+            drawingsurface.MouseMove += Drawingsurface_MouseMove;
 
             drawingsurface.Select();
             drawingsurface.Focus();
@@ -103,6 +108,58 @@ namespace Game
             toolStripButtonRest.Click += ToolStripButtonRest_Click;
             toolStripButtonSave.Click += ToolStripButtonSave_Click;
         }
+
+        private void Drawingsurface_MouseMove(object sender, MouseEventArgs e)
+        {
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            string tipText = "";
+
+            if (hoverTile != null)
+            {
+                if (hoverTile.Meta.BasicType == Library.Engine.Types.BasicTileType.ActorHostileBeing)
+                {
+                    var hostile = (hoverTile as ActorHostileBeing);
+                    tipText = $"{hostile?.Meta.Name} ({hostile.DamageText})";
+                }
+            }
+
+            toolStripStatusLabelDebug.Text = tipText;
+        }
+
+        private void Drawingsurface_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                _interrogationTip.Hide(drawingsurface);
+            }
+        }
+
+        private void Drawingsurface_MouseDown(object sender, MouseEventArgs e)
+        {
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            if (e.Button == MouseButtons.Right)
+            {
+                if (hoverTile != null)
+                {
+                    if (hoverTile.Meta.BasicType == Library.Engine.Types.BasicTileType.ActorHostileBeing)
+                    {
+                        var hostile = (hoverTile as ActorHostileBeing);
+                        var location = new Point((int)hostile.ScreenX, (int)hostile.ScreenY - hostile.Size.Height);
+                        string text = $"{hostile?.Meta.Name} ({hostile.DamageText})";
+                        _interrogationTip.Show(text, drawingsurface, location, 5000);
+                    }
+                }
+            }
+        }
+
 
         #region Menu Clicks.
 
