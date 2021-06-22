@@ -1,0 +1,5 @@
+{
+  "Name":"Gelatinous Cube",
+  "HitPoints": "200",
+  "Experience": "20"
+}

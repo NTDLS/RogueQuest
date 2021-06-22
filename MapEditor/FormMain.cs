@@ -130,6 +130,7 @@ namespace MapEditor
             toolStripButtonMoveTileDown.Click += ToolStripButtonMoveTileDown_Click;
             toolStripButtonShapeMode.Click += ToolStripButtonShapeMode_Click;
             toolStripButtonPlayMap.Click += ToolStripButtonPlayMap_Click;
+            toolStripMenuItemResetAllTileMeta.Click += ToolStripMenuItemResetAllTileMeta_Click;
 
             PopulateMaterials();
 
@@ -139,6 +140,18 @@ namespace MapEditor
         }
 
         #region Menu Clicks.
+
+
+        private void ToolStripMenuItemResetAllTileMeta_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Reset the meta data of all tiles on this map with their default values?",
+                "Reset all metadata?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                _core.Actors.ResetAllTilesMetadata();
+            }
+        }
 
         private void ToolStripButtonPlayMap_Click(object sender, EventArgs e)
         {
@@ -641,6 +654,7 @@ namespace MapEditor
                 listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
                 listViewProperties.Items.Add("CanTakeDamage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
                 listViewProperties.Items.Add("HitPoints").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
+                listViewProperties.Items.Add("Experience").SubItems.Add(selectedTile.Meta?.Experience.ToString());
                 listViewProperties.Items.Add("CanWalkOn").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
                 listViewProperties.Items.Add("BasicType").SubItems.Add(selectedTile.Meta?.BasicType.ToString());
                 listViewProperties.Items.Add("TilePath").SubItems.Add(selectedTile.TilePath);
@@ -712,6 +726,10 @@ namespace MapEditor
                             if (selectedRow.Text == "HitPoints")
                             {
                                 selectedTile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
+                            }
+                            if (selectedRow.Text == "Experience")
+                            {
+                                selectedTile.Meta.Experience = int.Parse(dialog.PropertyValue);
                             }
                             else if (selectedRow.Text == "Angle")
                             {
@@ -796,6 +814,8 @@ namespace MapEditor
                     insertedTile.Meta.UID = Guid.NewGuid();
                 }
 
+                insertedTile.RefreshMetadata();
+
                 if (insertedTile.Meta.CanTakeDamage != null && ((bool)insertedTile.Meta.CanTakeDamage) == true)
                 {
                     if (insertedTile.Meta.HitPoints == null)
@@ -809,7 +829,6 @@ namespace MapEditor
                     }
                 }
 
-                insertedTile.RefreshMetadata();
                 lastPlacedItemSize = insertedTile.Size;
                 drawLastLocation = new Point<double>(x, y);
             }

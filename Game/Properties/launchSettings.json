@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Game": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "/map:\"C:\\NTDLS\\RougueQuest\\Assets\\Maps\\MapHome.rqm\""
     }
   }
 }

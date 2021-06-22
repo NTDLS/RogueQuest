@@ -163,7 +163,7 @@ namespace Library.Engine
                 dc.DrawImage(bitmap, ScreenBounds);
             }
 
-
+            /*
             if (this.GetType().ToString().Contains("Hostile"))
             {
                 Pen pen = new Pen(Color.Red, 1);
@@ -179,6 +179,7 @@ namespace Library.Engine
                 Pen pen = new Pen(Color.Red, 4);
                 dc.DrawRectangle(pen, ScreenBounds);
             }
+            */
 
             if (HoverHighlight)
             {

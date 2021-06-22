@@ -10,13 +10,14 @@ namespace Library.Engine
         /// <summary>
         /// This is only populated for tiles that need it.
         /// </summary>
-        public Guid UID { get; set; }
+        public Guid? UID { get; set; }
         public string Name { get; set; }
         public string Tag { get; set; }
         public bool? CanWalkOn { get; set; }
         public bool? CanTakeDamage { get; set; }
         public int? Experience { get; set; }
         public int? HitPoints { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public BasicTileType? BasicType { get; set; }
 
@@ -26,7 +27,9 @@ namespace Library.Engine
             this.CanWalkOn = with.CanWalkOn ?? this.CanWalkOn;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
             this.HitPoints = with.HitPoints ?? this.HitPoints;
+            this.Experience = with.Experience ?? this.Experience;
             this.BasicType = with.BasicType ?? this.BasicType;
+            this.Name = with.Name ?? this.Name;
         }
     }
 }

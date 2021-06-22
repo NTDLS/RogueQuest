@@ -63,12 +63,31 @@ namespace Game
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainerHoriz = new System.Windows.Forms.SplitContainer();
+            this.splitContainerVert = new System.Windows.Forms.SplitContainer();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
+            this.labelTime = new System.Windows.Forms.Label();
+            this.labelXP = new System.Windows.Forms.Label();
+            this.labelMana = new System.Windows.Forms.Label();
+            this.labelHP = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonGet = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonRest = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
+            this.labelPlayer = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHoriz)).BeginInit();
             this.splitContainerHoriz.Panel2.SuspendLayout();
             this.splitContainerHoriz.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerVert)).BeginInit();
+            this.splitContainerVert.Panel1.SuspendLayout();
+            this.splitContainerVert.Panel2.SuspendLayout();
+            this.splitContainerVert.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -327,18 +346,46 @@ namespace Game
             this.splitContainerHoriz.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerHoriz.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainerHoriz.IsSplitterFixed = true;
-            this.splitContainerHoriz.Location = new System.Drawing.Point(0, 24);
+            this.splitContainerHoriz.Location = new System.Drawing.Point(0, 49);
             this.splitContainerHoriz.Margin = new System.Windows.Forms.Padding(0);
             this.splitContainerHoriz.Name = "splitContainerHoriz";
             this.splitContainerHoriz.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainerHoriz.Panel2
             // 
-            this.splitContainerHoriz.Panel2.Controls.Add(this.richTextBoxLog);
-            this.splitContainerHoriz.Size = new System.Drawing.Size(784, 515);
-            this.splitContainerHoriz.SplitterDistance = 465;
+            this.splitContainerHoriz.Panel2.Controls.Add(this.splitContainerVert);
+            this.splitContainerHoriz.Size = new System.Drawing.Size(784, 490);
+            this.splitContainerHoriz.SplitterDistance = 400;
             this.splitContainerHoriz.SplitterWidth = 3;
             this.splitContainerHoriz.TabIndex = 3;
+            // 
+            // splitContainerVert
+            // 
+            this.splitContainerVert.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerVert.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainerVert.IsSplitterFixed = true;
+            this.splitContainerVert.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerVert.Name = "splitContainerVert";
+            // 
+            // splitContainerVert.Panel1
+            // 
+            this.splitContainerVert.Panel1.Controls.Add(this.richTextBoxLog);
+            // 
+            // splitContainerVert.Panel2
+            // 
+            this.splitContainerVert.Panel2.AllowDrop = true;
+            this.splitContainerVert.Panel2.Controls.Add(this.labelPlayer);
+            this.splitContainerVert.Panel2.Controls.Add(this.labelTime);
+            this.splitContainerVert.Panel2.Controls.Add(this.labelXP);
+            this.splitContainerVert.Panel2.Controls.Add(this.labelMana);
+            this.splitContainerVert.Panel2.Controls.Add(this.labelHP);
+            this.splitContainerVert.Panel2.Controls.Add(this.label5);
+            this.splitContainerVert.Panel2.Controls.Add(this.label4);
+            this.splitContainerVert.Panel2.Controls.Add(this.label3);
+            this.splitContainerVert.Panel2.Controls.Add(this.label1);
+            this.splitContainerVert.Size = new System.Drawing.Size(784, 87);
+            this.splitContainerVert.SplitterDistance = 550;
+            this.splitContainerVert.TabIndex = 0;
             // 
             // richTextBoxLog
             // 
@@ -346,9 +393,130 @@ namespace Game
             this.richTextBoxLog.Location = new System.Drawing.Point(0, 0);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.ReadOnly = true;
-            this.richTextBoxLog.Size = new System.Drawing.Size(784, 47);
+            this.richTextBoxLog.Size = new System.Drawing.Size(550, 87);
             this.richTextBoxLog.TabIndex = 0;
             this.richTextBoxLog.Text = "";
+            // 
+            // labelTime
+            // 
+            this.labelTime.AutoSize = true;
+            this.labelTime.Location = new System.Drawing.Point(48, 65);
+            this.labelTime.Name = "labelTime";
+            this.labelTime.Size = new System.Drawing.Size(12, 15);
+            this.labelTime.TabIndex = 8;
+            this.labelTime.Text = "-";
+            // 
+            // labelXP
+            // 
+            this.labelXP.AutoSize = true;
+            this.labelXP.Location = new System.Drawing.Point(48, 50);
+            this.labelXP.Name = "labelXP";
+            this.labelXP.Size = new System.Drawing.Size(12, 15);
+            this.labelXP.TabIndex = 7;
+            this.labelXP.Text = "-";
+            // 
+            // labelMana
+            // 
+            this.labelMana.AutoSize = true;
+            this.labelMana.Location = new System.Drawing.Point(48, 35);
+            this.labelMana.Name = "labelMana";
+            this.labelMana.Size = new System.Drawing.Size(12, 15);
+            this.labelMana.TabIndex = 6;
+            this.labelMana.Text = "-";
+            // 
+            // labelHP
+            // 
+            this.labelHP.AutoSize = true;
+            this.labelHP.Location = new System.Drawing.Point(48, 20);
+            this.labelHP.Name = "labelHP";
+            this.labelHP.Size = new System.Drawing.Size(12, 15);
+            this.labelHP.TabIndex = 5;
+            this.labelHP.Text = "-";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(5, 63);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(33, 15);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Time";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(5, 48);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(21, 15);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "XP";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(5, 33);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(37, 15);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Mana";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(5, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(23, 15);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "HP";
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonGet,
+            this.toolStripButtonRest,
+            this.toolStripButtonSave});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(784, 25);
+            this.toolStrip1.TabIndex = 4;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButtonGet
+            // 
+            this.toolStripButtonGet.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonGet.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonGet.Image")));
+            this.toolStripButtonGet.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonGet.Name = "toolStripButtonGet";
+            this.toolStripButtonGet.Size = new System.Drawing.Size(29, 22);
+            this.toolStripButtonGet.Text = "Get";
+            // 
+            // toolStripButtonRest
+            // 
+            this.toolStripButtonRest.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonRest.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRest.Image")));
+            this.toolStripButtonRest.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRest.Name = "toolStripButtonRest";
+            this.toolStripButtonRest.Size = new System.Drawing.Size(33, 22);
+            this.toolStripButtonRest.Text = "Rest";
+            // 
+            // toolStripButtonSave
+            // 
+            this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonSave.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSave.Image")));
+            this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonSave.Name = "toolStripButtonSave";
+            this.toolStripButtonSave.Size = new System.Drawing.Size(35, 22);
+            this.toolStripButtonSave.Text = "Save";
+            // 
+            // labelPlayer
+            // 
+            this.labelPlayer.AllowDrop = true;
+            this.labelPlayer.AutoSize = true;
+            this.labelPlayer.Location = new System.Drawing.Point(5, 3);
+            this.labelPlayer.Name = "labelPlayer";
+            this.labelPlayer.Size = new System.Drawing.Size(12, 15);
+            this.labelPlayer.TabIndex = 10;
+            this.labelPlayer.Text = "-";
             // 
             // FormMain
             // 
@@ -358,6 +526,7 @@ namespace Game
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.splitContainerHoriz);
             this.Controls.Add(this.statusStrip);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip);
             this.DoubleBuffered = true;
             this.MainMenuStrip = this.menuStrip;
@@ -374,8 +543,16 @@ namespace Game
             this.splitContainerHoriz.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHoriz)).EndInit();
             this.splitContainerHoriz.ResumeLayout(false);
+            this.splitContainerVert.Panel1.ResumeLayout(false);
+            this.splitContainerVert.Panel2.ResumeLayout(false);
+            this.splitContainerVert.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerVert)).EndInit();
+            this.splitContainerVert.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -414,6 +591,20 @@ namespace Game
         private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainerVert;
+        private System.Windows.Forms.Label labelTime;
+        private System.Windows.Forms.Label labelXP;
+        private System.Windows.Forms.Label labelMana;
+        private System.Windows.Forms.Label labelHP;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButtonGet;
+        private System.Windows.Forms.ToolStripButton toolStripButtonRest;
+        private System.Windows.Forms.ToolStripButton toolStripButtonSave;
+        private System.Windows.Forms.Label labelPlayer;
     }
 }
 

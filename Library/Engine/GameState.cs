@@ -8,7 +8,7 @@ namespace Library.Engine
 {
     public class GameState
     {
-        public PlayerCharacter Character { get; set; }
+        public PlayerState Character { get; set; }
         public string CurrentMap { get; set; }
     }
 }

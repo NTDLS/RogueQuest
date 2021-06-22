@@ -1,0 +1,5 @@
+{
+  "Name":"Gray Wolf",
+  "HitPoints": "20",
+  "Experience": "2"
+}

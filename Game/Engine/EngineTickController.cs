@@ -14,28 +14,55 @@ namespace Game.Engine
 {
     public class EngineTickController
     {
-        public delegate void LogEvent(EngineCore core, string text, Color color);
-        public event LogEvent OnLog;
 
         public EngineCore Core { get; private set; }
 
         public int TimePassed { get; set; }
-
 
         public EngineTickController(EngineCore core)
         {
             Core = core;
         }
 
+        public void Rest()
+        {
+            var input = new Types.TickInput() { InputType = Types.TickInputType.Rest };
+
+            if (Core.State.Character.AvailableHitpoints >= Core.State.Character.Hitpoints)
+            {
+                Core.Log($"\r\nFeeling no need to rest you press on.", Color.DarkGreen);
+                return;
+            }
+
+            while (Core.State.Character.AvailableHitpoints < Core.State.Character.Hitpoints)
+            {
+                Advance(input);
+
+                var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 150)
+                    .Where(o => o.Meta.CanTakeDamage == true && o.Meta.BasicType == BasicTileType.ActorHostileBeing);
+
+                if (actorsThatCanSeePlayer.Any())
+                {
+                    var firstActor = actorsThatCanSeePlayer.First();
+                    Core.Log($"\r\nYour rest was interrupted by a {firstActor.Meta.Name}!", Color.DarkRed);
+                    return;
+                }
+
+                Core.State.Character.AvailableHitpoints++;
+            }
+
+            Core.Log($"\r\nYou awake feeling refreshed.", Color.DarkGreen);
+        }
+
         public Point<double> Advance(TickInput Input)
         {
-            Core.debugRects.Clear();
+            //Core.debugRects.Clear();
 
             bool isValidInput = false;
 
-            #region Keyboard handler.
             if (Input.InputType == TickInputType.Keyboard)
             {
+                #region Keyboard handler.
                 if (Input.Key == Keys.NumPad1 || Input.Key == Keys.Z)
                 {
                     Core.Player.Velocity.Angle.Degrees = 225;
@@ -76,8 +103,14 @@ namespace Game.Engine
                     Core.Player.Velocity.Angle.Degrees = 45;
                     isValidInput = true;
                 }
+                #endregion
+                Core.Player.Velocity.ThrottlePercentage = 100;
             }
-            #endregion
+            else if (Input.InputType == TickInputType.Rest)
+            {
+                isValidInput = true;
+                Core.Player.Velocity.ThrottlePercentage = 0;
+            }
 
             if (isValidInput == false)
             {
@@ -96,6 +129,45 @@ namespace Game.Engine
             Core.PurgeAllDeletedTiles();
 
             return appliedOffset;
+        }
+
+        string GetStrikeFlair()
+        {
+            var strs = new string[] {
+                "hitting them in the leg!",
+                "hitting them in the head!.",
+                "hitting them in the torso!",
+                "nearly removing a limb!",
+                "causing them to stumble back!",
+                "knocking them to the ground!"};
+
+            if (MathUtility.ChanceIn(25))
+            {
+                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
+            }
+            else
+            {
+                return "and hits.";
+            }
+        }
+
+        string GetMissFlair()
+        {
+            var strs = new string[] {
+                "but they evade your clumsy blow!",
+                "but they were faster then you expected!",
+                "but they pull just out of your path!",
+                "but you were bested by their agility!"
+            };
+
+            if (MathUtility.ChanceIn(25))
+            {
+                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
+            }
+            else
+            {
+                return "but miss.";
+            }
         }
 
         /// <summary>
@@ -140,39 +212,56 @@ namespace Game.Engine
             var actorToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).FirstOrDefault();
             if (actorToAttack != null)
             {
-                int playerHitsFor = MathUtility.RandomNumber(1, 5);
+                int playerHitsFor = MathUtility.RandomNumber(1, Core.State.Character.BaseDamage);
 
                 if (MathUtility.ChanceIn(4))
                 {
-                    OnLog?.Invoke(Core, $"\r\n{Core.State.Character.Name} attacks for {playerHitsFor} and HITS!", Color.DarkGreen);
+                    Core.Log($"\r\n{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetStrikeFlair()}", Color.DarkGreen);
 
                     if (actorToAttack.Hit(playerHitsFor))
                     {
-                        OnLog?.Invoke(Core, $"\r\n{Core.State.Character.Name} kills opponent!", Color.DarkGreen);
+                        int experience = 0;
 
-                        Core.State.Character.Experience += (int)actorToAttack.Meta.Experience;
+                        if (actorToAttack.Meta != null && actorToAttack.Meta.Experience != null)
+                        {
+                            experience = (int)actorToAttack.Meta.Experience;
+                        }
+
+                        Core.Log($"\r\n{Core.State.Character.Name} kills {actorToAttack.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
+
+                        Core.State.Character.Experience += experience;
                     }
                 }
                 else
                 {
-                    OnLog?.Invoke(Core, $"\r\n{Core.State.Character.Name} attacks for {playerHitsFor} and MISSES!", Color.DarkRed);
+                    Core.Log($"\r\n{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetMissFlair()}", Color.DarkRed);
                 }
             }
 
+
+            if (Core.State.Character.Experience > Core.State.Character.NextLevelExperience)
+            {
+                Core.State.Character.LevelUp();
+            }
+
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
-            foreach (var actor in hostileInteractions.Where(o => o.Visible))
+                foreach (var actor in hostileInteractions.Where(o => o.Visible))
             {
                 int actorHitsFor = MathUtility.RandomNumber(1, 5);
 
                 //Monster hit player.
                 if (MathUtility.ChanceIn(4))
                 {
-                    OnLog?.Invoke(Core, $"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor} and HITS!", Color.DarkRed);
-                    Core.Player.Hit(actorHitsFor);
+                    Core.Log($"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor}hp and hits!", Color.DarkRed);
+                    Core.State.Character.AvailableHitpoints -= actorHitsFor;
+                    if (Core.State.Character.AvailableHitpoints <= 0)
+                    {
+                        Core.Player.QueueForDelete();
+                    }
                 }
                 else
                 {
-                    OnLog?.Invoke(Core, $"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor} and MISSES!", Color.DarkGreen);
+                    Core.Log($"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor}hp and misses!", Color.DarkGreen);
                 }
             }
         }
@@ -227,7 +316,7 @@ namespace Game.Engine
                 //Butt the rectangles up against each other and adjust the applied offset to what was actually done.
                 if (delta.X > 0 && delta.Y > 0)
                 {
-                    Core.debugRects.Add(new Rectangle((int)delta.X, (int)delta.Y, (int)delta.Width, (int)delta.Height));
+                    //Core.debugRects.Add(new Rectangle((int)delta.X, (int)delta.Y, (int)delta.Width, (int)delta.Height));
 
                     if (appliedOffset.X > 0)
                     {

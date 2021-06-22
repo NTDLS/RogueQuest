@@ -97,10 +97,37 @@ namespace Game
             _core.OnStop += _core_OnStop;
             _core.OnStart += _core_OnStart;
             _core.AfterTick += _core_AfterTick;
-            _core.Tick.OnLog += _core_OnLog;
+            _core.OnLog += _core_OnLog;
+
+            toolStripButtonGet.Click += ToolStripButtonGet_Click;
+            toolStripButtonRest.Click += ToolStripButtonRest_Click;
+            toolStripButtonSave.Click += ToolStripButtonSave_Click;
         }
 
         #region Menu Clicks.
+
+        private void ToolStripButtonSave_Click(object sender, EventArgs e)
+        {
+            //If we already have an open file, then just save it.
+            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
+            {
+                _core.SaveGame(_currentMapFilename);
+                _hasBeenModified = false;
+            }
+            else //If we do not have a current open file, then we need to "Save As".
+            {
+                TrySave();
+            }
+        }
+
+        private void ToolStripButtonRest_Click(object sender, EventArgs e)
+        {
+            _core.Rest();
+        }
+
+        private void ToolStripButtonGet_Click(object sender, EventArgs e)
+        {
+        }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -117,6 +144,7 @@ namespace Game
                 {
                     _currentMapFilename = dialog.FileName;
                     _core.LoadGame(_currentMapFilename);
+                    UpdatePlayerStatLabels(_core);
                     _hasBeenModified = false;
                 }
             }
@@ -191,6 +219,8 @@ namespace Game
                         form.Constitution,
                         form.Intelligence,
                         form.Strength);
+
+                    UpdatePlayerStatLabels(_core);
                 }
             }
         }
@@ -217,10 +247,17 @@ namespace Game
 
         private void _core_AfterTick(EngineCore core, Types.TickInput input, Library.Types.Point<double> offsetApplied)
         {
-            var time = TimeSpan.FromMinutes(core.Tick.TimePassed);
+            UpdatePlayerStatLabels(core);
+        }
 
-            //toolStripStatusLabelDebug.Text = $"{_core.Player.X},{_core.Player.Y} {_core.Player.Meta.HitPoints}hp"
-                //+ " " + time.ToString(@"dd\:hh\:mm\:ss");
+        private void UpdatePlayerStatLabels(EngineCore core)
+        {
+            var time = TimeSpan.FromMinutes(core.Tick.TimePassed);
+            labelPlayer.Text = $"{core.State.Character.Name}, Level {core.State.Character.Level:N0}";
+            labelXP.Text = $"{core.State.Character.Experience.ToString():N0}/{core.State.Character.NextLevelExperience.ToString():N0}";
+            labelHP.Text = $"{core.State.Character.AvailableHitpoints:N0}";
+            labelMana.Text = $"{core.State.Character.AvailableMana:N0}";
+            labelTime.Text = time.ToString(@"dd\:hh\:mm\:ss");
         }
 
         private void _core_OnStart(EngineCoreBase sender)
@@ -230,6 +267,7 @@ namespace Game
             if (string.IsNullOrWhiteSpace(_gamePathPassedToGame) == false)
             {
                 _core.LoadGame(_gamePathPassedToGame);
+                UpdatePlayerStatLabels(_core);
 
                 if (_core.Player == null)
                 {
@@ -243,6 +281,20 @@ namespace Game
 
                 _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
 
+                _core.State.Character = new PlayerState()
+                {
+                    UID = Guid.NewGuid(),
+                    Experience = 0,
+                    Name = "Player",
+                    Level = 1,
+                    StartingDexterity = 10,
+                    StartingConstitution = 10,
+                    StartingIntelligence = 10,
+                    StartingStrength = 10
+                };
+
+                _core.State.Character.InitializeState();
+
                 if (_core.Player == null)
                 {
                     MessageBox.Show("This map has no player.");
@@ -252,10 +304,6 @@ namespace Game
 
         private void _core_OnStop(EngineCoreBase sender)
         {
-            this.Invoke((MethodInvoker)delegate
-            {
-                this.Close();
-            });
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)

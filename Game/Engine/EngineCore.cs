@@ -23,10 +23,23 @@ namespace Game.Engine
 
         public ActorPlayer Player { get; set; }
 
+        public delegate void LogEvent(EngineCore core, string text, Color color);
+        public event LogEvent OnLog;
+
         public EngineCore(Control drawingSurface, Size visibleSize)
             : base (drawingSurface, visibleSize)
         {
             Tick = new EngineTickController(this);
+        }
+
+        public void Log(string text, Color color)
+        {
+            OnLog?.Invoke(this, text, color);
+        }
+
+        public void Log(string text)
+        {
+            OnLog?.Invoke(this, text, Color.Black);
         }
 
         public void NewGame(string characterName, int dexterity, int constitution, int intelligence, int strength)
@@ -34,14 +47,14 @@ namespace Game.Engine
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
 
-            MapPersistence.Load(this, Assets.Constants.GetAssetPath(@"Maps\MapHome.rqm"), true);
+            MapPersistence.Load(this, Assets.Constants.GetAssetPath(@"Maps\MapHome.rqm"));
 
             this.State = new GameState()
             {
                 CurrentMap = "MapHome"
             };
 
-            this.State.Character = new PlayerCharacter()
+            this.State.Character = new PlayerState()
             {
                 UID = Guid.NewGuid(),
                 Experience = 0,
@@ -52,6 +65,8 @@ namespace Game.Engine
                 StartingIntelligence = intelligence,
                 StartingStrength = strength
             };
+
+            this.State.Character.InitializeState();
 
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
         }
@@ -80,6 +95,13 @@ namespace Game.Engine
                 Actors.Add(obj);
                 return obj;
             }
+        }
+
+        public void Rest()
+        {
+            var input = new Types.TickInput() { InputType = Types.TickInputType.Rest };
+            Tick.Rest();
+            AfterTick?.Invoke(this, input, new Point<double>());
         }
 
         public override void HandleSingleKeyPress(Keys key)

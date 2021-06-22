@@ -12,7 +12,8 @@ namespace Game.Engine
     {
         public enum TickInputType
         {
-            Keyboard
+            Keyboard,
+            Rest
             //Maybe later we can add other input types? Magic? Arrows?
         }
 

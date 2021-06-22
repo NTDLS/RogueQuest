@@ -57,6 +57,14 @@ namespace Library.Engine
             }
         }
 
+        public void ResetAllTilesMetadata()
+        {
+            foreach (var obj in this.Tiles)
+            {
+                obj.RefreshMetadata();
+            }
+        }
+
         public List<T> VisibleOfType<T>() where T : class
         {
             return (from o in Tiles

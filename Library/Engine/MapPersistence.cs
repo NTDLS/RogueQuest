@@ -60,7 +60,7 @@ namespace Library.Engine
             }
             if (core.State.Character == null)
             {
-                core.State.Character = new PlayerCharacter();
+                core.State.Character = new PlayerState();
             }
 
             core.QueueAllForDelete();

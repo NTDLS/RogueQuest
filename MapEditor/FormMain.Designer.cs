@@ -75,8 +75,10 @@ namespace MapEditor
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonMoveTileUp = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
+            this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemResetAllTileMeta = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -227,6 +229,7 @@ namespace MapEditor
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
+            this.toolStripMenuItemTools,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -507,6 +510,11 @@ namespace MapEditor
             this.toolStripButtonMoveTileDown.Text = "Move Tile Down";
             this.toolStripButtonMoveTileDown.ToolTipText = "Move Tile Down";
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 41);
+            // 
             // toolStripButtonPlayMap
             // 
             this.toolStripButtonPlayMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -517,10 +525,19 @@ namespace MapEditor
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
             // 
-            // toolStripSeparator6
+            // toolStripMenuItemTools
             // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 41);
+            this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemResetAllTileMeta});
+            this.toolStripMenuItemTools.Name = "toolStripMenuItemTools";
+            this.toolStripMenuItemTools.Size = new System.Drawing.Size(46, 20);
+            this.toolStripMenuItemTools.Text = "Tools";
+            // 
+            // toolStripMenuItemResetAllTileMeta
+            // 
+            this.toolStripMenuItemResetAllTileMeta.Name = "toolStripMenuItemResetAllTileMeta";
+            this.toolStripMenuItemResetAllTileMeta.Size = new System.Drawing.Size(175, 22);
+            this.toolStripMenuItemResetAllTileMeta.Text = "Reset All Tile Metas";
             // 
             // FormMain
             // 
@@ -608,6 +625,8 @@ namespace MapEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonShapeMode;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton toolStripButtonPlayMap;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemTools;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemResetAllTileMeta;
     }
 }
 
