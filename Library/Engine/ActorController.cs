@@ -11,10 +11,13 @@ namespace Library.Engine
     {
         public EngineCoreBase Core { get; set; }
         public List<ActorBase> Tiles { get; private set; }
+        public ContainerController Containers { get; private set; }
 
         public ActorController(EngineCoreBase core)
         {
             Core = core;
+
+            Containers = new ContainerController(Core);
 
             lock (Core.CollectionSemaphore)
             {

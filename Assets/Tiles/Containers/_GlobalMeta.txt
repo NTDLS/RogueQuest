@@ -1,0 +1,5 @@
+{
+  "CanTakeDamage": "False",
+  "BasicType": "ActorItem",
+  "IsContainer": "True"
+}

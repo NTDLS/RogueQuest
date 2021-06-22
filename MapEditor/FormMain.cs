@@ -136,7 +136,7 @@ namespace MapEditor
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
-            MapPersistence.Load(_core, Constants.GetAssetPath(@"Maps\MapHome.rqm"));
+            Level.Load(_core, Constants.GetAssetPath(@"Maps\MapHome.rqm"));
         }
 
         #region Menu Clicks.
@@ -245,7 +245,7 @@ namespace MapEditor
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _currentMapFilename = dialog.FileName;
-                    MapPersistence.Load(_core, _currentMapFilename);
+                    Level.Load(_core, _currentMapFilename);
                     _hasBeenModified = false;
                 }
             }
@@ -256,7 +256,7 @@ namespace MapEditor
             //If we already have an open file, then just save it.
             if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
             {
-                MapPersistence.Save(_core, _currentMapFilename);
+                Level.Save(_core, _currentMapFilename);
                 _hasBeenModified = false;
             }
             else //If we do not have a current open file, then we need to "Save As".
@@ -276,7 +276,7 @@ namespace MapEditor
                 {
                     _currentMapFilename = dialog.FileName;
 
-                    MapPersistence.Save(_core, _currentMapFilename);
+                    Level.Save(_core, _currentMapFilename);
                     _hasBeenModified = false;
                     return true;
                 }
@@ -428,7 +428,6 @@ namespace MapEditor
         }
 
         Rectangle? shapeSelectionRect = null;
-
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
@@ -599,6 +598,31 @@ namespace MapEditor
             }
         }
 
+        private void pictureBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
+            {
+                if (hoverTile.Meta?.IsContainer == true)
+                {
+                    EditorContainer((Guid)hoverTile.Meta.UID);
+                }
+            }
+        }
+
+        private void EditorContainer(Guid containerId)
+        {
+            using (var form = new FormEditContainer(_core, containerId))
+            {
+                form.ShowDialog();
+            }
+        }
+
+
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             double x = e.X + _core.Display.BackgroundOffset.X;
@@ -633,6 +657,11 @@ namespace MapEditor
                         selectedTile.SelectedHighlight = false;
                     }
 
+                    //Place the mouse over the exact center of the tile.
+                    Win32.POINT p = new Win32.POINT((int)hoverTile.ScreenX, (int)hoverTile.ScreenY);
+                    Win32.ClientToScreen(pictureBox.Handle, ref p);
+                    Win32.SetCursorPos(p.x, p.y);
+                    
                     selectedTile = hoverTile;
                     PopulateSelectedItemProperties();
                 }
@@ -661,6 +690,11 @@ namespace MapEditor
 
                 listViewProperties.Items.Add("Location").SubItems.Add(
                     $"{selectedTile.Location.X},{selectedTile.Location.Y}");
+
+                if (selectedTile.Meta?.IsContainer == true)
+                {
+                    listViewProperties.Items.Add("Contents").SubItems.Add("<open>");
+                }
 
                 listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
                 listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
@@ -808,13 +842,13 @@ namespace MapEditor
             {
                 insertedTile = _core.Actors.AddNew<ActorBase>(x, y, selectedItem.FullPath);
 
+                insertedTile.RefreshMetadata();
+
                 //No need to create GUIDs for every terrain tile.
                 if (insertedTile.Meta.BasicType != Library.Engine.Types.BasicTileType.ActorTerrain)
                 {
                     insertedTile.Meta.UID = Guid.NewGuid();
                 }
-
-                insertedTile.RefreshMetadata();
 
                 if (insertedTile.Meta.CanTakeDamage != null && ((bool)insertedTile.Meta.CanTakeDamage) == true)
                 {

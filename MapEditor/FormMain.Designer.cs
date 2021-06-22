@@ -60,6 +60,8 @@ namespace MapEditor
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemResetAllTileMeta = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -77,8 +79,6 @@ namespace MapEditor
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
-            this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemResetAllTileMeta = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -124,6 +124,7 @@ namespace MapEditor
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Paint);
             this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseClick);
+            this.pictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDoubleClick);
             this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
             this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
@@ -373,6 +374,20 @@ namespace MapEditor
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.selectAllToolStripMenuItem.Text = "Select &All";
             // 
+            // toolStripMenuItemTools
+            // 
+            this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemResetAllTileMeta});
+            this.toolStripMenuItemTools.Name = "toolStripMenuItemTools";
+            this.toolStripMenuItemTools.Size = new System.Drawing.Size(46, 20);
+            this.toolStripMenuItemTools.Text = "Tools";
+            // 
+            // toolStripMenuItemResetAllTileMeta
+            // 
+            this.toolStripMenuItemResetAllTileMeta.Name = "toolStripMenuItemResetAllTileMeta";
+            this.toolStripMenuItemResetAllTileMeta.Size = new System.Drawing.Size(175, 22);
+            this.toolStripMenuItemResetAllTileMeta.Text = "Reset All Tile Metas";
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -524,20 +539,6 @@ namespace MapEditor
             this.toolStripButtonPlayMap.Size = new System.Drawing.Size(23, 38);
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
-            // 
-            // toolStripMenuItemTools
-            // 
-            this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemResetAllTileMeta});
-            this.toolStripMenuItemTools.Name = "toolStripMenuItemTools";
-            this.toolStripMenuItemTools.Size = new System.Drawing.Size(46, 20);
-            this.toolStripMenuItemTools.Text = "Tools";
-            // 
-            // toolStripMenuItemResetAllTileMeta
-            // 
-            this.toolStripMenuItemResetAllTileMeta.Name = "toolStripMenuItemResetAllTileMeta";
-            this.toolStripMenuItemResetAllTileMeta.Size = new System.Drawing.Size(175, 22);
-            this.toolStripMenuItemResetAllTileMeta.Text = "Reset All Tile Metas";
             // 
             // FormMain
             // 

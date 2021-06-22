@@ -1,30 +1,42 @@
 ﻿using Assets;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Library.Engine
 {
-    public static class MapPersistence
+    public class Level
     {
+        public string Name { get; set; }
+        public List<LevelChunk> Chunks { get; set; }
+        public GameState State { get; set; }
+        public List<Container> Containers { get; set; }
+
+        public Level()
+        {
+            Chunks = new List<LevelChunk>();
+            Containers = new List<Container>();
+        }
 
         /// <summary>
-        /// Saves a map and optionally a game state.
+        /// Saves a level and optionally a game state.
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
         /// <param name="state"></param>
         public static void Save(EngineCoreBase core, string fileName, GameState state = null)
         {
-            var map = new PersistMap()
+            var level = new Level()
             {
-                State = state
+                State = state,
+                Containers = core.Actors.Containers.Collection
             };
 
             foreach (var obj in core.Actors.Tiles.Where(o => o.Visible))
             {
-                map.Chunks.Add(new PersistMapChunk
+                level.Chunks.Add(new LevelChunk
                 {
                     TilePath = obj.TilePath,
                     X = obj.X,
@@ -35,7 +47,7 @@ namespace Library.Engine
                 });
             }
 
-            var json = JsonConvert.SerializeObject(map);
+            var json = JsonConvert.SerializeObject(level);
 
             System.IO.File.WriteAllText(fileName, json);
 
@@ -50,9 +62,9 @@ namespace Library.Engine
 
             var json = System.IO.File.ReadAllText(fileName);
 
-            var map = JsonConvert.DeserializeObject<PersistMap>(json);
+            var level = JsonConvert.DeserializeObject<Level>(json);
 
-            core.State = map.State;
+            core.State = level.State;
 
             if (core.State == null)
             {
@@ -77,7 +89,9 @@ namespace Library.Engine
                 }
             }
 
-            foreach (var chunk in map.Chunks)
+            core.Actors.Containers.Set(level.Containers);
+
+            foreach (var chunk in level.Chunks)
             {
                 ActorBase tile = null;
 

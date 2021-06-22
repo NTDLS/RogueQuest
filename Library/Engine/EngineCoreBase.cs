@@ -18,12 +18,11 @@ namespace Library.Engine
         public GameState State { get; set; }
         public bool IsRendering { get; private set; }
         public bool IsRunning { get; private set; }
-        public EngineDisplay Display { get; set; }
+        public EngineDisplay Display { get; private set; }
         public object CollectionSemaphore { get; private set; } = new object();
-        public object DrawingSemaphore { get; set; } = new object();
+        public object DrawingSemaphore { get; private set; } = new object();
         public ActorController Actors { get; private set; }
-        public InputController Input { get; set; }
-        public List<MapBase> Maps { get; private set; }
+        public InputController Input { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
 
         //public List<Rectangle> debugRects = new List<Rectangle>();
@@ -50,7 +49,6 @@ namespace Library.Engine
             {
                 Actors = new ActorController(this);
                 Input = new InputController(this);
-                Maps = new List<MapBase>();
             }
         }
 
@@ -99,17 +97,6 @@ namespace Library.Engine
             lock (this.CollectionSemaphore)
             {
                 Actors.Tiles.RemoveAll(o => o.ReadyForDeletion);
-            }
-        }
-
-        public T AddNewMap<T>() where T : MapBase
-        {
-            lock (CollectionSemaphore)
-            {
-                object[] param = { this };
-                var obj = (MapBase)Activator.CreateInstance(typeof(T), param);
-                Maps.Add(obj);
-                return (T)obj;
             }
         }
 

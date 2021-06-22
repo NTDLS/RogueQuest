@@ -47,7 +47,7 @@ namespace Game.Engine
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
 
-            MapPersistence.Load(this, Assets.Constants.GetAssetPath(@"Maps\MapHome.rqm"));
+            Level.Load(this, Assets.Constants.GetAssetPath(@"Maps\MapHome.rqm"));
 
             this.State = new GameState()
             {
@@ -75,13 +75,13 @@ namespace Game.Engine
         {
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
-            MapPersistence.Load(this, fileName);
+            Level.Load(this, fileName);
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
         }
 
         public void SaveGame(string fileName)
         {
-            MapPersistence.Save(this, fileName, this.State);
+            Level.Save(this, fileName, this.State);
         }
 
         public ActorTextBlock AddNewTextBlock(string font, Brush color, double size, double x, double y, bool isPositionStatic, string text = "")

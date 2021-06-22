@@ -1,7 +1,6 @@
 ﻿using Game.Actors;
 using Game.Engine;
 using Game.Extensions;
-using Game.Maps;
 using Library.Engine;
 using Library.Types;
 using System;
@@ -116,14 +115,14 @@ namespace Game
 
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
-            string tipText = "";
+            string tipText = hoverTile.Meta?.Name;
 
             if (hoverTile != null)
             {
                 if (hoverTile.Meta.BasicType == Library.Engine.Types.BasicTileType.ActorHostileBeing)
                 {
                     var hostile = (hoverTile as ActorHostileBeing);
-                    tipText = $"{hostile?.Meta.Name} ({hostile.DamageText})";
+                    tipText += $" ({hostile.DamageText})";
                 }
             }
 
@@ -149,13 +148,20 @@ namespace Game
             {
                 if (hoverTile != null)
                 {
+                    string text = hoverTile?.Meta.Name;
+
                     if (hoverTile.Meta.BasicType == Library.Engine.Types.BasicTileType.ActorHostileBeing)
                     {
                         var hostile = (hoverTile as ActorHostileBeing);
-                        var location = new Point((int)hostile.ScreenX, (int)hostile.ScreenY - hostile.Size.Height);
-                        string text = $"{hostile?.Meta.Name} ({hostile.DamageText})";
+                        text += $" ({hostile.DamageText})";
+                    }
+
+                    if (string.IsNullOrWhiteSpace(text) == false)
+                    {
+                        var location = new Point((int)hoverTile.ScreenX, (int)hoverTile.ScreenY - hoverTile.Size.Height);
                         _interrogationTip.Show(text, drawingsurface, location, 5000);
                     }
+
                 }
             }
         }
@@ -319,8 +325,6 @@ namespace Game
 
         private void _core_OnStart(EngineCoreBase sender)
         {
-            sender.AddNewMap<MapHome>();
-
             if (string.IsNullOrWhiteSpace(_gamePathPassedToGame) == false)
             {
                 _core.LoadGame(_gamePathPassedToGame);
@@ -334,7 +338,7 @@ namespace Game
 
             if (string.IsNullOrWhiteSpace(_mapPathPassedToGame) == false)
             {
-                MapPersistence.Load(_core, _mapPathPassedToGame);
+                Level.Load(_core, _mapPathPassedToGame);
 
                 _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
 

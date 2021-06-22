@@ -459,59 +459,11 @@ namespace Library.Engine
 
 
         /// <summary>
-        /// Traverses up the directories looking for metadata files that describe the assets and allowing for overriding of metadat values.
-        /// </summary>
-        /// <param name="tilePath"></param>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        private TileMetadata FindFirstMetafile(string tilePath, string fileName)
-        {
-            string globalMetaFile = Path.Combine(tilePath, fileName);
-
-            if (File.Exists(globalMetaFile))
-            {
-                var text = File.ReadAllText(globalMetaFile);
-                return JsonConvert.DeserializeObject<TileMetadata>(text);
-            }
-            else
-            {
-                string parentPath = System.IO.Directory.GetParent(tilePath)?.FullName;
-                if (string.IsNullOrWhiteSpace(parentPath) == false)
-                {
-                    return FindFirstMetafile(parentPath, fileName);
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Reads metadata from the asset directories and refreshes the values stored with the actor.
         /// </summary>
         public void RefreshMetadata()
         {
-            string tilePath = Path.GetDirectoryName(Constants.GetAssetPath($"{TilePath}"));
-            string exactMetaFileName = Constants.GetAssetPath($"{TilePath}.txt");
-
-            this.Meta = FindFirstMetafile(tilePath, "_GlobalMeta.txt") ?? new TileMetadata();
-
-            var localMeta = FindFirstMetafile(tilePath, "_LocalMeta.txt");
-            if (localMeta != null)
-            {
-                this.Meta.OverrideWith(localMeta);
-            }
-
-            if (File.Exists(exactMetaFileName))
-            {
-                var text = File.ReadAllText(exactMetaFileName);
-                var exactMeta = JsonConvert.DeserializeObject<TileMetadata>(text);
-                if (exactMeta != null)
-                {
-                    this.Meta.OverrideWith(exactMeta);
-                }
-            }
-
-            Meta.OriginalHitPoints = Meta.HitPoints;
+            this.Meta = TileMetadata.GetFreshMetadata(this.TilePath);
         }
     }
 }

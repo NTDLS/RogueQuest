@@ -1,6 +1,6 @@
 ﻿namespace Library.Engine
 {
-    public class PersistMapChunk
+    public class LevelChunk
     {
         public string TilePath { get; set; }
         public double X { get; set; }
