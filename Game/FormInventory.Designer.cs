@@ -60,7 +60,7 @@ namespace Game
             this.listViewGauntlets = new System.Windows.Forms.ListView();
             this.label16 = new System.Windows.Forms.Label();
             this.listViewShield = new System.Windows.Forms.ListView();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listViewGround = new System.Windows.Forms.ListView();
             this.listViewContainer = new System.Windows.Forms.ListView();
             this.label10 = new System.Windows.Forms.Label();
             this.labelGround = new System.Windows.Forms.Label();
@@ -362,14 +362,14 @@ namespace Game
             this.listViewShield.TabStop = false;
             this.listViewShield.UseCompatibleStateImageBehavior = false;
             // 
-            // listView1
+            // listViewGround
             // 
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(349, 363);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(343, 101);
-            this.listView1.TabIndex = 33;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listViewGround.HideSelection = false;
+            this.listViewGround.Location = new System.Drawing.Point(349, 363);
+            this.listViewGround.Name = "listViewGround";
+            this.listViewGround.Size = new System.Drawing.Size(343, 101);
+            this.listViewGround.TabIndex = 33;
+            this.listViewGround.UseCompatibleStateImageBehavior = false;
             // 
             // listViewContainer
             // 
@@ -407,7 +407,7 @@ namespace Game
             this.Controls.Add(this.labelGround);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.listViewContainer);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.listViewGround);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.listViewPurse);
             this.Controls.Add(this.label12);
@@ -485,7 +485,7 @@ namespace Game
         private System.Windows.Forms.ListView listViewGauntlets;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.ListView listViewShield;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listViewGround;
         private System.Windows.Forms.ListView listViewContainer;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label labelGround;

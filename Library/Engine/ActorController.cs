@@ -33,15 +33,15 @@ namespace Library.Engine
                 List<ActorBase> renderTiles = new List<ActorBase>();
 
                 renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
-                    .Where(o => o.Meta.BasicType != Types.BasicTileType.ActorFriendyBeing
-                        && o.Meta.BasicType != Types.BasicTileType.ActorHostileBeing
-                        && o.Meta.BasicType != Types.BasicTileType.ActorPlayer)
+                    .Where(o => o.Meta.ActorClass != Types.ActorClassName.ActorFriendyBeing
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorHostileBeing
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer)
                     .OrderBy(o => o.DrawOrder).ToList());
 
                 renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
-                    .Where(o => o.Meta.BasicType == Types.BasicTileType.ActorFriendyBeing
-                        || o.Meta.BasicType == Types.BasicTileType.ActorHostileBeing
-                        || o.Meta.BasicType == Types.BasicTileType.ActorPlayer)
+                    .Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
+                        || o.Meta.ActorClass == Types.ActorClassName.ActorHostileBeing
+                        || o.Meta.ActorClass == Types.ActorClassName.ActorPlayer)
                     .OrderBy(o => o.DrawOrder).ToList());
 
                 foreach (var obj in renderTiles)
@@ -64,7 +64,20 @@ namespace Library.Engine
         {
             foreach (var obj in this.Tiles)
             {
-                obj.RefreshMetadata();
+                if (obj.TilePath.Contains("Chest"))
+                {
+                }
+
+                obj.RefreshMetadata(true);
+            }
+
+            foreach (var container in this.Containers.Collection)
+            {
+                foreach (var obj in container.Contents)
+                {
+                    var freshMeta = TileMetadata.GetFreshMetadata(obj.TilePath);
+                    obj.Meta.OverrideWith(freshMeta);
+                }
             }
         }
 

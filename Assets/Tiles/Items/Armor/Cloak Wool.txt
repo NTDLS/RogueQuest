@@ -1,0 +1,5 @@
+{
+  "Name":"Wool Cloak",
+  "SubType": "Garment",
+  "DamageReduction":"1"
+}

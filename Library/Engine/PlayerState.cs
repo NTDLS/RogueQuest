@@ -1,12 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿using Library.Engine.Types;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Library.Engine
 {
     public class PlayerState
     {
         public List<TileIdentifier> Inventory { get; set; }
+        public List<Equip> Equipment { get; set; }
 
         public Guid UID { get; set; }
         public string Name { get; set; }
@@ -75,6 +78,19 @@ namespace Library.Engine
         public PlayerState()
         {
             Inventory = new List<TileIdentifier>();
+            Equipment = new List<Equip>();
+        }
+
+        public Equip GetEquipSlot(EquipSlot slot)
+        {
+            var equip = this.Equipment.Where(o => o.Slot == slot).FirstOrDefault();
+            if (equip == null)
+            {
+                equip = new Equip() { Slot = slot };
+                this.Equipment.Add(equip);
+            }
+
+            return equip;
         }
     }
 }

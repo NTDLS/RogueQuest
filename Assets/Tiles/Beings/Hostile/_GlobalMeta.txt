@@ -1,6 +1,6 @@
 {
   "CanTakeDamage": "True",
   "HitPoints": "100",
-  "BasicType": "ActorHostileBeing",
+  "ActorClass": "ActorHostileBeing",
   "CanWalkOn": "False"
 }

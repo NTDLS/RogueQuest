@@ -23,7 +23,7 @@ namespace Game.Engine
         public void Get()
         {
             var itemsUnderfoot = Core.Actors.Intersections(Core.Player)
-                .Where(o => o.Meta.BasicType == BasicTileType.ActorItem)
+                .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem)
                 .Cast<ActorItem>();
 
             foreach (var item in itemsUnderfoot)
@@ -94,7 +94,7 @@ namespace Game.Engine
                 Advance(input);
 
                 var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 150)
-                    .Where(o => o.Meta.CanTakeDamage == true && o.Meta.BasicType == BasicTileType.ActorHostileBeing);
+                    .Where(o => o.Meta.CanTakeDamage == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing);
 
                 if (actorsThatCanSeePlayer.Any())
                 {
@@ -151,7 +151,7 @@ namespace Game.Engine
 
             //Find out which of the hostile beings in visible range are touching the
             //  player bounds (not intersecting, because these should be none, but just touching.
-            foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.BasicType == BasicTileType.ActorHostileBeing))
+            foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.ActorClass == ActorClassName.ActorHostileBeing))
             {
                 var largerBounds = new Rectangle(obj.ScreenBounds.X - 1, obj.ScreenBounds.Y - 1, obj.ScreenBounds.Width + 2, obj.ScreenBounds.Height + 2);
                 if (Core.Player.ScreenBounds.IntersectsWith(largerBounds))
@@ -161,7 +161,7 @@ namespace Game.Engine
             }
 
             //Hostile actors will follow player.
-            foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.BasicType == BasicTileType.ActorHostileBeing))
+            foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.ActorClass == ActorClassName.ActorHostileBeing))
             {
                 var actor = obj as ActorHostileBeing;
 
@@ -247,12 +247,12 @@ namespace Game.Engine
             actor.Y += appliedOffset.Y;
 
             var intersections = Core.Actors.Intersections(actor)
-                .Where(o => o.Meta.BasicType != BasicTileType.ActorTerrain)
+                .Where(o => o.Meta.ActorClass != ActorClassName.ActorTerrain)
                 .Where(o => o.Meta.CanWalkOn == false).ToList();
 
             //Only get the top terrain block, we dont want to dig to the ocean.
             var topTerrainBlock = Core.Actors.Intersections(actor)
-                .Where(o => o.Meta.BasicType == BasicTileType.ActorTerrain)
+                .Where(o => o.Meta.ActorClass == ActorClassName.ActorTerrain)
                 .OrderBy(o => o.DrawOrder).LastOrDefault();
 
             //Only act on the top terrain block if it turns out to be one we cant walk on.

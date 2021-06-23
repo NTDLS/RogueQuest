@@ -1,6 +1,6 @@
 {
   "CanTakeDamage": "False",
   "CanWalkOn":"True",
-  "BasicType": "ActorItem",
+  "ActorClass": "ActorItem",
   "IsContainer": "True"
 }

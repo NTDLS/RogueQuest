@@ -118,7 +118,7 @@ namespace Game
 
             if (hoverTile != null)
             {
-                if (hoverTile.Meta.BasicType == Library.Engine.Types.BasicTileType.ActorHostileBeing)
+                if (hoverTile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorHostileBeing)
                 {
                     var hostile = (hoverTile as ActorHostileBeing);
                     tipText += $" ({hostile.DamageText})";
@@ -149,7 +149,7 @@ namespace Game
                 {
                     string text = hoverTile?.Meta.Name;
 
-                    if (hoverTile.Meta.BasicType == Library.Engine.Types.BasicTileType.ActorHostileBeing)
+                    if (hoverTile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorHostileBeing)
                     {
                         var hostile = (hoverTile as ActorHostileBeing);
                         text += $" ({hostile.DamageText})";

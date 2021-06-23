@@ -468,9 +468,31 @@ namespace Library.Engine
         /// <summary>
         /// Reads metadata from the asset directories and refreshes the values stored with the actor.
         /// </summary>
-        public void RefreshMetadata()
+        public void RefreshMetadata(bool keepExplicitlyValues)
         {
-            this.Meta = TileMetadata.GetFreshMetadata(this.TilePath);
+            Guid? uid = Meta?.UID;
+
+            var freshMeta = TileMetadata.GetFreshMetadata(this.TilePath);
+
+            if (keepExplicitlyValues)
+            {
+                this.Meta.OverrideWith(freshMeta);
+            }
+            else
+            {
+                this.Meta = freshMeta;
+            }
+
+            if (uid != null) //Never override the UID.
+            {
+                this.Meta.UID = uid;
+            }
+
+            //All items need UIDs.
+            if (freshMeta.ActorClass != ActorClassName.ActorTerrain && this.Meta.UID == null)
+            {
+                this.Meta.UID = Guid.NewGuid();
+            }
         }
     }
 }

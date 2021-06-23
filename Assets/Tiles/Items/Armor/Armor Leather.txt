@@ -1,0 +1,5 @@
+{
+  "Name":"Leather Armor",
+  "SubType": "Armor",
+  "DamageReduction":"1"
+}

@@ -1,5 +1,6 @@
 {
   "Name":"Silver Coins",
+  "SubType":"Money",
   "CanStack":"True",
   "CanWalkOn":"True"
 }

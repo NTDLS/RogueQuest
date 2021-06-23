@@ -14,7 +14,7 @@ namespace MapEditor
 {
     public partial class FormMain : Form
     {
-        /// <summary>
+        /// <summary>"
         /// The action that will be performed when clicking the left mouse button.
         /// </summary>
         public enum PrimaryMode
@@ -150,6 +150,7 @@ namespace MapEditor
             if (result == DialogResult.Yes)
             {
                 _core.Actors.ResetAllTilesMetadata();
+                MessageBox.Show("Complete.");
             }
         }
 
@@ -456,7 +457,14 @@ namespace MapEditor
 
                     if (hoverTile != null)
                     {
-                        toolStripStatusLabelHoverObject.Text = $"[{hoverTile.TilePath}]";
+                        string hoverText = $"[{hoverTile.TilePath}]";
+
+                        if (hoverTile.Meta?.CanStack == true)
+                        {
+                            hoverText += $" ({hoverTile.Meta.Quantity:N0})";
+                        }
+
+                        toolStripStatusLabelHoverObject.Text = hoverText;
 
                         if (highlightHoverTile && CurrentPrimaryMode != PrimaryMode.Shape)
                         {
@@ -680,12 +688,17 @@ namespace MapEditor
             {
                 listViewProperties.Items.Add("Name").SubItems.Add(selectedTile.Meta?.Name);
                 listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
-                listViewProperties.Items.Add("CanTakeDamage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
-                listViewProperties.Items.Add("HitPoints").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
+                listViewProperties.Items.Add("Can Take Damage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
+                listViewProperties.Items.Add("Hit Points").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
                 listViewProperties.Items.Add("Experience").SubItems.Add(selectedTile.Meta?.Experience.ToString());
-                listViewProperties.Items.Add("CanWalkOn").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
-                listViewProperties.Items.Add("BasicType").SubItems.Add(selectedTile.Meta?.BasicType.ToString());
-                listViewProperties.Items.Add("TilePath").SubItems.Add(selectedTile.TilePath);
+                listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
+                listViewProperties.Items.Add("Actor Class").SubItems.Add(selectedTile.Meta?.ActorClass.ToString());
+                listViewProperties.Items.Add("Sub Type").SubItems.Add(selectedTile.Meta?.SubType.ToString());
+                listViewProperties.Items.Add("Damage Reduction").SubItems.Add(selectedTile.Meta?.DamageReduction.ToString());
+                listViewProperties.Items.Add("Damage Dice").SubItems.Add(selectedTile.Meta?.DamageDice.ToString());
+                listViewProperties.Items.Add("Damage Dice Faces").SubItems.Add(selectedTile.Meta?.DamageDiceFaces.ToString());
+                listViewProperties.Items.Add("Damage Additional").SubItems.Add(selectedTile.Meta?.DamageAdditional.ToString());
+                listViewProperties.Items.Add("Tile Path").SubItems.Add(selectedTile.TilePath);
 
                 listViewProperties.Items.Add("Location").SubItems.Add(
                     $"{selectedTile.Location.X},{selectedTile.Location.Y}");
@@ -702,6 +715,9 @@ namespace MapEditor
                 listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
                 listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
                 listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
+
+
+
                 listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
         }
@@ -739,7 +755,7 @@ namespace MapEditor
                                         selectedTile.Y = y;
                                     }
                                 }
-                                else if (selectedRow.Text == "CanTakeDamage")
+                                else if (selectedRow.Text == "Can Take Damage")
                                 {
                                     bool result = false;
 
@@ -750,7 +766,7 @@ namespace MapEditor
 
                                     selectedTile.Meta.CanTakeDamage = result;
                                 }
-                                else if (selectedRow.Text == "CanWalkOn")
+                                else if (selectedRow.Text == "Can Walk On")
                                 {
                                     bool result = false;
 
@@ -769,7 +785,7 @@ namespace MapEditor
                                 {
                                     selectedTile.Meta.Tag = dialog.PropertyValue;
                                 }
-                                else if (selectedRow.Text == "HitPoints")
+                                else if (selectedRow.Text == "Hit Points")
                                 {
                                     selectedTile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
                                 }
@@ -859,10 +875,10 @@ namespace MapEditor
             {
                 insertedTile = _core.Actors.AddNew<ActorBase>(x, y, selectedItem.FullPath);
 
-                insertedTile.RefreshMetadata();
+                insertedTile.RefreshMetadata(false);
 
                 //No need to create GUIDs for every terrain tile.
-                if (insertedTile.Meta.BasicType != Library.Engine.Types.BasicTileType.ActorTerrain)
+                if (insertedTile.Meta.ActorClass != Library.Engine.Types.ActorClassName.ActorTerrain)
                 {
                     insertedTile.Meta.UID = Guid.NewGuid();
                 }

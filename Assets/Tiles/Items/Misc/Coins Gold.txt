@@ -1,5 +1,6 @@
 {
   "Name":"Gold Coins",
+  "SubType":"Money",
   "CanStack":"True",
   "CanWalkOn":"True"
 }

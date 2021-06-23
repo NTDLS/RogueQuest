@@ -1,0 +1,5 @@
+{
+  "Name":"Leather Boots",
+  "SubType": "Boots",
+  "DamageReduction":"1"
+}

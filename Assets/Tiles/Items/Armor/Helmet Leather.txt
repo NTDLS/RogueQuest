@@ -1,0 +1,5 @@
+{
+  "Name":"Leather Helment",
+  "SubType": "Helment",
+  "DamageReduction":"1"
+}

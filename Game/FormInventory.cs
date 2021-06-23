@@ -1,6 +1,7 @@
 ﻿using Assets;
 using Game.Engine;
 using Library.Engine;
+using Library.Engine.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +19,12 @@ namespace Game
         private ImageList _imageList = new ImageList();
         private Button _buttonClose = new Button();
 
+        public class EquipTag
+        {
+            public TileIdentifier Tile { get; set; }
+            public ActorSubType AcceptType { get; set; }
+            public EquipSlot Slot { get; set; }
+        }
 
         public EngineCore Core { get; set; }
         public FormInventory()
@@ -40,70 +47,48 @@ namespace Game
             listViewContainer.LargeImageList = _imageList;
             listViewContainer.ItemDrag += ListViewContainer_ItemDrag;
             listViewContainer.DragEnter += ListViewContainer_DragEnter;
+            listViewContainer.DragDrop += ListViewContainer_DragDrop;
             listViewContainer.AllowDrop = true;
 
-            InitEquipSlot(listViewArmor);
-            InitEquipSlot(listViewBracers);
-            InitEquipSlot(listViewWeapon);
-            InitEquipSlot(listViewPack);
-            InitEquipSlot(listViewBelt);
-            InitEquipSlot(listViewRightRing);
-            InitEquipSlot(listViewNecklace);
-            InitEquipSlot(listViewHelment);
-            InitEquipSlot(listViewGarment);
-            InitEquipSlot(listViewPurse);
-            InitEquipSlot(listViewBoots);
-            InitEquipSlot(listViewLeftRing);
-            InitEquipSlot(listViewFreeHand);
-            InitEquipSlot(listViewGauntlets);
-            InitEquipSlot(listViewShield);
+            InitEquipSlot(listViewArmor,  ActorSubType.Armor, EquipSlot.Armor);
+            InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
+            InitEquipSlot(listViewWeapon, ActorSubType.Weapon, EquipSlot.Weapon);
+            InitEquipSlot(listViewPack, ActorSubType.Pack, EquipSlot.Pack);
+            InitEquipSlot(listViewBelt, ActorSubType.Belt, EquipSlot.Belt);
+            InitEquipSlot(listViewRightRing, ActorSubType.Ring, EquipSlot.RightRing);
+            InitEquipSlot(listViewNecklace, ActorSubType.Necklace, EquipSlot.Necklace);
+            InitEquipSlot(listViewHelment, ActorSubType.Helment, EquipSlot.Helment);
+            InitEquipSlot(listViewGarment, ActorSubType.Garment, EquipSlot.Garment);
+            //InitEquipSlot(listViewPurse, ActorSubType.Purse, EquipSlot.Purse);
+            InitEquipSlot(listViewBoots, ActorSubType.Boots, EquipSlot.Boots);
+            InitEquipSlot(listViewLeftRing, ActorSubType.Ring, EquipSlot.LeftRing);
+            InitEquipSlot(listViewFreeHand, ActorSubType.Unspecified, EquipSlot.FreeHand);
+            InitEquipSlot(listViewGauntlets, ActorSubType.Gauntlets, EquipSlot.Gauntlets);
+            InitEquipSlot(listViewShield, ActorSubType.Shield, EquipSlot.Shield);
 
             PopulateContainerFromPack();
         }
 
-        private void InitEquipSlot(ListView lv)
-        {
-            lv.AllowDrop = true;
-            lv.DragDrop += lv_DragDrop;
-            lv.DragEnter += lv_DragEnter;
-            lv.ItemDrag += lv_ItemDrag;
+        #region Container.
 
-            lv.Items.Add("");
-
-            lv.LargeImageList = _imageList;
-            lv.SmallImageList = _imageList;
-            lv.Scrollable = false;
-        }
-        private void lv_DragEnter(object sender, DragEventArgs e)
-        {
-            e.Effect = e.AllowedEffect;
-        }
-
-        private void lv_DragDrop(object sender, DragEventArgs e)
+        private void ListViewContainer_DragDrop(object sender, DragEventArgs e)
         {
             var destination = sender as ListView;
-
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
 
-            destination.Items[0].ImageKey = draggedItem.ImageKey;
-            destination.Items[0].Text = draggedItem.Text;
-
-            e.Effect = e.AllowedEffect;
-        }
-
-        private void lv_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
+            if (destination == draggedItem.ListView)
             {
-                DoDragDrop(e.Item, DragDropEffects.Move);
+                return;
             }
-            else if (e.Button == MouseButtons.Right)
-            {
-                DoDragDrop(e.Item, DragDropEffects.Copy);
-            }
+
+            var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            AddItemToContainer(draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+
+            draggedItem.ImageKey = null;
+            draggedItem.Text = "";
+            draggedItemTag.Tile = null;
         }
-
-
 
         private void ListViewContainer_DragEnter(object sender, DragEventArgs e)
         {
@@ -121,6 +106,121 @@ namespace Game
                 DoDragDrop(e.Item, DragDropEffects.Copy);
             }
         }
+
+        #endregion
+
+
+        #region Equip Slot.
+
+        private void InitEquipSlot(ListView lv, ActorSubType acceptType, EquipSlot slot)
+        {
+            lv.HideSelection = true;
+            lv.LargeImageList = _imageList;
+            lv.SmallImageList = _imageList;
+            lv.Scrollable = false;
+            lv.AllowDrop = true;
+
+            lv.DragDrop += ListView_EquipSlot_DragDrop;
+            lv.DragEnter += ListView_EquipSlot_DragEnter;
+            lv.ItemDrag += ListView_EquipSlot_ItemDrag;
+
+            ListViewItem item = new ListViewItem("");
+            item.Tag = new EquipTag()
+            {
+                AcceptType = acceptType,
+                Slot = slot
+            };
+
+            var equipSlot = Core.State.Character.GetEquipSlot(slot);
+            if (equipSlot.Tile != null)
+            {
+                string text = equipSlot.Tile.Meta.Name;
+
+                if (equipSlot.Tile.Meta.CanStack == true && equipSlot.Tile.Meta.Quantity > 0)
+                {
+                    text += $" ({equipSlot.Tile.Meta.Quantity})";
+                }
+
+                item.Text = text;
+                item.ImageKey = GetImageKey(equipSlot.Tile.TilePath);
+                (item.Tag as EquipTag).Tile = equipSlot.Tile;
+            }
+
+            lv.Items.Add(item);
+        }
+
+        private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
+        {
+            var destination = sender as ListView;
+            var destinationTag = destination.Items[0].Tag as EquipTag;
+
+            var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+            var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            if (destination == draggedItem.ListView || destinationTag.Tile != null)
+            {
+                return;
+            }
+
+            if (destinationTag.AcceptType == draggedItemTag.Tile.Meta.SubType
+                || destinationTag.AcceptType == ActorSubType.Unspecified)
+            {
+                e.Effect = e.AllowedEffect;
+            }
+        }
+
+        private void ListView_EquipSlot_DragDrop(object sender, DragEventArgs e)
+        {
+            var destination = sender as ListView;
+            var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+
+            if (destination == draggedItem.ListView)
+            {
+                return;
+            }
+
+            var destinationTag = destination.Items[0].Tag as EquipTag;
+
+            var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            if (destinationTag.AcceptType == draggedItemTag.Tile.Meta.SubType
+                || destinationTag.AcceptType == ActorSubType.Unspecified)
+            {
+                destination.Items[0].ImageKey = draggedItem.ImageKey;
+                destination.Items[0].Text = draggedItem.Text;
+                destinationTag.Tile = draggedItemTag.Tile;
+
+                var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
+                equipSlot.Tile = draggedItemTag.Tile;
+
+                if (draggedItem.ListView == listViewContainer || draggedItem.ListView == listViewGround)
+                {
+                    draggedItem.ListView.Items.Remove(draggedItem);
+                }
+                else
+                {
+                    //Re cant remove the "empty items" from equip slots.
+                    draggedItem.ImageKey = null;
+                    draggedItem.Text = "";
+                    draggedItemTag.Tile = null;
+                }
+            }
+        }
+
+        private void ListView_EquipSlot_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Move);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Copy);
+            }
+        }
+
+        #endregion
+
 
         private void _buttonClose_Click(object sender, EventArgs e)
         {
@@ -159,7 +259,14 @@ namespace Game
 
             ListViewItem item = new ListViewItem(text);
             item.ImageKey = GetImageKey(tilePath);
-            item.Tag = meta;
+            item.Tag = new EquipTag()
+            {
+                AcceptType = (ActorSubType)meta.SubType,
+                Tile = new TileIdentifier(tilePath)
+                {
+                    Meta = meta
+                }
+            };
             listViewContainer.Items.Add(item);
         }
     }

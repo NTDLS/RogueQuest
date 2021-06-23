@@ -99,7 +99,7 @@ namespace Library.Engine
 
                 if (gameAssembly != null)
                 {
-                    var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.BasicType}");
+                    var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
                     tile = (ActorBase)Activator.CreateInstance(tileType, param);
                 }
 
@@ -118,7 +118,7 @@ namespace Library.Engine
 
                 if (refreshMetadata)
                 {
-                    tile.RefreshMetadata();
+                    tile.RefreshMetadata(false);
                 }
 
                 core.Actors.Add(tile);

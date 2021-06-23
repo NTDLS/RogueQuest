@@ -20,24 +20,34 @@ namespace Library.Engine
         public bool? CanTakeDamage { get; set; }
         public int? Experience { get; set; }
         public int? HitPoints { get; set; }
+        public int? DamageReduction { get; set; }
+        public int? DamageDice { get; set; }
+        public int? DamageDiceFaces { get; set; }
+        public int? DamageAdditional { get; set; }
         public int? OriginalHitPoints { get; set; }        
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public BasicTileType? BasicType { get; set; }
+        public ActorClassName? ActorClass { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ActorSubType? SubType { get; set; }
 
         public void OverrideWith(TileMetadata with)
         {
+            this.UID = with.UID ?? this.UID;
             this.Tag = with.Tag ?? this.Tag;
             this.CanWalkOn = with.CanWalkOn ?? this.CanWalkOn;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
             this.HitPoints = with.HitPoints ?? this.HitPoints;
             this.Experience = with.Experience ?? this.Experience;
-            this.BasicType = with.BasicType ?? this.BasicType;
+            this.ActorClass = with.ActorClass ?? this.ActorClass;
             this.Name = with.Name ?? this.Name;
             this.IsContainer = with.IsContainer ?? this.IsContainer;
             this.CanStack = with.CanStack ?? this.CanStack;
+            this.SubType = with.SubType ?? this.SubType;
+            this.DamageReduction = with.DamageReduction ?? this.DamageReduction;
         }
 
         /// <summary>
