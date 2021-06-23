@@ -28,6 +28,17 @@ namespace Game.Engine
 
             foreach (var item in itemsUnderfoot)
             {
+                if (item.Meta.CanStack == true)
+                {
+                    var existingItem = Core.State.Character.Inventory.Where(o => o.TilePath == item.TilePath).FirstOrDefault();
+                    if (existingItem != null)
+                    {
+                        existingItem.Meta.Quantity += item.Meta.Quantity;
+                        item.QueueForDelete();
+                        continue;
+                    }
+                }
+
                 Core.State.Character.Inventory.Add(new TileIdentifier(item.TilePath)
                 {
                     Meta = item.Meta

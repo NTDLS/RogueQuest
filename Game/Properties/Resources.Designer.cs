@@ -61,6 +61,16 @@ namespace Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap claudius_battle_sprite_animated {
+            get {
+                object obj = ResourceManager.GetObject("claudius_battle_sprite_animated", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Arne
         ///Birger
         ///Bjørn

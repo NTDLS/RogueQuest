@@ -2,7 +2,7 @@
   "profiles": {
     "Game": {
       "commandName": "Project",
-      "commandLineArgs": "/map:\"C:\\NTDLS\\RougueQuest\\Assets\\Maps\\MapHome.rqm\""
+      "commandLineArgs": "/game:\"C:\\NTDLS\\RougueQuest\\Assets\\Saves\\Game.rqg\""
     }
   }
 }
