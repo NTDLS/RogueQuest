@@ -392,7 +392,14 @@ namespace Game
             {
                 _core.ActionGet();
             }
-            if (e.KeyCode == Keys.R)
+            else if (e.KeyCode == Keys.I)
+            {
+                using (var form = new FormInventory(_core))
+                {
+                    form.ShowDialog();
+                }
+            }
+            else if (e.KeyCode == Keys.R)
             {
                 _core.ActionRest();
             }

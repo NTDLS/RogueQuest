@@ -7,6 +7,9 @@
     <Compile Update="Controls\SmoothProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="FormInventory.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>

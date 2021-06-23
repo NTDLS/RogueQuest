@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace Library.Engine
 {
     public class PlayerState
     {
+        public List<TileIdentifier> Inventory { get; set; }
+
         public Guid UID { get; set; }
         public string Name { get; set; }
         public int StartingConstitution { get; set; }
@@ -67,6 +70,11 @@ namespace Library.Engine
 
             AvailableHitpoints = Hitpoints;
             AvailableMana = Manna;
+        }
+
+        public PlayerState()
+        {
+            Inventory = new List<TileIdentifier>();
         }
     }
 }

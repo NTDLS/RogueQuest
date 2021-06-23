@@ -7,18 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using static Game.Engine.Types;
 
 namespace Game.Engine
 {
     public class EngineTickController
     {
-
         public EngineCore Core { get; private set; }
-
         public int TimePassed { get; set; }
-
         public EngineTickController(EngineCore core)
         {
             Core = core;
@@ -26,7 +22,19 @@ namespace Game.Engine
 
         public void Get()
         {
+            var itemsUnderfoot = Core.Actors.Intersections(Core.Player)
+                .Where(o => o.Meta.BasicType == BasicTileType.ActorItem)
+                .Cast<ActorItem>();
 
+            foreach (var item in itemsUnderfoot)
+            {
+                Core.State.Character.Inventory.Add(new TileIdentifier(item.TilePath)
+                {
+                    Meta = item.Meta
+                });
+
+                item.QueueForDelete();
+            }
         }
 
         public void Rest()
@@ -85,46 +93,6 @@ namespace Game.Engine
             Core.PurgeAllDeletedTiles();
 
             return appliedOffset;
-        }
-
-        string GetStrikeFlair()
-        {
-            var strs = new string[] {
-                "hitting them in the leg!",
-                "landing a crushing blow!.",
-                "hitting them in the head!.",
-                "hitting them in the torso!",
-                "nearly removing a limb!",
-                "causing them to stumble back!",
-                "knocking them to the ground!"};
-
-            if (MathUtility.ChanceIn(25))
-            {
-                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
-            }
-            else
-            {
-                return "and hits.";
-            }
-        }
-
-        string GetMissFlair()
-        {
-            var strs = new string[] {
-                "but they evade your clumsy blow!",
-                "but they were faster then you expected!",
-                "but they pull just out of your path!",
-                "but you were bested by their agility!"
-            };
-
-            if (MathUtility.ChanceIn(25))
-            {
-                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
-            }
-            else
-            {
-                return "but missed.";
-            }
         }
 
         /// <summary>
@@ -369,5 +337,50 @@ namespace Game.Engine
                 Core.Display.DrawingSurface.Invalidate();
             }
         }
+
+        #region Misc.
+
+        string GetStrikeFlair()
+        {
+            var strs = new string[] {
+                "hitting them in the leg!",
+                "landing a crushing blow!.",
+                "hitting them in the head!.",
+                "hitting them in the torso!",
+                "nearly removing a limb!",
+                "causing them to stumble back!",
+                "knocking them to the ground!"};
+
+            if (MathUtility.ChanceIn(25))
+            {
+                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
+            }
+            else
+            {
+                return "and hits.";
+            }
+        }
+
+        string GetMissFlair()
+        {
+            var strs = new string[] {
+                "but they evade your clumsy blow!",
+                "but they were faster then you expected!",
+                "but they pull just out of your path!",
+                "but you were bested by their agility!"
+            };
+
+            if (MathUtility.ChanceIn(25))
+            {
+                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
+            }
+            else
+            {
+                return "but missed.";
+            }
+        }
+
+        #endregion
+
     }
 }

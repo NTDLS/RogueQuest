@@ -23,6 +23,7 @@ namespace Library.Engine
         public List<ActorBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
         public TileMetadata Meta { get; set; } = new TileMetadata();
+
         private Velocity<double> _velocity = new Velocity<double>();
         public Velocity<double> Velocity
         {
