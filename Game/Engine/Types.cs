@@ -12,14 +12,17 @@ namespace Game.Engine
     {
         public enum TickInputType
         {
-            Keyboard,
-            Rest
+            Movement,
+            Rest,
+            Get
             //Maybe later we can add other input types? Magic? Arrows?
         }
 
         public class TickInput
         {
             public TickInputType InputType { get; set; }
+            public double Degrees { get; set; }
+            public double Throttle { get; set; }
             public Keys Key { get; set; }
         }
     }

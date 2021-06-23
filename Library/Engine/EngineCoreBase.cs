@@ -22,7 +22,6 @@ namespace Library.Engine
         public object CollectionSemaphore { get; private set; } = new object();
         public object DrawingSemaphore { get; private set; } = new object();
         public ActorController Actors { get; private set; }
-        public InputController Input { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
 
         //public List<Rectangle> debugRects = new List<Rectangle>();
@@ -48,7 +47,6 @@ namespace Library.Engine
             lock (CollectionSemaphore)
             {
                 Actors = new ActorController(this);
-                Input = new InputController(this);
             }
         }
 

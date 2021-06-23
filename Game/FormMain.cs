@@ -85,7 +85,6 @@ namespace Game
             splitContainerHoriz.Panel1.Controls.Add(drawingsurface);
             drawingsurface.Dock = DockStyle.Fill;
 
-            drawingsurface.KeyUp += drawingsurface_KeyUp;
             richTextBoxLog.Click += RichTextBoxLog_Click;
             drawingsurface.KeyDown += drawingsurface_KeyDown;
             drawingsurface.Paint += drawingsurface_Paint;
@@ -383,45 +382,12 @@ namespace Game
             _core.Start();
         }
 
-        private void drawingsurface_KeyUp(object sender, KeyEventArgs e)
-        {
-            /*
-            if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Up);
-            if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Up);
-            if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Up);
-            if (e.KeyCode == Keys.S) _core.Input.KeyStateChanged(PlayerKey.Reverse, KeyPressState.Up);
-            if (e.KeyCode == Keys.D) _core.Input.KeyStateChanged(PlayerKey.RotateClockwise, KeyPressState.Up);
-            if (e.KeyCode == Keys.Space) _core.Input.KeyStateChanged(PlayerKey.PrimaryFire, KeyPressState.Up);
-            if (e.KeyCode == Keys.ControlKey) _core.Input.KeyStateChanged(PlayerKey.SecondaryFire, KeyPressState.Up);
-            if (e.KeyCode == Keys.Escape) _core.Input.KeyStateChanged(PlayerKey.Escape, KeyPressState.Up);
-            if (e.KeyCode == Keys.Left) _core.Input.KeyStateChanged(PlayerKey.Left, KeyPressState.Up);
-            if (e.KeyCode == Keys.Right) _core.Input.KeyStateChanged(PlayerKey.Right, KeyPressState.Up);
-            if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(PlayerKey.Up, KeyPressState.Up);
-            if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(PlayerKey.Down, KeyPressState.Up);
-            if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(PlayerKey.Enter, KeyPressState.Up);
-            */
-        }
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
             _hasBeenModified = true;
-            /*
-            if (e.KeyCode == Keys.ShiftKey) _core.Input.KeyStateChanged(PlayerKey.SpeedBoost, KeyPressState.Down);
-            if (e.KeyCode == Keys.W) _core.Input.KeyStateChanged(PlayerKey.Forward, KeyPressState.Down);
-            if (e.KeyCode == Keys.A) _core.Input.KeyStateChanged(PlayerKey.RotateCounterClockwise, KeyPressState.Down);
-            if (e.KeyCode == Keys.S) _core.Input.KeyStateChanged(PlayerKey.Reverse, KeyPressState.Down);
-            if (e.KeyCode == Keys.D) _core.Input.KeyStateChanged(PlayerKey.RotateClockwise, KeyPressState.Down);
-            if (e.KeyCode == Keys.Space) _core.Input.KeyStateChanged(PlayerKey.PrimaryFire, KeyPressState.Down);
-            if (e.KeyCode == Keys.ControlKey) _core.Input.KeyStateChanged(PlayerKey.SecondaryFire, KeyPressState.Down);
-            if (e.KeyCode == Keys.Escape) _core.Input.KeyStateChanged(PlayerKey.Escape, KeyPressState.Down);
-            if (e.KeyCode == Keys.Left) _core.Input.KeyStateChanged(PlayerKey.Left, KeyPressState.Down);
-            if (e.KeyCode == Keys.Right) _core.Input.KeyStateChanged(PlayerKey.Right, KeyPressState.Down);
-            if (e.KeyCode == Keys.Up) _core.Input.KeyStateChanged(PlayerKey.Up, KeyPressState.Down);
-            if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(PlayerKey.Down, KeyPressState.Down);
-            if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(PlayerKey.Enter, KeyPressState.Down);
-            */
 
-            _core.Input.HandleSingleKeyPress(e.KeyCode);
+            _core.HandleSingleKeyPress(e.KeyCode);
         }
 
         private void drawingsurface_Paint(object sender, PaintEventArgs e)

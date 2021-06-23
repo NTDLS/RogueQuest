@@ -111,15 +111,47 @@ namespace Game.Engine
                 return;
             }
 
-            var input = new Types.TickInput()
-            {
-                InputType = Types.TickInputType.Keyboard,
-                Key = key
-            };
+            Types.TickInput input = null;
 
-            BeforeTick?.Invoke(this, input);
-            var offsetApplied = Tick.Advance(input);
-            AfterTick?.Invoke(this, input, offsetApplied);
+            if (key == Keys.NumPad1 || key == Keys.Z)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 225, Throttle = 1 };
+            }
+            else if (key == Keys.NumPad2 || key == Keys.Down || key == Keys.S)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 180, Throttle = 1 };
+            }
+            else if (key == Keys.NumPad3 || key == Keys.X)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 135, Throttle = 1 };
+            }
+            else if (key == Keys.NumPad4 || key == Keys.Left || key == Keys.A)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 270, Throttle = 1 };
+            }
+            else if (key == Keys.NumPad6 || key == Keys.Right || key == Keys.D)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 90, Throttle = 1 };
+            }
+            else if (key == Keys.NumPad7 || key == Keys.Q)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 315, Throttle = 1 };
+            }
+            else if (key == Keys.NumPad8 || key == Keys.Up || key == Keys.W)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 0, Throttle = 1 };
+            }
+            else if (key == Keys.NumPad9 || key == Keys.E)
+            {
+                input = new Types.TickInput { InputType = Types.TickInputType.Movement, Degrees = 45, Throttle = 1 };
+            }
+
+            if (input != null)
+            {
+                BeforeTick?.Invoke(this, input);
+                var offsetApplied = Tick.Advance(input);
+                AfterTick?.Invoke(this, input, offsetApplied);
+            }
         }
     }
 }

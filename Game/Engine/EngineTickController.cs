@@ -56,72 +56,23 @@ namespace Game.Engine
 
         public Point<double> Advance(TickInput Input)
         {
-            //Core.debugRects.Clear();
+            Point<double> appliedOffset = new Point<double>();
 
-            bool isValidInput = false;
+            List<ActorBase> intersections = new List<ActorBase>();
 
-            if (Input.InputType == TickInputType.Keyboard)
+            if (Input.InputType == TickInputType.Movement)
             {
-                #region Keyboard handler.
-                if (Input.Key == Keys.NumPad1 || Input.Key == Keys.Z)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 225;
-                    isValidInput = true;
-                }
-                else if (Input.Key == Keys.NumPad2 || Input.Key == Keys.Down || Input.Key == Keys.S)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 180;
-                    isValidInput = true;
-                }
-                else if (Input.Key == Keys.NumPad3 || Input.Key == Keys.X)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 135;
-                    isValidInput = true;
-                }
-                else if (Input.Key == Keys.NumPad4 || Input.Key == Keys.Left || Input.Key == Keys.A)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 270;
-                    isValidInput = true;
-                }
-                else if (Input.Key == Keys.NumPad6 || Input.Key == Keys.Right || Input.Key == Keys.D)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 90;
-                    isValidInput = true;
-                }
-                else if (Input.Key == Keys.NumPad7 || Input.Key == Keys.Q)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 315;
-                    isValidInput = true;
-                }
-                else if (Input.Key == Keys.NumPad8 || Input.Key == Keys.Up || Input.Key == Keys.W)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 0;
-                    isValidInput = true;
-                }
-                else if (Input.Key == Keys.NumPad9 || Input.Key == Keys.E)
-                {
-                    Core.Player.Velocity.Angle.Degrees = 45;
-                    isValidInput = true;
-                }
-                #endregion
-                Core.Player.Velocity.ThrottlePercentage = 100;
+                Core.Player.Velocity.Angle.Degrees = Input.Degrees;
+                Core.Player.Velocity.ThrottlePercentage = Input.Throttle;
+
+                intersections.AddRange(MoveActor(Core.Player, out appliedOffset));
+                ScrollBackground(appliedOffset);
             }
             else if (Input.InputType == TickInputType.Rest)
             {
-                isValidInput = true;
                 Core.Player.Velocity.ThrottlePercentage = 0;
             }
 
-            if (isValidInput == false)
-            {
-                return new Point<double>(0, 0);
-            }
-
-            Point<double> appliedOffset = new Point<double>();
-
-            var intersections = MoveActor(Core.Player, out appliedOffset);
-            
-            ScrollBackground(appliedOffset);
             TimePassed++;
 
             GameLogic(intersections);
@@ -135,6 +86,7 @@ namespace Game.Engine
         {
             var strs = new string[] {
                 "hitting them in the leg!",
+                "landing a crushing blow!.",
                 "hitting them in the head!.",
                 "hitting them in the torso!",
                 "nearly removing a limb!",
@@ -166,7 +118,7 @@ namespace Game.Engine
             }
             else
             {
-                return "but miss.";
+                return "but missed.";
             }
         }
 
@@ -252,7 +204,7 @@ namespace Game.Engine
                 //Monster hit player.
                 if (MathUtility.ChanceIn(4))
                 {
-                    Core.Log($"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor}hp and hits!", Color.DarkRed);
+                    Core.Log($"\r\n{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp and hits!", Color.DarkRed);
                     Core.State.Character.AvailableHitpoints -= actorHitsFor;
                     if (Core.State.Character.AvailableHitpoints <= 0)
                     {
@@ -261,7 +213,7 @@ namespace Game.Engine
                 }
                 else
                 {
-                    Core.Log($"\r\nMonster attacks {Core.State.Character.Name} for {actorHitsFor}hp but misses!", Color.DarkGreen);
+                    Core.Log($"\r\n{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp but missed!", Color.DarkGreen);
                 }
             }
         }
