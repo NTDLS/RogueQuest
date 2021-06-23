@@ -1,0 +1,6 @@
+{
+  "Name":"Long Sword",
+  "DamageDice":"1",
+  "DamageDiceFaces":"6",
+  "DamageAdditional":"0"
+}

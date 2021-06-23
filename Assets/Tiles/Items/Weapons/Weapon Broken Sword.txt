@@ -1,0 +1,6 @@
+{
+  "Name":"Broken Sword",
+  "DamageDice":"0",
+  "DamageDiceFaces":"0",
+  "DamageAdditional":"0"
+}

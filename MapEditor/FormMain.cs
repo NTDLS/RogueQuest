@@ -710,70 +710,80 @@ namespace MapEditor
                 {
                     var selectedRow = listViewProperties.SelectedItems[0];
 
-                    using (var dialog = new FormTileProperties(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
+                    if (selectedRow.Text == "Contents")
                     {
-                        if (dialog.ShowDialog() == DialogResult.OK)
+                        if (selectedTile.Meta?.IsContainer == true)
                         {
-                            if (selectedRow.Text == "Location")
+                            EditorContainer((Guid)selectedTile.Meta.UID);
+                        }
+                    }
+                    else
+                    {
+                        using (var dialog = new FormTileProperties(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
+                        {
+                            if (dialog.ShowDialog() == DialogResult.OK)
                             {
-                                var coords = dialog.PropertyValue.Split(",");
-                                if (coords.Length == 2)
+                                if (selectedRow.Text == "Location")
                                 {
-                                    var x = double.Parse(coords[0]);
-                                    var y = double.Parse(coords[1]);
+                                    var coords = dialog.PropertyValue.Split(",");
+                                    if (coords.Length == 2)
+                                    {
+                                        var x = double.Parse(coords[0]);
+                                        var y = double.Parse(coords[1]);
 
-                                    selectedTile.X = x;
-                                    selectedTile.Y = y;
+                                        selectedTile.X = x;
+                                        selectedTile.Y = y;
+                                    }
                                 }
-                            }
-                            else if (selectedRow.Text == "CanTakeDamage")
-                            {
-                                bool result = false;
-
-                                if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                                else if (selectedRow.Text == "CanTakeDamage")
                                 {
-                                    result = int.Parse(dialog.PropertyValue) != 0;
+                                    bool result = false;
+
+                                    if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                                    {
+                                        result = int.Parse(dialog.PropertyValue) != 0;
+                                    }
+
+                                    selectedTile.Meta.CanTakeDamage = result;
                                 }
-
-                                selectedTile.Meta.CanTakeDamage = result;
-                            }
-                            else if (selectedRow.Text == "CanWalkOn")
-                            {
-                                bool result = false;
-
-                                if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                                else if (selectedRow.Text == "CanWalkOn")
                                 {
-                                    result = int.Parse(dialog.PropertyValue) != 0;
+                                    bool result = false;
+
+                                    if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                                    {
+                                        result = int.Parse(dialog.PropertyValue) != 0;
+                                    }
+
+                                    selectedTile.Meta.CanWalkOn = result;
+                                }
+                                else if (selectedRow.Text == "Name")
+                                {
+                                    selectedTile.Meta.Name = dialog.PropertyValue;
+                                }
+                                else if (selectedRow.Text == "Tag")
+                                {
+                                    selectedTile.Meta.Tag = dialog.PropertyValue;
+                                }
+                                if (selectedRow.Text == "HitPoints")
+                                {
+                                    selectedTile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
+                                }
+                                if (selectedRow.Text == "Experience")
+                                {
+                                    selectedTile.Meta.Experience = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Angle")
+                                {
+                                    selectedTile.Velocity.Angle.Degrees = double.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "z-Order")
+                                {
+                                    selectedTile.DrawOrder = int.Parse(dialog.PropertyValue);
                                 }
 
-                                selectedTile.Meta.CanWalkOn = result;
+                                PopulateSelectedItemProperties();
                             }
-                            else if (selectedRow.Text == "Name")
-                            {
-                                selectedTile.Meta.Name = dialog.PropertyValue;
-                            }
-                            else if (selectedRow.Text == "Tag")
-                            {
-                                selectedTile.Meta.Tag = dialog.PropertyValue;
-                            }
-                            if (selectedRow.Text == "HitPoints")
-                            {
-                                selectedTile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
-                            }
-                            if (selectedRow.Text == "Experience")
-                            {
-                                selectedTile.Meta.Experience = int.Parse(dialog.PropertyValue);
-                            }
-                            else if (selectedRow.Text == "Angle")
-                            {
-                                selectedTile.Velocity.Angle.Degrees = double.Parse(dialog.PropertyValue);
-                            }
-                            else if (selectedRow.Text == "z-Order")
-                            {
-                                selectedTile.DrawOrder = int.Parse(dialog.PropertyValue);
-                            }
-
-                            PopulateSelectedItemProperties();
                         }
                     }
                 }
