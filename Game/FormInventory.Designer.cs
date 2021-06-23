@@ -379,6 +379,7 @@ namespace Game
             this.listViewContainer.Size = new System.Drawing.Size(343, 311);
             this.listViewContainer.TabIndex = 34;
             this.listViewContainer.UseCompatibleStateImageBehavior = false;
+            this.listViewContainer.View = System.Windows.Forms.View.SmallIcon;
             // 
             // label10
             // 

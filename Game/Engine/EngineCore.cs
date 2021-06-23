@@ -42,6 +42,16 @@ namespace Game.Engine
             OnLog?.Invoke(this, text, Color.Black);
         }
 
+        public void LogLine(string text)
+        {
+            OnLog?.Invoke(this, "\r\n" + text, Color.Black);
+        }
+
+        public void LogLine(string text, Color color)
+        {
+            OnLog?.Invoke(this, "\r\n" + text, color);
+        }
+
         public void NewGame(string characterName, int dexterity, int constitution, int intelligence, int strength)
         {
             this.QueueAllForDelete();

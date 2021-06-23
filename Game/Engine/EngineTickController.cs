@@ -28,23 +28,54 @@ namespace Game.Engine
 
             foreach (var item in itemsUnderfoot)
             {
-                if (item.Meta.CanStack == true)
+                if (item.Meta.IsContainer == true)
                 {
-                    var existingItem = Core.State.Character.Inventory.Where(o => o.TilePath == item.TilePath).FirstOrDefault();
-                    if (existingItem != null)
+                    var container = Core.Actors.Containers.GetContainer((Guid)item.Meta.UID);
+
+                    foreach (var contItem in container.Contents)
                     {
-                        existingItem.Meta.Quantity += item.Meta.Quantity;
-                        item.QueueForDelete();
-                        continue;
+                        Core.LogLine($"Picked up" + ((contItem.Meta.CanStack == true) ? $" {contItem.Meta.Quantity:N0}" : "") + $" {contItem.Meta.Name}");
+
+                        if (contItem.Meta.CanStack == true)
+                        {
+                            var existingItem = Core.State.Character.Inventory.Where(o => o.TilePath == contItem.TilePath).FirstOrDefault();
+                            if (existingItem != null)
+                            {
+                                existingItem.Meta.Quantity += contItem.Meta.Quantity;
+                                continue;
+                            }
+                        }
+
+                        Core.State.Character.Inventory.Add(new TileIdentifier(contItem.TilePath)
+                        {
+                            Meta = contItem.Meta
+                        });
                     }
+
+                    container.Clear();
                 }
-
-                Core.State.Character.Inventory.Add(new TileIdentifier(item.TilePath)
+                else
                 {
-                    Meta = item.Meta
-                });
+                    Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.Name}");
 
-                item.QueueForDelete();
+                    if (item.Meta.CanStack == true)
+                    {
+                        var existingItem = Core.State.Character.Inventory.Where(o => o.TilePath == item.TilePath).FirstOrDefault();
+                        if (existingItem != null)
+                        {
+                            existingItem.Meta.Quantity += item.Meta.Quantity;
+                            item.QueueForDelete();
+                            continue;
+                        }
+                    }
+
+                    Core.State.Character.Inventory.Add(new TileIdentifier(item.TilePath)
+                    {
+                        Meta = item.Meta
+                    });
+
+                    item.QueueForDelete();
+                }
             }
         }
 
@@ -54,7 +85,7 @@ namespace Game.Engine
 
             if (Core.State.Character.AvailableHitpoints >= Core.State.Character.Hitpoints)
             {
-                Core.Log($"\r\nFeeling no need to rest you press on.", Color.DarkGreen);
+                Core.LogLine($"Feeling no need to rest you press on.", Color.DarkGreen);
                 return;
             }
 
@@ -68,14 +99,14 @@ namespace Game.Engine
                 if (actorsThatCanSeePlayer.Any())
                 {
                     var firstActor = actorsThatCanSeePlayer.First();
-                    Core.Log($"\r\nYour rest was interrupted by a {firstActor.Meta.Name}!", Color.DarkRed);
+                    Core.LogLine($"Your rest was interrupted by a {firstActor.Meta.Name}!", Color.DarkRed);
                     return;
                 }
 
                 Core.State.Character.AvailableHitpoints++;
             }
 
-            Core.Log($"\r\nYou awake feeling refreshed.", Color.DarkGreen);
+            Core.LogLine($"You awake feeling refreshed.", Color.DarkGreen);
         }
 
         public Point<double> Advance(TickInput Input)
@@ -152,7 +183,7 @@ namespace Game.Engine
 
                 if (MathUtility.ChanceIn(4))
                 {
-                    Core.Log($"\r\n{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetStrikeFlair()}", Color.DarkGreen);
+                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetStrikeFlair()}", Color.DarkGreen);
 
                     if (actorToAttack.Hit(playerHitsFor))
                     {
@@ -163,14 +194,14 @@ namespace Game.Engine
                             experience = (int)actorToAttack.Meta.Experience;
                         }
 
-                        Core.Log($"\r\n{Core.State.Character.Name} kills {actorToAttack.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
+                        Core.LogLine($"{Core.State.Character.Name} kills {actorToAttack.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
 
                         Core.State.Character.Experience += experience;
                     }
                 }
                 else
                 {
-                    Core.Log($"\r\n{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetMissFlair()}", Color.DarkRed);
+                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetMissFlair()}", Color.DarkRed);
                 }
             }
 
@@ -188,7 +219,7 @@ namespace Game.Engine
                 //Monster hit player.
                 if (MathUtility.ChanceIn(4))
                 {
-                    Core.Log($"\r\n{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp and hits!", Color.DarkRed);
+                    Core.LogLine($"{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp and hits!", Color.DarkRed);
                     Core.State.Character.AvailableHitpoints -= actorHitsFor;
                     if (Core.State.Character.AvailableHitpoints <= 0)
                     {
@@ -197,7 +228,7 @@ namespace Game.Engine
                 }
                 else
                 {
-                    Core.Log($"\r\n{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp but missed!", Color.DarkGreen);
+                    Core.LogLine($"{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp but missed!", Color.DarkGreen);
                 }
             }
         }

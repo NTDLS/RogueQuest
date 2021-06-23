@@ -152,7 +152,7 @@ namespace MapEditor
         {
             ImageList imageList = new ImageList();
             treeViewTiles.ImageList = imageList;
-            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Tiles/Items");
+            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Tiles\\Items");
             if (treeViewTiles.Nodes.Count > 0)
             {
                 treeViewTiles.Nodes[0].Expand();
