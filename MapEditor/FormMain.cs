@@ -694,6 +694,10 @@ namespace MapEditor
                 {
                     listViewProperties.Items.Add("Contents").SubItems.Add("<open>");
                 }
+                if (selectedTile.Meta?.CanStack == true)
+                {
+                    listViewProperties.Items.Add("Quantity").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
+                }
 
                 listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
                 listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
@@ -765,13 +769,17 @@ namespace MapEditor
                                 {
                                     selectedTile.Meta.Tag = dialog.PropertyValue;
                                 }
-                                if (selectedRow.Text == "HitPoints")
+                                else if (selectedRow.Text == "HitPoints")
                                 {
                                     selectedTile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
                                 }
-                                if (selectedRow.Text == "Experience")
+                                else if (selectedRow.Text == "Experience")
                                 {
                                     selectedTile.Meta.Experience = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Quantity")
+                                {
+                                    selectedTile.Meta.Quantity = int.Parse(dialog.PropertyValue);
                                 }
                                 else if (selectedRow.Text == "Angle")
                                 {
@@ -870,6 +878,11 @@ namespace MapEditor
                     {
                         insertedTile.Meta.Experience = 10;
                     }
+                }
+
+                if (insertedTile.Meta.CanStack == true && insertedTile.Meta.Quantity == 0)
+                {
+                    insertedTile.Meta.Quantity = 1;
                 }
 
                 lastPlacedItemSize = insertedTile.Size;

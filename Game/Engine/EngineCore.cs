@@ -97,10 +97,17 @@ namespace Game.Engine
             }
         }
 
-        public void Rest()
+        public void ActionRest()
         {
             var input = new Types.TickInput() { InputType = Types.TickInputType.Rest };
             Tick.Rest();
+            AfterTick?.Invoke(this, input, new Point<double>());
+        }
+
+        public void ActionGet()
+        {
+            var input = new Types.TickInput() { InputType = Types.TickInputType.Get };
+            Tick.Get();
             AfterTick?.Invoke(this, input, new Point<double>());
         }
 

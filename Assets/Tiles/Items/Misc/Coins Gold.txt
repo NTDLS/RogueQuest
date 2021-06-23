@@ -1,3 +1,5 @@
 {
-  "Name":"Gold Coins"
+  "Name":"Gold Coins",
+  "CanStack":"True",
+  "CanWalkOn":"True"
 }

@@ -24,6 +24,11 @@ namespace Game.Engine
             Core = core;
         }
 
+        public void Get()
+        {
+
+        }
+
         public void Rest()
         {
             var input = new Types.TickInput() { InputType = Types.TickInputType.Rest };

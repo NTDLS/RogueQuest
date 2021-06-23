@@ -22,6 +22,7 @@ namespace Library.Engine
         public int? HitPoints { get; set; }
         public int? OriginalHitPoints { get; set; }        
         public bool? IsContainer { get; set; }
+        public bool? CanStack { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public BasicTileType? BasicType { get; set; }
@@ -36,10 +37,11 @@ namespace Library.Engine
             this.BasicType = with.BasicType ?? this.BasicType;
             this.Name = with.Name ?? this.Name;
             this.IsContainer = with.IsContainer ?? this.IsContainer;
+            this.CanStack = with.CanStack ?? this.CanStack;
         }
 
         /// <summary>
-        /// Traverses up the directories looking for metadata files that describe the assets and allowing for overriding of metadat values.
+        /// Traverses up the directories looking for metadata files that describe the assets and allowing for overriding of metadata values.
         /// </summary>
         /// <param name="tilePath"></param>
         /// <param name="fileName"></param>

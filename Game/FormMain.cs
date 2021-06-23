@@ -184,11 +184,12 @@ namespace Game
 
         private void ToolStripButtonRest_Click(object sender, EventArgs e)
         {
-            _core.Rest();
+            _core.ActionRest();
         }
 
         private void ToolStripButtonGet_Click(object sender, EventArgs e)
         {
+            _core.ActionGet();
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -387,7 +388,18 @@ namespace Game
         {
             _hasBeenModified = true;
 
-            _core.HandleSingleKeyPress(e.KeyCode);
+            if (e.KeyCode == Keys.G)
+            {
+                _core.ActionGet();
+            }
+            if (e.KeyCode == Keys.R)
+            {
+                _core.ActionRest();
+            }
+            else
+            {
+                _core.HandleSingleKeyPress(e.KeyCode);
+            }
         }
 
         private void drawingsurface_Paint(object sender, PaintEventArgs e)
