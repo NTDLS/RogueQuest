@@ -291,7 +291,14 @@ namespace Game.Engine
             //Only act on the top terrain block if it turns out to be one we cant walk on.
             if (topTerrainBlock.Meta.CanWalkOn == false)
             {
+                actor.X -= appliedOffset.X;
+                actor.Y -= appliedOffset.Y;
+
                 intersections.Add(topTerrainBlock);
+
+                finalAppliedOffset = new Point<double>(0, 0);
+
+                return intersections;
             }
 
             //Do basic collision detection and back off the player movement

@@ -57,7 +57,7 @@ namespace MapEditor
 
             _container = Core.Actors.Containers.GetContainer(ContainerId);
 
-            foreach (var obj in _container.Chunks)
+            foreach (var obj in _container.Contents)
             {
                 AddItemToContainer(obj.TilePath, obj.Meta.Quantity);
             }
@@ -232,14 +232,8 @@ namespace MapEditor
             foreach (ListViewItem obj in listViewContainer.Items)
             {
                 var metaData = TileMetadata.GetFreshMetadata(obj.ImageKey);
-
                 metaData.Quantity = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
-
-                _container.Add(new LevelChunk()
-                {
-                    TilePath = obj.ImageKey,
-                    Meta = metaData,
-                });
+                _container.Add(new TileIdentifier(obj.ImageKey) { Meta = metaData });
             }
 
             DialogResult = DialogResult.OK;

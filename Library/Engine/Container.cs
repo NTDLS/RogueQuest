@@ -1,35 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Library.Engine
 {
     public class Container
     {
         public Guid ContainerId { get; set; }
-        public List<LevelChunk> Chunks { get; set; }
+        public List<TileIdentifier> Contents { get; set; }
 
         public Container(Guid containerId)
         {
             ContainerId = containerId;
-            Chunks = new List<LevelChunk>();
+            Contents = new List<TileIdentifier>();
         }
 
         public Container()
         {
-            Chunks = new List<LevelChunk>();
+            Contents = new List<TileIdentifier>();
         }
 
-        public void Add(LevelChunk chunk)
+        public void Add(TileIdentifier chunk)
         {
-            Chunks.Add(chunk);
+            Contents.Add(chunk);
         }
 
         public void Clear()
         {
-            Chunks.Clear();
+            Contents.Clear();
         }
     }
 }

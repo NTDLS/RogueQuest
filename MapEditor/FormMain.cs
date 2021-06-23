@@ -622,7 +622,6 @@ namespace MapEditor
             }
         }
 
-
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             double x = e.X + _core.Display.BackgroundOffset.X;

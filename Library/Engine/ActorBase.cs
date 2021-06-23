@@ -3,6 +3,7 @@ using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -245,6 +246,11 @@ namespace Library.Engine
             foreach (var child in Children)
             {
                 child.QueueForDelete();
+            }
+
+            if (Meta != null && Meta.UID != null)
+            {
+                Core.Actors.Containers.Remove((Guid)Meta.UID);
             }
 
             _readyForDeletion = true;

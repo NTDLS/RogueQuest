@@ -51,6 +51,5 @@ namespace Library.Types
 
             return EmptyRectangleF;
         }
-
     }
 }
