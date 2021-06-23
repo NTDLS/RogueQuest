@@ -50,7 +50,7 @@ namespace Game
             listViewContainer.DragDrop += ListViewContainer_DragDrop;
             listViewContainer.AllowDrop = true;
 
-            InitEquipSlot(listViewArmor,  ActorSubType.Armor, EquipSlot.Armor);
+            InitEquipSlot(listViewArmor, ActorSubType.Armor, EquipSlot.Armor);
             InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
             InitEquipSlot(listViewWeapon, ActorSubType.Weapon, EquipSlot.Weapon);
             InitEquipSlot(listViewPack, ActorSubType.Pack, EquipSlot.Pack);
@@ -66,7 +66,12 @@ namespace Game
             InitEquipSlot(listViewGauntlets, ActorSubType.Gauntlets, EquipSlot.Gauntlets);
             InitEquipSlot(listViewShield, ActorSubType.Shield, EquipSlot.Shield);
 
-            PopulateContainerFromPack();
+            //If we are wearing a pack, go ahead and show its contents.
+            var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+            if (pack.Tile != null)
+            {
+                PopulateContainerFromPack((Guid)pack.Tile.Meta.UID);
+            }
         }
 
         #region Container.
@@ -240,11 +245,11 @@ namespace Game
             return tilePath;
         }
 
-        void PopulateContainerFromPack()
+        void PopulateContainerFromPack(Guid containerId)
         {
-            foreach (var item in Core.State.Character.Inventory)
+            foreach (var item in Core.State.Character.Inventory.Where(o => o.ContainerId == containerId))
             {
-                AddItemToContainer(item.TilePath, item.Meta);
+                AddItemToContainer(item.Tile.TilePath, item.Tile.Meta);
             }
         }
 

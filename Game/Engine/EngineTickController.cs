@@ -26,6 +26,15 @@ namespace Game.Engine
                 .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem)
                 .Cast<ActorItem>();
 
+            var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+            if (pack.Tile == null)
+            {
+                Core.LogLine($"You'll need a pack if you want to carry items. Maybe use your free hand?");
+                return;
+            }
+
+            Guid containerId = (Guid)pack.Tile.Meta.UID;
+
             foreach (var item in itemsUnderfoot)
             {
                 if (item.Meta.IsContainer == true)
@@ -38,18 +47,24 @@ namespace Game.Engine
 
                         if (contItem.Meta.CanStack == true)
                         {
-                            var existingItem = Core.State.Character.Inventory.Where(o => o.TilePath == contItem.TilePath).FirstOrDefault();
+                            var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == contItem.TilePath).FirstOrDefault();
                             if (existingItem != null)
                             {
-                                existingItem.Meta.Quantity += contItem.Meta.Quantity;
+                                existingItem.Tile.Meta.Quantity += contItem.Meta.Quantity;
                                 continue;
                             }
                         }
 
-                        Core.State.Character.Inventory.Add(new TileIdentifier(contItem.TilePath)
+                        var inventoryItem = new InventoryItem()
                         {
-                            Meta = contItem.Meta
-                        });
+                            ContainerId = containerId,
+                            Tile = new TileIdentifier(contItem.TilePath)
+                            {
+                                Meta = contItem.Meta
+                            }
+                        };
+
+                        Core.State.Character.Inventory.Add(inventoryItem);
                     }
 
                     container.Clear();
@@ -60,19 +75,25 @@ namespace Game.Engine
 
                     if (item.Meta.CanStack == true)
                     {
-                        var existingItem = Core.State.Character.Inventory.Where(o => o.TilePath == item.TilePath).FirstOrDefault();
+                        var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == item.TilePath).FirstOrDefault();
                         if (existingItem != null)
                         {
-                            existingItem.Meta.Quantity += item.Meta.Quantity;
+                            existingItem.Tile.Meta.Quantity += item.Meta.Quantity;
                             item.QueueForDelete();
                             continue;
                         }
                     }
 
-                    Core.State.Character.Inventory.Add(new TileIdentifier(item.TilePath)
+                    var inventoryItem = new InventoryItem()
                     {
-                        Meta = item.Meta
-                    });
+                        ContainerId = containerId,
+                        Tile = new TileIdentifier(item.TilePath)
+                        {
+                            Meta = item.Meta
+                        }
+                    };
+
+                    Core.State.Character.Inventory.Add(inventoryItem);
 
                     item.QueueForDelete();
                 }
