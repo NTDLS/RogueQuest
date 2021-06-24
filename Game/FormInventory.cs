@@ -267,10 +267,7 @@ namespace Game
             item.Tag = new EquipTag()
             {
                 AcceptType = (ActorSubType)meta.SubType,
-                Tile = new TileIdentifier(tilePath)
-                {
-                    Meta = meta
-                }
+                Tile = new TileIdentifier(tilePath, meta)
             };
             listViewContainer.Items.Add(item);
         }

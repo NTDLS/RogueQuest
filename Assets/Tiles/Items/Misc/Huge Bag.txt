@@ -1,0 +1,7 @@
+{
+  "Name":"Huge Pack",
+  "SubType":"Pack",
+  "BulkCapacity":"1600",
+  "WeightCapacity":"500",
+  "CanWalkOn":"True"
+}

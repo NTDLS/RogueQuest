@@ -233,7 +233,7 @@ namespace MapEditor
             {
                 var metaData = TileMetadata.GetFreshMetadata(obj.ImageKey);
                 metaData.Quantity = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
-                _container.Add(new TileIdentifier(obj.ImageKey) { Meta = metaData });
+                _container.Add(new TileIdentifier(obj.ImageKey, metaData));
             }
 
             DialogResult = DialogResult.OK;

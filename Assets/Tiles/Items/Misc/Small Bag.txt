@@ -1,0 +1,7 @@
+{
+  "Name":"Small Pack",
+  "SubType":"Pack",
+  "BulkCapacity":"500",
+  "WeightCapacity":"120",
+  "CanWalkOn":"True"
+}

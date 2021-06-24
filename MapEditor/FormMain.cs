@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Library.Engine.Types;
 
 namespace MapEditor
 {
@@ -687,21 +688,48 @@ namespace MapEditor
             if (selectedTile != null && selectedTile.Visible)
             {
                 listViewProperties.Items.Add("Name").SubItems.Add(selectedTile.Meta?.Name);
+                listViewProperties.Items.Add("Tile").SubItems.Add(selectedTile.TilePath);
                 listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
-                listViewProperties.Items.Add("Can Take Damage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
-                listViewProperties.Items.Add("Hit Points").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
-                listViewProperties.Items.Add("Experience").SubItems.Add(selectedTile.Meta?.Experience.ToString());
-                listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
                 listViewProperties.Items.Add("Actor Class").SubItems.Add(selectedTile.Meta?.ActorClass.ToString());
                 listViewProperties.Items.Add("Sub Type").SubItems.Add(selectedTile.Meta?.SubType.ToString());
-                listViewProperties.Items.Add("Damage Reduction").SubItems.Add(selectedTile.Meta?.DamageReduction.ToString());
-                listViewProperties.Items.Add("Damage Dice").SubItems.Add(selectedTile.Meta?.DamageDice.ToString());
-                listViewProperties.Items.Add("Damage Dice Faces").SubItems.Add(selectedTile.Meta?.DamageDiceFaces.ToString());
-                listViewProperties.Items.Add("Damage Additional").SubItems.Add(selectedTile.Meta?.DamageAdditional.ToString());
-                listViewProperties.Items.Add("Tile Path").SubItems.Add(selectedTile.TilePath);
+                listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
+                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
+                listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
+                listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
 
-                listViewProperties.Items.Add("Location").SubItems.Add(
-                    $"{selectedTile.Location.X},{selectedTile.Location.Y}");
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing)
+                {
+                    listViewProperties.Items.Add("Can Take Damage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
+                    listViewProperties.Items.Add("Hit Points").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
+                    listViewProperties.Items.Add("Experience").SubItems.Add(selectedTile.Meta?.Experience.ToString());
+                }
+
+                if (selectedTile.Meta.SubType == ActorSubType.Armor || selectedTile.Meta.SubType == ActorSubType.Gauntlets
+                    || selectedTile.Meta.SubType == ActorSubType.Helment || selectedTile.Meta.SubType == ActorSubType.Bracers
+                    || selectedTile.Meta.SubType == ActorSubType.Boots || selectedTile.Meta.SubType == ActorSubType.Shield
+                    || selectedTile.Meta.SubType == ActorSubType.Ring || selectedTile.Meta.SubType == ActorSubType.Garment
+                    || selectedTile.Meta.SubType == ActorSubType.Belt || selectedTile.Meta.SubType == ActorSubType.Necklace)
+                {
+                    listViewProperties.Items.Add("Damage Reduction").SubItems.Add(selectedTile.Meta?.DamageReduction.ToString());
+                }
+
+                if (selectedTile.Meta.SubType == ActorSubType.Wand || selectedTile.Meta.SubType == ActorSubType.Weapon)
+                {
+                    listViewProperties.Items.Add("Damage Dice").SubItems.Add(selectedTile.Meta?.DamageDice.ToString());
+                    listViewProperties.Items.Add("Damage Dice Faces").SubItems.Add(selectedTile.Meta?.DamageDiceFaces.ToString());
+                    listViewProperties.Items.Add("Damage Additional").SubItems.Add(selectedTile.Meta?.DamageAdditional.ToString());
+                }
+
+                if (selectedTile.Meta.SubType == ActorSubType.Pack)
+                {
+                    listViewProperties.Items.Add("BulkCapacity").SubItems.Add(selectedTile.Meta?.BulkCapacity.ToString());
+                    listViewProperties.Items.Add("WeightCapacity").SubItems.Add(selectedTile.Meta?.WeightCapacity.ToString());
+                }
+
+                listViewProperties.Items.Add("Bulk").SubItems.Add(selectedTile.Meta?.Bulk.ToString());
+                listViewProperties.Items.Add("Weight").SubItems.Add(selectedTile.Meta?.Weight.ToString());
+
+                listViewProperties.Items.Add("Location").SubItems.Add($"{selectedTile.Location.X},{selectedTile.Location.Y}");
 
                 if (selectedTile.Meta?.IsContainer == true)
                 {
@@ -711,12 +739,6 @@ namespace MapEditor
                 {
                     listViewProperties.Items.Add("Quantity").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
                 }
-
-                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
-                listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
-                listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
-
-
 
                 listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
@@ -805,6 +827,38 @@ namespace MapEditor
                                 {
                                     selectedTile.DrawOrder = int.Parse(dialog.PropertyValue);
                                 }
+                                else if (selectedRow.Text == "Damage Reduction")
+                                {
+                                    selectedTile.Meta.DamageReduction = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Damage Dice")
+                                {
+                                    selectedTile.Meta.DamageDice = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Damage Dice Faces")
+                                {
+                                    selectedTile.Meta.DamageDiceFaces = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Damage Additional")
+                                {
+                                    selectedTile.Meta.DamageAdditional = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Bulk")
+                                {
+                                    selectedTile.Meta.Bulk = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Bulk Capacity")
+                                {
+                                    selectedTile.Meta.BulkCapacity = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Weight Capacity")
+                                {
+                                    selectedTile.Meta.WeightCapacity = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Damage Reduction")
+                                {
+                                    selectedTile.Meta.DamageReduction = int.Parse(dialog.PropertyValue);
+                                }
 
                                 PopulateSelectedItemProperties();
                             }
@@ -878,7 +932,7 @@ namespace MapEditor
                 insertedTile.RefreshMetadata(false);
 
                 //No need to create GUIDs for every terrain tile.
-                if (insertedTile.Meta.ActorClass != Library.Engine.Types.ActorClassName.ActorTerrain)
+                if (insertedTile.Meta.ActorClass != ActorClassName.ActorTerrain)
                 {
                     insertedTile.Meta.UID = Guid.NewGuid();
                 }

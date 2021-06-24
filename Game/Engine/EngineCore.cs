@@ -87,11 +87,13 @@ namespace Game.Engine
             this.PurgeAllDeletedTiles();
             Level.Load(this, fileName);
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+            LogLine("Game loaded.");
         }
 
         public void SaveGame(string fileName)
         {
             Level.Save(this, fileName, this.State);
+            LogLine("Game saved.");
         }
 
         public ActorTextBlock AddNewTextBlock(string font, Brush color, double size, double x, double y, bool isPositionStatic, string text = "")

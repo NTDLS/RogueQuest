@@ -45,6 +45,14 @@ namespace Library.Engine
             Velocity.OnChange += Velocity_OnChange;
         }
 
+        public TileIdentifier CloneIdentifier()
+        {
+            return new TileIdentifier(this.TilePath)
+            {
+                Meta = this.Meta
+            };
+        }
+
         private void Velocity_OnChange(Velocity<double> sender)
         {
             this.Invalidate();

@@ -1,5 +1,7 @@
 {
   "Name":"Wool Cloak",
   "SubType": "Garment",
-  "DamageReduction":"1"
+  "DamageReduction":"1",
+  "Weight":"6",
+  "Bulk":"60"
 }

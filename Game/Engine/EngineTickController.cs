@@ -29,20 +29,49 @@ namespace Game.Engine
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (pack.Tile == null)
             {
+                //Make it easy to put our first pack where it goes.
+                var underfootPack = itemsUnderfoot.Where(o => o.Meta.SubType == ActorSubType.Pack).FirstOrDefault();
+                if (underfootPack != null)
+                {
+                    Core.LogLine($"Picked up {underfootPack.Meta.Name} and placed it on your back.");
+                    pack.Tile = underfootPack.CloneIdentifier();
+                    underfootPack.QueueForDelete();
+                    return;
+                }
+
                 Core.LogLine($"You'll need a pack if you want to carry items. Maybe use your free hand?");
                 return;
             }
 
             Guid containerId = (Guid)pack.Tile.Meta.UID;
+            int maxBulk = (int)pack.Tile.Meta.BulkCapacity;
+            int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
 
             foreach (var item in itemsUnderfoot)
             {
+                var itemsRemovedFromContainer = new List<Guid>();
+
                 if (item.Meta.IsContainer == true)
                 {
                     var container = Core.Actors.Containers.GetContainer((Guid)item.Meta.UID);
 
                     foreach (var contItem in container.Contents)
                     {
+                        //Do weight/bulk math.
+                        var currentContainerWeight = Core.State.Character.Inventory.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Weight);
+                        if (contItem.Meta.Weight + currentContainerWeight > maxWeight)
+                        {
+                            Core.LogLine($"{item.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something?");
+                            break;
+                        }
+
+                        var currentContainerBulk = Core.State.Character.Inventory.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Bulk);
+                        if (contItem.Meta.Bulk + currentContainerBulk > maxBulk)
+                        {
+                            Core.LogLine($"{item.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something?");
+                            break;
+                        }
+
                         Core.LogLine($"Picked up" + ((contItem.Meta.CanStack == true) ? $" {contItem.Meta.Quantity:N0}" : "") + $" {contItem.Meta.Name}");
 
                         if (contItem.Meta.CanStack == true)
@@ -58,19 +87,36 @@ namespace Game.Engine
                         var inventoryItem = new InventoryItem()
                         {
                             ContainerId = containerId,
-                            Tile = new TileIdentifier(contItem.TilePath)
-                            {
-                                Meta = contItem.Meta
-                            }
+                            Tile = contItem.Clone()
                         };
 
+                        itemsRemovedFromContainer.Add((Guid)inventoryItem.Tile.Meta.UID);
                         Core.State.Character.Inventory.Add(inventoryItem);
                     }
 
-                    container.Clear();
+                    //Remove the items from the container that were place into inventory.
+                    foreach (var itemId in itemsRemovedFromContainer)
+                    {
+                        container.Contents.RemoveAll(o => o.Meta.UID == itemId);
+                    }
                 }
                 else
                 {
+                    //Do weight/bulk math.
+                    var currentContainerWeight = Core.State.Character.Inventory.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Weight);
+                    if (item.Meta.Weight + currentContainerWeight > maxWeight)
+                    {
+                        Core.LogLine($"{item.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something?");
+                        break;
+                    }
+
+                    var currentContainerBulk = Core.State.Character.Inventory.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Bulk);
+                    if (item.Meta.Bulk + currentContainerBulk > maxBulk)
+                    {
+                        Core.LogLine($"{item.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something?");
+                        break;
+                    }
+
                     Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.Name}");
 
                     if (item.Meta.CanStack == true)
@@ -87,10 +133,7 @@ namespace Game.Engine
                     var inventoryItem = new InventoryItem()
                     {
                         ContainerId = containerId,
-                        Tile = new TileIdentifier(item.TilePath)
-                        {
-                            Meta = item.Meta
-                        }
+                        Tile = item.CloneIdentifier()
                     };
 
                     Core.State.Character.Inventory.Add(inventoryItem);

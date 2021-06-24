@@ -1,5 +1,7 @@
 {
   "Name":"Leather Helment",
   "SubType": "Helment",
-  "DamageReduction":"1"
+  "DamageReduction":"1",
+  "Weight":"5",
+  "Bulk":"5"
 }

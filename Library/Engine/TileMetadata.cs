@@ -15,7 +15,7 @@ namespace Library.Engine
         public Guid? UID { get; set; }
         public string Name { get; set; }
         public string Tag { get; set; }
-        public int Quantity { get; set; } //Stacking because things like money only really matter in quantities
+        public int Quantity { get; set; } //Stacking because things like money only really matter in multiples.
         public bool? CanWalkOn { get; set; }
         public bool? CanTakeDamage { get; set; }
         public int? Experience { get; set; }
@@ -27,6 +27,11 @@ namespace Library.Engine
         public int? OriginalHitPoints { get; set; }        
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; }
+        public int? BulkCapacity { get; set; }
+        public int? WeightCapacity { get; set; }
+        public int? Weight { get; set; }
+        public int? Bulk { get; set; }
+
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorClassName? ActorClass { get; set; }
@@ -48,6 +53,10 @@ namespace Library.Engine
             this.CanStack = with.CanStack ?? this.CanStack;
             this.SubType = with.SubType ?? this.SubType;
             this.DamageReduction = with.DamageReduction ?? this.DamageReduction;
+            this.BulkCapacity = with.BulkCapacity ?? this.BulkCapacity;
+            this.WeightCapacity = with.WeightCapacity ?? this.WeightCapacity;
+            this.Bulk = with.Bulk ?? this.Bulk;
+            this.Weight = with.Weight ?? this.Weight;
         }
 
         /// <summary>

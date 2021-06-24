@@ -1,5 +1,7 @@
 {
   "Name":"Leather Boots",
   "SubType": "Boots",
-  "DamageReduction":"1"
+  "DamageReduction":"1",
+  "Weight":"15",
+  "Bulk":"40"
 }

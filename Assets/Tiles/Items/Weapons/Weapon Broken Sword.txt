@@ -3,5 +3,7 @@
   "SubType": "Weapon",
   "DamageDice":"0",
   "DamageDiceFaces":"0",
-  "DamageAdditional":"0"
+  "DamageAdditional":"0",
+  "Weight":"10",
+  "Bulk":"50"
 }
