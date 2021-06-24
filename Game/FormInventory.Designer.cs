@@ -61,9 +61,11 @@ namespace Game
             this.label16 = new System.Windows.Forms.Label();
             this.listViewShield = new System.Windows.Forms.ListView();
             this.listViewGround = new System.Windows.Forms.ListView();
-            this.listViewContainer = new System.Windows.Forms.ListView();
+            this.listViewPlayerPack = new System.Windows.Forms.ListView();
             this.label10 = new System.Windows.Forms.Label();
             this.labelGround = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.listViewSelectedContainer = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCharacter)).BeginInit();
             this.SuspendLayout();
             // 
@@ -371,24 +373,24 @@ namespace Game
             this.listViewGround.TabIndex = 33;
             this.listViewGround.UseCompatibleStateImageBehavior = false;
             // 
-            // listViewContainer
+            // listViewPlayerPack
             // 
-            this.listViewContainer.HideSelection = false;
-            this.listViewContainer.Location = new System.Drawing.Point(349, 29);
-            this.listViewContainer.Name = "listViewContainer";
-            this.listViewContainer.Size = new System.Drawing.Size(343, 311);
-            this.listViewContainer.TabIndex = 34;
-            this.listViewContainer.UseCompatibleStateImageBehavior = false;
-            this.listViewContainer.View = System.Windows.Forms.View.SmallIcon;
+            this.listViewPlayerPack.HideSelection = false;
+            this.listViewPlayerPack.Location = new System.Drawing.Point(349, 29);
+            this.listViewPlayerPack.Name = "listViewPlayerPack";
+            this.listViewPlayerPack.Size = new System.Drawing.Size(343, 189);
+            this.listViewPlayerPack.TabIndex = 34;
+            this.listViewPlayerPack.UseCompatibleStateImageBehavior = false;
+            this.listViewPlayerPack.View = System.Windows.Forms.View.SmallIcon;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(349, 11);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(106, 15);
+            this.label10.Size = new System.Drawing.Size(32, 15);
             this.label10.TabIndex = 35;
-            this.label10.Text = "Selected Container";
+            this.label10.Text = "Pack";
             // 
             // labelGround
             // 
@@ -399,14 +401,34 @@ namespace Game
             this.labelGround.TabIndex = 36;
             this.labelGround.Text = "Ground";
             // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(349, 221);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(106, 15);
+            this.label17.TabIndex = 38;
+            this.label17.Text = "Selected Container";
+            // 
+            // listViewSelectedContainer
+            // 
+            this.listViewSelectedContainer.HideSelection = false;
+            this.listViewSelectedContainer.Location = new System.Drawing.Point(349, 239);
+            this.listViewSelectedContainer.Name = "listViewSelectedContainer";
+            this.listViewSelectedContainer.Size = new System.Drawing.Size(343, 101);
+            this.listViewSelectedContainer.TabIndex = 37;
+            this.listViewSelectedContainer.UseCompatibleStateImageBehavior = false;
+            // 
             // FormInventory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 477);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.listViewSelectedContainer);
             this.Controls.Add(this.labelGround);
             this.Controls.Add(this.label10);
-            this.Controls.Add(this.listViewContainer);
+            this.Controls.Add(this.listViewPlayerPack);
             this.Controls.Add(this.listViewGround);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.listViewPurse);
@@ -486,8 +508,10 @@ namespace Game
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.ListView listViewShield;
         private System.Windows.Forms.ListView listViewGround;
-        private System.Windows.Forms.ListView listViewContainer;
+        private System.Windows.Forms.ListView listViewPlayerPack;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label labelGround;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.ListView listViewSelectedContainer;
     }
 }

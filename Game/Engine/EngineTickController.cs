@@ -20,6 +20,124 @@ namespace Game.Engine
             Core = core;
         }
 
+        private void PickupPack(ActorItem packOnGround)
+        {
+            var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+            int maxBulk = (int)pack.Tile.Meta.BulkCapacity;
+            int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
+            var worldContainer = Core.Actors.Containers.GetContainer((Guid)packOnGround.Meta.UID);
+
+            var currentContainerWeight = Core.State.Character.Inventory.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+            var worldContainerWeight = worldContainer.Contents.Sum(o => o.Meta.Weight);
+            if (currentContainerWeight + worldContainerWeight > maxWeight)
+            {
+                Core.LogLine($"This pack contains items too bulky for your {pack.Tile.Meta.Name}. Drop something?");
+                return;
+            }
+
+            var currentContainerBulk = Core.State.Character.Inventory.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+            var worldContainerBulk = worldContainer.Contents.Sum(o => o.Meta.Bulk);
+            if (currentContainerBulk + worldContainerBulk > maxWeight)
+            {
+                Core.LogLine($"This pack contains items too heavy for your {pack.Tile.Meta.Name}. Drop something?");
+                return;
+            }
+
+            //We typically add the pack to our existing pack, unless the pack we are picking up is the one in the players pack slot.
+            //This happens when the player picks up a pack when one is not already equipped.
+            if (pack.Tile.Meta.UID != packOnGround.Meta.UID) 
+            {
+                //Add the pack on the ground to the players inventory pack.
+                var nestedPack = new InventoryItem()
+                {
+                    ContainerId = (Guid)pack.Tile.Meta.UID,
+                    Tile = packOnGround.CloneIdentifier()
+                };
+                Core.State.Character.Inventory.Add(nestedPack);
+            }
+
+            //Add all the items in the poack on the ground to the pack in the players inventory pack (nested). :(
+            foreach (var item in worldContainer.Contents)
+            {
+                Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.Name}");
+
+                if (item.Meta.CanStack == true)
+                {
+                    var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == item.TilePath).FirstOrDefault();
+                    if (existingItem != null)
+                    {
+                        existingItem.Tile.Meta.Quantity += item.Meta.Quantity;
+                        continue;
+                    }
+                }
+
+                var inventoryItem = new InventoryItem()
+                {
+                    ContainerId = (Guid)packOnGround.Meta.UID,
+                    Tile = item.Clone()
+                };
+
+                Core.State.Character.Inventory.Add(inventoryItem);
+            }
+
+            packOnGround.QueueForDelete();
+        }
+
+        private void PickupChestContents(Guid worldContainerId)
+        {
+            var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+            int maxBulk = (int)pack.Tile.Meta.BulkCapacity;
+            int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
+            var worldContainer = Core.Actors.Containers.GetContainer(worldContainerId);
+
+            var itemsRemovedFromContainer = new List<Guid>();
+
+            foreach (var item in worldContainer.Contents)
+            {
+                //Do weight/bulk math.
+                var currentContainerWeight = Core.State.Character.Inventory.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+                if (item.Meta.Weight + currentContainerWeight > maxWeight)
+                {
+                    Core.LogLine($"{item.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something?");
+                    break;
+                }
+
+                var currentContainerBulk = Core.State.Character.Inventory.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+                if (item.Meta.Bulk + currentContainerBulk > maxBulk)
+                {
+                    Core.LogLine($"{item.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something?");
+                    break;
+                }
+
+                Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.Name}");
+
+                if (item.Meta.CanStack == true)
+                {
+                    var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == item.TilePath).FirstOrDefault();
+                    if (existingItem != null)
+                    {
+                        existingItem.Tile.Meta.Quantity += item.Meta.Quantity;
+                        continue;
+                    }
+                }
+
+                var inventoryItem = new InventoryItem()
+                {
+                    ContainerId = (Guid)pack.Tile.Meta.UID,
+                    Tile = item.Clone()
+                };
+
+                itemsRemovedFromContainer.Add((Guid)inventoryItem.Tile.Meta.UID);
+                Core.State.Character.Inventory.Add(inventoryItem);
+            }
+
+            //Remove the items from the container that were place into inventory.
+            foreach (var itemId in itemsRemovedFromContainer)
+            {
+                worldContainer.Contents.RemoveAll(o => o.Meta.UID == itemId);
+            }
+        }
+
         public void Get()
         {
             var itemsUnderfoot = Core.Actors.Intersections(Core.Player)
@@ -35,6 +153,9 @@ namespace Game.Engine
                 {
                     Core.LogLine($"Picked up {underfootPack.Meta.Name} and placed it on your back.");
                     pack.Tile = underfootPack.CloneIdentifier();
+
+                    PickupPack(underfootPack);
+
                     underfootPack.QueueForDelete();
                     return;
                 }
@@ -49,55 +170,16 @@ namespace Game.Engine
 
             foreach (var item in itemsUnderfoot)
             {
-                var itemsRemovedFromContainer = new List<Guid>();
-
                 if (item.Meta.IsContainer == true)
                 {
-                    var container = Core.Actors.Containers.GetContainer((Guid)item.Meta.UID);
-
-                    foreach (var contItem in container.Contents)
+                    //We take stuff out of all containers except for bags. For bags, we pick up the entire thing.
+                    if (item.Meta.SubType == ActorSubType.Pack)
                     {
-                        //Do weight/bulk math.
-                        var currentContainerWeight = Core.State.Character.Inventory.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Weight);
-                        if (contItem.Meta.Weight + currentContainerWeight > maxWeight)
-                        {
-                            Core.LogLine($"{item.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something?");
-                            break;
-                        }
-
-                        var currentContainerBulk = Core.State.Character.Inventory.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Bulk);
-                        if (contItem.Meta.Bulk + currentContainerBulk > maxBulk)
-                        {
-                            Core.LogLine($"{item.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something?");
-                            break;
-                        }
-
-                        Core.LogLine($"Picked up" + ((contItem.Meta.CanStack == true) ? $" {contItem.Meta.Quantity:N0}" : "") + $" {contItem.Meta.Name}");
-
-                        if (contItem.Meta.CanStack == true)
-                        {
-                            var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == contItem.TilePath).FirstOrDefault();
-                            if (existingItem != null)
-                            {
-                                existingItem.Tile.Meta.Quantity += contItem.Meta.Quantity;
-                                continue;
-                            }
-                        }
-
-                        var inventoryItem = new InventoryItem()
-                        {
-                            ContainerId = containerId,
-                            Tile = contItem.Clone()
-                        };
-
-                        itemsRemovedFromContainer.Add((Guid)inventoryItem.Tile.Meta.UID);
-                        Core.State.Character.Inventory.Add(inventoryItem);
+                        PickupPack(item);
                     }
-
-                    //Remove the items from the container that were place into inventory.
-                    foreach (var itemId in itemsRemovedFromContainer)
+                    else
                     {
-                        container.Contents.RemoveAll(o => o.Meta.UID == itemId);
+                        PickupChestContents((Guid)item.Meta.UID);
                     }
                 }
                 else

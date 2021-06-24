@@ -3,5 +3,6 @@
   "SubType":"Pack",
   "BulkCapacity":"1000",
   "WeightCapacity":"350",
-  "CanWalkOn":"True"
+  "CanWalkOn":"True",
+  "IsContainer":"True"
 }

@@ -43,12 +43,21 @@ namespace Game
             _buttonClose.Click += _buttonClose_Click;
             this.CancelButton = _buttonClose;
 
-            listViewContainer.SmallImageList = _imageList;
-            listViewContainer.LargeImageList = _imageList;
-            listViewContainer.ItemDrag += ListViewContainer_ItemDrag;
-            listViewContainer.DragEnter += ListViewContainer_DragEnter;
-            listViewContainer.DragDrop += ListViewContainer_DragDrop;
-            listViewContainer.AllowDrop = true;
+            listViewSelectedContainer.SmallImageList = _imageList;
+            listViewSelectedContainer.LargeImageList = _imageList;
+            listViewSelectedContainer.ItemDrag += ListViewSelectedContainer_ItemDrag;
+            listViewSelectedContainer.DragEnter += ListViewSelectedContainer_DragEnter;
+            listViewSelectedContainer.DragDrop += ListViewSelectedContainer_DragDrop;
+            listViewSelectedContainer.AllowDrop = true;
+            listViewSelectedContainer.MouseDoubleClick += ListViewSelectedContainer_MouseDoubleClick;
+
+            listViewPlayerPack.SmallImageList = _imageList;
+            listViewPlayerPack.LargeImageList = _imageList;
+            listViewPlayerPack.ItemDrag += ListViewPlayerPack_ItemDrag;
+            listViewPlayerPack.DragEnter += ListViewPlayerPack_DragEnter;
+            listViewPlayerPack.DragDrop += ListViewPlayerPack_DragDrop;
+            listViewPlayerPack.AllowDrop = true;
+            listViewPlayerPack.MouseDoubleClick += ListViewPlayerPack_MouseDoubleClick;
 
             InitEquipSlot(listViewArmor, ActorSubType.Armor, EquipSlot.Armor);
             InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
@@ -70,13 +79,49 @@ namespace Game
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (pack.Tile != null)
             {
-                PopulateContainerFromPack((Guid)pack.Tile.Meta.UID);
+                PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
             }
         }
 
-        #region Container.
+        #region ListViewSelectedContainer.
 
-        private void ListViewContainer_DragDrop(object sender, DragEventArgs e)
+        private void ListViewSelectedContainer_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void ListViewSelectedContainer_DragDrop(object sender, DragEventArgs e)
+        {
+        }
+
+        private void ListViewSelectedContainer_DragEnter(object sender, DragEventArgs e)
+        {
+        }
+
+        private void ListViewSelectedContainer_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+        }
+
+        #endregion
+
+        #region ListViewPlayerPack.
+
+        private void ListViewPlayerPack_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (listViewPlayerPack.SelectedItems?.Count != 1)
+            {
+                return;
+            }
+
+            ListViewItem selectedListItem = listViewPlayerPack.SelectedItems[0];
+            var item = selectedListItem.Tag as EquipTag;
+
+            if (item.Tile.Meta.SubType == ActorSubType.Pack)
+            {
+                PopulateContainerFromPack(listViewSelectedContainer, (Guid)item.Tile.Meta.UID);
+            }
+        }
+
+        private void ListViewPlayerPack_DragDrop(object sender, DragEventArgs e)
         {
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
@@ -88,19 +133,19 @@ namespace Game
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
 
-            AddItemToContainer(draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+            AddItemToContainer(listViewPlayerPack, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
 
             draggedItem.ImageKey = null;
             draggedItem.Text = "";
             draggedItemTag.Tile = null;
         }
 
-        private void ListViewContainer_DragEnter(object sender, DragEventArgs e)
+        private void ListViewPlayerPack_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = e.AllowedEffect;
         }
 
-        private void ListViewContainer_ItemDrag(object sender, ItemDragEventArgs e)
+        private void ListViewPlayerPack_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -113,7 +158,6 @@ namespace Game
         }
 
         #endregion
-
 
         #region Equip Slot.
 
@@ -198,7 +242,7 @@ namespace Game
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
                 equipSlot.Tile = draggedItemTag.Tile;
 
-                if (draggedItem.ListView == listViewContainer || draggedItem.ListView == listViewGround)
+                if (draggedItem.ListView == listViewPlayerPack || draggedItem.ListView == listViewGround)
                 {
                     draggedItem.ListView.Items.Remove(draggedItem);
                 }
@@ -226,11 +270,16 @@ namespace Game
 
         #endregion
 
+        #region Form Events.
 
         private void _buttonClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        #endregion
+
+        #region Utility.
 
         string GetImageKey(string tilePath)
         {
@@ -245,15 +294,15 @@ namespace Game
             return tilePath;
         }
 
-        void PopulateContainerFromPack(Guid containerId)
+        void PopulateContainerFromPack(ListView listView, Guid containerId)
         {
             foreach (var item in Core.State.Character.Inventory.Where(o => o.ContainerId == containerId))
             {
-                AddItemToContainer(item.Tile.TilePath, item.Tile.Meta);
+                AddItemToContainer(listView, item.Tile.TilePath, item.Tile.Meta);
             }
         }
 
-        private void AddItemToContainer(string tilePath, TileMetadata meta)
+        private void AddItemToContainer(ListView listView, string tilePath, TileMetadata meta)
         {
             string text = meta.Name;
 
@@ -269,7 +318,10 @@ namespace Game
                 AcceptType = (ActorSubType)meta.SubType,
                 Tile = new TileIdentifier(tilePath, meta)
             };
-            listViewContainer.Items.Add(item);
+            listView.Items.Add(item);
         }
+
+        #endregion
+
     }
 }
