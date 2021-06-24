@@ -63,7 +63,8 @@ namespace Game.Engine
 
                 if (item.Meta.CanStack == true)
                 {
-                    var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == item.TilePath).FirstOrDefault();
+                    var existingItem = Core.State.Character.Inventory
+                        .Where(o => o.Tile.TilePath == item.TilePath && o.ContainerId == pack.Tile.Meta.UID).FirstOrDefault();
                     if (existingItem != null)
                     {
                         existingItem.Tile.Meta.Quantity += item.Meta.Quantity;
@@ -113,7 +114,8 @@ namespace Game.Engine
 
                 if (item.Meta.CanStack == true)
                 {
-                    var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == item.TilePath).FirstOrDefault();
+                    var existingItem = Core.State.Character.Inventory
+                        .Where(o => o.Tile.TilePath == item.TilePath && o.ContainerId == pack.Tile.Meta.UID).FirstOrDefault();
                     if (existingItem != null)
                     {
                         existingItem.Tile.Meta.Quantity += item.Meta.Quantity;
@@ -151,8 +153,17 @@ namespace Game.Engine
                 var underfootPack = itemsUnderfoot.Where(o => o.Meta.SubType == ActorSubType.Pack).FirstOrDefault();
                 if (underfootPack != null)
                 {
+                    //TODO: We need to make sure that the player can even pick up this pack. It might be too heavy?
+
                     Core.LogLine($"Picked up {underfootPack.Meta.Name} and placed it on your back.");
                     pack.Tile = underfootPack.CloneIdentifier();
+
+                    var inventoryItem = new InventoryItem()
+                    {
+                        Tile = underfootPack.CloneIdentifier()
+                    };
+
+                    Core.State.Character.Inventory.Add(inventoryItem);
 
                     PickupPack(underfootPack);
 
@@ -203,7 +214,8 @@ namespace Game.Engine
 
                     if (item.Meta.CanStack == true)
                     {
-                        var existingItem = Core.State.Character.Inventory.Where(o => o.Tile.TilePath == item.TilePath).FirstOrDefault();
+                        var existingItem = Core.State.Character.Inventory
+                            .Where(o => o.Tile.TilePath == item.TilePath && o.ContainerId == pack.Tile.Meta.UID).FirstOrDefault();
                         if (existingItem != null)
                         {
                             existingItem.Tile.Meta.Quantity += item.Meta.Quantity;

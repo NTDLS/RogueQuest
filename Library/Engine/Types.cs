@@ -47,7 +47,8 @@
         Potion,
         Scroll,
         Wand,
-        Money
+        Money,
+        Chest
     }
 
     public enum RotationMode

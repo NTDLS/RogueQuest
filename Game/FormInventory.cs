@@ -1,4 +1,5 @@
 ﻿using Assets;
+using Game.Actors;
 using Game.Engine;
 using Library.Engine;
 using Library.Engine.Types;
@@ -18,6 +19,7 @@ namespace Game
     {
         private ImageList _imageList = new ImageList();
         private Button _buttonClose = new Button();
+        private TileIdentifier _currentlySelectedPack { get; set; } = null;
 
         public class EquipTag
         {
@@ -51,6 +53,14 @@ namespace Game
             listViewSelectedContainer.AllowDrop = true;
             listViewSelectedContainer.MouseDoubleClick += ListViewSelectedContainer_MouseDoubleClick;
 
+            listViewGround.SmallImageList = _imageList;
+            listViewGround.LargeImageList = _imageList;
+            listViewGround.ItemDrag += ListViewGround_ItemDrag;
+            listViewGround.DragEnter += ListViewGround_DragEnter;
+            listViewGround.DragDrop += ListViewGround_DragDrop;
+            listViewGround.AllowDrop = true;
+            listViewGround.MouseDoubleClick += ListViewGround_MouseDoubleClick;
+
             listViewPlayerPack.SmallImageList = _imageList;
             listViewPlayerPack.LargeImageList = _imageList;
             listViewPlayerPack.ItemDrag += ListViewPlayerPack_ItemDrag;
@@ -81,24 +91,266 @@ namespace Game
             {
                 PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
             }
+
+            PopulateContainerFromGround(listViewGround);
         }
+
+        #region ListViewGround
+
+        private void ListViewGround_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (listViewGround.SelectedItems?.Count != 1)
+            {
+                return;
+            }
+
+            var item = listViewGround.SelectedItems[0].Tag as EquipTag;
+            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            {
+                OpenPack(item);
+            }
+        }
+
+        private void ListViewGround_DragDrop(object sender, DragEventArgs e)
+        {
+            var destination = sender as ListView;
+            var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+            var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            if (destination == draggedItem.ListView)
+            {
+                return;
+            }
+
+            //If we are draging from the primary pack slot, then close the pack.
+            if (draggedItem.ListView == listViewPack)
+            {
+                listViewPlayerPack.Items.Clear();
+            }
+
+            //Find the item in the players inventory and change its container id to that of the selected open pack.
+            var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+
+            bool wasStacked = false;
+
+            if (inventoryItem.Tile.Meta.CanStack == true)
+            {
+                var itemUnderfoot = Core.Actors.Intersections(Core.Player)
+                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
+                    .Cast<ActorItem>().FirstOrDefault();
+
+                if (itemUnderfoot != null)
+                {
+                    itemUnderfoot.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+
+                    var listViewItem = FindListViewObjectByUid(listViewGround, (Guid)itemUnderfoot.Meta.UID);
+                    if (listViewItem != null)
+                    {
+                        string text = itemUnderfoot.Meta.Name;
+
+                        if (itemUnderfoot.Meta.CanStack == true && itemUnderfoot.Meta.Quantity > 0)
+                        {
+                            text += $" ({itemUnderfoot.Meta.Quantity})";
+                        }
+
+                        listViewItem.Text = text;
+                    }
+
+                    wasStacked = true;
+                }
+            }
+
+            if (wasStacked == false)
+            {
+                var droppedItem = Core.Actors.AddDynamic(inventoryItem.Tile.Meta.ActorClass.ToString(),
+                    Core.Player.X, Core.Player.Y, inventoryItem.Tile.TilePath);
+                droppedItem.Meta = inventoryItem.Tile.Meta;
+
+                AddItemToListView(listViewGround, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+            }
+
+            Core.State.Character.Inventory.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
+
+            if (draggedItem.ListView == listViewSelectedContainer)
+            {
+                draggedItem.ListView.Items.Remove(draggedItem);
+            }
+            else if (draggedItem.ListView == listViewPlayerPack)
+            {
+                draggedItem.ListView.Items.Remove(draggedItem);
+            }
+            else
+            {
+                var slotToVacate = Core.State.Character.GetEquipSlot(draggedItemTag.Slot);
+                slotToVacate.Tile = null;
+
+                //We dont remove the items from equip slots, we just clear their text and image.
+                draggedItem.ImageKey = null;
+                draggedItem.Text = "";
+                draggedItemTag.Tile = null;
+            }
+        }
+
+        private void ListViewGround_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = e.AllowedEffect;
+        }
+
+        private void ListViewGround_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Move);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Copy);
+            }
+        }
+
+        #endregion
 
         #region ListViewSelectedContainer.
 
         private void ListViewSelectedContainer_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (listViewSelectedContainer.SelectedItems?.Count != 1)
+            {
+                return;
+            }
+
+            var item = listViewSelectedContainer.SelectedItems[0].Tag as EquipTag;
+            if (item.Tile.Meta.SubType == ActorSubType.Pack)
+            {
+                OpenPack(item);
+            }
         }
 
         private void ListViewSelectedContainer_DragDrop(object sender, DragEventArgs e)
         {
+            if (_currentlySelectedPack == null)
+            {
+                MessageBox.Show("You havn't opend a container yet.");
+                return;
+            }
+
+            var destination = sender as ListView;
+            var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+
+            if (destination == draggedItem.ListView)
+            {
+                return;
+            }
+
+            //If we are draging from the primary pack slot, then close the pack.
+            if (draggedItem.ListView == listViewPack)
+            {
+                listViewPlayerPack.Items.Clear();
+            }
+
+            var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            ActorItem itemOnGround = null;
+
+            if (draggedItem.ListView == listViewGround)
+            {
+                itemOnGround = Core.Actors.Intersections(Core.Player)
+                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
+                    .Cast<ActorItem>().FirstOrDefault();
+
+                Core.State.Character.Inventory.Add(new InventoryItem()
+                {
+                    Tile = itemOnGround.CloneIdentifier()
+                });
+            }
+
+            //Find the item in the players inventory and change its container id to that of the selected open pack.
+            var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+
+            if (_currentlySelectedPack.Meta.UID == draggedItemTag.Tile.Meta.UID)
+            {
+                //A container canot contain itsself.
+                MessageBox.Show($"A {_currentlySelectedPack.Meta.Name} cannot contain itself.");
+                return;
+            }
+            if (inventoryItem.ContainerId == (Guid)_currentlySelectedPack.Meta.UID)
+            {
+                //No need to do anything if we are dragging to the same container.
+                return;
+            }
+
+            bool wasStacked = false;
+
+            if (inventoryItem.Tile.Meta.CanStack == true)
+            {
+                //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
+                var existingInventoryItem = Core.State.Character.Inventory
+                    .Where(o => o.Tile.TilePath == draggedItemTag.Tile.TilePath
+                    && o.ContainerId == _currentlySelectedPack.Meta.UID).FirstOrDefault();
+
+                if (existingInventoryItem != null)
+                {
+                    existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    Core.State.Character.Inventory.RemoveAll(o=>o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
+
+                    var listViewItem = FindListViewObjectByUid(listViewSelectedContainer, (Guid)existingInventoryItem.Tile.Meta.UID);
+                    if (listViewItem != null)
+                    {
+                        string text = existingInventoryItem.Tile.Meta.Name;
+
+                        if (existingInventoryItem.Tile.Meta.CanStack == true && existingInventoryItem.Tile.Meta.Quantity > 0)
+                        {
+                            text += $" ({existingInventoryItem.Tile.Meta.Quantity})";
+                        }
+
+                        listViewItem.Text = text;
+                    }
+
+                    wasStacked = true;
+                }
+            }
+
+            if (wasStacked == false)
+            {
+                AddItemToListView(listViewSelectedContainer, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                inventoryItem.ContainerId = (Guid)_currentlySelectedPack.Meta.UID;
+            }
+
+            if (draggedItem.ListView == listViewGround)
+            {
+                itemOnGround.QueueForDelete();
+                draggedItem.ListView.Items.Remove(draggedItem);
+            }
+            else if (draggedItem.ListView == listViewPlayerPack)
+            {
+                draggedItem.ListView.Items.Remove(draggedItem);
+            }
+            else
+            {
+                var slotToVacate = Core.State.Character.GetEquipSlot(draggedItemTag.Slot);
+                slotToVacate.Tile = null;
+
+                //We dont remove the items from equip slots, we just clear their text and image.
+                draggedItem.ImageKey = null;
+                draggedItem.Text = "";
+                draggedItemTag.Tile = null;
+            }
         }
 
         private void ListViewSelectedContainer_DragEnter(object sender, DragEventArgs e)
-        {
+        {       
+            e.Effect = e.AllowedEffect;
         }
 
         private void ListViewSelectedContainer_ItemDrag(object sender, ItemDragEventArgs e)
-        {
+        {            if (e.Button == MouseButtons.Left)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Move);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Copy);
+            }
         }
 
         #endregion
@@ -112,32 +364,122 @@ namespace Game
                 return;
             }
 
-            ListViewItem selectedListItem = listViewPlayerPack.SelectedItems[0];
-            var item = selectedListItem.Tag as EquipTag;
-
+            var item = listViewPlayerPack.SelectedItems[0].Tag as EquipTag;
             if (item.Tile.Meta.SubType == ActorSubType.Pack)
             {
-                PopulateContainerFromPack(listViewSelectedContainer, (Guid)item.Tile.Meta.UID);
+                OpenPack(item);
             }
         }
 
         private void ListViewPlayerPack_DragDrop(object sender, DragEventArgs e)
         {
+            var playersPack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+            if (playersPack.Tile == null)
+            {
+                MessageBox.Show("You need to equip a pack.");
+                return;
+            }
+
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+            var draggedItemTag = draggedItem.Tag as EquipTag;
 
             if (destination == draggedItem.ListView)
             {
                 return;
             }
 
-            var draggedItemTag = draggedItem.Tag as EquipTag;
+            //If we are draging from the primary pack slot, then close the pack.
+            if (draggedItem.ListView == listViewPack)
+            {
+                listViewPlayerPack.Items.Clear();
+            }
 
-            AddItemToContainer(listViewPlayerPack, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+            ActorItem itemOnGround = null;
 
-            draggedItem.ImageKey = null;
-            draggedItem.Text = "";
-            draggedItemTag.Tile = null;
+            if (draggedItem.ListView == listViewGround)
+            {
+                itemOnGround = Core.Actors.Intersections(Core.Player)
+                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
+                    .Cast<ActorItem>().FirstOrDefault();
+
+                Core.State.Character.Inventory.Add(new InventoryItem()
+                {
+                    Tile = itemOnGround.CloneIdentifier()
+                });
+            }
+
+            //Find the item in the playes inventory and change its container id to that of the players pack.
+            var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+
+            if (playersPack.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID)
+            {
+                //A container canot contain itsself.
+                MessageBox.Show($"A {playersPack.Tile.Meta.Name} cannot contain itself.");
+                return;
+            }
+            if (inventoryItem.ContainerId == (Guid)playersPack.Tile.Meta.UID)
+            {
+                //No need to do anything if we are dragging to the same container.
+                return;
+            }
+
+            bool wasStacked = false;
+
+            if (inventoryItem.Tile.Meta.CanStack == true)
+            {
+                //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
+                var existingInventoryItem = Core.State.Character.Inventory
+                    .Where(o => o.Tile.TilePath == draggedItemTag.Tile.TilePath
+                    && o.ContainerId == playersPack.Tile.Meta.UID).FirstOrDefault();
+
+                if (existingInventoryItem != null)
+                {
+                    existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    Core.State.Character.Inventory.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
+
+                    var listViewItem = FindListViewObjectByUid(listViewPlayerPack, (Guid)existingInventoryItem.Tile.Meta.UID);
+                    if (listViewItem != null)
+                    {
+                        string text = existingInventoryItem.Tile.Meta.Name;
+
+                        if (existingInventoryItem.Tile.Meta.CanStack == true && existingInventoryItem.Tile.Meta.Quantity > 0)
+                        {
+                            text += $" ({existingInventoryItem.Tile.Meta.Quantity})";
+                        }
+
+                        listViewItem.Text = text;
+                    }
+
+                    wasStacked = true;
+                }
+            }
+
+            if (wasStacked == false)
+            {
+                AddItemToListView(listViewPlayerPack, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                inventoryItem.ContainerId = (Guid)playersPack.Tile.Meta.UID;
+            }
+
+            if (draggedItem.ListView == listViewGround)
+            {
+                itemOnGround.QueueForDelete();
+                draggedItem.ListView.Items.Remove(draggedItem);
+            }
+            else if (draggedItem.ListView == listViewSelectedContainer)
+            {
+                draggedItem.ListView.Items.Remove(draggedItem);
+            }
+            else
+            {
+                var slotToVacate = Core.State.Character.GetEquipSlot(draggedItemTag.Slot);
+                slotToVacate.Tile = null;
+
+                //We dont remove the items from equip slots, we just clear their text and image.
+                draggedItem.ImageKey = null;
+                draggedItem.Text = "";
+                draggedItemTag.Tile = null;
+            }
         }
 
         private void ListViewPlayerPack_DragEnter(object sender, DragEventArgs e)
@@ -172,6 +514,7 @@ namespace Game
             lv.DragDrop += ListView_EquipSlot_DragDrop;
             lv.DragEnter += ListView_EquipSlot_DragEnter;
             lv.ItemDrag += ListView_EquipSlot_ItemDrag;
+            lv.MouseDoubleClick += Lv_MouseDoubleClick;
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
@@ -197,6 +540,35 @@ namespace Game
 
             lv.Items.Add(item);
         }
+
+        private void Lv_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var listView = sender as ListView;
+
+            if (listView.SelectedItems?.Count != 1)
+            {
+                return;
+            }
+
+            if (listView == listViewPack)
+            {
+                //Only open the worm pack to the main container view.
+                var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+                if (pack.Tile != null)
+                {
+                    PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                }
+            }
+            else
+            {
+                var item = listView.SelectedItems[0].Tag as EquipTag;
+                if (item.Tile.Meta.SubType == ActorSubType.Pack)
+                {
+                    OpenPack(item);
+                }
+            }
+        }
+
 
         private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
         {
@@ -228,6 +600,12 @@ namespace Game
                 return;
             }
 
+            //If we are draging from the primary pack slot, then close the pack.
+            if (draggedItem.ListView == listViewPack)
+            {
+                listViewPlayerPack.Items.Clear();
+            }
+
             var destinationTag = destination.Items[0].Tag as EquipTag;
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
@@ -242,16 +620,59 @@ namespace Game
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
                 equipSlot.Tile = draggedItemTag.Tile;
 
-                if (draggedItem.ListView == listViewPlayerPack || draggedItem.ListView == listViewGround)
+                ActorItem itemOnGround = null;
+
+                if (draggedItem.ListView == listViewGround)
+                {
+                    itemOnGround = Core.Actors.Intersections(Core.Player)
+                        .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
+                        .Cast<ActorItem>().FirstOrDefault();
+
+                    Core.State.Character.Inventory.Add(new InventoryItem()
+                    {
+                        Tile = itemOnGround.CloneIdentifier()
+                    });
+                }
+
+                var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+                inventoryItem.ContainerId = null; //find the item in inventory and set its container id to null.
+
+                if (draggedItem.ListView == listViewGround)
+                {
+                    itemOnGround.QueueForDelete();
+                    draggedItem.ListView.Items.Remove(draggedItem);
+                }
+                else if (draggedItem.ListView == listViewPlayerPack)
+                {
+                    draggedItem.ListView.Items.Remove(draggedItem);
+                }
+                else if (draggedItem.ListView == listViewSelectedContainer)
                 {
                     draggedItem.ListView.Items.Remove(draggedItem);
                 }
                 else
                 {
-                    //Re cant remove the "empty items" from equip slots.
+                    var slotToVacate = Core.State.Character.GetEquipSlot(draggedItemTag.Slot);
+                    slotToVacate.Tile = null;
+
+                    //We dont remove the items from equip slots, we just clear their text and image.
                     draggedItem.ImageKey = null;
                     draggedItem.Text = "";
                     draggedItemTag.Tile = null;
+                }
+
+                if (destination == listViewPack)
+                {
+                    var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+                    if (pack.Tile != null)
+                    {
+                        if (pack.Tile.Meta.UID == _currentlySelectedPack.Meta?.UID)
+                        {
+                            listViewSelectedContainer.Items.Clear();
+                        }
+
+                        PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                    }
                 }
             }
         }
@@ -294,15 +715,31 @@ namespace Game
             return tilePath;
         }
 
-        void PopulateContainerFromPack(ListView listView, Guid containerId)
+        void PopulateContainerFromGround(ListView listView)
         {
-            foreach (var item in Core.State.Character.Inventory.Where(o => o.ContainerId == containerId))
+            listView.Items.Clear();
+
+            var itemUnderfoot = Core.Actors.Intersections(Core.Player)
+                .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem)
+                .Cast<ActorItem>();
+
+            foreach (var item in itemUnderfoot)
             {
-                AddItemToContainer(listView, item.Tile.TilePath, item.Tile.Meta);
+                AddItemToListView(listView, item.TilePath, item.Meta);
             }
         }
 
-        private void AddItemToContainer(ListView listView, string tilePath, TileMetadata meta)
+        void PopulateContainerFromPack(ListView listView, Guid containerId)
+        {
+            listView.Items.Clear();
+
+            foreach (var item in Core.State.Character.Inventory.Where(o => o.ContainerId == containerId))
+            {
+                AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
+            }
+        }
+
+        private void AddItemToListView(ListView listView, string tilePath, TileMetadata meta)
         {
             string text = meta.Name;
 
@@ -320,6 +757,32 @@ namespace Game
             };
             listView.Items.Add(item);
         }
+
+        private void OpenPack(EquipTag item)
+        {
+            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            {
+                _currentlySelectedPack = item.Tile;
+                labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.Name})";
+                PopulateContainerFromPack(listViewSelectedContainer, (Guid)item.Tile.Meta.UID);
+            }
+        }
+
+        private ListViewItem FindListViewObjectByUid(ListView listView, Guid uid)
+        {
+            foreach (ListViewItem obj in listView.Items)
+            {
+                var item = obj.Tag as EquipTag;
+
+                if (item.Tile.Meta.UID == uid)
+                {
+                    return obj;
+                }
+            }
+
+            return null;
+        }
+
 
         #endregion
 

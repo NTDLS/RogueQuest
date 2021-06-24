@@ -64,7 +64,7 @@ namespace Game
             this.listViewPlayerPack = new System.Windows.Forms.ListView();
             this.label10 = new System.Windows.Forms.Label();
             this.labelGround = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
+            this.labelSelectedContainer = new System.Windows.Forms.Label();
             this.listViewSelectedContainer = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCharacter)).BeginInit();
             this.SuspendLayout();
@@ -372,6 +372,7 @@ namespace Game
             this.listViewGround.Size = new System.Drawing.Size(343, 101);
             this.listViewGround.TabIndex = 33;
             this.listViewGround.UseCompatibleStateImageBehavior = false;
+            this.listViewGround.View = System.Windows.Forms.View.SmallIcon;
             // 
             // listViewPlayerPack
             // 
@@ -401,14 +402,14 @@ namespace Game
             this.labelGround.TabIndex = 36;
             this.labelGround.Text = "Ground";
             // 
-            // label17
+            // labelSelectedContainer
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(349, 221);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(106, 15);
-            this.label17.TabIndex = 38;
-            this.label17.Text = "Selected Container";
+            this.labelSelectedContainer.AutoSize = true;
+            this.labelSelectedContainer.Location = new System.Drawing.Point(349, 221);
+            this.labelSelectedContainer.Name = "labelSelectedContainer";
+            this.labelSelectedContainer.Size = new System.Drawing.Size(106, 15);
+            this.labelSelectedContainer.TabIndex = 38;
+            this.labelSelectedContainer.Text = "Selected Container";
             // 
             // listViewSelectedContainer
             // 
@@ -418,13 +419,14 @@ namespace Game
             this.listViewSelectedContainer.Size = new System.Drawing.Size(343, 101);
             this.listViewSelectedContainer.TabIndex = 37;
             this.listViewSelectedContainer.UseCompatibleStateImageBehavior = false;
+            this.listViewSelectedContainer.View = System.Windows.Forms.View.SmallIcon;
             // 
             // FormInventory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 477);
-            this.Controls.Add(this.label17);
+            this.Controls.Add(this.labelSelectedContainer);
             this.Controls.Add(this.listViewSelectedContainer);
             this.Controls.Add(this.labelGround);
             this.Controls.Add(this.label10);
@@ -511,7 +513,7 @@ namespace Game
         private System.Windows.Forms.ListView listViewPlayerPack;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label labelGround;
-        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label labelSelectedContainer;
         private System.Windows.Forms.ListView listViewSelectedContainer;
     }
 }

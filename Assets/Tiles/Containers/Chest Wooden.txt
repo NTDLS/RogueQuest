@@ -1,3 +1,4 @@
 {
-  "Name":"Wooden Chest"
+  "Name":"Wooden Chest",
+  "SubType":"Chest"
 }

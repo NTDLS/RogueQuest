@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 
 namespace Library.Engine
 {
@@ -12,6 +13,7 @@ namespace Library.Engine
         public EngineCoreBase Core { get; set; }
         public List<ActorBase> Tiles { get; private set; }
         public ContainerController Containers { get; private set; }
+        public Assembly GameAssembly  { get; private set; } = null;
 
         public ActorController(EngineCoreBase core)
         {
@@ -23,6 +25,17 @@ namespace Library.Engine
             {
                 Tiles = new List<ActorBase>();
             }
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            var assemblies = currentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                if (assembly.FullName.StartsWith("Game,"))
+                {
+                    GameAssembly = Assembly.Load("Game");
+                }
+            }
+
         }
 
         public void Render(Graphics dc)
@@ -64,10 +77,6 @@ namespace Library.Engine
         {
             foreach (var obj in this.Tiles)
             {
-                if (obj.TilePath.Contains("Chest"))
-                {
-                }
-
                 obj.RefreshMetadata(true);
             }
 
@@ -75,8 +84,21 @@ namespace Library.Engine
             {
                 foreach (var obj in container.Contents)
                 {
+                    Guid? uid = obj.Meta.UID;
+
                     var freshMeta = TileMetadata.GetFreshMetadata(obj.TilePath);
                     obj.Meta.OverrideWith(freshMeta);
+
+                    if (uid != null)
+                    {
+                        obj.Meta.UID = (Guid)uid; //Never change the UID once it is set.
+                    }
+
+                    //All items need UIDs.
+                    if (obj.Meta.UID == null)
+                    {
+                        obj.Meta.UID = Guid.NewGuid();
+                    }
                 }
             }
         }
@@ -170,20 +192,37 @@ namespace Library.Engine
             }
         }
 
+        public ActorBase AddDynamic(string actorClass, double x, double y, string TilePath)
+        {
+            object[] param = { this.Core };
+
+            var tileType = GameAssembly.GetType($"Game.Actors.{actorClass}");
+            var obj = (ActorBase)Activator.CreateInstance(tileType, param);
+
+            obj.TilePath = TilePath;
+            obj.SetImage(SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{TilePath}.png")));
+            obj.X = x;
+            obj.Y = y;
+
+            Tiles.Add(obj);
+
+            return obj;
+        }
+
         public T AddNew<T>(double x, double y, string TilePath) where T : ActorBase
         {
             lock (Core.CollectionSemaphore)
             {
-                var bitmap = SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{TilePath}.png"));
                 object[] param = { Core };
                 var obj = (ActorBase)Activator.CreateInstance(typeof(T), param);
 
                 obj.TilePath = TilePath;
-                obj.SetImage(bitmap);
-
+                obj.SetImage(SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{TilePath}.png")));
                 obj.X = x;
                 obj.Y = y;
+
                 Tiles.Add(obj);
+
                 return (T)obj;
             }
         }

@@ -491,9 +491,9 @@ namespace Library.Engine
                 this.Meta = freshMeta;
             }
 
-            if (uid != null) //Never override the UID.
+            if (uid != null)
             {
-                this.Meta.UID = uid;
+                this.Meta.UID = uid; //Never change the UID once it is set.
             }
 
             //All items need UIDs.
