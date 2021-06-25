@@ -19,7 +19,8 @@ namespace Game
     {
         private ImageList _imageList = new ImageList();
         private Button _buttonClose = new Button();
-        private TileIdentifier _currentlySelectedPack { get; set; } = null;
+        private TileIdentifier _currentlySelectedPack = null;
+        private ToolTip _interrogationTip = new ToolTip();
 
         public class EquipTag
         {
@@ -52,6 +53,8 @@ namespace Game
             listViewSelectedContainer.DragDrop += ListViewSelectedContainer_DragDrop;
             listViewSelectedContainer.AllowDrop = true;
             listViewSelectedContainer.MouseDoubleClick += ListViewSelectedContainer_MouseDoubleClick;
+            listViewSelectedContainer.MouseUp += ListViewe_Shared_MouseUp;
+            listViewSelectedContainer.MouseDown += ListViewe_Shared_MouseDown;
 
             listViewGround.SmallImageList = _imageList;
             listViewGround.LargeImageList = _imageList;
@@ -60,6 +63,8 @@ namespace Game
             listViewGround.DragDrop += ListViewGround_DragDrop;
             listViewGround.AllowDrop = true;
             listViewGround.MouseDoubleClick += ListViewGround_MouseDoubleClick;
+            listViewGround.MouseUp += ListViewe_Shared_MouseUp;
+            listViewGround.MouseDown += ListViewe_Shared_MouseDown;
 
             listViewPlayerPack.SmallImageList = _imageList;
             listViewPlayerPack.LargeImageList = _imageList;
@@ -68,6 +73,8 @@ namespace Game
             listViewPlayerPack.DragDrop += ListViewPlayerPack_DragDrop;
             listViewPlayerPack.AllowDrop = true;
             listViewPlayerPack.MouseDoubleClick += ListViewPlayerPack_MouseDoubleClick;
+            listViewPlayerPack.MouseUp += ListViewe_Shared_MouseUp;
+            listViewPlayerPack.MouseDown += ListViewe_Shared_MouseDown;
 
             InitEquipSlot(listViewArmor, ActorSubType.Armor, EquipSlot.Armor);
             InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
@@ -129,7 +136,7 @@ namespace Game
             }
 
             //Find the item in the players inventory and change its container id to that of the selected open pack.
-            var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             bool wasStacked = false;
 
@@ -169,7 +176,7 @@ namespace Game
                 AddItemToListView(listViewGround, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
             }
 
-            Core.State.Character.Inventory.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
+            Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
             if (draggedItem.ListView == listViewSelectedContainer)
             {
@@ -220,7 +227,7 @@ namespace Game
             }
 
             var item = listViewSelectedContainer.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
             {
                 OpenPack(item);
             }
@@ -258,14 +265,14 @@ namespace Game
                     .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
                     .Cast<ActorItem>().FirstOrDefault();
 
-                Core.State.Character.Inventory.Add(new InventoryItem()
+                Core.State.Items.Add(new CustodyItem()
                 {
                     Tile = itemOnGround.CloneIdentifier()
                 });
             }
 
             //Find the item in the players inventory and change its container id to that of the selected open pack.
-            var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             if (_currentlySelectedPack.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
@@ -284,14 +291,14 @@ namespace Game
             if (inventoryItem.Tile.Meta.CanStack == true)
             {
                 //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
-                var existingInventoryItem = Core.State.Character.Inventory
+                var existingInventoryItem = Core.State.Items
                     .Where(o => o.Tile.TilePath == draggedItemTag.Tile.TilePath
                     && o.ContainerId == _currentlySelectedPack.Meta.UID).FirstOrDefault();
 
                 if (existingInventoryItem != null)
                 {
                     existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
-                    Core.State.Character.Inventory.RemoveAll(o=>o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
+                    Core.State.Items.RemoveAll(o=>o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
                     var listViewItem = FindListViewObjectByUid(listViewSelectedContainer, (Guid)existingInventoryItem.Tile.Meta.UID);
                     if (listViewItem != null)
@@ -365,7 +372,7 @@ namespace Game
             }
 
             var item = listViewPlayerPack.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
             {
                 OpenPack(item);
             }
@@ -403,14 +410,14 @@ namespace Game
                     .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
                     .Cast<ActorItem>().FirstOrDefault();
 
-                Core.State.Character.Inventory.Add(new InventoryItem()
+                Core.State.Items.Add(new CustodyItem()
                 {
                     Tile = itemOnGround.CloneIdentifier()
                 });
             }
 
             //Find the item in the playes inventory and change its container id to that of the players pack.
-            var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             if (playersPack.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
@@ -429,14 +436,14 @@ namespace Game
             if (inventoryItem.Tile.Meta.CanStack == true)
             {
                 //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
-                var existingInventoryItem = Core.State.Character.Inventory
+                var existingInventoryItem = Core.State.Items
                     .Where(o => o.Tile.TilePath == draggedItemTag.Tile.TilePath
                     && o.ContainerId == playersPack.Tile.Meta.UID).FirstOrDefault();
 
                 if (existingInventoryItem != null)
                 {
                     existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
-                    Core.State.Character.Inventory.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
+                    Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
                     var listViewItem = FindListViewObjectByUid(listViewPlayerPack, (Guid)existingInventoryItem.Tile.Meta.UID);
                     if (listViewItem != null)
@@ -515,6 +522,8 @@ namespace Game
             lv.DragEnter += ListView_EquipSlot_DragEnter;
             lv.ItemDrag += ListView_EquipSlot_ItemDrag;
             lv.MouseDoubleClick += Lv_MouseDoubleClick;
+            lv.MouseDown += Lv_MouseDown;
+            lv.MouseUp += Lv_MouseUp;
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
@@ -541,6 +550,33 @@ namespace Game
             lv.Items.Add(item);
         }
 
+        private void Lv_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var lv = sender as ListView;
+                var item = lv.Items[0].Tag as EquipTag;
+
+                string text = item.Tile.Meta.Name;
+                text += "\r\n" + $"Weight: {item.Tile.Meta.Bulk:N0}";
+                text += "\r\n" + $"Bulk: {item.Tile.Meta.Weight:N0}";
+
+                if (string.IsNullOrWhiteSpace(text) == false)
+                {
+                    var location = new Point(e.X + 10, e.Y - 25);
+                    _interrogationTip.Show(text, lv, location, 5000);
+                }
+            }
+        }
+
+        private void Lv_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                _interrogationTip.Hide(sender as Control);
+            }
+        }
+
         private void Lv_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             var listView = sender as ListView;
@@ -562,7 +598,7 @@ namespace Game
             else
             {
                 var item = listView.SelectedItems[0].Tag as EquipTag;
-                if (item.Tile.Meta.SubType == ActorSubType.Pack)
+                if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
                 {
                     OpenPack(item);
                 }
@@ -628,13 +664,13 @@ namespace Game
                         .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
                         .Cast<ActorItem>().FirstOrDefault();
 
-                    Core.State.Character.Inventory.Add(new InventoryItem()
+                    Core.State.Items.Add(new CustodyItem()
                     {
                         Tile = itemOnGround.CloneIdentifier()
                     });
                 }
 
-                var inventoryItem = Core.State.Character.Inventory.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+                var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
                 inventoryItem.ContainerId = null; //find the item in inventory and set its container id to null.
 
                 if (draggedItem.ListView == listViewGround)
@@ -693,6 +729,40 @@ namespace Game
 
         #region Form Events.
 
+        private void ListViewe_Shared_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var lv = sender as ListView;
+                var selection =  lv.GetItemAt(e.X, e.Y);
+
+                if (selection == null)
+                {
+                    return;
+                }
+
+                var item = selection.Tag as EquipTag;
+
+                string text = item.Tile.Meta.Name;
+                text += "\r\n" + $"Weight: {item.Tile.Meta.Bulk:N0}";
+                text += "\r\n" + $"Bulk: {item.Tile.Meta.Weight:N0}";
+
+                if (string.IsNullOrWhiteSpace(text) == false)
+                {
+                    var location = new Point(e.X + 10, e.Y - 25);
+                    _interrogationTip.Show(text, lv, location, 5000);
+                }
+            }
+        }
+
+        private void ListViewe_Shared_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                _interrogationTip.Hide(sender as Control);
+            }
+        }
+
         private void _buttonClose_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -733,7 +803,7 @@ namespace Game
         {
             listView.Items.Clear();
 
-            foreach (var item in Core.State.Character.Inventory.Where(o => o.ContainerId == containerId))
+            foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerId))
             {
                 AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
             }

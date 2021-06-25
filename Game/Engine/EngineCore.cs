@@ -59,11 +59,6 @@ namespace Game.Engine
 
             Level.Load(this, Assets.Constants.GetAssetPath(@"Maps\MapHome.rqm"));
 
-            this.State = new GameState()
-            {
-                CurrentMap = "MapHome"
-            };
-
             this.State.Character = new PlayerState()
             {
                 UID = Guid.NewGuid(),
@@ -92,7 +87,7 @@ namespace Game.Engine
 
         public void SaveGame(string fileName)
         {
-            Level.Save(this, fileName, this.State);
+            Level.Save(this, fileName);
             LogLine("Game saved.");
         }
 

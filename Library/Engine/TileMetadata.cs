@@ -112,6 +112,11 @@ namespace Library.Engine
                 }
             }
 
+            if (meta.UID == null && meta.ActorClass != ActorClassName.ActorTerrain)
+            {
+                meta.UID = Guid.NewGuid();
+            }
+
             meta.OriginalHitPoints = meta.HitPoints;
 
             return meta;

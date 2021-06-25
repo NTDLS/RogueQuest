@@ -21,8 +21,6 @@ namespace MapEditor
         public EngineCore Core { get; set; }
         public Guid ContainerId { get; set; }
 
-        private Library.Engine.Container _container { get; set; }
-
         public FormEditContainer(EngineCore core, Guid containerId)
         {
             InitializeComponent();
@@ -55,11 +53,11 @@ namespace MapEditor
             this.AcceptButton = buttonSave;
             this.CancelButton = buttonCancel;
 
-            _container = Core.Actors.Containers.GetContainer(ContainerId);
+            var objs = Core.State.Items.Where(o=> o.ContainerId == ContainerId);
 
-            foreach (var obj in _container.Contents)
+            foreach (var obj in objs)
             {
-                AddItemToContainer(obj.TilePath, obj.Meta.Quantity);
+                AddItemToContainer(obj.Tile.TilePath, obj.Tile.Meta.Quantity);
             }
         }
 
@@ -227,13 +225,20 @@ namespace MapEditor
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            _container.Clear();
+            Core.State.Items.RemoveAll(o => o.ContainerId == ContainerId);
 
             foreach (ListViewItem obj in listViewContainer.Items)
             {
-                var metaData = TileMetadata.GetFreshMetadata(obj.ImageKey);
-                metaData.Quantity = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
-                _container.Add(new TileIdentifier(obj.ImageKey, metaData));
+                var newItem = new CustodyItem()
+                {
+                    ContainerId = ContainerId
+                };
+
+                var meta = TileMetadata.GetFreshMetadata(obj.ImageKey);
+                meta.Quantity = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
+                newItem.Tile = new TileIdentifier(obj.ImageKey, meta);
+
+                Core.State.Items.Add(newItem);
             }
 
             DialogResult = DialogResult.OK;

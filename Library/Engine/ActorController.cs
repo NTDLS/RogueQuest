@@ -12,14 +12,12 @@ namespace Library.Engine
     {
         public EngineCoreBase Core { get; set; }
         public List<ActorBase> Tiles { get; private set; }
-        public ContainerController Containers { get; private set; }
         public Assembly GameAssembly  { get; private set; } = null;
 
         public ActorController(EngineCoreBase core)
         {
             Core = core;
 
-            Containers = new ContainerController(Core);
 
             lock (Core.CollectionSemaphore)
             {
@@ -78,28 +76,6 @@ namespace Library.Engine
             foreach (var obj in this.Tiles)
             {
                 obj.RefreshMetadata(true);
-            }
-
-            foreach (var container in this.Containers.Collection)
-            {
-                foreach (var obj in container.Contents)
-                {
-                    Guid? uid = obj.Meta.UID;
-
-                    var freshMeta = TileMetadata.GetFreshMetadata(obj.TilePath);
-                    obj.Meta.OverrideWith(freshMeta);
-
-                    if (uid != null)
-                    {
-                        obj.Meta.UID = (Guid)uid; //Never change the UID once it is set.
-                    }
-
-                    //All items need UIDs.
-                    if (obj.Meta.UID == null)
-                    {
-                        obj.Meta.UID = Guid.NewGuid();
-                    }
-                }
             }
         }
 

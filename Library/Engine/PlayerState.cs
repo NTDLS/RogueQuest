@@ -8,9 +8,7 @@ namespace Library.Engine
 {
     public class PlayerState
     {
-        public List<InventoryItem> Inventory { get; set; }
         public List<Equip> Equipment { get; set; }
-
         public Guid UID { get; set; }
         public string Name { get; set; }
         public int StartingConstitution { get; set; }
@@ -77,7 +75,6 @@ namespace Library.Engine
 
         public PlayerState()
         {
-            Inventory = new List<InventoryItem>();
             Equipment = new List<Equip>();
         }
 

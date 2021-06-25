@@ -41,6 +41,7 @@ namespace Library.Engine
         public EngineCoreBase(Control drawingSurface, Size visibleSize)
         {
             Display = new EngineDisplay(drawingSurface, visibleSize);
+            State = new GameState();
 
             lock (CollectionSemaphore)
             {
@@ -68,6 +69,30 @@ namespace Library.Engine
 
         public virtual void HandleSingleKeyPress(Keys key)
         {
+        }
+
+        public void ResetAllTilesMetadata()
+        {
+            Actors.ResetAllTilesMetadata();
+
+            foreach (var obj in this.State.Items)
+            {
+                Guid? uid = obj.Tile.Meta.UID;
+
+                var freshMeta = TileMetadata.GetFreshMetadata(obj.Tile.TilePath);
+                obj.Tile.Meta.OverrideWith(freshMeta);
+
+                if (uid != null)
+                {
+                    obj.Tile.Meta.UID = (Guid)uid; //Never change the UID once it is set.
+                }
+
+                //All items need UIDs.
+                if (obj.Tile.Meta.UID == null)
+                {
+                    obj.Tile.Meta.UID = Guid.NewGuid();
+                }
+            }
         }
 
         public void ResizeDrawingSurface(Size visibleSize)

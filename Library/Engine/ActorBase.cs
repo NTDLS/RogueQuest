@@ -257,11 +257,6 @@ namespace Library.Engine
                 child.QueueForDelete();
             }
 
-            if (Meta != null && Meta.UID != null)
-            {
-                Core.Actors.Containers.Remove((Guid)Meta.UID);
-            }
-
             _readyForDeletion = true;
         }
 

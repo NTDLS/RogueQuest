@@ -150,7 +150,7 @@ namespace MapEditor
 
             if (result == DialogResult.Yes)
             {
-                _core.Actors.ResetAllTilesMetadata();
+                _core.ResetAllTilesMetadata();
                 MessageBox.Show("Complete.");
             }
         }

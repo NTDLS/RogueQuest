@@ -12,12 +12,10 @@ namespace Library.Engine
         public string Name { get; set; }
         public List<LevelChunk> Chunks { get; set; }
         public GameState State { get; set; }
-        public List<Container> Containers { get; set; }
 
         public Level()
         {
             Chunks = new List<LevelChunk>();
-            Containers = new List<Container>();
         }
 
         /// <summary>
@@ -26,12 +24,11 @@ namespace Library.Engine
         /// <param name="core"></param>
         /// <param name="fileName"></param>
         /// <param name="state"></param>
-        public static void Save(EngineCoreBase core, string fileName, GameState state = null)
+        public static void Save(EngineCoreBase core, string fileName)
         {
             var level = new Level()
             {
-                State = state,
-                Containers = core.Actors.Containers.Collection
+                State = core.State
             };
 
             foreach (var obj in core.Actors.Tiles.Where(o => o.Visible))
@@ -88,8 +85,6 @@ namespace Library.Engine
                     gameAssembly = Assembly.Load("Game");
                 }
             }
-
-            core.Actors.Containers.Set(level.Containers);
 
             foreach (var chunk in level.Chunks)
             {
