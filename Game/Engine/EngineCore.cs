@@ -74,6 +74,9 @@ namespace Game.Engine
             this.State.Character.InitializeState();
 
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+
+            this.Display.BackgroundOffset.Y = Player.Y / 2;
+            this.Display.BackgroundOffset.X = Player.X / 2;
         }
 
         public void LoadGame(string fileName)

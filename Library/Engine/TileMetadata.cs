@@ -57,6 +57,9 @@ namespace Library.Engine
             this.WeightCapacity = with.WeightCapacity ?? this.WeightCapacity;
             this.Bulk = with.Bulk ?? this.Bulk;
             this.Weight = with.Weight ?? this.Weight;
+            this.DamageDice = with.DamageDice ?? this.DamageDice;
+            this.DamageDiceFaces = with.DamageDiceFaces ?? this.DamageDiceFaces;
+            this.DamageAdditional = with.DamageAdditional ?? this.DamageAdditional;
         }
 
         /// <summary>
