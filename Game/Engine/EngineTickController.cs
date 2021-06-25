@@ -291,6 +291,24 @@ namespace Game.Engine
             return appliedOffset;
         }
 
+        private bool DoesPlayerLandHit()
+        {
+            var equipment = Core.State.Character.Equipment.Where(o => o.Tile != null).ToList();
+
+            //MathUtility.RandomNumber(1, Core.State.Character.BaseDamage);
+
+            return true;
+        }
+
+        private int GetPlayerHitForDamage()
+        {
+            var equipment = Core.State.Character.Equipment.Where(o => o.Tile != null).ToList();
+
+
+            return 100;
+
+        }
+
         /// <summary>
         /// Intersections contains all objects that the player collided with during their turn. If this
         /// contains actors that can be damaged, then these  would be the melee attack target for the player.
@@ -333,9 +351,9 @@ namespace Game.Engine
             var actorToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).FirstOrDefault();
             if (actorToAttack != null)
             {
-                int playerHitsFor = MathUtility.RandomNumber(1, Core.State.Character.BaseDamage);
+                int playerHitsFor = GetPlayerHitForDamage();
 
-                if (MathUtility.ChanceIn(4))
+                if (DoesPlayerLandHit())
                 {
                     Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetStrikeFlair()}", Color.DarkGreen);
 

@@ -82,6 +82,10 @@ namespace Game.Engine
             this.PurgeAllDeletedTiles();
             Level.Load(this, fileName);
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+
+            this.Display.BackgroundOffset.Y = Player.Y / 2;
+            this.Display.BackgroundOffset.X = Player.X / 2;
+
             LogLine("Game loaded.");
         }
 

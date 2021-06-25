@@ -388,7 +388,6 @@ namespace Game
             _core.Start();
         }
 
-
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
             _hasBeenModified = true;
