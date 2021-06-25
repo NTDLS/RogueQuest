@@ -702,7 +702,7 @@ namespace Game
                     var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
                     if (pack.Tile != null)
                     {
-                        if (pack.Tile.Meta.UID == _currentlySelectedPack.Meta?.UID)
+                        if (pack.Tile.Meta.UID == _currentlySelectedPack?.Meta?.UID)
                         {
                             listViewSelectedContainer.Items.Clear();
                         }

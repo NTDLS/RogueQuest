@@ -36,6 +36,7 @@ namespace MapEditor
         private bool _hasBeenModified = false;
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
+        private ToolTip _interrogationTip = new ToolTip();
 
         #region Settings.
 
@@ -132,12 +133,50 @@ namespace MapEditor
             toolStripButtonShapeMode.Click += ToolStripButtonShapeMode_Click;
             toolStripButtonPlayMap.Click += ToolStripButtonPlayMap_Click;
             toolStripMenuItemResetAllTileMeta.Click += ToolStripMenuItemResetAllTileMeta_Click;
+            treeViewTiles.MouseDown += TreeViewTiles_MouseDown;
+            treeViewTiles.MouseUp += TreeViewTiles_MouseUp;
 
             PopulateMaterials();
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
             Level.Load(_core, Constants.GetAssetPath(@"Maps\MapHome.rqm"));
+        }
+
+        private void TreeViewTiles_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                _interrogationTip.Hide(sender as Control);
+            }
+        }
+
+        private void TreeViewTiles_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var lv = sender as TreeView;
+                var selectedItem = lv.GetNodeAt(e.X, e.Y);
+
+                if (selectedItem == null)
+                {
+                    return;
+                }
+
+                var meta = TileMetadata.GetFreshMetadata(selectedItem.FullPath);
+                if (meta.ActorClass == ActorClassName.ActorItem)
+                {
+                    string text = meta.Name;
+                    text += "\r\n" + $"Weight: {meta.Bulk:N0}";
+                    text += "\r\n" + $"Bulk: {meta.Weight:N0}";
+
+                    if (string.IsNullOrWhiteSpace(text) == false)
+                    {
+                        var location = new Point(e.X + 10, e.Y - 25);
+                        _interrogationTip.Show(text, lv, location, 5000);
+                    }
+                }
+            }
         }
 
         #region Menu Clicks.

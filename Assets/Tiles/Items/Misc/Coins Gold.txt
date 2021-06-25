@@ -2,5 +2,7 @@
   "Name":"Gold Coins",
   "SubType":"Money",
   "CanStack":"True",
-  "CanWalkOn":"True"
+  "CanWalkOn":"True",
+  "Weight":"0",
+  "Bulk":"0"
 }

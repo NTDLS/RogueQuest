@@ -96,7 +96,7 @@ namespace Game.Engine
             int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
             var containerContents = Core.State.Items.Where(o => o.ContainerId == containerId);
 
-            var itemsRemovedFromContainer = new List<Guid>();
+            var itemsToDelete = new List<Guid>();
 
             foreach (var item in containerContents)
             {
@@ -124,12 +124,16 @@ namespace Game.Engine
                     if (existingItem != null)
                     {
                         existingItem.Tile.Meta.Quantity += item.Tile.Meta.Quantity;
+
+                        itemsToDelete.Add((Guid)item.Tile.Meta.UID);
                         continue;
                     }
                 }
 
                 item.ContainerId = pack.Tile.Meta.UID;
             }
+
+            Core.State.Items.RemoveAll(o => itemsToDelete.Contains((Guid)o.Tile?.Meta?.UID));
         }
 
         public void Get()

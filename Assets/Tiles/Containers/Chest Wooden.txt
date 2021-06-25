@@ -1,4 +1,8 @@
 {
   "Name":"Wooden Chest",
-  "SubType":"Chest"
+  "SubType":"Chest",
+  "Weight":"800",
+  "Bulk":"1800",
+  "BulkCapacity":"10000",
+  "WeightCapacity":"5000"
 }

@@ -4,5 +4,7 @@
   "BulkCapacity":"750",
   "WeightCapacity":"220",
   "CanWalkOn":"True",
-  "IsContainer":"True"
+  "IsContainer":"True",
+  "Weight":"5",
+  "Bulk":"50"
 }

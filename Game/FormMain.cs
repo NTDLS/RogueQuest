@@ -154,6 +154,11 @@ namespace Game
                         var hostile = (hoverTile as ActorHostileBeing);
                         text += $" ({hostile.DamageText})";
                     }
+                    else if (hoverTile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorItem)
+                    {
+                        text += "\r\n" + $"Weight: {hoverTile.Meta.Bulk:N0}";
+                        text += "\r\n" + $"Bulk: {hoverTile.Meta.Weight:N0}";
+                    }
 
                     if (string.IsNullOrWhiteSpace(text) == false)
                     {

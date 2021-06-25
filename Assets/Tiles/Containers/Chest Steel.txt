@@ -1,4 +1,8 @@
 {
   "Name":"Steel Chest",
-  "SubType":"Chest"
+  "SubType":"Chest",
+  "Weight":"1000",
+  "Bulk":"2000",
+  "BulkCapacity":"7000",
+  "WeightCapacity":"3000"
 }
