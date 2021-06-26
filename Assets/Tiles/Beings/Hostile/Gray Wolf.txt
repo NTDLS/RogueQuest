@@ -1,5 +1,10 @@
 {
   "Name":"Gray Wolf",
   "HitPoints": "60",
-  "Experience": "10"
+  "Experience": "10",
+  "AC":"16",
+  "Dexterity":"30",
+  "Strength":"8",
+  "DamageDice":"2",
+  "DamageDiceFaces":"5"
 }

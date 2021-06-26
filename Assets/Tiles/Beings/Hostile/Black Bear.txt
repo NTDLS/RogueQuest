@@ -1,5 +1,10 @@
 {
   "Name":"Black Bear",
   "HitPoints": "200",
-  "Experience": "20"
+  "Experience": "20",
+  "AC":"1",
+  "Dexterity":"16",
+  "Strength":"20",
+  "DamageDice":"2",
+  "DamageDiceFaces":"12"
 }

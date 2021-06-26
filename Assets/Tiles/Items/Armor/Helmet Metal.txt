@@ -1,7 +1,7 @@
 {
   "Name":"Metal Helment",
   "SubType": "Helment",
-  "DamageReduction":"2",
-  "Weight":"25",
-  "Bulk":"20"
+  "AC":"2",
+  "Weight":"20",
+  "Bulk":"8"
 }

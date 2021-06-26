@@ -1,7 +1,7 @@
 {
   "Name":"Leather Armor",
   "SubType": "Armor",
-  "DamageReduction":"1",
+  "AC":"11",
   "Weight":"50",
   "Bulk":"240"
 }

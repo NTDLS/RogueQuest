@@ -1,5 +1,11 @@
 {
   "Name":"Barbarian Fighter",
   "HitPoints": "150",
-  "Experience": "15"
+  "Experience": "15",
+  "AC":"20",
+  "Dexterity":"25",
+  "Strength":"16",
+  "DamageDice":"2",
+  "DamageDiceFaces":"6"
 }
+

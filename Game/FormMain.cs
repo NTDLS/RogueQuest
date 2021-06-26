@@ -113,6 +113,10 @@ namespace Game
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            if (hoverTile == null)
+            {
+                return;
+            }
 
             string tipText = hoverTile.Meta?.Name;
 

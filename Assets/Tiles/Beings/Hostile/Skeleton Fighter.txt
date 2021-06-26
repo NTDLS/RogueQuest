@@ -1,5 +1,10 @@
 {
   "Name":"Skeleton Fighter",
   "HitPoints": "40",
-  "Experience": "8"
+  "Experience": "8",
+  "AC":"6",
+  "Dexterity":"10",
+  "Strength":"5",
+  "DamageDice":"1",
+  "DamageDiceFaces":"5"
 }

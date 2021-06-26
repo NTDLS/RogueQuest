@@ -20,18 +20,19 @@ namespace Library.Engine
         public bool? CanTakeDamage { get; set; }
         public int? Experience { get; set; }
         public int? HitPoints { get; set; }
-        public int? DamageReduction { get; set; }
+        public int? AC { get; set; } //Armor Class. yay.
         public int? DamageDice { get; set; }
         public int? DamageDiceFaces { get; set; }
         public int? DamageAdditional { get; set; }
-        public int? OriginalHitPoints { get; set; }        
+        public int? OriginalHitPoints { get; set; }
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; }
         public int? BulkCapacity { get; set; }
         public int? WeightCapacity { get; set; }
         public int? Weight { get; set; }
         public int? Bulk { get; set; }
-
+        public int? Dexterity { get; set; }
+        public int? Strength { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorClassName? ActorClass { get; set; }
@@ -52,7 +53,7 @@ namespace Library.Engine
             this.IsContainer = with.IsContainer ?? this.IsContainer;
             this.CanStack = with.CanStack ?? this.CanStack;
             this.SubType = with.SubType ?? this.SubType;
-            this.DamageReduction = with.DamageReduction ?? this.DamageReduction;
+            this.AC = with.AC ?? this.AC;
             this.BulkCapacity = with.BulkCapacity ?? this.BulkCapacity;
             this.WeightCapacity = with.WeightCapacity ?? this.WeightCapacity;
             this.Bulk = with.Bulk ?? this.Bulk;
@@ -60,6 +61,8 @@ namespace Library.Engine
             this.DamageDice = with.DamageDice ?? this.DamageDice;
             this.DamageDiceFaces = with.DamageDiceFaces ?? this.DamageDiceFaces;
             this.DamageAdditional = with.DamageAdditional ?? this.DamageAdditional;
+            this.Strength = with.Strength ?? this.Strength;
+            this.Dexterity = with.Dexterity ?? this.Dexterity;
         }
 
         /// <summary>

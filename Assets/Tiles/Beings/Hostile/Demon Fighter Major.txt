@@ -1,5 +1,10 @@
 {
   "Name":"Demon Fighter (Major)",
   "HitPoints": "600",
-  "Experience": "100"
+  "Experience": "100",
+  "AC":"25",
+  "Dexterity":"30",
+  "Strength":"30",
+  "DamageDice":"2",
+  "DamageDiceFaces":"8"
 }

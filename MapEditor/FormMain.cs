@@ -749,7 +749,7 @@ namespace MapEditor
                     || selectedTile.Meta.SubType == ActorSubType.Ring || selectedTile.Meta.SubType == ActorSubType.Garment
                     || selectedTile.Meta.SubType == ActorSubType.Belt || selectedTile.Meta.SubType == ActorSubType.Necklace)
                 {
-                    listViewProperties.Items.Add("Damage Reduction").SubItems.Add(selectedTile.Meta?.DamageReduction.ToString());
+                    listViewProperties.Items.Add("Armor Class").SubItems.Add(selectedTile.Meta?.AC.ToString());
                 }
 
                 if (selectedTile.Meta.SubType == ActorSubType.Wand || selectedTile.Meta.SubType == ActorSubType.Weapon)
@@ -866,9 +866,9 @@ namespace MapEditor
                                 {
                                     selectedTile.DrawOrder = int.Parse(dialog.PropertyValue);
                                 }
-                                else if (selectedRow.Text == "Damage Reduction")
+                                else if (selectedRow.Text == "Armor Class")
                                 {
-                                    selectedTile.Meta.DamageReduction = int.Parse(dialog.PropertyValue);
+                                    selectedTile.Meta.AC = int.Parse(dialog.PropertyValue);
                                 }
                                 else if (selectedRow.Text == "Damage Dice")
                                 {
@@ -893,10 +893,6 @@ namespace MapEditor
                                 else if (selectedRow.Text == "Weight Capacity")
                                 {
                                     selectedTile.Meta.WeightCapacity = int.Parse(dialog.PropertyValue);
-                                }
-                                else if (selectedRow.Text == "Damage Reduction")
-                                {
-                                    selectedTile.Meta.DamageReduction = int.Parse(dialog.PropertyValue);
                                 }
 
                                 PopulateSelectedItemProperties();

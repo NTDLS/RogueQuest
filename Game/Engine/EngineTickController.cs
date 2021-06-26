@@ -291,38 +291,64 @@ namespace Game.Engine
             return appliedOffset;
         }
 
-        private bool DoesPlayerLandHit()
+        private bool CanActorLandHit(int agressorDexterity, int victimAC)
         {
-            var equipment = Core.State.Character.Equipment.Where(o => o.Tile != null).ToList();
+            //https://roll20.net/compendium/dnd5e/Items:Leather%20Armor/#h-Leather%20Armor
 
-            //MathUtility.RandomNumber(1, Core.State.Character.BaseDamage);
+            /*
+                Note that attack bonus is your total attack bonus with all modifiers.
+                    We can test this out pretty easily. If you have a +7 to hit and are
+                    attacking a target with AC of 18, you need an 11 to hit.
+                    11 through 20 is 10 faces on the d20, so it's half the die. A 50% chance to hit.
 
-            return true;
+                21 + 7 − 18
+               ------------  = 0.5
+                    20
+
+                If you are attacking the same AC 18 target and have a +2 attack bonus, you need
+                    a 16 or better to hit. You hit on 16, 17, 18, 19, or 20. That's five of the
+                    twenty sides of a d20, which is a quarter or 25% of the die.
+
+                21 + 2 - 18
+               ------------ = 0.25
+                    20
+            */
+
+            double chanceToHit = (((21.0 + agressorDexterity) - victimAC) / 20.0);
+
+            if (chanceToHit < 0.05) chanceToHit = 0.05;
+            if (chanceToHit > 0.95) chanceToHit = 0.95;
+
+            int diceRollBetterThan = (int)(21 - (20 * chanceToHit));
+
+            int diceRoll = MathUtility.RandomNumber(1, 20);
+
+            bool doWeHit = diceRoll >= diceRollBetterThan;
+
+            return doWeHit;
         }
 
-        private int GetPlayerHitForDamage()
+        private int GetActorDamage(int strength, int additionalDamage, int dice, int faces)
         {
-            var equipment = Core.State.Character.Equipment.Where(o => o.Tile != null).ToList();
-
-            int damage = Core.State.Character.Strength;  //Characters base damage.
+            int damage = strength;  //Characters base damage.
 
             //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
             //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
-            damage += Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
+            damage += additionalDamage;
 
             var weapon = Core.State.Character.GetEquipSlot(EquipSlot.Weapon)?.Tile?.Meta;
             if (weapon != null)
             {
                 //Weapon strike damage.
-                for (int i = 0; i < weapon.DamageDice; i++)
+                for (int i = 0; i < dice; i++)
                 {
-                    damage += MathUtility.RandomNumber(1, (int)weapon.DamageDiceFaces);
+                    damage += MathUtility.RandomNumber(1, faces);
                 }
             }
 
             return damage;
         }
-
+   
         /// <summary>
         /// Intersections contains all objects that the player collided with during their turn. If this
         /// contains actors that can be damaged, then these  would be the melee attack target for the player.
@@ -365,9 +391,15 @@ namespace Game.Engine
             var actorToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).FirstOrDefault();
             if (actorToAttack != null)
             {
-                int playerHitsFor = GetPlayerHitForDamage();
+                //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
+                //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
+                int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
 
-                if (DoesPlayerLandHit())
+                var weapon = Core.State.Character.GetEquipSlot(EquipSlot.Weapon)?.Tile?.Meta;
+
+                int playerHitsFor = GetActorDamage(Core.State.Character.Strength, additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
+
+                if (CanActorLandHit( Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC))
                 {
                     Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetStrikeFlair()}", Color.DarkGreen);
 
@@ -397,16 +429,19 @@ namespace Game.Engine
                 Core.State.Character.LevelUp();
             }
 
+            var totalPlayerAC = Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);
+
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
-            foreach (var actor in hostileInteractions.Where(o => o.Visible))
+            foreach (var hostile in hostileInteractions.Where(o => o.Visible))
             {
-                int actorHitsFor = MathUtility.RandomNumber(1, 5);
+                int hostileHitsFor = GetActorDamage(Core.State.Character.Strength,
+                    0, hostile.Meta.DamageDice ?? 0, hostile.Meta?.DamageDiceFaces ?? 0);
 
                 //Monster hit player.
-                if (MathUtility.ChanceIn(4))
+                if (CanActorLandHit((int)hostile.Meta.Dexterity, totalPlayerAC))
                 {
-                    Core.LogLine($"{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp and hits!", Color.DarkRed);
-                    Core.State.Character.AvailableHitpoints -= actorHitsFor;
+                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp and hits!", Color.DarkRed);
+                    Core.State.Character.AvailableHitpoints -= hostileHitsFor;
                     if (Core.State.Character.AvailableHitpoints <= 0)
                     {
                         Core.Player.QueueForDelete();
@@ -414,7 +449,7 @@ namespace Game.Engine
                 }
                 else
                 {
-                    Core.LogLine($"{actor.Meta.Name} attacks {Core.State.Character.Name} for {actorHitsFor}hp but missed!", Color.DarkGreen);
+                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp but missed!", Color.DarkGreen);
                 }
             }
         }
