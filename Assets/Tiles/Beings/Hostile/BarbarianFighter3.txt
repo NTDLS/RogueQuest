@@ -1,5 +1,0 @@
-{
-  "Name":"Barbarian Fighter",
-  "HitPoints": "50",
-  "Experience": "5"
-}

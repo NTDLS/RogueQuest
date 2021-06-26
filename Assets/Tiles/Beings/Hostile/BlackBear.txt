@@ -1,5 +1,0 @@
-{
-  "Name":"Black Bear",
-  "HitPoints": "30",
-  "Experience": "3"
-}

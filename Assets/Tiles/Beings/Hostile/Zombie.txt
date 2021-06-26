@@ -1,5 +1,5 @@
 {
   "Name":"Zombie",
-  "HitPoints": "10",
-  "Experience": "1"
+  "HitPoints": "30",
+  "Experience": "4"
 }

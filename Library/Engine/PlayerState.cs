@@ -24,6 +24,12 @@ namespace Library.Engine
         public int AugmentedIntelligence { get; set; }
         public int AugmentedStrength { get; set; }
 
+        //Starting + Augmented attributes.
+        public int Constitution => StartingConstitution + AugmentedConstitution;
+        public int Dexterity => StartingDexterity + AugmentedDexterity;
+        public int Intelligence => StartingIntelligence + AugmentedIntelligence;
+        public int Strength => StartingStrength + AugmentedStrength;
+
         public int Experience { get; set; }
         public int NextLevelExperience { get; set; }
         public int Level { get; set; }
@@ -36,16 +42,12 @@ namespace Library.Engine
         public int Hitpoints { get; private set; }
         public int Manna { get; private set; }
         public int MaxWeight { get; private set; }
-        public int Damage { get; private set; }
-        public int Dexterity { get; private set; }
 
         public void InitializeState()
         {
-            Hitpoints = 10 + StartingConstitution;
-            Manna = 5 + StartingIntelligence;
-            Dexterity = 1 + StartingDexterity;
-            Damage = 1 + StartingStrength;
-            MaxWeight = 250 + StartingStrength;
+            Hitpoints = 5 + StartingConstitution;
+            Manna = StartingIntelligence;
+            MaxWeight = 250 + (StartingStrength * 10);
 
             AvailableHitpoints = Hitpoints;
             AvailableMana = Manna;
@@ -59,11 +61,9 @@ namespace Library.Engine
 
             NextLevelExperience = (int)(((float)Experience) * 1.5f);
 
-            Hitpoints += 6 + StartingConstitution + AugmentedConstitution;
-            Manna += 6 + StartingIntelligence + AugmentedIntelligence;
-            Dexterity += 6 + StartingDexterity + AugmentedDexterity;
-            Damage += 6 + StartingStrength + AugmentedStrength;
-            MaxWeight += 20 + StartingStrength + AugmentedStrength;
+            Hitpoints += 6 + StartingConstitution + (AugmentedConstitution * 3);
+            Manna += 6 + StartingIntelligence + (AugmentedIntelligence * 3);
+            MaxWeight += 20 + StartingStrength + (AugmentedStrength * 5);
 
             AvailableHitpoints = Hitpoints;
             AvailableMana = Manna;

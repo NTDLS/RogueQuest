@@ -1,0 +1,5 @@
+{
+  "Name":"Skeleton Fighter",
+  "HitPoints": "40",
+  "Experience": "8"
+}

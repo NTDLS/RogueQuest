@@ -304,26 +304,23 @@ namespace Game.Engine
         {
             var equipment = Core.State.Character.Equipment.Where(o => o.Tile != null).ToList();
 
-            //Get the additional damage added by all equipped items.
-            int damageAdditional = Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
+            int damage = Core.State.Character.Strength;  //Characters base damage.
+
+            //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
+            //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
+            damage += Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
 
             var weapon = Core.State.Character.GetEquipSlot(EquipSlot.Weapon)?.Tile?.Meta;
             if (weapon != null)
             {
-                int damage = damageAdditional; //Weapon's +Damage
-
-                damage += MathUtility.RandomNumber(1, (int)Core.State.Character.Damage); //Characters base damage.
-
                 //Weapon strike damage.
                 for (int i = 0; i < weapon.DamageDice; i++)
                 {
                     damage += MathUtility.RandomNumber(1, (int)weapon.DamageDiceFaces);
                 }
-
-                return damage;
             }
 
-            return MathUtility.RandomNumber(1, (int)Core.State.Character.Damage);
+            return damage;
         }
 
         /// <summary>

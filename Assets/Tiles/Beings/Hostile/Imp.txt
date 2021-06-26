@@ -1,5 +1,5 @@
 {
   "Name":"Imp",
-  "HitPoints": "5",
-  "Experience": "1"
+  "HitPoints": "20",
+  "Experience": "5"
 }

@@ -1,0 +1,5 @@
+{
+  "Name":"Demon Fighter (Major)",
+  "HitPoints": "600",
+  "Experience": "100"
+}

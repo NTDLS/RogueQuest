@@ -1,0 +1,11 @@
+Name                     | Hit Points    Experience 
+------------------------ | ----------- | ----------
+Barbarian Fighter        | 150         |  15
+Black Bear               | 200         |  20
+Demon Fighter Major      | 600         | 100
+Gelatinous Cube          | 250         |  25
+Gray Wolf                |  60         |  10
+Imp                      |  20         |   5
+Skeleton Fighter         |  40         |   8
+Zombie                   |  30         |   4
+
