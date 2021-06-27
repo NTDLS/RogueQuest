@@ -10,7 +10,7 @@ namespace Library.Engine
     public class Levels
     {
         public EngineCoreBase Core { get; set; }
-        public List<byte[]> Bytes { get; set; }
+        public List<Level> Collection { get; set; } = new List<Level>();
 
         public Levels(EngineCoreBase core)
         {
@@ -23,9 +23,9 @@ namespace Library.Engine
         /// <param name="fileName"></param>
         public void Save(string fileName)
         {
-            var saveFile = new BinarySaveFile()
+            var saveFile = new SaveFile()
             {
-                Bytes = this.Bytes,
+                Collection = this.Collection,
                 State = Core.State
             };
 
@@ -44,9 +44,9 @@ namespace Library.Engine
 
             var json = Utility.Compress.Unzip(compressedSaveFile);
 
-            var saveFile = JsonConvert.DeserializeObject<BinarySaveFile>(json);
+            var saveFile = JsonConvert.DeserializeObject<SaveFile>(json);
 
-            Bytes = saveFile.Bytes;
+            Collection = saveFile.Collection;
 
             Core.State = saveFile.State;
 
@@ -87,7 +87,7 @@ namespace Library.Engine
 
             var compressed = Utility.Compress.Zip(json);
 
-            this.Bytes[levelNumber] = compressed;
+            this.Collection[levelNumber].Bytes = compressed;
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Library.Engine
         /// <param name="refreshMetadata"></param>
         public void PopLevel(int levelNumber, bool refreshMetadata = false)
         {
-            var bytes = Bytes[levelNumber];
+            var bytes = Collection[levelNumber].Bytes;
 
             var json = Utility.Compress.Unzip(bytes);
 

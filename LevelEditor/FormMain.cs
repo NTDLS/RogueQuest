@@ -136,11 +136,24 @@ namespace LevelEditor
             treeViewTiles.MouseDown += TreeViewTiles_MouseDown;
             treeViewTiles.MouseUp += TreeViewTiles_MouseUp;
 
+            toolStripMenuItemAddLevel.Click += ToolStripMenuItemAddLevel_Click;
+            toolStripMenuItemChangeLevel.Click += ToolStripMenuItemChangeLevel_Click;
+
             PopulateMaterials();
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
             _core.Load(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
+        }
+
+        private void ToolStripMenuItemChangeLevel_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ToolStripMenuItemAddLevel_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void TreeViewTiles_MouseUp(object sender, MouseEventArgs e)

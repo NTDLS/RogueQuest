@@ -79,6 +79,9 @@ namespace LevelEditor
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
+            this.levelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemAddLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemChangeLevel = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -230,6 +233,7 @@ namespace LevelEditor
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
+            this.levelToolStripMenuItem,
             this.toolStripMenuItemTools,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -540,6 +544,27 @@ namespace LevelEditor
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
             // 
+            // levelToolStripMenuItem
+            // 
+            this.levelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemAddLevel,
+            this.toolStripMenuItemChangeLevel});
+            this.levelToolStripMenuItem.Name = "levelToolStripMenuItem";
+            this.levelToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.levelToolStripMenuItem.Text = "Level";
+            // 
+            // toolStripMenuItemAddLevel
+            // 
+            this.toolStripMenuItemAddLevel.Name = "toolStripMenuItemAddLevel";
+            this.toolStripMenuItemAddLevel.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuItemAddLevel.Text = "Add Level";
+            // 
+            // toolStripMenuItemChangeLevel
+            // 
+            this.toolStripMenuItemChangeLevel.Name = "toolStripMenuItemChangeLevel";
+            this.toolStripMenuItemChangeLevel.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuItemChangeLevel.Text = "Change Level";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -628,6 +653,9 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonPlayMap;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemTools;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemResetAllTileMeta;
+        private System.Windows.Forms.ToolStripMenuItem levelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAddLevel;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeLevel;
     }
 }
 
