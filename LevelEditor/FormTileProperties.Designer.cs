@@ -1,7 +1,7 @@
 ﻿
-namespace MapEditor
+namespace LevelEditor
 {
-    partial class FormEditQuantity
+    partial class FormTileProperties
     {
         /// <summary>
         /// Required designer variable.
@@ -91,7 +91,7 @@ namespace MapEditor
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // FormEditQuantity
+            // FormTileProperties
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -106,10 +106,10 @@ namespace MapEditor
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormEditQuantity";
+            this.Name = "FormTileProperties";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Property";
-            this.Load += new System.EventHandler(this.FormEditQuantity_Load);
+            this.Load += new System.EventHandler(this.FormTileProperties_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -1,6 +1,6 @@
 ﻿using Assets;
 using Library.Engine;
-using MapEditor.Engine;
+using LevelEditor.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MapEditor
+namespace LevelEditor
 {
     public partial class FormEditContainer : Form
     {

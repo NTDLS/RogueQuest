@@ -1,5 +1,5 @@
 ﻿using Assets;
-using MapEditor.Engine;
+using LevelEditor.Engine;
 using Library.Engine;
 using Library.Types;
 using Library.Utility;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Library.Engine.Types;
 
-namespace MapEditor
+namespace LevelEditor
 {
     public partial class FormMain : Form
     {

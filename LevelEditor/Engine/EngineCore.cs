@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace MapEditor.Engine
+namespace LevelEditor.Engine
 {
     public class EngineCore : EngineCoreBase
     {

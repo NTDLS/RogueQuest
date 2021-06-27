@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace MapEditor
+namespace LevelEditor
 {
     public partial class FormTileProperties : Form
     {

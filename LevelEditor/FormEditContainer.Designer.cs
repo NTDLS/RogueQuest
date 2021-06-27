@@ -1,5 +1,5 @@
 ﻿
-namespace MapEditor
+namespace LevelEditor
 {
     partial class FormEditContainer
     {
