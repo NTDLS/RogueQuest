@@ -73,7 +73,14 @@ namespace Game.Engine
 
             this.State.Character.InitializeState();
 
+            this.State.CurrentLevel = this.State.DefaultLevel;
+
+            var spawnPoint = Actors.OfType<ActorSpawnPoint>().FirstOrDefault();
+            Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @"Tiles\Player\1\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+            this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
+
+            spawnPoint.QueueForDelete();
 
             this.Display.BackgroundOffset.Y = Player.Y / 2;
             this.Display.BackgroundOffset.X = Player.X / 2;
