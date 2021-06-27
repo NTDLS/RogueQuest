@@ -15,6 +15,7 @@ namespace Library.Engine
     {
         #region Public properties.
 
+        public Levels Levels { get; set; }
         public GameState State { get; set; }
         public bool IsRendering { get; private set; }
         public bool IsRunning { get; private set; }
@@ -38,9 +39,20 @@ namespace Library.Engine
 
         #endregion
 
+        public void Save(string fileName)
+        {
+            Levels.Save(fileName);
+        }
+
+        public void Load(string fileName)
+        {
+            Levels.Load(fileName);
+        }
+
         public EngineCoreBase(Control drawingSurface, Size visibleSize)
         {
             Display = new EngineDisplay(drawingSurface, visibleSize);
+            Levels = new Levels(this);
             State = new GameState();
 
             lock (CollectionSemaphore)

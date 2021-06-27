@@ -57,7 +57,7 @@ namespace Game.Engine
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
 
-            Level.Load(this, Assets.Constants.GetAssetPath(@"Maps\MapHome.rqm"));
+            Load(Assets.Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
 
             this.State.Character = new PlayerState()
             {
@@ -79,11 +79,17 @@ namespace Game.Engine
             this.Display.BackgroundOffset.X = Player.X / 2;
         }
 
+        /// <summary>
+        /// This is the user friendly load method. Dont call the base.Load directly because it leaves the character off screen n' stuff.
+        /// </summary>
+        /// <param name="fileName"></param>
         public void LoadGame(string fileName)
         {
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
-            Level.Load(this, fileName);
+
+            Load(fileName);
+
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
 
             this.Display.BackgroundOffset.Y = Player.Y / 2;
@@ -92,9 +98,13 @@ namespace Game.Engine
             LogLine("Game loaded.");
         }
 
+        /// <summary>
+        /// This is the user frendly save game method, do not call save direclty from user code.
+        /// </summary>
+        /// <param name="fileName"></param>
         public void SaveGame(string fileName)
         {
-            Level.Save(this, fileName);
+            Save(fileName);
             LogLine("Game saved.");
         }
 

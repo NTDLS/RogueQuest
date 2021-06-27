@@ -6,5 +6,10 @@ namespace Library.Engine
     {
         public PlayerState Character { get; set; } = new PlayerState();
         public List<CustodyItem> Items { get; set; } = new List<CustodyItem>();
+
+        /// <summary>
+        /// The level/map-number that the player is currently on.
+        /// </summary>
+        public int CurrentLevel { get; set; }
     }
 }

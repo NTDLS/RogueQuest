@@ -352,7 +352,7 @@ namespace Game
 
             if (string.IsNullOrWhiteSpace(_mapPathPassedToGame) == false)
             {
-                Level.Load(_core, _mapPathPassedToGame);
+                _core.LoadGame(_mapPathPassedToGame);
 
                 _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
 

@@ -140,7 +140,7 @@ namespace LevelEditor
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
 
-            Level.Load(_core, Constants.GetAssetPath(@"Maps\MapHome.rqm"));
+            _core.Load(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
         }
 
         private void TreeViewTiles_MouseUp(object sender, MouseEventArgs e)
@@ -310,7 +310,7 @@ namespace LevelEditor
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _currentMapFilename = dialog.FileName;
-                    Level.Load(_core, _currentMapFilename);
+                    _core.Load(_currentMapFilename);
                     _hasBeenModified = false;
                 }
             }
@@ -321,7 +321,7 @@ namespace LevelEditor
             //If we already have an open file, then just save it.
             if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
             {
-                Level.Save(_core, _currentMapFilename);
+                _core.Save(_currentMapFilename);
                 _hasBeenModified = false;
             }
             else //If we do not have a current open file, then we need to "Save As".
@@ -341,7 +341,7 @@ namespace LevelEditor
                 {
                     _currentMapFilename = dialog.FileName;
 
-                    Level.Save(_core, _currentMapFilename);
+                    _core.Save(_currentMapFilename);
                     _hasBeenModified = false;
                     return true;
                 }
