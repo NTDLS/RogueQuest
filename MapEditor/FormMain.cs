@@ -167,8 +167,32 @@ namespace MapEditor
                 if (meta.ActorClass == ActorClassName.ActorItem)
                 {
                     string text = meta.Name;
+
+                    if (meta.SubType == ActorSubType.Weapon)
+                    {
+                        text += "\r\n" + $"Damage: {meta.DamageDice:N0}d{meta.DamageDiceFaces:N0}";
+                        if (meta.DamageAdditional > 0)
+                        {
+                            text += $" +{meta.DamageAdditional:N0}";
+                        }
+                    }
+                    else if (meta.SubType == ActorSubType.Armor || meta.SubType == ActorSubType.Boots
+                        || meta.SubType == ActorSubType.Garment || meta.SubType == ActorSubType.Gauntlets
+                        || meta.SubType == ActorSubType.Helment || meta.SubType == ActorSubType.Shield
+                        || meta.SubType == ActorSubType.Necklace || meta.SubType == ActorSubType.Belt
+                        || meta.SubType == ActorSubType.Bracers)
+                    {
+                        text += "\r\n" + $"Armor Class: {meta.AC:N0}";
+                    }
+                    else if (meta.SubType == ActorSubType.Chest || meta.SubType == ActorSubType.Pack)
+                    {
+                        text += "\r\n" + $"Max Weight: {meta.WeightCapacity:N0}";
+                        text += "\r\n" + $"Bulk Weight: {meta.BulkCapacity:N0}";
+                    }
+
                     text += "\r\n" + $"Weight: {meta.Bulk:N0}";
                     text += "\r\n" + $"Bulk: {meta.Weight:N0}";
+
 
                     if (string.IsNullOrWhiteSpace(text) == false)
                     {

@@ -1,0 +1,9 @@
+{
+  "Name":"Belial",
+  "SubType": "Weapon",
+  "DamageDice":"3",
+  "DamageDiceFaces":"6",
+  "DamageAdditional":"2",
+  "Weight":"100",
+  "Bulk":"145"
+}

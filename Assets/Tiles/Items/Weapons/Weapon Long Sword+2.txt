@@ -1,0 +1,9 @@
+{
+  "Name":"Long Sword +2",
+  "SubType": "Weapon",
+  "DamageDice":"1",
+  "DamageDiceFaces":"7",
+  "DamageAdditional":"2",
+  "Weight":"20",
+  "Bulk":"80"
+}

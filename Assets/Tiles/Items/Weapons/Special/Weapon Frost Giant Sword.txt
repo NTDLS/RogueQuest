@@ -1,0 +1,9 @@
+{
+  "Name":"Frost Giant Sword",
+  "SubType": "Weapon",
+  "DamageDice":"2",
+  "DamageDiceFaces":"10",
+  "DamageAdditional":"3",
+  "Weight":"110",
+  "Bulk":"200"
+}

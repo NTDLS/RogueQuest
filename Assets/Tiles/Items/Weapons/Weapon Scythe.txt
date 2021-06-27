@@ -1,0 +1,9 @@
+{
+  "Name":"Scythe",
+  "SubType": "Weapon",
+  "DamageDice":"1",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"0",
+  "Weight":"60",
+  "Bulk":"115"
+}

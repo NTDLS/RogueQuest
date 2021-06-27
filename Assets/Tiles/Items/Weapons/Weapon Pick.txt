@@ -1,0 +1,9 @@
+{
+  "Name":"Pick",
+  "SubType": "Weapon",
+  "DamageDice":"1",
+  "DamageDiceFaces":"3",
+  "DamageAdditional":"0",
+  "Weight":"25",
+  "Bulk":"100"
+}

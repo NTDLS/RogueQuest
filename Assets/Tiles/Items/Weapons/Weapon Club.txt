@@ -1,0 +1,9 @@
+{
+  "Name":"Club",
+  "SubType": "Weapon",
+  "DamageDice":"1",
+  "DamageDiceFaces":"4",
+  "DamageAdditional":"0",
+  "Weight":"15",
+  "Bulk":"30"
+}

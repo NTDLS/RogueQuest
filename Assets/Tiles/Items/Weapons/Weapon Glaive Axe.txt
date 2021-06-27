@@ -1,0 +1,9 @@
+{
+  "Name":"Glaive Axe",
+  "SubType": "Weapon",
+  "DamageDice":"1",
+  "DamageDiceFaces":"8",
+  "DamageAdditional":"0",
+  "Weight":"50",
+  "Bulk":"120"
+}

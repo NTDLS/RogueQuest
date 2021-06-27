@@ -1,0 +1,9 @@
+{
+  "Name":"Diabolus",
+  "SubType": "Weapon",
+  "DamageDice":"3",
+  "DamageDiceFaces":"10",
+  "DamageAdditional":"2",
+  "Weight":"120",
+  "Bulk":"180"
+}

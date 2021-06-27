@@ -35,13 +35,31 @@ namespace Library.Engine
         public int Level { get; set; }
 
         //Availabe start at the base rates and are reduced as consumed.
-        public int AvailableHitpoints { get; set; }
+        private int _availableHitpoints;
+        public int AvailableHitpoints
+        {
+            get
+            {
+                return _availableHitpoints;
+
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    _availableHitpoints = 0;
+                }
+                else
+                { _availableHitpoints = value;
+                }
+            }
+        }
         public int AvailableMana { get; set; }
 
         //These are the base values.
-        public int Hitpoints { get; private set; }
-        public int Manna { get; private set; }
-        public int MaxWeight { get; private set; }
+        public int Hitpoints { get; set; }
+        public int Manna { get; set; }
+        public int MaxWeight { get; set; }
 
         public void InitializeState()
         {

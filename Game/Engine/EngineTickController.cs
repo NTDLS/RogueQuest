@@ -291,7 +291,15 @@ namespace Game.Engine
             return appliedOffset;
         }
 
-        private bool CanActorLandHit(int agressorDexterity, int victimAC)
+        enum HitType
+        {
+            CriticalMiss,
+            Miss,
+            Hit,
+            CriticalHit
+        }
+
+        private HitType CalculateHitType(int agressorDexterity, int victimAC)
         {
             //https://roll20.net/compendium/dnd5e/Items:Leather%20Armor/#h-Leather%20Armor
 
@@ -314,6 +322,17 @@ namespace Game.Engine
                     20
             */
 
+            int diceRoll = MathUtility.RandomNumber(1, 20);
+
+            if (diceRoll == 1)
+            {
+                return HitType.CriticalMiss;
+            }
+            else if (diceRoll == 20)
+            {
+                return HitType.CriticalHit;
+            }
+
             double chanceToHit = (((21.0 + agressorDexterity) - victimAC) / 20.0);
 
             if (chanceToHit < 0.05) chanceToHit = 0.05;
@@ -321,14 +340,12 @@ namespace Game.Engine
 
             int diceRollBetterThan = (int)(21 - (20 * chanceToHit));
 
-            int diceRoll = MathUtility.RandomNumber(1, 20);
-
             bool doWeHit = diceRoll >= diceRollBetterThan;
 
-            return doWeHit;
+            return doWeHit ? HitType.Hit : HitType.Miss;
         }
 
-        private int GetActorDamage(int strength, int additionalDamage, int dice, int faces)
+        private int CalculateDealtDamage(HitType hitType, int strength, int additionalDamage, int dice, int faces)
         {
             int damage = strength;  //Characters base damage.
 
@@ -336,11 +353,13 @@ namespace Game.Engine
             //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
             damage += additionalDamage;
 
-            var weapon = Core.State.Character.GetEquipSlot(EquipSlot.Weapon)?.Tile?.Meta;
-            if (weapon != null)
+            //Weapon strike damage.
+            for (int i = 0; i < dice; i++)
             {
-                //Weapon strike damage.
-                for (int i = 0; i < dice; i++)
+                damage += MathUtility.RandomNumber(1, faces);
+
+                //Critical hit allows for double weapon damage.
+                if (hitType == HitType.CriticalHit)
                 {
                     damage += MathUtility.RandomNumber(1, faces);
                 }
@@ -397,11 +416,20 @@ namespace Game.Engine
 
                 var weapon = Core.State.Character.GetEquipSlot(EquipSlot.Weapon)?.Tile?.Meta;
 
-                int playerHitsFor = GetActorDamage(Core.State.Character.Strength, additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
-
-                if (CanActorLandHit( Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC))
+                var hitType = CalculateHitType(Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC);
+                if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
                 {
-                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetStrikeFlair()}", Color.DarkGreen);
+                    int playerHitsFor = CalculateDealtDamage(hitType, Core.State.Character.Strength,
+                        additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
+
+                    if (hitType == HitType.CriticalHit)
+                    {
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
+                    }
+                    else
+                    {
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp and hits.", Color.DarkGreen);
+                    }
 
                     if (actorToAttack.Hit(playerHitsFor))
                     {
@@ -417,9 +445,13 @@ namespace Game.Engine
                         Core.State.Character.Experience += experience;
                     }
                 }
+                else if(hitType == HitType.CriticalMiss)
+                {
+                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} {GetCriticalMissText()}", Color.DarkRed);
+                }
                 else
                 {
-                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetMissFlair()}", Color.DarkRed);
+                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
                 }
             }
 
@@ -434,22 +466,35 @@ namespace Game.Engine
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
             foreach (var hostile in hostileInteractions.Where(o => o.Visible))
             {
-                int hostileHitsFor = GetActorDamage(Core.State.Character.Strength,
-                    0, hostile.Meta.DamageDice ?? 0, hostile.Meta?.DamageDiceFaces ?? 0);
-
                 //Monster hit player.
-                if (CanActorLandHit((int)hostile.Meta.Dexterity, totalPlayerAC))
+                var hitType = CalculateHitType((int)hostile.Meta.Dexterity, totalPlayerAC);
+                if (hitType == HitType.Hit)
                 {
-                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp and hits!", Color.DarkRed);
+                    int hostileHitsFor = CalculateDealtDamage(hitType, (int)hostile.Meta.Strength,
+                        0, hostile.Meta.DamageDice ?? 0, hostile.Meta?.DamageDiceFaces ?? 0);
+
+                    if (hitType == HitType.CriticalHit)
+                    {
+                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp landing a critical hit!", Color.DarkRed);
+                    }
+                    else
+                    {
+                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp and hits.", Color.DarkRed);
+                    }
+
                     Core.State.Character.AvailableHitpoints -= hostileHitsFor;
-                    if (Core.State.Character.AvailableHitpoints <= 0)
+                    if (Core.State.Character.AvailableHitpoints == 0)
                     {
                         Core.Player.QueueForDelete();
                     }
                 }
+                else if(hitType == HitType.CriticalMiss)
+                {
+                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} resulting in a critical miss!", Color.DarkGreen);
+                }
                 else
                 {
-                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp but missed!", Color.DarkGreen);
+                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} but missed.", Color.DarkGreen);
                 }
             }
         }
@@ -603,44 +648,34 @@ namespace Game.Engine
 
         #region Misc.
 
-        string GetStrikeFlair()
+        string GetCriticalHitText()
         {
             var strs = new string[] {
-                "hitting them in the leg!",
+                "tearing them open!",
                 "landing a crushing blow!.",
                 "hitting them in the head!.",
                 "hitting them in the torso!",
                 "nearly removing a limb!",
-                "causing them to stumble back!",
+                "leaving them in a state of shock!",
+                "nearly blinding them!",
+                "causing them to stumble!",
                 "knocking them to the ground!"};
 
-            if (MathUtility.ChanceIn(25))
-            {
-                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
-            }
-            else
-            {
-                return "and hits.";
-            }
+            return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
         }
 
-        string GetMissFlair()
+        string GetCriticalMissText()
         {
             var strs = new string[] {
                 "but they evade your clumsy blow!",
                 "but they were faster then you expected!",
                 "but they pull just out of your path!",
+                "are too slow to get an upper hand!",
+                "but nearly drop your weapon!",
                 "but you were bested by their agility!"
             };
 
-            if (MathUtility.ChanceIn(25))
-            {
-                return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
-            }
-            else
-            {
-                return "but missed.";
-            }
+            return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
         }
 
         #endregion

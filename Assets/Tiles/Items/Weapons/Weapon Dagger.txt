@@ -2,7 +2,7 @@
   "Name":"Dagger",
   "SubType": "Weapon",
   "DamageDice":"1",
-  "DamageDiceFaces":"2",
+  "DamageDiceFaces":"3",
   "DamageAdditional":"0",
   "Weight":"5",
   "Bulk":"5"

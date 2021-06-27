@@ -1,0 +1,9 @@
+{
+  "Name":"Broad Sword +2",
+  "SubType": "Weapon",
+  "DamageDice":"1",
+  "DamageDiceFaces":"9",
+  "DamageAdditional":"2",
+  "Weight":"50",
+  "Bulk":"95"
+}

@@ -1,0 +1,9 @@
+{
+  "Name":"Apollyon",
+  "SubType": "Weapon",
+  "DamageDice":"4",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"2",
+  "Weight":"100",
+  "Bulk":"150"
+}

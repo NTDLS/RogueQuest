@@ -1,0 +1,9 @@
+{
+  "Name":"Beaked Axe",
+  "SubType": "Weapon",
+  "DamageDice":"1",
+  "DamageDiceFaces":"7",
+  "DamageAdditional":"0",
+  "Weight":"30",
+  "Bulk":"100"
+}

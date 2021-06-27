@@ -1,0 +1,9 @@
+{
+  "Name":"Double Flail",
+  "SubType": "Weapon",
+  "DamageDice":"2",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"0",
+  "Weight":"25",
+  "Bulk":"45"
+}

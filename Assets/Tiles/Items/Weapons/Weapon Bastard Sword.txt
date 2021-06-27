@@ -1,0 +1,9 @@
+{
+  "Name":"Bastard Sword",
+  "SubType": "Weapon",
+  "DamageDice":"2",
+  "DamageDiceFaces":"6",
+  "DamageAdditional":"0",
+  "Weight":"20",
+  "Bulk":"95"
+}

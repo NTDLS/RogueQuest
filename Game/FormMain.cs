@@ -244,6 +244,11 @@ namespace Game
         {
             if (_hasBeenModified)
             {
+                if (_core.Player.Visible == false)
+                {
+                    return true; //Player is dead, probably a bad idea to save.
+                }
+
                 var result = MessageBox.Show("The game has been played since it was last saved. Save it now?",
                     "Save before continuing?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
@@ -394,6 +399,11 @@ namespace Game
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
+            if (_core.Player.Visible == false)
+            {
+                return; //Player is dead.
+            }
+
             _hasBeenModified = true;
 
             if (e.KeyCode == Keys.G)

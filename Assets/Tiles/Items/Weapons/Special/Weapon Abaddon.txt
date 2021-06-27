@@ -1,0 +1,9 @@
+{
+  "Name":"Abaddon",
+  "SubType": "Weapon",
+  "DamageDice":"2",
+  "DamageDiceFaces":"9",
+  "DamageAdditional":"4",
+  "Weight":"105",
+  "Bulk":"155"
+}
