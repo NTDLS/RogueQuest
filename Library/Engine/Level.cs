@@ -10,5 +10,10 @@ namespace Library.Engine
     {
         public string Name { get; set; }
         public byte[] Bytes { get; set; }
+
+        public new string ToString()
+        {
+            return Name;
+        }
     }
 }

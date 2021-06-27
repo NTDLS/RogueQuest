@@ -41,12 +41,60 @@ namespace Library.Engine
 
         public void Save(string fileName)
         {
+            PushCurrentLevel();
             Levels.Save(fileName);
         }
 
         public void Load(string fileName)
         {
             Levels.Load(fileName);
+
+        }
+        public void PushCurrentLevel()
+        {
+            Levels.PushLevel(State.CurrentLevel);
+        }
+
+        public void PopCurrentLevel()
+        {
+            Levels.PopLevel(State.CurrentLevel);
+        }
+
+        public void SelectLevel(int levelNumber)
+        {
+            Levels.PushLevel(State.CurrentLevel);
+            Levels.PopLevel(levelNumber);
+            State.CurrentLevel = levelNumber;
+        }
+
+        public void DeleteLevel(int levelNumber)
+        {
+            if (Levels.Collection.Count <= 1)
+            {
+                return;//Can't delete the last level.
+            }
+
+            if (levelNumber == State.CurrentLevel)
+            {
+                Levels.PopLevel(0);
+                State.CurrentLevel = 0;
+            }
+
+            if (levelNumber == State.DefaultLevel)
+            {
+                State.DefaultLevel = 0;
+            }
+
+            Levels.Collection.RemoveAt(levelNumber);
+        }
+
+        /// <summary>
+        /// Set the level number for the start of a new game.
+        /// </summary>
+        /// <param name="levelNumber"></param>
+        public void SetDefaultLevel(int levelNumber)
+        {
+            State.DefaultLevel = levelNumber;
         }
 
         public EngineCoreBase(Control drawingSurface, Size visibleSize)

@@ -31,6 +31,7 @@ namespace Game
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormNewCharacter));
             this.progressBarAvailable = new Game.Controls.SmoothProgressBar();
             this.labelAvailable = new System.Windows.Forms.Label();
             this.labelStrength = new System.Windows.Forms.Label();
@@ -311,6 +312,7 @@ namespace Game
             this.Controls.Add(this.labelName);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormNewCharacter";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -11,5 +11,6 @@ namespace Library.Engine
         /// The level/map-number that the player is currently on.
         /// </summary>
         public int CurrentLevel { get; set; }
+        public int DefaultLevel { get; set; }
     }
 }

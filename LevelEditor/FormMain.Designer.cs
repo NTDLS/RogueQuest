@@ -60,6 +60,11 @@ namespace LevelEditor
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.levelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemAddLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemChangeLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemDeleteLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemSetDefaultLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemResetAllTileMeta = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,9 +84,6 @@ namespace LevelEditor
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
-            this.levelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemAddLevel = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemChangeLevel = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -378,6 +380,41 @@ namespace LevelEditor
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.selectAllToolStripMenuItem.Text = "Select &All";
             // 
+            // levelToolStripMenuItem
+            // 
+            this.levelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemAddLevel,
+            this.toolStripMenuItemChangeLevel,
+            this.toolStripMenuItemDeleteLevel,
+            this.toolStripMenuItemSetDefaultLevel});
+            this.levelToolStripMenuItem.Name = "levelToolStripMenuItem";
+            this.levelToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.levelToolStripMenuItem.Text = "Level";
+            // 
+            // toolStripMenuItemAddLevel
+            // 
+            this.toolStripMenuItemAddLevel.Name = "toolStripMenuItemAddLevel";
+            this.toolStripMenuItemAddLevel.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItemAddLevel.Text = "Add Level";
+            // 
+            // toolStripMenuItemChangeLevel
+            // 
+            this.toolStripMenuItemChangeLevel.Name = "toolStripMenuItemChangeLevel";
+            this.toolStripMenuItemChangeLevel.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItemChangeLevel.Text = "Select Level";
+            // 
+            // toolStripMenuItemDeleteLevel
+            // 
+            this.toolStripMenuItemDeleteLevel.Name = "toolStripMenuItemDeleteLevel";
+            this.toolStripMenuItemDeleteLevel.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItemDeleteLevel.Text = "Delete Level";
+            // 
+            // toolStripMenuItemSetDefaultLevel
+            // 
+            this.toolStripMenuItemSetDefaultLevel.Name = "toolStripMenuItemSetDefaultLevel";
+            this.toolStripMenuItemSetDefaultLevel.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItemSetDefaultLevel.Text = "Set Default Level";
+            // 
             // toolStripMenuItemTools
             // 
             this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -544,27 +581,6 @@ namespace LevelEditor
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
             // 
-            // levelToolStripMenuItem
-            // 
-            this.levelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemAddLevel,
-            this.toolStripMenuItemChangeLevel});
-            this.levelToolStripMenuItem.Name = "levelToolStripMenuItem";
-            this.levelToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
-            this.levelToolStripMenuItem.Text = "Level";
-            // 
-            // toolStripMenuItemAddLevel
-            // 
-            this.toolStripMenuItemAddLevel.Name = "toolStripMenuItemAddLevel";
-            this.toolStripMenuItemAddLevel.Size = new System.Drawing.Size(145, 22);
-            this.toolStripMenuItemAddLevel.Text = "Add Level";
-            // 
-            // toolStripMenuItemChangeLevel
-            // 
-            this.toolStripMenuItemChangeLevel.Name = "toolStripMenuItemChangeLevel";
-            this.toolStripMenuItemChangeLevel.Size = new System.Drawing.Size(145, 22);
-            this.toolStripMenuItemChangeLevel.Text = "Change Level";
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -575,6 +591,7 @@ namespace LevelEditor
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.statusStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "RougueQuest : LevelEditor";
@@ -656,6 +673,8 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripMenuItem levelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAddLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeLevel;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemDeleteLevel;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSetDefaultLevel;
     }
 }
 

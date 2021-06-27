@@ -65,6 +65,7 @@ namespace Game
             this.splitContainerHoriz = new System.Windows.Forms.SplitContainer();
             this.splitContainerVert = new System.Windows.Forms.SplitContainer();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
+            this.labelPlayer = new System.Windows.Forms.Label();
             this.labelTime = new System.Windows.Forms.Label();
             this.labelXP = new System.Windows.Forms.Label();
             this.labelMana = new System.Windows.Forms.Label();
@@ -77,7 +78,6 @@ namespace Game
             this.toolStripButtonGet = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonRest = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
-            this.labelPlayer = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHoriz)).BeginInit();
@@ -355,7 +355,7 @@ namespace Game
             // 
             this.splitContainerHoriz.Panel2.Controls.Add(this.splitContainerVert);
             this.splitContainerHoriz.Size = new System.Drawing.Size(784, 490);
-            this.splitContainerHoriz.SplitterDistance = 400;
+            this.splitContainerHoriz.SplitterDistance = 401;
             this.splitContainerHoriz.SplitterWidth = 3;
             this.splitContainerHoriz.TabIndex = 3;
             // 
@@ -383,7 +383,7 @@ namespace Game
             this.splitContainerVert.Panel2.Controls.Add(this.label4);
             this.splitContainerVert.Panel2.Controls.Add(this.label3);
             this.splitContainerVert.Panel2.Controls.Add(this.label1);
-            this.splitContainerVert.Size = new System.Drawing.Size(784, 87);
+            this.splitContainerVert.Size = new System.Drawing.Size(784, 86);
             this.splitContainerVert.SplitterDistance = 550;
             this.splitContainerVert.TabIndex = 0;
             // 
@@ -393,9 +393,19 @@ namespace Game
             this.richTextBoxLog.Location = new System.Drawing.Point(0, 0);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.ReadOnly = true;
-            this.richTextBoxLog.Size = new System.Drawing.Size(550, 87);
+            this.richTextBoxLog.Size = new System.Drawing.Size(550, 86);
             this.richTextBoxLog.TabIndex = 0;
             this.richTextBoxLog.Text = "";
+            // 
+            // labelPlayer
+            // 
+            this.labelPlayer.AllowDrop = true;
+            this.labelPlayer.AutoSize = true;
+            this.labelPlayer.Location = new System.Drawing.Point(5, 3);
+            this.labelPlayer.Name = "labelPlayer";
+            this.labelPlayer.Size = new System.Drawing.Size(12, 15);
+            this.labelPlayer.TabIndex = 10;
+            this.labelPlayer.Text = "-";
             // 
             // labelTime
             // 
@@ -508,16 +518,6 @@ namespace Game
             this.toolStripButtonSave.Size = new System.Drawing.Size(35, 22);
             this.toolStripButtonSave.Text = "Save";
             // 
-            // labelPlayer
-            // 
-            this.labelPlayer.AllowDrop = true;
-            this.labelPlayer.AutoSize = true;
-            this.labelPlayer.Location = new System.Drawing.Point(5, 3);
-            this.labelPlayer.Name = "labelPlayer";
-            this.labelPlayer.Size = new System.Drawing.Size(12, 15);
-            this.labelPlayer.TabIndex = 10;
-            this.labelPlayer.Text = "-";
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -529,6 +529,7 @@ namespace Game
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip);
             this.DoubleBuffered = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

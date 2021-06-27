@@ -1,6 +1,7 @@
 ﻿using Assets;
 using LevelEditor.Engine;
 using Library.Engine;
+using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
 using System;
@@ -9,7 +10,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Library.Engine.Types;
 
 namespace LevelEditor
 {
@@ -37,6 +37,7 @@ namespace LevelEditor
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
         private ToolTip _interrogationTip = new ToolTip();
+        private Rectangle? shapeSelectionRect = null; 
 
         #region Settings.
 
@@ -139,6 +140,9 @@ namespace LevelEditor
             toolStripMenuItemAddLevel.Click += ToolStripMenuItemAddLevel_Click;
             toolStripMenuItemChangeLevel.Click += ToolStripMenuItemChangeLevel_Click;
 
+            toolStripMenuItemSetDefaultLevel.Click += ToolStripMenuItemSetDefaultLevel_Click;
+            toolStripMenuItemDeleteLevel.Click += ToolStripMenuItemDeleteLevel_Click;
+
             PopulateMaterials();
 
             ToolStripButtonInsertMode_Click(new object(), new EventArgs());
@@ -146,78 +150,55 @@ namespace LevelEditor
             _core.Load(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
         }
 
+        #region Menu Clicks.
+
+        private void ToolStripMenuItemDeleteLevel_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormDeleteLevel(_core))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    int levelIndex = form.SelectedLevelIndex;
+                    _core.DeleteLevel(levelIndex);
+                }
+            }
+        }
+
+        private void ToolStripMenuItemSetDefaultLevel_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormSetDefaultLevel(_core))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    int levelIndex = form.SelectedLevelIndex;
+                    _core.SetDefaultLevel(levelIndex);
+                }
+            }
+        }
+
         private void ToolStripMenuItemChangeLevel_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            using (var form = new FormSelectLevel(_core))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    int levelIndex = form.SelectedLevelIndex;
+                    _core.SelectLevel(levelIndex);
+                }
+            }
         }
 
         private void ToolStripMenuItemAddLevel_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
-        }
-
-        private void TreeViewTiles_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
+            using (var form = new FormAddNewLevel(_core))
             {
-                _interrogationTip.Hide(sender as Control);
-            }
-        }
-
-        private void TreeViewTiles_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                var lv = sender as TreeView;
-                var selectedItem = lv.GetNodeAt(e.X, e.Y);
-
-                if (selectedItem == null)
+                if (form.ShowDialog() == DialogResult.OK)
                 {
-                    return;
-                }
-
-                var meta = TileMetadata.GetFreshMetadata(selectedItem.FullPath);
-                if (meta.ActorClass == ActorClassName.ActorItem)
-                {
-                    string text = meta.Name;
-
-                    if (meta.SubType == ActorSubType.Weapon)
-                    {
-                        text += "\r\n" + $"Damage: {meta.DamageDice:N0}d{meta.DamageDiceFaces:N0}";
-                        if (meta.DamageAdditional > 0)
-                        {
-                            text += $" +{meta.DamageAdditional:N0}";
-                        }
-                    }
-                    else if (meta.SubType == ActorSubType.Armor || meta.SubType == ActorSubType.Boots
-                        || meta.SubType == ActorSubType.Garment || meta.SubType == ActorSubType.Gauntlets
-                        || meta.SubType == ActorSubType.Helment || meta.SubType == ActorSubType.Shield
-                        || meta.SubType == ActorSubType.Necklace || meta.SubType == ActorSubType.Belt
-                        || meta.SubType == ActorSubType.Bracers)
-                    {
-                        text += "\r\n" + $"Armor Class: {meta.AC:N0}";
-                    }
-                    else if (meta.SubType == ActorSubType.Chest || meta.SubType == ActorSubType.Pack)
-                    {
-                        text += "\r\n" + $"Max Weight: {meta.WeightCapacity:N0}";
-                        text += "\r\n" + $"Bulk Weight: {meta.BulkCapacity:N0}";
-                    }
-
-                    text += "\r\n" + $"Weight: {meta.Bulk:N0}";
-                    text += "\r\n" + $"Bulk: {meta.Weight:N0}";
-
-
-                    if (string.IsNullOrWhiteSpace(text) == false)
-                    {
-                        var location = new Point(e.X + 10, e.Y - 25);
-                        _interrogationTip.Show(text, lv, location, 5000);
-                    }
+                    int levelIndex = _core.Levels.AddNew(form.LevelName);
+                    _core.SelectLevel(levelIndex);
                 }
             }
         }
-
-        #region Menu Clicks.
-
 
         private void ToolStripMenuItemResetAllTileMeta_Click(object sender, EventArgs e)
         {
@@ -435,77 +416,158 @@ namespace LevelEditor
 
         #endregion
 
-        public TreeNode CreateImageListAndAssets(ImageList imageList, TreeNode parent, string basePath, string partialPath)
+        #region TreeViewTiles.
+
+        private void TreeViewTiles_MouseUp(object sender, MouseEventArgs e)
         {
-            TreeNode node = null;
-
-            if (parent == null)
+            if (e.Button == MouseButtons.Right)
             {
-                node = treeViewTiles.Nodes.Add(Path.GetFileName(partialPath));
-            }
-            else
-            {
-                node = parent.Nodes.Add(Path.GetFileName(partialPath));
-            }
-
-            foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
-            {
-                if (Path.GetFileName(f).StartsWith("@"))
-                {
-                    continue;
-                }
-                var file = new FileInfo(f);
-
-                string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
-
-                imageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
-
-                node.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey, fileKey);
-            }
-            foreach (string d in Directory.GetDirectories(basePath + partialPath))
-            {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@"))
-                {
-                    continue;
-                }
-                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
-
-                //Set the folder image to the first image in the children.
-                TreeNode imageFind = addedNode;
-                while (String.IsNullOrWhiteSpace(imageFind.ImageKey))
-                {
-                    if (imageFind.Nodes.Count > 0)
-                    {
-                        imageFind = imageFind.Nodes[0];
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (imageFind != null)
-                {
-                    addedNode.ImageKey = imageFind.ImageKey;
-                    addedNode.SelectedImageKey = imageFind.SelectedImageKey;
-                }
-            }
-
-            return node;
-        }
-
-        void PopulateMaterials()
-        {
-            ImageList imageList = new ImageList();
-            treeViewTiles.ImageList = imageList;
-            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Tiles");
-            if (treeViewTiles.Nodes.Count > 0)
-            {
-                treeViewTiles.Nodes[0].Expand();
+                _interrogationTip.Hide(sender as Control);
             }
         }
 
-        Rectangle? shapeSelectionRect = null;
+        private void TreeViewTiles_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var lv = sender as TreeView;
+                var selectedItem = lv.GetNodeAt(e.X, e.Y);
+
+                if (selectedItem == null)
+                {
+                    return;
+                }
+
+                var meta = TileMetadata.GetFreshMetadata(selectedItem.FullPath);
+                if (meta.ActorClass == ActorClassName.ActorItem)
+                {
+                    string text = meta.Name;
+
+                    if (meta.SubType == ActorSubType.Weapon)
+                    {
+                        text += "\r\n" + $"Damage: {meta.DamageDice:N0}d{meta.DamageDiceFaces:N0}";
+                        if (meta.DamageAdditional > 0)
+                        {
+                            text += $" +{meta.DamageAdditional:N0}";
+                        }
+                    }
+                    else if (meta.SubType == ActorSubType.Armor || meta.SubType == ActorSubType.Boots
+                        || meta.SubType == ActorSubType.Garment || meta.SubType == ActorSubType.Gauntlets
+                        || meta.SubType == ActorSubType.Helment || meta.SubType == ActorSubType.Shield
+                        || meta.SubType == ActorSubType.Necklace || meta.SubType == ActorSubType.Belt
+                        || meta.SubType == ActorSubType.Bracers)
+                    {
+                        text += "\r\n" + $"Armor Class: {meta.AC:N0}";
+                    }
+                    else if (meta.SubType == ActorSubType.Chest || meta.SubType == ActorSubType.Pack)
+                    {
+                        text += "\r\n" + $"Max Weight: {meta.WeightCapacity:N0}";
+                        text += "\r\n" + $"Bulk Weight: {meta.BulkCapacity:N0}";
+                    }
+
+                    text += "\r\n" + $"Weight: {meta.Bulk:N0}";
+                    text += "\r\n" + $"Bulk: {meta.Weight:N0}";
+
+
+                    if (string.IsNullOrWhiteSpace(text) == false)
+                    {
+                        var location = new Point(e.X + 10, e.Y - 25);
+                        _interrogationTip.Show(text, lv, location, 5000);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region PictureBox.
+
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            if (e.Button == MouseButtons.Middle)
+            {
+                dragStartOffset = new Point<double>(_core.Display.BackgroundOffset.X, _core.Display.BackgroundOffset.Y);
+                dragStartMouse = new Point<double>(e.X, e.Y);
+            }
+
+            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+            {
+                shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
+            }
+
+            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
+            {
+                //Single item placement with left button.
+                insertStartMousePosition = new Point<double>(e.X, e.Y);
+                PlaceSelectedItem(x, y);
+            }
+
+            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
+            {
+                if (selectedTile != hoverTile)
+                {
+                    if (selectedTile != null && highlightSelectedTile)
+                    {
+                        selectedTile.SelectedHighlight = false;
+                    }
+
+                    //Place the mouse over the exact center of the tile.
+                    Win32.POINT p = new Win32.POINT((int)hoverTile.ScreenX, (int)hoverTile.ScreenY);
+                    Win32.ClientToScreen(pictureBox.Handle, ref p);
+                    Win32.SetCursorPos(p.x, p.y);
+
+                    selectedTile = hoverTile;
+                    PopulateSelectedItemProperties();
+                }
+
+                if (selectedTile != null && highlightSelectedTile)
+                {
+                    selectedTile.SelectedHighlight = true;
+                }
+            }
+        }
+
+        private void pictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            double x = e.X + _core.Display.BackgroundOffset.X;
+            double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            //Single item deletion with right button.
+            if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
+            {
+                if (hoverTile != null)
+                {
+                    hoverTile.QueueForDelete();
+                    _hasBeenModified = true;
+                }
+            }
+        }
+
+        private void pictureBox_Paint(object sender, PaintEventArgs e)
+        {
+            var image = _core.Render();
+
+            e.Graphics.DrawImage(image, 0, 0);
+
+            if (shapeSelectionRect != null)
+            {
+                Pen pen = new Pen(Color.Yellow, 2);
+
+                if (shapeFillMode == ShapeFillMode.Delete)
+                {
+                    pen = new Pen(Color.Red, 2);
+                }
+
+                e.Graphics.DrawRectangle(pen, (Rectangle)shapeSelectionRect);
+            }
+        }
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
@@ -699,126 +761,18 @@ namespace LevelEditor
             }
         }
 
-        private void EditorContainer(Guid containerId)
+        #endregion
+
+        #region Form Events.
+
+        private void FormMain_SizeChanged(object sender, EventArgs e)
         {
-            using (var form = new FormEditContainer(_core, containerId))
-            {
-                form.ShowDialog();
-            }
+            _core.ResizeDrawingSurface(new Size(pictureBox.Width, pictureBox.Height));
         }
 
-        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            double x = e.X + _core.Display.BackgroundOffset.X;
-            double y = e.Y + _core.Display.BackgroundOffset.Y;
+        #endregion
 
-            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
-
-            if (e.Button == MouseButtons.Middle)
-            {
-                dragStartOffset = new Point<double>(_core.Display.BackgroundOffset.X, _core.Display.BackgroundOffset.Y);
-                dragStartMouse = new Point<double>(e.X, e.Y);
-            }
-
-            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
-            {
-                shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
-            }
-
-            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
-            {
-                //Single item placement with left button.
-                insertStartMousePosition = new Point<double>(e.X, e.Y);
-                PlaceSelectedItem(x, y);
-            }
-
-            if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
-            {
-                if (selectedTile != hoverTile)
-                {
-                    if (selectedTile != null && highlightSelectedTile)
-                    {
-                        selectedTile.SelectedHighlight = false;
-                    }
-
-                    //Place the mouse over the exact center of the tile.
-                    Win32.POINT p = new Win32.POINT((int)hoverTile.ScreenX, (int)hoverTile.ScreenY);
-                    Win32.ClientToScreen(pictureBox.Handle, ref p);
-                    Win32.SetCursorPos(p.x, p.y);
-                    
-                    selectedTile = hoverTile;
-                    PopulateSelectedItemProperties();
-                }
-
-                if (selectedTile != null && highlightSelectedTile)
-                {
-                    selectedTile.SelectedHighlight = true;
-                }
-            }
-        }
-
-        void PopulateSelectedItemProperties()
-        {
-            listViewProperties.Items.Clear();
-
-            if (selectedTile != null && selectedTile.Visible)
-            {
-                listViewProperties.Items.Add("Name").SubItems.Add(selectedTile.Meta?.Name);
-                listViewProperties.Items.Add("Tile").SubItems.Add(selectedTile.TilePath);
-                listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
-                listViewProperties.Items.Add("Actor Class").SubItems.Add(selectedTile.Meta?.ActorClass.ToString());
-                listViewProperties.Items.Add("Sub Type").SubItems.Add(selectedTile.Meta?.SubType.ToString());
-                listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
-                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
-                listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
-                listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
-
-                if (selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing)
-                {
-                    listViewProperties.Items.Add("Can Take Damage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
-                    listViewProperties.Items.Add("Hit Points").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
-                    listViewProperties.Items.Add("Experience").SubItems.Add(selectedTile.Meta?.Experience.ToString());
-                }
-
-                if (selectedTile.Meta.SubType == ActorSubType.Armor || selectedTile.Meta.SubType == ActorSubType.Gauntlets
-                    || selectedTile.Meta.SubType == ActorSubType.Helment || selectedTile.Meta.SubType == ActorSubType.Bracers
-                    || selectedTile.Meta.SubType == ActorSubType.Boots || selectedTile.Meta.SubType == ActorSubType.Shield
-                    || selectedTile.Meta.SubType == ActorSubType.Ring || selectedTile.Meta.SubType == ActorSubType.Garment
-                    || selectedTile.Meta.SubType == ActorSubType.Belt || selectedTile.Meta.SubType == ActorSubType.Necklace)
-                {
-                    listViewProperties.Items.Add("Armor Class").SubItems.Add(selectedTile.Meta?.AC.ToString());
-                }
-
-                if (selectedTile.Meta.SubType == ActorSubType.Wand || selectedTile.Meta.SubType == ActorSubType.Weapon)
-                {
-                    listViewProperties.Items.Add("Damage Dice").SubItems.Add(selectedTile.Meta?.DamageDice.ToString());
-                    listViewProperties.Items.Add("Damage Dice Faces").SubItems.Add(selectedTile.Meta?.DamageDiceFaces.ToString());
-                    listViewProperties.Items.Add("Damage Additional").SubItems.Add(selectedTile.Meta?.DamageAdditional.ToString());
-                }
-
-                if (selectedTile.Meta.SubType == ActorSubType.Pack)
-                {
-                    listViewProperties.Items.Add("BulkCapacity").SubItems.Add(selectedTile.Meta?.BulkCapacity.ToString());
-                    listViewProperties.Items.Add("WeightCapacity").SubItems.Add(selectedTile.Meta?.WeightCapacity.ToString());
-                }
-
-                listViewProperties.Items.Add("Bulk").SubItems.Add(selectedTile.Meta?.Bulk.ToString());
-                listViewProperties.Items.Add("Weight").SubItems.Add(selectedTile.Meta?.Weight.ToString());
-
-                listViewProperties.Items.Add("Location").SubItems.Add($"{selectedTile.Location.X},{selectedTile.Location.Y}");
-
-                if (selectedTile.Meta?.IsContainer == true)
-                {
-                    listViewProperties.Items.Add("Contents").SubItems.Add("<open>");
-                }
-                if (selectedTile.Meta?.CanStack == true)
-                {
-                    listViewProperties.Items.Add("Quantity").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
-                }
-
-                listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            }
-        }
+        #region ListViewProperties.
 
         private void listViewProperties_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -943,26 +897,138 @@ namespace LevelEditor
             }
         }
 
-        public class TPTag //Tile properties tag
+        void PopulateSelectedItemProperties()
         {
-            public bool ReadOnly { get; set; } = true;
+            listViewProperties.Items.Clear();
+
+            if (selectedTile != null && selectedTile.Visible)
+            {
+                listViewProperties.Items.Add("Name").SubItems.Add(selectedTile.Meta?.Name);
+                listViewProperties.Items.Add("Tile").SubItems.Add(selectedTile.TilePath);
+                listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
+                listViewProperties.Items.Add("Actor Class").SubItems.Add(selectedTile.Meta?.ActorClass.ToString());
+                listViewProperties.Items.Add("Sub Type").SubItems.Add(selectedTile.Meta?.SubType.ToString());
+                listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
+                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
+                listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
+                listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
+
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing)
+                {
+                    listViewProperties.Items.Add("Can Take Damage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
+                    listViewProperties.Items.Add("Hit Points").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
+                    listViewProperties.Items.Add("Experience").SubItems.Add(selectedTile.Meta?.Experience.ToString());
+                }
+
+                if (selectedTile.Meta.SubType == ActorSubType.Armor || selectedTile.Meta.SubType == ActorSubType.Gauntlets
+                    || selectedTile.Meta.SubType == ActorSubType.Helment || selectedTile.Meta.SubType == ActorSubType.Bracers
+                    || selectedTile.Meta.SubType == ActorSubType.Boots || selectedTile.Meta.SubType == ActorSubType.Shield
+                    || selectedTile.Meta.SubType == ActorSubType.Ring || selectedTile.Meta.SubType == ActorSubType.Garment
+                    || selectedTile.Meta.SubType == ActorSubType.Belt || selectedTile.Meta.SubType == ActorSubType.Necklace)
+                {
+                    listViewProperties.Items.Add("Armor Class").SubItems.Add(selectedTile.Meta?.AC.ToString());
+                }
+
+                if (selectedTile.Meta.SubType == ActorSubType.Wand || selectedTile.Meta.SubType == ActorSubType.Weapon)
+                {
+                    listViewProperties.Items.Add("Damage Dice").SubItems.Add(selectedTile.Meta?.DamageDice.ToString());
+                    listViewProperties.Items.Add("Damage Dice Faces").SubItems.Add(selectedTile.Meta?.DamageDiceFaces.ToString());
+                    listViewProperties.Items.Add("Damage Additional").SubItems.Add(selectedTile.Meta?.DamageAdditional.ToString());
+                }
+
+                if (selectedTile.Meta.SubType == ActorSubType.Pack)
+                {
+                    listViewProperties.Items.Add("BulkCapacity").SubItems.Add(selectedTile.Meta?.BulkCapacity.ToString());
+                    listViewProperties.Items.Add("WeightCapacity").SubItems.Add(selectedTile.Meta?.WeightCapacity.ToString());
+                }
+
+                listViewProperties.Items.Add("Bulk").SubItems.Add(selectedTile.Meta?.Bulk.ToString());
+                listViewProperties.Items.Add("Weight").SubItems.Add(selectedTile.Meta?.Weight.ToString());
+
+                listViewProperties.Items.Add("Location").SubItems.Add($"{selectedTile.Location.X},{selectedTile.Location.Y}");
+
+                if (selectedTile.Meta?.IsContainer == true)
+                {
+                    listViewProperties.Items.Add("Contents").SubItems.Add("<open>");
+                }
+                if (selectedTile.Meta?.CanStack == true)
+                {
+                    listViewProperties.Items.Add("Quantity").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
+                }
+
+                listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
         }
 
-        private void pictureBox_MouseClick(object sender, MouseEventArgs e)
+        #endregion
+
+        public TreeNode CreateImageListAndAssets(ImageList imageList, TreeNode parent, string basePath, string partialPath)
         {
-            double x = e.X + _core.Display.BackgroundOffset.X;
-            double y = e.Y + _core.Display.BackgroundOffset.Y;
+            TreeNode node = null;
 
-            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
-
-            //Single item deletion with right button.
-            if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
+            if (parent == null)
             {
-                if(hoverTile != null)
+                node = treeViewTiles.Nodes.Add(Path.GetFileName(partialPath));
+            }
+            else
+            {
+                node = parent.Nodes.Add(Path.GetFileName(partialPath));
+            }
+
+            foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
+            {
+                if (Path.GetFileName(f).StartsWith("@"))
                 {
-                    hoverTile.QueueForDelete();
-                    _hasBeenModified = true;
+                    continue;
                 }
+                var file = new FileInfo(f);
+
+                string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
+
+                imageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
+
+                node.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey, fileKey);
+            }
+            foreach (string d in Directory.GetDirectories(basePath + partialPath))
+            {
+                var directory = Path.GetFileName(d);
+                if (directory.StartsWith("@"))
+                {
+                    continue;
+                }
+                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
+
+                //Set the folder image to the first image in the children.
+                TreeNode imageFind = addedNode;
+                while (String.IsNullOrWhiteSpace(imageFind.ImageKey))
+                {
+                    if (imageFind.Nodes.Count > 0)
+                    {
+                        imageFind = imageFind.Nodes[0];
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (imageFind != null)
+                {
+                    addedNode.ImageKey = imageFind.ImageKey;
+                    addedNode.SelectedImageKey = imageFind.SelectedImageKey;
+                }
+            }
+
+            return node;
+        }
+
+        void PopulateMaterials()
+        {
+            ImageList imageList = new ImageList();
+            treeViewTiles.ImageList = imageList;
+            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Tiles");
+            if (treeViewTiles.Nodes.Count > 0)
+            {
+                treeViewTiles.Nodes[0].Expand();
             }
         }
 
@@ -1034,28 +1100,13 @@ namespace LevelEditor
             return insertedTile;
         }
 
-        private void pictureBox_Paint(object sender, PaintEventArgs e)
+        private void EditorContainer(Guid containerId)
         {
-            var image = _core.Render();
-
-            e.Graphics.DrawImage(image, 0, 0);
-
-            if (shapeSelectionRect != null)
+            using (var form = new FormEditContainer(_core, containerId))
             {
-                Pen pen = new Pen(Color.Yellow, 2);
-
-                if (shapeFillMode == ShapeFillMode.Delete)
-                {
-                    pen = new Pen(Color.Red, 2);
-                }
-
-                e.Graphics.DrawRectangle(pen, (Rectangle)shapeSelectionRect);
+                form.ShowDialog();
             }
         }
 
-        private void FormMain_SizeChanged(object sender, EventArgs e)
-        {
-            _core.ResizeDrawingSurface(new Size(pictureBox.Width, pictureBox.Height));
-        }
     }
 }

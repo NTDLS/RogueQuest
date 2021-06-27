@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>RougueQuest.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FormSetDefaultLevel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormDeleteLevel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormSelectLevel.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormEditQuantity.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -26,6 +36,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="FormSelectLevel - Copy %282%29.resx">
+      <DependentUpon>FormSelectLevel.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy - Copy.resx">
+      <DependentUpon>FormSelectLevel - Copy.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy.resx">
+      <DependentUpon>FormSelectLevel.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -62,6 +62,34 @@ namespace Library.Engine
             PopLevel(saveFile.State.CurrentLevel);
         }
 
+        public int GetIndex(string name)
+        {
+            for (int i = 0; i < this.Collection.Count; i++)
+            {
+                if (Collection[i].Name == name)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Adds a new level to the collection and returns its index.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public int AddNew(string name)
+        {
+            this.Collection.Add(new Level()
+            {
+                Bytes = new byte[0],
+                Name = name
+            });
+
+            return this.Collection.Count - 1;
+        }
+
         /// <summary>
         /// Pushes the game tiles to the level array as compressed json.
         /// </summary>
@@ -99,56 +127,58 @@ namespace Library.Engine
         {
             var bytes = Collection[levelNumber].Bytes;
 
-            var json = Utility.Compress.Unzip(bytes);
-
-            var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(json);
-
             Core.QueueAllForDelete();
             Core.PurgeAllDeletedTiles();
 
-            Assembly gameAssembly = null;
-
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-            var assemblies = currentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
+            if (bytes.Length > 0)
             {
-                if (assembly.FullName.StartsWith("Game,"))
+                var json = Utility.Compress.Unzip(bytes);
+                var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(json);
+
+                Assembly gameAssembly = null;
+
+                AppDomain currentDomain = AppDomain.CurrentDomain;
+                var assemblies = currentDomain.GetAssemblies();
+                foreach (var assembly in assemblies)
                 {
-                    gameAssembly = Assembly.Load("Game");
-                }
-            }
-
-            foreach (var chunk in chunks)
-            {
-                ActorBase tile = null;
-
-                object[] param = { Core };
-
-                if (gameAssembly != null)
-                {
-                    var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
-                    tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                    if (assembly.FullName.StartsWith("Game,"))
+                    {
+                        gameAssembly = Assembly.Load("Game");
+                    }
                 }
 
-                if (tile == null)
+                foreach (var chunk in chunks)
                 {
-                    tile = (ActorBase)Activator.CreateInstance(Type.GetType("Library.Engine.ActorBase"), param);
+                    ActorBase tile = null;
+
+                    object[] param = { Core };
+
+                    if (gameAssembly != null)
+                    {
+                        var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
+                        tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                    }
+
+                    if (tile == null)
+                    {
+                        tile = (ActorBase)Activator.CreateInstance(Type.GetType("Library.Engine.ActorBase"), param);
+                    }
+
+                    tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
+                    tile.X = chunk.X;
+                    tile.Y = chunk.Y;
+                    tile.TilePath = chunk.TilePath;
+                    tile.Velocity.Angle.Degrees = chunk.Angle;
+                    tile.DrawOrder = chunk.DrawOrder;
+                    tile.Meta = chunk.Meta;
+
+                    if (refreshMetadata)
+                    {
+                        tile.RefreshMetadata(false);
+                    }
+
+                    Core.Actors.Add(tile);
                 }
-
-                tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
-                tile.X = chunk.X;
-                tile.Y = chunk.Y;
-                tile.TilePath = chunk.TilePath;
-                tile.Velocity.Angle.Degrees = chunk.Angle;
-                tile.DrawOrder = chunk.DrawOrder;
-                tile.Meta = chunk.Meta;
-
-                if (refreshMetadata)
-                {
-                    tile.RefreshMetadata(false);
-                }
-
-                Core.Actors.Add(tile);
             }
         }
     }
