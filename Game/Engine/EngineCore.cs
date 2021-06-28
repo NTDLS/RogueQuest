@@ -63,6 +63,13 @@ namespace Game.Engine
                 return;
             }
 
+            var existingPlayers = Actors.OfType<ActorPlayer>().ToList();
+            foreach (var player in existingPlayers)
+            {
+                player.QueueForDelete();
+            }
+            PurgeAllDeletedTiles();
+
             Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\Player\{this.State.Character.Avatar}\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
@@ -73,11 +80,8 @@ namespace Game.Engine
                 //Should we store the player stats here???
             };
 
-            spawnPoint.Visible = false; //Keep the spawn point here so we can place the player over it if we ever come back to this level.
-
             this.Display.BackgroundOffset.Y = Player.Y / 2;
             this.Display.BackgroundOffset.X = Player.X / 2;
-
         }
 
         public void NewGame(string characterName, int avatar,

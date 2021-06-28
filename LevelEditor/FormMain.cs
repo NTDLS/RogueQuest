@@ -95,9 +95,12 @@ namespace LevelEditor
             InitializeComponent();
         }
 
+        private Control drawingsurface = new Control();
+
+
         private void FormMain_Load(object sender, EventArgs e)
         {
-            _core = new EngineCore(pictureBox, new Size(pictureBox.Width, pictureBox.Height));
+            _core = new EngineCore(drawingsurface, new Size(drawingsurface.Width, drawingsurface.Height));
 
             DoubleBuffered = true;
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
@@ -117,13 +120,29 @@ namespace LevelEditor
             //SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             //SetStyle(ControlStyles.UserPaint, true);
 
-            pictureBox.BackColor = Color.FromArgb(60, 60, 60);
+            System.Reflection.PropertyInfo controlProperty = typeof(Control)
+                    .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            controlProperty.SetValue(drawingsurface, true, null);
 
-            pictureBox.PreviewKeyDown += PictureBox_PreviewKeyDown;
-            this.PreviewKeyDown += PictureBox_PreviewKeyDown;
-            listViewProperties.PreviewKeyDown += PictureBox_PreviewKeyDown;
-            toolStrip.PreviewKeyDown += PictureBox_PreviewKeyDown;
-            treeViewTiles.PreviewKeyDown += PictureBox_PreviewKeyDown;
+            splitContainerBody.Panel1.Controls.Add(drawingsurface);
+            drawingsurface.Dock = DockStyle.Fill;
+
+            drawingsurface.BackColor = Color.FromArgb(60, 60, 60);
+            drawingsurface.PreviewKeyDown += drawingsurface_PreviewKeyDown;
+            drawingsurface.Paint += new PaintEventHandler(drawingsurface_Paint);
+            drawingsurface.MouseClick += new MouseEventHandler(drawingsurface_MouseClick);
+            drawingsurface.MouseDoubleClick += new MouseEventHandler(drawingsurface_MouseDoubleClick);
+            drawingsurface.MouseDown += new MouseEventHandler(drawingsurface_MouseDown);
+            drawingsurface.MouseMove += new MouseEventHandler(drawingsurface_MouseMove);
+            drawingsurface.MouseUp += new MouseEventHandler(this.drawingsurface_MouseUp);
+
+            drawingsurface.Select();
+            drawingsurface.Focus();
+
+            this.PreviewKeyDown += drawingsurface_PreviewKeyDown;
+            listViewProperties.PreviewKeyDown += drawingsurface_PreviewKeyDown;
+            toolStrip.PreviewKeyDown += drawingsurface_PreviewKeyDown;
+            treeViewTiles.PreviewKeyDown += drawingsurface_PreviewKeyDown;
 
             toolStripButtonInsertMode.Click += ToolStripButtonInsertMode_Click;
             toolStripButtonSelectMode.Click += ToolStripButtonSelectMode_Click;
@@ -153,14 +172,14 @@ namespace LevelEditor
 
             PopulateMaterials();
 
-            treeViewTiles.Focus();
-
             ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
-            _core.LoadLevlesAndPopCurrent(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
+            //_core.LoadLevlesAndPopCurrent(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
+
+            NewToolStripMenuItem_Click(null, null);
         }
 
-        private void PictureBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        private void drawingsurface_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -214,6 +233,35 @@ namespace LevelEditor
                     foreach (var tile in selectedTiles)
                     {
                         tile.Y++;
+                    }
+                }
+            }
+
+
+            else if (e.KeyCode == Keys.D)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.SelectedHighlight = false;
+                    }
+
+                    foreach (var tile in selectedTiles)
+                    {
+                        var actor = new ActorBase(_core)
+                        {
+                            Meta = tile.Meta,
+                            X = tile.X + 15,
+                            Y = tile.Y + 15
+                        };
+
+                        actor.SetImage(tile.GetImage());
+
+                        actor.SelectedHighlight = true;
+
+                        _core.Actors.Add(actor);
                     }
                 }
             }
@@ -306,7 +354,7 @@ namespace LevelEditor
             {
                 var gameApp = new System.Diagnostics.Process();
                 gameApp.StartInfo.FileName = @"..\..\..\..\Game\bin\Debug\net5.0-windows\Game.exe";
-                gameApp.StartInfo.Arguments = $"/map:{_currentMapFilename}";
+                gameApp.StartInfo.Arguments = $"/levelfile:\"{_currentMapFilename}\" /levelindex:{_core.State.CurrentLevel}";
                 gameApp.Start();
             }
         }
@@ -440,6 +488,8 @@ namespace LevelEditor
             }
 
             _core.QueueAllForDelete();
+            _core.Levels.Collection.Clear();
+            _core.Levels.AddNew("Home");
             _core.Display.BackgroundOffset = new Point<double>();
         }
 
@@ -569,7 +619,7 @@ namespace LevelEditor
 
         #endregion
 
-        #region PictureBox.
+        #region drawingsurface.
 
         private void ClearMultiSelection()
         {
@@ -580,9 +630,11 @@ namespace LevelEditor
             }
         }
 
-
-        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
+        private void drawingsurface_MouseDown(object sender, MouseEventArgs e)
         {
+            drawingsurface.Select();
+            drawingsurface.Focus();
+
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
@@ -597,9 +649,10 @@ namespace LevelEditor
             //We have a bunch of tiles selected but now are clicking on a different tile while not holding shift or control.
             //Since this is not adding to the selection (holsing shift) or removing from the selection (holding control) and not
             //dragging (since we arent over a selected tile, then assume this is a new operation and deslect all tiles.
-            if (IsShiftDown() == false && IsControlDown() == false && hoverTile.SelectedHighlight == false)
+            if (IsShiftDown() == false && IsControlDown() == false && (hoverTile == null || hoverTile?.SelectedHighlight == false))
             {
                 ClearMultiSelection();
+                selectedTile = null;
             }
 
             if (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
@@ -630,7 +683,7 @@ namespace LevelEditor
 
                     //Place the mouse over the exact center of the tile.
                     Win32.POINT p = new Win32.POINT((int)hoverTile.ScreenX, (int)hoverTile.ScreenY);
-                    Win32.ClientToScreen(pictureBox.Handle, ref p);
+                    Win32.ClientToScreen(drawingsurface.Handle, ref p);
                     Win32.SetCursorPos(p.x, p.y);
 
                     selectedTile = hoverTile;
@@ -654,7 +707,7 @@ namespace LevelEditor
             return (Control.ModifierKeys & Keys.Control) == Keys.Control;
         }
 
-        private void pictureBox_MouseClick(object sender, MouseEventArgs e)
+        private void drawingsurface_MouseClick(object sender, MouseEventArgs e)
         {
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
@@ -672,7 +725,7 @@ namespace LevelEditor
             }
         }
 
-        private void pictureBox_Paint(object sender, PaintEventArgs e)
+        private void drawingsurface_Paint(object sender, PaintEventArgs e)
         {
             var image = _core.Render();
 
@@ -691,7 +744,7 @@ namespace LevelEditor
             }
         }
 
-        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        private void drawingsurface_MouseMove(object sender, MouseEventArgs e)
         {
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
@@ -750,7 +803,7 @@ namespace LevelEditor
                                         (int)(e.Y - shapeInsertStartMousePosition.Y)));
 
                     var rc = (Rectangle)shapeSelectionRect;
-                    pictureBox.Invalidate();
+                    drawingsurface.Invalidate();
                     toolStripStatusLabelDebug.Text = $"{rc.X}x,{rc.Y}y->{rc.Width}x,{rc.Height}y";
 
                     if (CurrentPrimaryMode == PrimaryMode.Shape)
@@ -835,7 +888,7 @@ namespace LevelEditor
             }
         }
 
-        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+        private void drawingsurface_MouseUp(object sender, MouseEventArgs e)
         {
             PopulateSelectedItemProperties();
 
@@ -909,7 +962,7 @@ namespace LevelEditor
                                 if (placedTile == null) //No tiles are selected in the explorer.
                                 {
                                     shapeSelectionRect = null;
-                                    pictureBox.Invalidate();
+                                    drawingsurface.Invalidate();
                                     return;
                                 }
 
@@ -939,11 +992,11 @@ namespace LevelEditor
                 }
 
                 shapeSelectionRect = null;
-                pictureBox.Invalidate();
+                drawingsurface.Invalidate();
             }
         }
 
-        private void pictureBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void drawingsurface_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
@@ -978,7 +1031,7 @@ namespace LevelEditor
 
         private void FormMain_SizeChanged(object sender, EventArgs e)
         {
-            _core.ResizeDrawingSurface(new Size(pictureBox.Width, pictureBox.Height));
+            _core.ResizeDrawingSurface(new Size(drawingsurface.Width, drawingsurface.Height));
         }
 
         #endregion
@@ -1221,7 +1274,7 @@ namespace LevelEditor
             foreach (string d in Directory.GetDirectories(basePath + partialPath))
             {
                 var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@"))
+                if (directory.StartsWith("@") || directory.ToLower() == "player")
                 {
                     continue;
                 }

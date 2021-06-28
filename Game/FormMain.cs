@@ -23,8 +23,8 @@ namespace Game
         /// <summary>
         /// Really just for debugging.
         /// </summary>
-        public string _mapPathPassedToGame { get; set; }
-        public string _gamePathPassedToGame { get; set; }
+        public string _levelPathPassedToGame { get; set; }
+        public int _levelIndexPassedToGame { get; set; }
 
         //This really shouldn't be necessary! :(
         protected override CreateParams CreateParams
@@ -39,11 +39,11 @@ namespace Game
             }
         }
 
-        public FormMain(string mapPath = null, string gamePath = null)
+        public FormMain(string levelPath = null, int levelIndex = 0)
         {
             InitializeComponent();
-            _mapPathPassedToGame = mapPath;
-            _gamePathPassedToGame = gamePath;
+            _levelPathPassedToGame = levelPath;
+            _levelIndexPassedToGame = levelIndex;
         }
 
         public FormMain()
@@ -79,7 +79,7 @@ namespace Game
             openToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
 
             //Yea, this is stupid but the richtextbox steals the keyboard focus from the form. :(
-            System.Reflection.PropertyInfo controlProperty = typeof(System.Windows.Forms.Control)
+            System.Reflection.PropertyInfo controlProperty = typeof(Control)
                     .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             controlProperty.SetValue(drawingsurface, true, null);
 
@@ -244,7 +244,7 @@ namespace Game
         /// <returns></returns>
         bool CheckForNeededSave()
         {
-            if (_hasBeenModified)
+            if (_hasBeenModified && string.IsNullOrWhiteSpace(_levelPathPassedToGame))
             {
                 if (_core.Player.Visible == false)
                 {
@@ -322,6 +322,55 @@ namespace Game
         {
             if (_firstShown == true)
             {
+                if (string.IsNullOrWhiteSpace(_levelPathPassedToGame) == false)
+                {
+                    _core.Load(_levelPathPassedToGame);
+
+                    _core.State.Character = new PlayerState()
+                    {
+                        UID = Guid.NewGuid(),
+                        Experience = 0,
+                        Name = "Tester",
+                        Avatar = 1,
+                        Level = 1,
+                        StartingDexterity = 100,
+                        StartingConstitution = 100,
+                        StartingIntelligence = 100,
+                        StartingStrength = 100
+                    };
+
+                    _core.State.Character.InitializeState();
+                    _core.State.CurrentLevel = _core.State.DefaultLevel;
+
+                    _core.Levels.PopLevel(_levelIndexPassedToGame);
+
+                    var spawnPoint = _core.Actors.OfType<ActorSpawnPoint>().FirstOrDefault();
+                    if (spawnPoint == null)
+                    {
+                        MessageBox.Show("This level contains no Spawn Point and cannot be played.");
+                        return;
+                    }
+
+                    _core.Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\Player\{_core.State.Character.Avatar}\Front 1");
+                    _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
+                    _core.Player.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder) + 1;
+
+                    _core.Player.Meta = new TileMetadata()
+                    {
+                        ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
+                        //Should we store the player stats here???
+                    };
+
+                    spawnPoint.Visible = false; //Keep the spawn point here so we can place the player over it if we ever come back to this level.
+
+                    _core.Display.BackgroundOffset.Y = _core.Player.Y / 2;
+                    _core.Display.BackgroundOffset.X = _core.Player.X / 2;
+
+                    UpdatePlayerStatLabels(_core);
+
+                    return;
+                }
+
                 using (var form = new FormWelcome())
                 {
                     var result = form.ShowDialog();

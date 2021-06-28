@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Game
@@ -26,21 +24,25 @@ namespace Game
 
             string testFor = "";
 
+            string levelFile = "";
+            int levelIndex = 0;
+
             foreach (var arg in args)
             {
-                testFor = "/map:";
+                testFor = "/levelfile:";
                 if (arg.ToLower().StartsWith(testFor))
                 {
-                    string value = arg.Substring(testFor.Length);
-                    Application.Run(new FormMain(mapPath: value));
+                    levelFile = arg.Substring(testFor.Length);
                 }
-                testFor = "/game:";
+                testFor = "/levelindex:";
                 if (arg.ToLower().StartsWith(testFor))
                 {
-                    string value = arg.Substring(testFor.Length);
-                    Application.Run(new FormMain(gamePath: value));
+                    levelIndex = Int32.Parse(arg.Substring(testFor.Length));
                 }
             }
+
+
+            Application.Run(new FormMain(levelFile, levelIndex));
         }
     }
 }

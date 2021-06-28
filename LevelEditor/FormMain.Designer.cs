@@ -31,7 +31,6 @@ namespace LevelEditor
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.splitContainerBody = new System.Windows.Forms.SplitContainer();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
             this.splitContainerTools1 = new System.Windows.Forms.SplitContainer();
             this.treeViewTiles = new System.Windows.Forms.TreeView();
             this.groupBoxProperties = new System.Windows.Forms.GroupBox();
@@ -86,10 +85,8 @@ namespace LevelEditor
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
-            this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
             this.splitContainerBody.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools1)).BeginInit();
             this.splitContainerTools1.Panel1.SuspendLayout();
             this.splitContainerTools1.Panel2.SuspendLayout();
@@ -108,32 +105,12 @@ namespace LevelEditor
             this.splitContainerBody.Location = new System.Drawing.Point(0, 65);
             this.splitContainerBody.Name = "splitContainerBody";
             // 
-            // splitContainerBody.Panel1
-            // 
-            this.splitContainerBody.Panel1.Controls.Add(this.pictureBox);
-            // 
             // splitContainerBody.Panel2
             // 
             this.splitContainerBody.Panel2.Controls.Add(this.splitContainerTools1);
             this.splitContainerBody.Size = new System.Drawing.Size(784, 474);
             this.splitContainerBody.SplitterDistance = 500;
             this.splitContainerBody.TabIndex = 0;
-            // 
-            // pictureBox
-            // 
-            this.pictureBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(500, 474);
-            this.pictureBox.TabIndex = 0;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Paint);
-            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseClick);
-            this.pictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDoubleClick);
-            this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
-            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
-            this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             // 
             // splitContainerTools1
             // 
@@ -607,11 +584,9 @@ namespace LevelEditor
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FormMain_KeyPress);
-            this.splitContainerBody.Panel1.ResumeLayout(false);
             this.splitContainerBody.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).EndInit();
             this.splitContainerBody.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.splitContainerTools1.Panel1.ResumeLayout(false);
             this.splitContainerTools1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools1)).EndInit();
@@ -634,7 +609,6 @@ namespace LevelEditor
         private System.Windows.Forms.SplitContainer splitContainerTools1;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelMouseXY;
-        private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelHoverObject;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;

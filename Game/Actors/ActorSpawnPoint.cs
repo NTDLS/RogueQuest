@@ -13,6 +13,7 @@ namespace Game.Actors
         public ActorSpawnPoint(EngineCore core)
             : base(core)
         {
+            DoNotDraw = true;
         }
     }
 }

@@ -124,7 +124,7 @@ namespace Library.Engine
         {
             var chunks = new List<LevelChunk>();
 
-            foreach (var obj in Core.Actors.Tiles.Where(o => o.Visible))
+            foreach (var obj in Core.Actors.Tiles.Where(o => o.ReadyForDeletion == false))
             {
                 chunks.Add(new LevelChunk
                 {
