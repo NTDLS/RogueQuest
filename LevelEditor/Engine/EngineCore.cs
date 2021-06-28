@@ -16,7 +16,18 @@ namespace LevelEditor.Engine
         public EngineCore(Control drawingSurface, Size visibleSize)
             : base(drawingSurface, visibleSize)
         {
+        }
 
+        public void LoadLevlesAndPopCurrent(string fileName)
+        {
+            Levels.Load(fileName);
+            PopCurrentLevel();        
+        }
+
+        public void PushLevelAndSave(string fileName)
+        {
+            PushCurrentLevel();
+            Levels.Save(fileName);
         }
     }
 }

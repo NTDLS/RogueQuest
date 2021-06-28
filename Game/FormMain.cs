@@ -292,6 +292,7 @@ namespace Game
                 {
                     _core.NewGame(
                         form.CharacterName,
+                        form.SelectedAvatar,
                         form.Dexterity,
                         form.Constitution,
                         form.Intelligence,

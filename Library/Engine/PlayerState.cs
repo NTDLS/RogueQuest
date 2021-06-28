@@ -11,6 +11,7 @@ namespace Library.Engine
         public List<Equip> Equipment { get; set; }
         public Guid UID { get; set; }
         public string Name { get; set; }
+        public int Avatar { get; set; }
 
         //These are the attributes that the player started with from character creation.
         public int StartingConstitution { get; set; }

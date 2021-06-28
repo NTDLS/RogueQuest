@@ -32,7 +32,7 @@ namespace LevelEditor
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.splitContainerBody = new System.Windows.Forms.SplitContainer();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.splitContainerTools = new System.Windows.Forms.SplitContainer();
+            this.splitContainerTools1 = new System.Windows.Forms.SplitContainer();
             this.treeViewTiles = new System.Windows.Forms.TreeView();
             this.groupBoxProperties = new System.Windows.Forms.GroupBox();
             this.listViewProperties = new System.Windows.Forms.ListView();
@@ -67,6 +67,7 @@ namespace LevelEditor
             this.toolStripMenuItemSetDefaultLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemResetAllTileMeta = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemViewWorldItems = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -84,16 +85,15 @@ namespace LevelEditor
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
-            this.toolStripMenuItemEditWorldItems = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
             this.splitContainerBody.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools)).BeginInit();
-            this.splitContainerTools.Panel1.SuspendLayout();
-            this.splitContainerTools.Panel2.SuspendLayout();
-            this.splitContainerTools.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools1)).BeginInit();
+            this.splitContainerTools1.Panel1.SuspendLayout();
+            this.splitContainerTools1.Panel2.SuspendLayout();
+            this.splitContainerTools1.SuspendLayout();
             this.groupBoxProperties.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -114,7 +114,7 @@ namespace LevelEditor
             // 
             // splitContainerBody.Panel2
             // 
-            this.splitContainerBody.Panel2.Controls.Add(this.splitContainerTools);
+            this.splitContainerBody.Panel2.Controls.Add(this.splitContainerTools1);
             this.splitContainerBody.Size = new System.Drawing.Size(784, 474);
             this.splitContainerBody.SplitterDistance = 500;
             this.splitContainerBody.TabIndex = 0;
@@ -135,23 +135,23 @@ namespace LevelEditor
             this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             // 
-            // splitContainerTools
+            // splitContainerTools1
             // 
-            this.splitContainerTools.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerTools.Location = new System.Drawing.Point(0, 0);
-            this.splitContainerTools.Name = "splitContainerTools";
-            this.splitContainerTools.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.splitContainerTools1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerTools1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerTools1.Name = "splitContainerTools1";
+            this.splitContainerTools1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainerTools.Panel1
+            // splitContainerTools1.Panel1
             // 
-            this.splitContainerTools.Panel1.Controls.Add(this.treeViewTiles);
+            this.splitContainerTools1.Panel1.Controls.Add(this.treeViewTiles);
             // 
-            // splitContainerTools.Panel2
+            // splitContainerTools1.Panel2
             // 
-            this.splitContainerTools.Panel2.Controls.Add(this.groupBoxProperties);
-            this.splitContainerTools.Size = new System.Drawing.Size(280, 474);
-            this.splitContainerTools.SplitterDistance = 236;
-            this.splitContainerTools.TabIndex = 1;
+            this.splitContainerTools1.Panel2.Controls.Add(this.groupBoxProperties);
+            this.splitContainerTools1.Size = new System.Drawing.Size(280, 474);
+            this.splitContainerTools1.SplitterDistance = 236;
+            this.splitContainerTools1.TabIndex = 1;
             // 
             // treeViewTiles
             // 
@@ -420,7 +420,7 @@ namespace LevelEditor
             // 
             this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemResetAllTileMeta,
-            this.toolStripMenuItemEditWorldItems});
+            this.toolStripMenuItemViewWorldItems});
             this.toolStripMenuItemTools.Name = "toolStripMenuItemTools";
             this.toolStripMenuItemTools.Size = new System.Drawing.Size(46, 20);
             this.toolStripMenuItemTools.Text = "Tools";
@@ -430,6 +430,12 @@ namespace LevelEditor
             this.toolStripMenuItemResetAllTileMeta.Name = "toolStripMenuItemResetAllTileMeta";
             this.toolStripMenuItemResetAllTileMeta.Size = new System.Drawing.Size(175, 22);
             this.toolStripMenuItemResetAllTileMeta.Text = "Reset All Tile Metas";
+            // 
+            // toolStripMenuItemViewWorldItems
+            // 
+            this.toolStripMenuItemViewWorldItems.Name = "toolStripMenuItemViewWorldItems";
+            this.toolStripMenuItemViewWorldItems.Size = new System.Drawing.Size(175, 22);
+            this.toolStripMenuItemViewWorldItems.Text = "View World Items";
             // 
             // helpToolStripMenuItem
             // 
@@ -521,8 +527,8 @@ namespace LevelEditor
             this.toolStripButtonInsertMode.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonInsertMode.Image")));
             this.toolStripButtonInsertMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonInsertMode.Name = "toolStripButtonInsertMode";
-            this.toolStripButtonInsertMode.Size = new System.Drawing.Size(40, 38);
-            this.toolStripButtonInsertMode.Text = "Insert";
+            this.toolStripButtonInsertMode.Size = new System.Drawing.Size(71, 38);
+            this.toolStripButtonInsertMode.Text = "Add/Delete";
             this.toolStripButtonInsertMode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             // 
             // toolStripButtonSelectMode
@@ -583,12 +589,6 @@ namespace LevelEditor
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
             // 
-            // toolStripMenuItemEditWorldItems
-            // 
-            this.toolStripMenuItemEditWorldItems.Name = "toolStripMenuItemEditWorldItems";
-            this.toolStripMenuItemEditWorldItems.Size = new System.Drawing.Size(175, 22);
-            this.toolStripMenuItemEditWorldItems.Text = "Edit World Items";
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -611,10 +611,10 @@ namespace LevelEditor
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).EndInit();
             this.splitContainerBody.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-            this.splitContainerTools.Panel1.ResumeLayout(false);
-            this.splitContainerTools.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools)).EndInit();
-            this.splitContainerTools.ResumeLayout(false);
+            this.splitContainerTools1.Panel1.ResumeLayout(false);
+            this.splitContainerTools1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools1)).EndInit();
+            this.splitContainerTools1.ResumeLayout(false);
             this.groupBoxProperties.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
@@ -630,7 +630,7 @@ namespace LevelEditor
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainerBody;
-        private System.Windows.Forms.SplitContainer splitContainerTools;
+        private System.Windows.Forms.SplitContainer splitContainerTools1;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelMouseXY;
         private System.Windows.Forms.PictureBox pictureBox;
@@ -683,7 +683,7 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemDeleteLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSetDefaultLevel;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemEditWorldItems;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemViewWorldItems;
     }
 }
 

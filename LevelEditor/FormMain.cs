@@ -37,7 +37,7 @@ namespace LevelEditor
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
         private ToolTip _interrogationTip = new ToolTip();
-        private Rectangle? shapeSelectionRect = null; 
+        private Rectangle? shapeSelectionRect = null;
 
         #region Settings.
 
@@ -74,7 +74,7 @@ namespace LevelEditor
         private Size lastPlacedItemSize = new Size(0, 0);
         private ActorBase selectedTile = null;
         private ActorBase previousHoverTile = null;
-        private PrimaryMode CurrentPrimaryMode { get; set; } = PrimaryMode.Insert;
+        private PrimaryMode CurrentPrimaryMode { get; set; } = PrimaryMode.Select;
 
         //This really shouldn't be necessary! :(
         protected override CreateParams CreateParams
@@ -142,18 +142,18 @@ namespace LevelEditor
 
             toolStripMenuItemSetDefaultLevel.Click += ToolStripMenuItemSetDefaultLevel_Click;
             toolStripMenuItemDeleteLevel.Click += ToolStripMenuItemDeleteLevel_Click;
-            toolStripMenuItemEditWorldItems.Click += ToolStripMenuItemEditWorldItems_Click;
+            toolStripMenuItemViewWorldItems.Click += ToolStripMenuItemViewWorldItems_Click;
 
             PopulateMaterials();
 
-            ToolStripButtonInsertMode_Click(new object(), new EventArgs());
+            ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
-            _core.Load(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
+            _core.LoadLevlesAndPopCurrent(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
         }
 
         #region Menu Clicks.
 
-        private void ToolStripMenuItemEditWorldItems_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemViewWorldItems_Click(object sender, EventArgs e)
         {
             if (CheckForNeededSave())
             {
@@ -318,7 +318,7 @@ namespace LevelEditor
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _currentMapFilename = dialog.FileName;
-                    _core.Load(_currentMapFilename);
+                    _core.LoadLevlesAndPopCurrent(_currentMapFilename);
                     _hasBeenModified = false;
                 }
             }
@@ -329,7 +329,7 @@ namespace LevelEditor
             //If we already have an open file, then just save it.
             if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
             {
-                _core.Save(_currentMapFilename);
+                _core.PushLevelAndSave(_currentMapFilename);
                 _hasBeenModified = false;
             }
             else //If we do not have a current open file, then we need to "Save As".
@@ -349,7 +349,7 @@ namespace LevelEditor
                 {
                     _currentMapFilename = dialog.FileName;
 
-                    _core.Save(_currentMapFilename);
+                    _core.PushLevelAndSave(_currentMapFilename);
                     _hasBeenModified = false;
                     return true;
                 }
@@ -409,7 +409,7 @@ namespace LevelEditor
             toolStripButtonSelectMode.Checked = false;
             toolStripButtonShapeMode.Checked = false;
 
-            if(selectedTile != null) selectedTile.SelectedHighlight = false;
+            if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -523,7 +523,7 @@ namespace LevelEditor
 
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
             {
-                if (selectedTile != hoverTile)
+                if (selectedTile != hoverTile && hoverTile != null)
                 {
                     if (selectedTile != null && highlightSelectedTile)
                     {
@@ -1099,7 +1099,7 @@ namespace LevelEditor
                 }
 
                 //No need to create GUIDs for every terrain tile.
-                    if (insertedTile.Meta.ActorClass != ActorClassName.ActorTerrain)
+                if (insertedTile.Meta.ActorClass != ActorClassName.ActorTerrain)
                 {
                     insertedTile.Meta.UID = Guid.NewGuid();
                 }

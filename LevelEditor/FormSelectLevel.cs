@@ -7,10 +7,19 @@ namespace LevelEditor
 {
     public partial class FormSelectLevel : Form
     {
+        private ContextMenuStrip _menu = new ContextMenuStrip();
+
         public EngineCore Core  { get; set; }
+
         public FormSelectLevel()
         {
             InitializeComponent();
+        }
+
+        public FormSelectLevel(EngineCore core)
+        {
+            InitializeComponent();
+            Core = core;
         }
 
         private void FormSelectLevel_Load(object sender, EventArgs e)
@@ -19,17 +28,59 @@ namespace LevelEditor
             this.CancelButton = buttonCancel;
 
             listBoxLevels.DisplayMember = "Name";
+            listBoxLevels.MouseUp += ListBoxLevels_MouseUp;
 
+            _menu.Items.Clear();
+            _menu.Items.Add("Rename").Click += FormSetDefaultLevel_Click;
+
+            PopulateLevels();
+        }
+
+        private void PopulateLevels()
+        {
+            listBoxLevels.Items.Clear();
             foreach (var level in Core.Levels.Collection)
             {
                 listBoxLevels.Items.Add(level);
             }
         }
 
-        public FormSelectLevel(EngineCore core)
+        private void ListBoxLevels_MouseUp(object sender, MouseEventArgs e)
         {
-            InitializeComponent();
-            Core = core;
+            if (e.Button == MouseButtons.Right)
+            {
+                var index = listBoxLevels.IndexFromPoint(e.Location);
+                if (index >= 0)
+                {
+                    listBoxLevels.SelectedIndex = index;
+                }
+
+                if (listBoxLevels.SelectedItem == null)
+                {
+                    return;
+                }
+
+                _menu.Show(listBoxLevels, e.Location);
+            }
+        }
+
+        private void FormSetDefaultLevel_Click(object sender, EventArgs e)
+        {
+            if (listBoxLevels.SelectedItem == null)
+            {
+                return;
+            }
+
+            string oldName = (listBoxLevels.SelectedItem as Level).Name;
+
+            using (var dialog = new FormTileProperties("Level Name", oldName))
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    Core.Levels.RenameLevel(oldName, dialog.PropertyValue);
+                    PopulateLevels();
+                }
+            }
         }
 
         public int SelectedLevelIndex

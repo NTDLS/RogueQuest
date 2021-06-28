@@ -52,7 +52,8 @@ namespace Game.Engine
             OnLog?.Invoke(this, "\r\n" + text, color);
         }
 
-        public void NewGame(string characterName, int dexterity, int constitution, int intelligence, int strength)
+        public void NewGame(string characterName, int avatar,
+            int dexterity, int constitution, int intelligence, int strength)
         {
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
@@ -64,6 +65,7 @@ namespace Game.Engine
                 UID = Guid.NewGuid(),
                 Experience = 0,
                 Name = characterName,
+                Avatar = avatar,
                 Level = 1,
                 StartingDexterity = dexterity,
                 StartingConstitution = constitution,
@@ -75,11 +77,18 @@ namespace Game.Engine
 
             this.State.CurrentLevel = this.State.DefaultLevel;
 
+            Levels.PopLevel(this.State.CurrentLevel);
+
             var spawnPoint = Actors.OfType<ActorSpawnPoint>().FirstOrDefault();
-            Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @"Tiles\Player\1\Front 1");
+            if (spawnPoint == null)
+            {
+                MessageBox.Show("This level contains no Spawn Point and cannot be played.");
+                return;
+            }
+
+            Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Player\{avatar}\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
-
             spawnPoint.QueueForDelete();
 
             this.Display.BackgroundOffset.Y = Player.Y / 2;

@@ -55,7 +55,17 @@ namespace Game
             this.textBoxName = new System.Windows.Forms.TextBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOk = new System.Windows.Forms.Button();
+            this.pictureBoxPlayer1 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPlayer2 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPlayer3 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPlayer4 = new System.Windows.Forms.PictureBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer4)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // progressBarAvailable
@@ -258,7 +268,7 @@ namespace Game
             this.groupBox1.Controls.Add(this.buttonStrengthUp);
             this.groupBox1.Controls.Add(this.labelDexterity);
             this.groupBox1.Controls.Add(this.progressBarConstitution);
-            this.groupBox1.Location = new System.Drawing.Point(12, 61);
+            this.groupBox1.Location = new System.Drawing.Point(12, 126);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(386, 264);
             this.groupBox1.TabIndex = 23;
@@ -283,7 +293,7 @@ namespace Game
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(324, 331);
+            this.buttonCancel.Location = new System.Drawing.Point(325, 396);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 10;
@@ -293,7 +303,7 @@ namespace Game
             // 
             // buttonOk
             // 
-            this.buttonOk.Location = new System.Drawing.Point(243, 331);
+            this.buttonOk.Location = new System.Drawing.Point(244, 396);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 9;
@@ -301,11 +311,61 @@ namespace Game
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
+            // pictureBoxPlayer1
+            // 
+            this.pictureBoxPlayer1.Location = new System.Drawing.Point(6, 21);
+            this.pictureBoxPlayer1.Name = "pictureBoxPlayer1";
+            this.pictureBoxPlayer1.Size = new System.Drawing.Size(30, 30);
+            this.pictureBoxPlayer1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxPlayer1.TabIndex = 24;
+            this.pictureBoxPlayer1.TabStop = false;
+            // 
+            // pictureBoxPlayer2
+            // 
+            this.pictureBoxPlayer2.Location = new System.Drawing.Point(42, 21);
+            this.pictureBoxPlayer2.Name = "pictureBoxPlayer2";
+            this.pictureBoxPlayer2.Size = new System.Drawing.Size(30, 30);
+            this.pictureBoxPlayer2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxPlayer2.TabIndex = 25;
+            this.pictureBoxPlayer2.TabStop = false;
+            // 
+            // pictureBoxPlayer3
+            // 
+            this.pictureBoxPlayer3.Location = new System.Drawing.Point(78, 21);
+            this.pictureBoxPlayer3.Name = "pictureBoxPlayer3";
+            this.pictureBoxPlayer3.Size = new System.Drawing.Size(30, 30);
+            this.pictureBoxPlayer3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxPlayer3.TabIndex = 26;
+            this.pictureBoxPlayer3.TabStop = false;
+            // 
+            // pictureBoxPlayer4
+            // 
+            this.pictureBoxPlayer4.Location = new System.Drawing.Point(114, 21);
+            this.pictureBoxPlayer4.Name = "pictureBoxPlayer4";
+            this.pictureBoxPlayer4.Size = new System.Drawing.Size(30, 30);
+            this.pictureBoxPlayer4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxPlayer4.TabIndex = 27;
+            this.pictureBoxPlayer4.TabStop = false;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.pictureBoxPlayer3);
+            this.groupBox2.Controls.Add(this.pictureBoxPlayer4);
+            this.groupBox2.Controls.Add(this.pictureBoxPlayer1);
+            this.groupBox2.Controls.Add(this.pictureBoxPlayer2);
+            this.groupBox2.Location = new System.Drawing.Point(12, 56);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(162, 66);
+            this.groupBox2.TabIndex = 28;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Avatar";
+            // 
             // FormNewCharacter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 362);
+            this.ClientSize = new System.Drawing.Size(411, 432);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.textBoxName);
@@ -313,6 +373,8 @@ namespace Game
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormNewCharacter";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -320,6 +382,11 @@ namespace Game
             this.Load += new System.EventHandler(this.FormNewCharacter_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer4)).EndInit();
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -350,5 +417,10 @@ namespace Game
         private System.Windows.Forms.TextBox textBoxName;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOk;
+        private System.Windows.Forms.PictureBox pictureBoxPlayer1;
+        private System.Windows.Forms.PictureBox pictureBoxPlayer2;
+        private System.Windows.Forms.PictureBox pictureBoxPlayer3;
+        private System.Windows.Forms.PictureBox pictureBoxPlayer4;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }

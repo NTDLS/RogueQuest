@@ -1,6 +1,7 @@
 ﻿using Game.Properties;
 using Library.Utility;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -8,6 +9,13 @@ namespace Game
 {
     public partial class FormNewCharacter : Form
     {
+        public int SelectedAvatar { get; set; }
+        public int Constitution => progressBarConstitution.Value;
+        public int Dexterity => progressBarDexterity.Value;
+        public int Intelligence => progressBarIntelligence.Value;
+        public int Strength => progressBarStrength.Value;
+        public string CharacterName => textBoxName.Text;
+
         public FormNewCharacter()
         {
             InitializeComponent();
@@ -37,8 +45,48 @@ namespace Game
             var names = Resources.Names.Split("\r\n").ToList();
             textBoxName.Text = names[MathUtility.RandomNumber(0, names.Count - 1)];
 
+            Image img;
+
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Player\1\Front 1.png"));
+            pictureBoxPlayer1.Image = img;
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Player\2\Front 1.png"));
+            pictureBoxPlayer2.Image = img;
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Player\3\Front 1.png"));
+            pictureBoxPlayer3.Image = img;
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Player\4\Front 1.png"));
+            pictureBoxPlayer4.Image = img;
+
+
+            pictureBoxPlayer1.MouseClick += PictureBoxPlayer_MouseClick;
+            pictureBoxPlayer2.MouseClick += PictureBoxPlayer_MouseClick;
+            pictureBoxPlayer3.MouseClick += PictureBoxPlayer_MouseClick;
+            pictureBoxPlayer4.MouseClick += PictureBoxPlayer_MouseClick;
+
+            PictureBoxPlayer_MouseClick(pictureBoxPlayer3, null);
+
             this.AcceptButton = buttonOk;
             this.CancelButton = buttonCancel;
+        }
+
+        private void PictureBoxPlayer_MouseClick(object sender, MouseEventArgs e)
+        {
+            pictureBoxPlayer1.BackColor = Color.Transparent;
+            pictureBoxPlayer2.BackColor = Color.Transparent;
+            pictureBoxPlayer3.BackColor = Color.Transparent;
+            pictureBoxPlayer4.BackColor = Color.Transparent;
+
+            pictureBoxPlayer1.BorderStyle = BorderStyle.None;
+            pictureBoxPlayer2.BorderStyle = BorderStyle.None;
+            pictureBoxPlayer3.BorderStyle = BorderStyle.None;
+            pictureBoxPlayer4.BorderStyle = BorderStyle.None;
+
+            (sender as PictureBox).BackColor = Color.LightSkyBlue;
+            (sender as PictureBox).BorderStyle = BorderStyle.Fixed3D;
+
+            if (sender == pictureBoxPlayer1) SelectedAvatar = 1;
+            if (sender == pictureBoxPlayer2) SelectedAvatar = 2;
+            if (sender == pictureBoxPlayer3) SelectedAvatar = 3;
+            if (sender == pictureBoxPlayer4) SelectedAvatar = 4;
         }
 
         int UsedPool
@@ -131,13 +179,6 @@ namespace Game
             }
             progressBarAvailable.Value = RemainPool;
         }
-
-
-        public int Constitution => progressBarConstitution.Value;
-        public int Dexterity => progressBarDexterity.Value;
-        public int Intelligence => progressBarIntelligence.Value;
-        public int Strength => progressBarStrength.Value;
-        public string CharacterName => textBoxName.Text;
 
         private void buttonOk_Click(object sender, EventArgs e)
         {

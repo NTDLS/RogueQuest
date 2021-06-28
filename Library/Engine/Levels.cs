@@ -58,8 +58,24 @@ namespace Library.Engine
             {
                 Core.State.Character = new PlayerState();
             }
+        }
 
-            PopLevel(saveFile.State.CurrentLevel);
+        public bool RenameLevel(string oldName, string newName)
+        {
+            if (oldName == newName)
+            {
+                return true;
+            }
+
+            if (Collection.Where(o => o.Name == newName).Any())
+            {
+                return false; //Duplicate name exists
+            }
+
+            int levelIndex = GetIndex(oldName);
+            Core.Levels.Collection[levelIndex].Name = newName;
+
+            return true;
         }
 
         public int GetIndex(string name)

@@ -48,8 +48,8 @@ namespace Library.Engine
         public void Load(string fileName)
         {
             Levels.Load(fileName);
-
         }
+
         public void PushCurrentLevel()
         {
             PurgeAllDeletedTiles();
