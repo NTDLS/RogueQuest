@@ -14,6 +14,8 @@ namespace Game.Engine
 {
     public class EngineTickController
     {
+        private int _avatarAnimationFrame = 1;
+
         public EngineCore Core { get; private set; }
         public int TimePassed { get; set; }
         public EngineTickController(EngineCore core)
@@ -264,8 +266,6 @@ namespace Game.Engine
             Core.LogLine($"You awake feeling refreshed.", Color.DarkGreen);
         }
 
-        int playerFrame = 1;
-
         public Point<double> Advance(TickInput Input)
         {
             Point<double> appliedOffset = new Point<double>();
@@ -297,12 +297,11 @@ namespace Game.Engine
                     playerAngle = "Left";
                 }
 
-                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Player\{Core.State.Character.Avatar}\{playerAngle} {playerFrame}.png");
+                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Player\{Core.State.Character.Avatar}\{playerAngle} {_avatarAnimationFrame}.png");
                 Core.Player.SetImage(SpriteCache.GetBitmapCached(assetPath));
-
-                if (playerFrame++ == 2)
+                if (_avatarAnimationFrame++ == 2)
                 {
-                    playerFrame = 1;
+                    _avatarAnimationFrame = 1;
                 }
 
                 intersections.AddRange(MoveActor(Core.Player, out appliedOffset));
@@ -353,7 +352,7 @@ namespace Game.Engine
                     20
             */
 
-            int diceRoll = MathUtility.RandomNumber(1, 20);
+            int diceRoll = MathUtility.RandomNumber(1, 21);
 
             if (diceRoll == 1)
             {
@@ -387,12 +386,12 @@ namespace Game.Engine
             //Weapon strike damage.
             for (int i = 0; i < dice; i++)
             {
-                damage += MathUtility.RandomNumber(1, faces);
+                damage += MathUtility.RandomNumber(1, faces + 1);
 
                 //Critical hit allows for double weapon damage.
                 if (hitType == HitType.CriticalHit)
                 {
-                    damage += MathUtility.RandomNumber(1, faces);
+                    damage += MathUtility.RandomNumber(1, faces + 1);
                 }
             }
 
@@ -692,7 +691,7 @@ namespace Game.Engine
                 "causing them to stumble!",
                 "knocking them to the ground!"};
 
-            return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
+            return strs[MathUtility.RandomNumber(0, strs.Count())];
         }
 
         string GetCriticalMissText()
@@ -706,7 +705,7 @@ namespace Game.Engine
                 "but you were bested by their agility!"
             };
 
-            return strs[MathUtility.RandomNumber(0, strs.Count() - 1)];
+            return strs[MathUtility.RandomNumber(0, strs.Count())];
         }
 
         #endregion

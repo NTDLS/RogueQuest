@@ -23,27 +23,18 @@ namespace Game
 
         private void FormNewCharacter_Load(object sender, EventArgs e)
         {
-            progressBarConstitution.Minimum = 0;
-            progressBarDexterity.Minimum = 0;
-            progressBarIntelligence.Minimum = 0;
-            progressBarStrength.Minimum = 0;
+            progressBarConstitution.Minimum = Constants.MinStartingStatLevel;
+            progressBarDexterity.Minimum = Constants.MinStartingStatLevel;
+            progressBarIntelligence.Minimum = Constants.MinStartingStatLevel;
+            progressBarStrength.Minimum = Constants.MinStartingStatLevel;
 
             progressBarConstitution.Maximum = Constants.MaxAvailableStatsPool;
             progressBarDexterity.Maximum = Constants.MaxAvailableStatsPool;
             progressBarIntelligence.Maximum = Constants.MaxAvailableStatsPool;
             progressBarStrength.Maximum = Constants.MaxAvailableStatsPool;
 
-            progressBarConstitution.Value = Constants.StartingStatLevel;
-            progressBarDexterity.Value = Constants.StartingStatLevel;
-            progressBarIntelligence.Value = Constants.StartingStatLevel;
-            progressBarStrength.Value = Constants.StartingStatLevel;
-
             progressBarAvailable.Minimum = 0;
             progressBarAvailable.Maximum = Constants.MaxAvailableStatsPool;
-            progressBarAvailable.Value = RemainPool;
-
-            var names = Resources.Names.Split("\r\n").ToList();
-            textBoxName.Text = names[MathUtility.RandomNumber(0, names.Count - 1)];
 
             Image img;
 
@@ -56,16 +47,53 @@ namespace Game
             img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Player\4\Front 1.png"));
             pictureBoxPlayer4.Image = img;
 
-
             pictureBoxPlayer1.MouseClick += PictureBoxPlayer_MouseClick;
             pictureBoxPlayer2.MouseClick += PictureBoxPlayer_MouseClick;
             pictureBoxPlayer3.MouseClick += PictureBoxPlayer_MouseClick;
             pictureBoxPlayer4.MouseClick += PictureBoxPlayer_MouseClick;
 
-            PictureBoxPlayer_MouseClick(pictureBoxPlayer3, null);
+            buttonRandom_Click(null, null);
 
             this.AcceptButton = buttonOk;
             this.CancelButton = buttonCancel;
+        }
+
+        private void buttonRandom_Click(object sender, EventArgs e)
+        {
+            var names = Resources.Names.Split("\r\n").ToList();
+            textBoxName.Text = names[MathUtility.RandomNumber(0, names.Count)];
+
+            switch (MathUtility.RandomNumber(1, 5))
+            {
+                case 1:
+                    PictureBoxPlayer_MouseClick(pictureBoxPlayer1, null);
+                    break;
+                case 2:
+                    PictureBoxPlayer_MouseClick(pictureBoxPlayer2, null);
+                    break;
+                case 3:
+                    PictureBoxPlayer_MouseClick(pictureBoxPlayer3, null);
+                    break;
+                case 4:
+                    PictureBoxPlayer_MouseClick(pictureBoxPlayer4, null);
+                    break;
+            }
+
+            progressBarConstitution.Value = Constants.MinStartingStatLevel;
+            progressBarDexterity.Value = Constants.MinStartingStatLevel;
+            progressBarIntelligence.Value = Constants.MinStartingStatLevel;
+            progressBarStrength.Value = Constants.MinStartingStatLevel;
+            progressBarAvailable.Value = Constants.MaxAvailableStatsPool;
+
+            while (RemainPool > 0)
+            {
+                if (MathUtility.ChanceIn(10)) progressBarConstitution.Value++;
+                if (MathUtility.ChanceIn(10)) progressBarDexterity.Value++;
+                if (MathUtility.ChanceIn(10)) progressBarIntelligence.Value++;
+                if (MathUtility.ChanceIn(10)) progressBarStrength.Value++;
+            }
+
+            progressBarAvailable.Value = RemainPool;
         }
 
         private void PictureBoxPlayer_MouseClick(object sender, MouseEventArgs e)

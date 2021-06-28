@@ -89,6 +89,13 @@ namespace Game.Engine
             Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Player\{avatar}\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
+
+            this.Player.Meta = new TileMetadata()
+            {
+                ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
+                //Should we store the player stats here???
+            };
+
             spawnPoint.QueueForDelete();
 
             this.Display.BackgroundOffset.Y = Player.Y / 2;
@@ -101,10 +108,14 @@ namespace Game.Engine
         /// <param name="fileName"></param>
         public void LoadGame(string fileName)
         {
+            FormWelcome.AddToRecentList(fileName);
+
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
 
             Load(fileName);
+
+            PopCurrentLevel();
 
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
 
@@ -120,6 +131,7 @@ namespace Game.Engine
         /// <param name="fileName"></param>
         public void SaveGame(string fileName)
         {
+            FormWelcome.AddToRecentList(fileName);
             Save(fileName);
             LogLine("Game saved.");
         }

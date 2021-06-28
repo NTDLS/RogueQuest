@@ -58,6 +58,7 @@ namespace Game
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             this.UpdateStyles();
+            this.Shown += FormMain_Shown1;
 
             if (_fullScreen)
             {
@@ -216,6 +217,7 @@ namespace Game
                 {
                     _currentMapFilename = dialog.FileName;
                     _core.LoadGame(_currentMapFilename);
+                    richTextBoxLog.Clear();
                     UpdatePlayerStatLabels(_core);
                     _hasBeenModified = false;
                 }
@@ -299,6 +301,11 @@ namespace Game
                         form.Strength);
 
                     UpdatePlayerStatLabels(_core);
+
+                    _currentMapFilename = null;
+                    _hasBeenModified = true;
+
+                    richTextBoxLog.Clear();
                 }
             }
         }
@@ -308,6 +315,33 @@ namespace Game
         private void RichTextBoxLog_Click(object sender, EventArgs e)
         {
             drawingsurface.Focus();
+        }
+
+        private bool _firstShown = true;
+        private void FormMain_Shown1(object sender, EventArgs e)
+        {
+            if (_firstShown == true)
+            {
+                using (var form = new FormWelcome())
+                {
+                    var result = form.ShowDialog();
+
+                    if (result == DialogResult.Yes)
+                    {
+                        NewToolStripMenuItem_Click(null, null);
+                    }
+                    else if (result == DialogResult.OK)
+                    {
+                        _currentMapFilename = form.SelectedFileName;
+                        _core.LoadGame(_currentMapFilename);
+                        UpdatePlayerStatLabels(_core);
+                        _hasBeenModified = false;
+                    }
+
+                }
+
+                _firstShown = false;
+            }
         }
 
         private void drawingsurface_SizeChanged(object sender, EventArgs e)
@@ -340,42 +374,6 @@ namespace Game
 
         private void _core_OnStart(EngineCoreBase sender)
         {
-            if (string.IsNullOrWhiteSpace(_gamePathPassedToGame) == false)
-            {
-                _core.LoadGame(_gamePathPassedToGame);
-                UpdatePlayerStatLabels(_core);
-
-                if (_core.Player == null)
-                {
-                    MessageBox.Show("This map has no player.");
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(_mapPathPassedToGame) == false)
-            {
-                _core.LoadGame(_mapPathPassedToGame);
-
-                _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
-
-                _core.State.Character = new PlayerState()
-                {
-                    UID = Guid.NewGuid(),
-                    Experience = 0,
-                    Name = "Player",
-                    Level = 1,
-                    StartingDexterity = 10,
-                    StartingConstitution = 10,
-                    StartingIntelligence = 10,
-                    StartingStrength = 10
-                };
-
-                _core.State.Character.InitializeState();
-
-                if (_core.Player == null)
-                {
-                    MessageBox.Show("This map has no player.");
-                }
-            }
         }
 
         private void _core_OnStop(EngineCoreBase sender)

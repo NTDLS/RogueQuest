@@ -60,6 +60,7 @@ namespace Game
             this.pictureBoxPlayer3 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPlayer4 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonRandom = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer2)).BeginInit();
@@ -360,11 +361,22 @@ namespace Game
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Avatar";
             // 
+            // buttonRandom
+            // 
+            this.buttonRandom.Location = new System.Drawing.Point(309, 56);
+            this.buttonRandom.Name = "buttonRandom";
+            this.buttonRandom.Size = new System.Drawing.Size(67, 64);
+            this.buttonRandom.TabIndex = 29;
+            this.buttonRandom.Text = "Random";
+            this.buttonRandom.UseVisualStyleBackColor = true;
+            this.buttonRandom.Click += new System.EventHandler(this.buttonRandom_Click);
+            // 
             // FormNewCharacter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(411, 432);
+            this.Controls.Add(this.buttonRandom);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
@@ -422,5 +434,6 @@ namespace Game
         private System.Windows.Forms.PictureBox pictureBoxPlayer3;
         private System.Windows.Forms.PictureBox pictureBoxPlayer4;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button buttonRandom;
     }
 }

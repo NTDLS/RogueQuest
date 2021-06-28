@@ -204,7 +204,10 @@ namespace Library.Engine
                     if (gameAssembly != null)
                     {
                         var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
-                        tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                        if (tileType != null)
+                        {
+                            tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                        }
                     }
 
                     if (tile == null)
