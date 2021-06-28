@@ -28,7 +28,8 @@ namespace LevelEditor
         public enum ShapeFillMode
         {
             Insert,
-            Delete
+            Delete,
+            Select,
         }
 
         private EngineCore _core;
@@ -118,6 +119,12 @@ namespace LevelEditor
 
             pictureBox.BackColor = Color.FromArgb(60, 60, 60);
 
+            pictureBox.PreviewKeyDown += PictureBox_PreviewKeyDown;
+            this.PreviewKeyDown += PictureBox_PreviewKeyDown;
+            listViewProperties.PreviewKeyDown += PictureBox_PreviewKeyDown;
+            toolStrip.PreviewKeyDown += PictureBox_PreviewKeyDown;
+            treeViewTiles.PreviewKeyDown += PictureBox_PreviewKeyDown;
+
             toolStripButtonInsertMode.Click += ToolStripButtonInsertMode_Click;
             toolStripButtonSelectMode.Click += ToolStripButtonSelectMode_Click;
             saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
@@ -146,9 +153,71 @@ namespace LevelEditor
 
             PopulateMaterials();
 
+            treeViewTiles.Focus();
+
             ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
             _core.LoadLevlesAndPopCurrent(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
+        }
+
+        private void PictureBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.QueueForDelete();
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Left)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.X--;
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.X++;
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.Y--;
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.Y++;
+                    }
+                }
+            }
+
         }
 
         #region Menu Clicks.
@@ -389,6 +458,8 @@ namespace LevelEditor
             toolStripButtonSelectMode.Checked = false;
             toolStripButtonShapeMode.Checked = true;
 
+            ClearMultiSelection();
+
             if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
@@ -399,6 +470,8 @@ namespace LevelEditor
             toolStripButtonSelectMode.Checked = true;
             toolStripButtonShapeMode.Checked = false;
 
+            ClearMultiSelection();
+
             if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
@@ -408,6 +481,8 @@ namespace LevelEditor
             toolStripButtonInsertMode.Checked = true;
             toolStripButtonSelectMode.Checked = false;
             toolStripButtonShapeMode.Checked = false;
+
+            ClearMultiSelection();
 
             if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
@@ -496,6 +571,16 @@ namespace LevelEditor
 
         #region PictureBox.
 
+        private void ClearMultiSelection()
+        {
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+            foreach (var tile in selectedTiles)
+            {
+                tile.SelectedHighlight = false;
+            }
+        }
+
+
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             double x = e.X + _core.Display.BackgroundOffset.X;
@@ -507,6 +592,19 @@ namespace LevelEditor
             {
                 dragStartOffset = new Point<double>(_core.Display.BackgroundOffset.X, _core.Display.BackgroundOffset.Y);
                 dragStartMouse = new Point<double>(e.X, e.Y);
+            }
+
+            //We have a bunch of tiles selected but now are clicking on a different tile while not holding shift or control.
+            //Since this is not adding to the selection (holsing shift) or removing from the selection (holding control) and not
+            //dragging (since we arent over a selected tile, then assume this is a new operation and deslect all tiles.
+            if (IsShiftDown() == false && IsControlDown() == false && hoverTile.SelectedHighlight == false)
+            {
+                ClearMultiSelection();
+            }
+
+            if (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
+            {
+                shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
             }
 
             if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
@@ -544,6 +642,16 @@ namespace LevelEditor
                     selectedTile.SelectedHighlight = true;
                 }
             }
+        }
+
+        public static bool IsShiftDown()
+        {
+            return (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
+        }
+
+        public static bool IsControlDown()
+        {
+            return (Control.ModifierKeys & Keys.Control) == Keys.Control;
         }
 
         private void pictureBox_MouseClick(object sender, MouseEventArgs e)
@@ -632,28 +740,33 @@ namespace LevelEditor
                     }
                 }
 
-                if (CurrentPrimaryMode == PrimaryMode.Shape)
+                if ((CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+                    || (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right))
                 {
-                    if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
-                    {
-                        shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
-                                            (int)shapeInsertStartMousePosition.X,
-                                            (int)shapeInsertStartMousePosition.Y,
-                                            (int)(e.X - shapeInsertStartMousePosition.X),
-                                            (int)(e.Y - shapeInsertStartMousePosition.Y)));
+                    shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
+                                        (int)shapeInsertStartMousePosition.X,
+                                        (int)shapeInsertStartMousePosition.Y,
+                                        (int)(e.X - shapeInsertStartMousePosition.X),
+                                        (int)(e.Y - shapeInsertStartMousePosition.Y)));
 
-                        var rc = (Rectangle)shapeSelectionRect;
-                        pictureBox.Invalidate();
-                        toolStripStatusLabelDebug.Text = $"{rc.X}x,{rc.Y}y->{rc.Width}x,{rc.Height}y";
-                    }
+                    var rc = (Rectangle)shapeSelectionRect;
+                    pictureBox.Invalidate();
+                    toolStripStatusLabelDebug.Text = $"{rc.X}x,{rc.Y}y->{rc.Width}x,{rc.Height}y";
 
-                    if (e.Button == MouseButtons.Left)
+                    if (CurrentPrimaryMode == PrimaryMode.Shape)
                     {
-                        shapeFillMode = ShapeFillMode.Insert;
+                        if (e.Button == MouseButtons.Left)
+                        {
+                            shapeFillMode = ShapeFillMode.Insert;
+                        }
+                        if (e.Button == MouseButtons.Right)
+                        {
+                            shapeFillMode = ShapeFillMode.Delete;
+                        }
                     }
-                    if (e.Button == MouseButtons.Right)
+                    else if (CurrentPrimaryMode == PrimaryMode.Select)
                     {
-                        shapeFillMode = ShapeFillMode.Delete;
+                        shapeFillMode = ShapeFillMode.Select;
                     }
                 }
 
@@ -681,11 +794,32 @@ namespace LevelEditor
                         selectedTile = hoverTile;
                     }
 
-                    if (selectedTile != null)
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    if (selectedTiles.Count == 1)
                     {
+                        if (selectedTile != null)
+                        {
+                            selectedTile.X = x;
+                            selectedTile.Y = y;
+                            _hasBeenModified = true;
+                        }
+                    }
+                    else if (selectedTiles.Count > 1)
+                    {
+                        int deltaX = (int)(selectedTile.X - x);
+                        int deltaY = (int)(selectedTile.Y - y);
+
                         selectedTile.X = x;
                         selectedTile.Y = y;
-                        _hasBeenModified = true;
+
+                        foreach (var tile in selectedTiles)
+                        {
+                            if (tile != selectedTile)
+                            {
+                                tile.X -= deltaX;
+                                tile.Y -= deltaY;
+                            }
+                        }
                     }
                 }
 
@@ -705,9 +839,59 @@ namespace LevelEditor
         {
             PopulateSelectedItemProperties();
 
-            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) && shapeSelectionRect != null)
+            if (shapeFillMode == ShapeFillMode.Select && (IsShiftDown() || IsControlDown()))
             {
-                if (shapeFillMode == ShapeFillMode.Insert)
+                double x = e.X + _core.Display.BackgroundOffset.X;
+                double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+                var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+
+                if (hoverTile != null)
+                {
+                    if (IsShiftDown())
+                    {
+                        hoverTile.SelectedHighlight = true;
+                    }
+                    else if (IsControlDown())
+                    {
+                        hoverTile.SelectedHighlight = false;
+                    }
+                }
+            }
+
+            if (
+                shapeSelectionRect != null &&
+                   (
+                        (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+                        || (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
+                   )
+                )
+            {
+                if (shapeFillMode == ShapeFillMode.Select)
+                {
+                    var rc = (Rectangle)shapeSelectionRect;
+                    double x = rc.X + _core.Display.BackgroundOffset.X;
+                    double y = rc.Y + _core.Display.BackgroundOffset.Y;
+
+                    var intersections = _core.Actors.Intersections(x, y, rc.Width, rc.Height);
+
+                    if (IsControlDown() == true)
+                    {
+                        foreach (var obj in intersections)
+                        {
+                            obj.SelectedHighlight = false;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var obj in intersections)
+                        {
+                            obj.SelectedHighlight = true;
+                        }
+                    }
+
+                }
+                else if (shapeFillMode == ShapeFillMode.Insert)
                 {
                     var rc = (Rectangle)shapeSelectionRect;
                     double x = rc.X + _core.Display.BackgroundOffset.X;
@@ -1168,5 +1352,9 @@ namespace LevelEditor
             }
         }
 
+        private void FormMain_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
     }
 }
