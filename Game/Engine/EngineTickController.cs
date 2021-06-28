@@ -1,4 +1,5 @@
-﻿using Game.Actors;
+﻿using Assets;
+using Game.Actors;
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
@@ -263,6 +264,8 @@ namespace Game.Engine
             Core.LogLine($"You awake feeling refreshed.", Color.DarkGreen);
         }
 
+        int playerFrame = 1;
+
         public Point<double> Advance(TickInput Input)
         {
             Point<double> appliedOffset = new Point<double>();
@@ -273,6 +276,34 @@ namespace Game.Engine
             {
                 Core.Player.Velocity.Angle.Degrees = Input.Degrees;
                 Core.Player.Velocity.ThrottlePercentage = Input.Throttle;
+
+                var angle = Core.Player.Velocity.Angle.Degrees;
+
+                string playerAngle = "front";
+                if ((angle >= 0 && angle < 45) || (angle > 315 && angle < 359))
+                {
+                    playerAngle = "Back";
+                }
+                else if ((angle >= 45 && angle <= 135))
+                {
+                    playerAngle = "Right";
+                }
+                else if ((angle >= 135 && angle <= 224))
+                {
+                    playerAngle = "Front";
+                }
+                else if ((angle >= 225 && angle <= 315))
+                {
+                    playerAngle = "Left";
+                }
+
+                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Player\{Core.State.Character.Avatar}\{playerAngle} {playerFrame}.png");
+                Core.Player.SetImage(SpriteCache.GetBitmapCached(assetPath));
+
+                if (playerFrame++ == 2)
+                {
+                    playerFrame = 1;
+                }
 
                 intersections.AddRange(MoveActor(Core.Player, out appliedOffset));
                 ScrollBackground(appliedOffset);
