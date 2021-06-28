@@ -84,6 +84,7 @@ namespace LevelEditor
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
+            this.toolStripMenuItemEditWorldItems = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel1.SuspendLayout();
             this.splitContainerBody.Panel2.SuspendLayout();
@@ -418,7 +419,8 @@ namespace LevelEditor
             // toolStripMenuItemTools
             // 
             this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemResetAllTileMeta});
+            this.toolStripMenuItemResetAllTileMeta,
+            this.toolStripMenuItemEditWorldItems});
             this.toolStripMenuItemTools.Name = "toolStripMenuItemTools";
             this.toolStripMenuItemTools.Size = new System.Drawing.Size(46, 20);
             this.toolStripMenuItemTools.Text = "Tools";
@@ -581,6 +583,12 @@ namespace LevelEditor
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
             // 
+            // toolStripMenuItemEditWorldItems
+            // 
+            this.toolStripMenuItemEditWorldItems.Name = "toolStripMenuItemEditWorldItems";
+            this.toolStripMenuItemEditWorldItems.Size = new System.Drawing.Size(175, 22);
+            this.toolStripMenuItemEditWorldItems.Text = "Edit World Items";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -675,6 +683,7 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemDeleteLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSetDefaultLevel;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemEditWorldItems;
     }
 }
 

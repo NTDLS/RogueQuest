@@ -52,6 +52,7 @@ namespace Library.Engine
         }
         public void PushCurrentLevel()
         {
+            PurgeAllDeletedTiles();
             Levels.PushLevel(State.CurrentLevel);
         }
 

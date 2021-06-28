@@ -118,6 +118,38 @@ namespace Library.Engine
             this.Collection[levelNumber].Bytes = compressed;
         }
 
+        public List<LevelChunk> GetChunks(int levelNumber)
+        {
+            var bytes = Collection[levelNumber].Bytes;
+
+            if (bytes.Length > 0)
+            {
+                var json = Utility.Compress.Unzip(bytes);
+                var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(json);
+                return chunks;
+
+            }
+
+            return new List<LevelChunk>();
+        }
+
+        public List<List<LevelChunk>> GetAllLevelsChunks()
+        {
+            var chunks = new List<List<LevelChunk>>();
+
+            for (int level = 0; level < Collection.Count; level++)
+            {
+                if (chunks.Count < level + 1)
+                {
+                    chunks.Add(new List<LevelChunk>());
+                }
+
+                chunks[level].AddRange(GetChunks(level));
+            }
+
+            return chunks;
+        }
+
         /// <summary>
         /// Decompresses a level from bytes and pushes it to the game tiles. This is how you change maps.
         /// </summary>

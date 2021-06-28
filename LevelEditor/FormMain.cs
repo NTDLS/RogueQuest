@@ -142,6 +142,7 @@ namespace LevelEditor
 
             toolStripMenuItemSetDefaultLevel.Click += ToolStripMenuItemSetDefaultLevel_Click;
             toolStripMenuItemDeleteLevel.Click += ToolStripMenuItemDeleteLevel_Click;
+            toolStripMenuItemEditWorldItems.Click += ToolStripMenuItemEditWorldItems_Click;
 
             PopulateMaterials();
 
@@ -151,6 +152,19 @@ namespace LevelEditor
         }
 
         #region Menu Clicks.
+
+        private void ToolStripMenuItemEditWorldItems_Click(object sender, EventArgs e)
+        {
+            if (CheckForNeededSave())
+            {
+                using (var form = new FormWorldItems(_core))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                    }
+                }
+            }
+        }
 
         private void ToolStripMenuItemDeleteLevel_Click(object sender, EventArgs e)
         {
@@ -1069,8 +1083,23 @@ namespace LevelEditor
 
                 insertedTile.RefreshMetadata(false);
 
+                if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawnPoint)
+                {
+                    insertedTile.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder) + 1;
+
+                    var otherSpawnPoints = _core.Actors.Tiles.Where(o =>
+                        o.Meta.ActorClass == ActorClassName.ActorSpawnPoint && o.Meta.UID != insertedTile.Meta.UID).ToList();
+
+                    foreach (var tile in otherSpawnPoints)
+                    {
+                        tile.QueueForDelete();
+                    }
+
+                    _core.PurgeAllDeletedTiles();
+                }
+
                 //No need to create GUIDs for every terrain tile.
-                if (insertedTile.Meta.ActorClass != ActorClassName.ActorTerrain)
+                    if (insertedTile.Meta.ActorClass != ActorClassName.ActorTerrain)
                 {
                     insertedTile.Meta.UID = Guid.NewGuid();
                 }
