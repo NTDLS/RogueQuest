@@ -772,6 +772,19 @@ namespace LevelEditor
                 {
                     EditorContainer((Guid)hoverTile.Meta.UID);
                 }
+                else if (hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarp)
+                {
+                    using (var form = new FormSelectLevel(_core))
+                    {
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            int levelIndex = form.SelectedLevelIndex;
+                            var level = _core.Levels.ByIndex(levelIndex);
+                            selectedTile.Meta.LevelWarpName = level.Name;
+                            PopulateSelectedItemProperties();
+                        }
+                    }
+                }
             }
         }
 
@@ -801,6 +814,19 @@ namespace LevelEditor
                         if (selectedTile.Meta?.IsContainer == true)
                         {
                             EditorContainer((Guid)selectedTile.Meta.UID);
+                        }
+                    }
+                    else if (selectedRow.Text == "Warp to Level")
+                    {
+                        using (var form = new FormSelectLevel(_core))
+                        {
+                            if (form.ShowDialog() == DialogResult.OK)
+                            {
+                                int levelIndex = form.SelectedLevelIndex;
+                                var level = _core.Levels.ByIndex(levelIndex);
+                                selectedTile.Meta.LevelWarpName = level.Name;
+                                PopulateSelectedItemProperties();
+                            }
                         }
                     }
                     else
@@ -926,6 +952,11 @@ namespace LevelEditor
                 listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
                 listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
                 listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
+
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarp)
+                {
+                    listViewProperties.Items.Add("Warp to Level").SubItems.Add(selectedTile.Meta?.LevelWarpName?.ToString());
+                }
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing)
                 {

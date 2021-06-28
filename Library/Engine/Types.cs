@@ -27,7 +27,8 @@
         ActorPlayer,
         ActorTerrain,
         ActorTextBlock,
-        ActorSpawnPoint
+        ActorSpawnPoint,
+        ActorLevelWarp
     }
 
     public enum ActorSubType

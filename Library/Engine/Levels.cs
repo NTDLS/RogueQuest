@@ -90,6 +90,16 @@ namespace Library.Engine
             return -1;
         }
 
+        public Level ByName(string name)
+        {
+            return Collection[GetIndex(name)];
+        }
+
+        public Level ByIndex(int index)
+        {
+            return Collection[index];
+        }
+
         /// <summary>
         /// Adds a new level to the collection and returns its index.
         /// </summary>

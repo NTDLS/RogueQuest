@@ -297,7 +297,7 @@ namespace Game.Engine
                     playerAngle = "Left";
                 }
 
-                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Player\{Core.State.Character.Avatar}\{playerAngle} {_avatarAnimationFrame}.png");
+                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Special\Player\{Core.State.Character.Avatar}\{playerAngle} {_avatarAnimationFrame}.png");
                 Core.Player.SetImage(SpriteCache.GetBitmapCached(assetPath));
                 if (_avatarAnimationFrame++ == 2)
                 {
@@ -405,6 +405,17 @@ namespace Game.Engine
         /// <param name="intersections"></param>
         void GameLogic(List<ActorBase> intersections)
         {
+            if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp).Any())
+            {
+                var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp).First();
+
+                Core.LogLine($"After a long travel you arrive in {warp.Meta.LevelWarpName}");
+
+                Core.LevelWarp(warp.Meta.LevelWarpName);
+
+                return;
+            }
+
             var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 150)
                 .Where(o => o.Meta.CanTakeDamage == true);
 
@@ -551,6 +562,16 @@ namespace Game.Engine
                 .Where(o => o.Meta.ActorClass == ActorClassName.ActorTerrain)
                 .OrderBy(o => o.DrawOrder).LastOrDefault();
 
+            if (topTerrainBlock == null)
+            {
+                actor.X -= appliedOffset.X;
+                actor.Y -= appliedOffset.Y;
+
+                finalAppliedOffset = new Point<double>(0, 0);
+
+                return intersections;
+            }
+
             //Only act on the top terrain block if it turns out to be one we cant walk on.
             if (topTerrainBlock.Meta.CanWalkOn == false)
             {
@@ -642,6 +663,12 @@ namespace Game.Engine
             }
 
             finalAppliedOffset = new Point<double>(appliedOffset);
+
+            var finalIntersections = Core.Actors.Intersections(actor)
+                .Where(o => o.Meta.ActorClass != ActorClassName.ActorTerrain).ToList();
+
+            intersections.AddRange(finalIntersections);
+
 
             return intersections;
         }

@@ -138,7 +138,7 @@ namespace Library.Engine
 
         public void Render(Graphics dc)
         {
-            if (Visible && _image != null)
+            if (Visible && _image != null && !DoNotDraw)
             {
                 DrawImage(dc, _image);
             }
@@ -221,6 +221,11 @@ namespace Library.Engine
         #endregion
 
         #region Visibility.
+
+        /// <summary>
+        /// This tile is treated like any other visible tile but is not actuallt painted. Its effectevly transparent.
+        /// </summary>
+        public bool DoNotDraw { get; set; } = false;
 
         private bool _Visible = false;
         public bool Visible

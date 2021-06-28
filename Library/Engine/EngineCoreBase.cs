@@ -48,6 +48,7 @@ namespace Library.Engine
         public void Load(string fileName)
         {
             Levels.Load(fileName);
+            Display.DrawingSurface.Invalidate();
         }
 
         public void PushCurrentLevel()
@@ -59,43 +60,52 @@ namespace Library.Engine
         public void PopCurrentLevel()
         {
             Levels.PopLevel(State.CurrentLevel);
+            Display.DrawingSurface.Invalidate();
         }
 
-        public void SelectLevel(int levelNumber)
+        public void SelectLevel(int levelIndex)
         {
             Levels.PushLevel(State.CurrentLevel);
-            Levels.PopLevel(levelNumber);
-            State.CurrentLevel = levelNumber;
+            Levels.PopLevel(levelIndex);
+            State.CurrentLevel = levelIndex;
         }
 
-        public void DeleteLevel(int levelNumber)
+        public void SelectLevel(string levelName)
+        {
+            int levelIndex = Levels.GetIndex(levelName);
+            Levels.PushLevel(State.CurrentLevel);
+            Levels.PopLevel(levelIndex);
+            State.CurrentLevel = levelIndex;
+        }
+
+        public void DeleteLevel(int levelIndex)
         {
             if (Levels.Collection.Count <= 1)
             {
                 return;//Can't delete the last level.
             }
 
-            if (levelNumber == State.CurrentLevel)
+            if (levelIndex == State.CurrentLevel)
             {
                 Levels.PopLevel(0);
                 State.CurrentLevel = 0;
             }
 
-            if (levelNumber == State.DefaultLevel)
+            if (levelIndex == State.DefaultLevel)
             {
                 State.DefaultLevel = 0;
             }
 
-            Levels.Collection.RemoveAt(levelNumber);
+            Levels.Collection.RemoveAt(levelIndex);
         }
 
         /// <summary>
         /// Set the level number for the start of a new game.
         /// </summary>
-        /// <param name="levelNumber"></param>
-        public void SetDefaultLevel(int levelNumber)
+        /// <param name="levelIndex"></param>
+        public void SetDefaultLevel(int levelIndex)
         {
-            State.DefaultLevel = levelNumber;
+            State.DefaultLevel = levelIndex;
         }
 
         public EngineCoreBase(Control drawingSurface, Size visibleSize)

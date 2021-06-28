@@ -34,6 +34,11 @@ namespace Library.Engine
         public int? Dexterity { get; set; }
         public int? Strength { get; set; }
 
+        /// <summary>
+        /// Used for level warp tiles. This tells the engine which level to load.
+        /// </summary>
+        public string LevelWarpName { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorClassName? ActorClass { get; set; }
 
