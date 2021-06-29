@@ -1,7 +1,7 @@
 ﻿
-namespace LevelEditor
+namespace ScenarioEdit
 {
-    partial class FormSelectLevel
+    partial class FormDeleteLevel
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace LevelEditor
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSelectLevel));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDeleteLevel));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.listBoxLevels = new System.Windows.Forms.ListBox();
@@ -65,7 +65,7 @@ namespace LevelEditor
             this.listBoxLevels.TabIndex = 6;
             this.listBoxLevels.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxLevels_MouseDoubleClick);
             // 
-            // FormSelectLevel
+            // FormDeleteLevel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -78,10 +78,10 @@ namespace LevelEditor
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormSelectLevel";
+            this.Name = "FormDeleteLevel";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Select Level";
-            this.Load += new System.EventHandler(this.FormSelectLevel_Load);
+            this.Text = "Delete Level";
+            this.Load += new System.EventHandler(this.FormDeleteLevel_Load);
             this.ResumeLayout(false);
 
         }

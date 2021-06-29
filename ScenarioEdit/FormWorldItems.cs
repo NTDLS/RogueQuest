@@ -1,11 +1,11 @@
-﻿using LevelEditor.Engine;
+﻿using ScenarioEdit.Engine;
 using Library.Engine;
 using System;
 using System.Windows.Forms;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace LevelEditor
+namespace ScenarioEdit
 {
     public partial class FormWorldItems : Form
     {

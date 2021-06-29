@@ -1,5 +1,5 @@
 ﻿
-namespace LevelEditor
+namespace ScenarioEdit
 {
     partial class FormWelcome
     {
@@ -31,33 +31,23 @@ namespace LevelEditor
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWelcome));
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonOk = new System.Windows.Forms.Button();
             this.listBoxSaves = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(324, 206);
+            this.buttonCancel.Location = new System.Drawing.Point(408, 165);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(78, 23);
             this.buttonCancel.TabIndex = 10;
             this.buttonCancel.Text = "Close";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-            // 
-            // buttonOk
-            // 
-            this.buttonOk.Location = new System.Drawing.Point(243, 206);
-            this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 9;
-            this.buttonOk.Text = "Load";
-            this.buttonOk.UseVisualStyleBackColor = true;
-            this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
             // listBoxSaves
             // 
@@ -76,13 +66,13 @@ namespace LevelEditor
             this.groupBox1.Size = new System.Drawing.Size(387, 188);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Recent Scenarios";
+            this.groupBox1.Text = "Recent Scenarios (Double-Click to Load)";
             // 
             // buttonBrowse
             // 
             this.buttonBrowse.Location = new System.Drawing.Point(408, 34);
             this.buttonBrowse.Name = "buttonBrowse";
-            this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
+            this.buttonBrowse.Size = new System.Drawing.Size(78, 23);
             this.buttonBrowse.TabIndex = 14;
             this.buttonBrowse.Text = "Browse";
             this.buttonBrowse.UseVisualStyleBackColor = true;
@@ -92,21 +82,31 @@ namespace LevelEditor
             // 
             this.buttonClear.Location = new System.Drawing.Point(408, 63);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(75, 23);
+            this.buttonClear.Size = new System.Drawing.Size(78, 23);
             this.buttonClear.TabIndex = 15;
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(408, 136);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(78, 23);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "New World";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FormWelcome
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(495, 242);
+            this.ClientSize = new System.Drawing.Size(495, 211);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonBrowse);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -115,7 +115,7 @@ namespace LevelEditor
             this.Name = "FormWelcome";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Welcome";
+            this.Text = "Welcome to Rogue Quest";
             this.Load += new System.EventHandler(this.FormWelcome_Load);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -124,10 +124,10 @@ namespace LevelEditor
 
         #endregion
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.ListBox listBoxSaves;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.Button buttonClear;
+        private System.Windows.Forms.Button button1;
     }
 }

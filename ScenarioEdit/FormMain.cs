@@ -1,5 +1,5 @@
 ﻿using Assets;
-using LevelEditor.Engine;
+using ScenarioEdit.Engine;
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace LevelEditor
+namespace ScenarioEdit
 {
     public partial class FormMain : Form
     {
@@ -1027,6 +1027,11 @@ namespace LevelEditor
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+
+            if (hoverTile == null)
+            {
+                return;
+            }
 
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
             {

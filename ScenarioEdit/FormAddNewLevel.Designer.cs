@@ -1,7 +1,7 @@
 ﻿
-namespace LevelEditor
+namespace ScenarioEdit
 {
-    partial class FormSetDefaultLevel
+    partial class FormAddNewLevel
     {
         /// <summary>
         /// Required designer variable.
@@ -29,66 +29,76 @@ namespace LevelEditor
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSetDefaultLevel));
-            this.buttonOk = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAddNewLevel));
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxName = new System.Windows.Forms.TextBox();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.listBoxLevels = new System.Windows.Forms.ListBox();
+            this.buttonOk = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // buttonOk
+            // label1
             // 
-            this.buttonOk.Location = new System.Drawing.Point(132, 220);
-            this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 4;
-            this.buttonOk.Text = "Ok";
-            this.buttonOk.UseVisualStyleBackColor = true;
-            this.buttonOk.Click += new System.EventHandler(this.buttonSave_Click);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(39, 15);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Name";
+            // 
+            // textBoxName
+            // 
+            this.textBoxName.Location = new System.Drawing.Point(12, 27);
+            this.textBoxName.Name = "textBoxName";
+            this.textBoxName.Size = new System.Drawing.Size(191, 23);
+            this.textBoxName.TabIndex = 1;
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(213, 220);
+            this.buttonCancel.Location = new System.Drawing.Point(128, 56);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 5;
+            this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // listBoxLevels
+            // buttonOk
             // 
-            this.listBoxLevels.FormattingEnabled = true;
-            this.listBoxLevels.ItemHeight = 15;
-            this.listBoxLevels.Location = new System.Drawing.Point(12, 12);
-            this.listBoxLevels.Name = "listBoxLevels";
-            this.listBoxLevels.Size = new System.Drawing.Size(276, 199);
-            this.listBoxLevels.TabIndex = 6;
-            this.listBoxLevels.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxLevels_MouseDoubleClick);
+            this.buttonOk.Location = new System.Drawing.Point(47, 56);
+            this.buttonOk.Name = "buttonOk";
+            this.buttonOk.Size = new System.Drawing.Size(75, 23);
+            this.buttonOk.TabIndex = 3;
+            this.buttonOk.Text = "Ok";
+            this.buttonOk.UseVisualStyleBackColor = true;
+            this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
-            // FormSetDefaultLevel
+            // FormAddNewLevel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 255);
-            this.Controls.Add(this.listBoxLevels);
-            this.Controls.Add(this.buttonCancel);
+            this.ClientSize = new System.Drawing.Size(220, 94);
             this.Controls.Add(this.buttonOk);
-            this.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.textBoxName);
+            this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormSetDefaultLevel";
+            this.Name = "FormAddNewLevel";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Set Default Level";
-            this.Load += new System.EventHandler(this.FormSetDefaultLevel_Load);
+            this.Text = "Add Level";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Button buttonOk;
+
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxName;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.ListBox listBoxLevels;
+        private System.Windows.Forms.Button buttonOk;
     }
 }

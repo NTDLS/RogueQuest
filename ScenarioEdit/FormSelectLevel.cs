@@ -1,9 +1,9 @@
-﻿using LevelEditor.Engine;
+﻿using ScenarioEdit.Engine;
 using Library.Engine;
 using System;
 using System.Windows.Forms;
 
-namespace LevelEditor
+namespace ScenarioEdit
 {
     public partial class FormSelectLevel : Form
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace LevelEditor
+namespace ScenarioEdit
 {
     partial class FormWorldItems
     {

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace LevelEditor.Engine
+namespace ScenarioEdit.Engine
 {
     public class EngineCore : EngineCoreBase
     {

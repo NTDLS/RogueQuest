@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace LevelEditor
+namespace ScenarioEdit
 {
     public partial class FormEditQuantity : Form
     {

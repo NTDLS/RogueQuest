@@ -1,8 +1,8 @@
-﻿using LevelEditor.Engine;
+﻿using ScenarioEdit.Engine;
 using System;
 using System.Windows.Forms;
 
-namespace LevelEditor
+namespace ScenarioEdit
 {
     public partial class FormAddNewLevel : Form
     {

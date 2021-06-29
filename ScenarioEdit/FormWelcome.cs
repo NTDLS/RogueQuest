@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace LevelEditor
+namespace ScenarioEdit
 {
     public partial class FormWelcome : Form
     {
@@ -93,7 +93,6 @@ namespace LevelEditor
 
         private void FormWelcome_Load(object sender, EventArgs e)
         {
-            this.AcceptButton = buttonOk;
             this.CancelButton = buttonCancel;
 
             listBoxSaves.MouseDoubleClick += ListBoxSaves_MouseDoubleClick;
@@ -121,25 +120,6 @@ namespace LevelEditor
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();
-            }
-        }
-
-        private void buttonOk_Click(object sender, EventArgs e)
-        {
-            if (listBoxSaves.SelectedItem != null)
-            {
-                SelectedFileName = listBoxSaves.SelectedItem.ToString();
-
-                if (System.IO.File.Exists(SelectedFileName) == false)
-                {
-                    MessageBox.Show("This file no longer exists.", "Missing File");
-                    RemoveFromList(SelectedFileName);
-                    PopulateList();
-                    SelectedFileName = string.Empty;
-                    return;
-                }
-
-                this.DialogResult = DialogResult.OK;
             }
         }
 
@@ -179,6 +159,11 @@ namespace LevelEditor
                 listBoxSaves.Items.Clear();
                 ClearList();
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Yes;
         }
     }
 }

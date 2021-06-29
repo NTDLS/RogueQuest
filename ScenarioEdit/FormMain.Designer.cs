@@ -1,5 +1,5 @@
 ﻿
-namespace LevelEditor
+namespace ScenarioEdit
 {
     partial class FormMain
     {
@@ -579,7 +579,7 @@ namespace LevelEditor
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "RougueQuest : LevelEditor";
+            this.Text = "RougueQuest : ScenarioEdit";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);

@@ -1,6 +1,6 @@
 ﻿using Assets;
 using Library.Engine;
-using LevelEditor.Engine;
+using ScenarioEdit.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LevelEditor
+namespace ScenarioEdit
 {
     public partial class FormEditContainer : Form
     {
