@@ -1,8 +1,11 @@
 ﻿using Game.Properties;
+using Library.Engine;
 using Library.Utility;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Game
@@ -15,6 +18,14 @@ namespace Game
         public int Intelligence => progressBarIntelligence.Value;
         public int Strength => progressBarStrength.Value;
         public string CharacterName => textBoxName.Text;
+
+        public string ScenerioFile
+        {
+            get
+            {
+                return (comboBoxScenario.SelectedItem as ScenarioMetaData).FileName;
+            }
+        }
 
         public FormNewCharacter()
         {
@@ -53,6 +64,91 @@ namespace Game
             pictureBoxPlayer4.MouseClick += PictureBoxPlayer_MouseClick;
 
             buttonRandom_Click(null, null);
+
+
+            ToolTip toolTip = new ToolTip() { AutoPopDelay = 0, InitialDelay = 0, ReshowDelay = 0, ShowAlways = true, };
+
+            comboBoxScenario.DrawMode = DrawMode.OwnerDrawFixed;
+
+            comboBoxScenario.DrawItem += (s, e) =>
+            {
+                e.DrawBackground();
+
+                string text = comboBoxScenario.GetItemText(comboBoxScenario.Items[e.Index]);
+                if (string.IsNullOrWhiteSpace(text) == false)
+                {
+                    using (SolidBrush br = new SolidBrush(e.ForeColor))
+                    {
+                        e.Graphics.DrawString(text, e.Font, br, e.Bounds);
+                    }
+
+                    string description = (comboBoxScenario.Items[e.Index] as ScenarioMetaData)?.Description;
+
+                    //Poormans line wrap.
+                    if (description.IndexOf("\n") < 0)
+                    {
+                        var descr = new StringBuilder(description);
+
+                        bool addNextSpace = false;
+                        int count = 0;
+
+                        for (int i = 0; i < descr.Length; i++)
+                        {
+                            if (addNextSpace && (descr[i] == ' ' || descr[i] == '\t'))
+                            {
+                                descr[i] = '\n';
+                                count = 0;
+                                addNextSpace = false;
+                            }
+
+
+                            if (addNextSpace == false)
+                            {
+                                if (count > 0 && count % 50 == 0)
+                                {
+                                    addNextSpace = true;
+                                }
+                                count++;
+                            }
+                        }
+
+                        description = descr.ToString();
+                    }
+
+                    if ((e.State & DrawItemState.Selected) == DrawItemState.Selected && comboBoxScenario.DroppedDown)
+                    {
+                        toolTip.Show(description, comboBoxScenario, e.Bounds.Right, e.Bounds.Bottom + 4);
+                    }
+
+                    e.DrawFocusRectangle();
+                }
+            };
+
+            comboBoxScenario.DropDownClosed += (s, e) => toolTip.Hide(comboBoxScenario);
+
+            string scenariosPath = Assets.Constants.GetAssetPath(@"Scenario");
+
+            var files = Directory.GetFiles(scenariosPath, "*.rqs");
+
+            comboBoxScenario.DisplayMember = "Name";
+
+            foreach (var file in files)
+            {
+                var meta = Levels.GetMetadata(file);
+                if (string.IsNullOrWhiteSpace(meta.Name))
+                {
+                    meta.Name = Path.GetFileNameWithoutExtension(file);
+                }
+
+                int index = comboBoxScenario.Items.Add(meta);
+
+                (comboBoxScenario.Items[index] as ScenarioMetaData).FileName = file;
+            }
+
+            if (comboBoxScenario.Items.Count > 0)
+            {
+                comboBoxScenario.SelectedIndex = 0;
+            }
 
             this.AcceptButton = buttonOk;
             this.CancelButton = buttonCancel;
@@ -210,6 +306,24 @@ namespace Game
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
+            if (RemainPool > 0)
+            {
+                MessageBox.Show("You have available attribute points to assign before you can continue.", "Character is incomplete.");
+                return;
+            }
+
+            if (comboBoxScenario.SelectedItem == null)
+            {
+                MessageBox.Show("You must specify a scenario.", "Character is incomplete.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(textBoxName.Text))
+            {
+                MessageBox.Show("Give you character a name.", "Character is incomplete.");
+                return;
+            }
+
             this.DialogResult = DialogResult.OK;
         }
 

@@ -293,6 +293,7 @@ namespace Game
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     _core.NewGame(
+                        form.ScenerioFile,
                         form.CharacterName,
                         form.SelectedAvatar,
                         form.Dexterity,

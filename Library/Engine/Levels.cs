@@ -37,6 +37,14 @@ namespace Library.Engine
             System.IO.File.WriteAllBytes(fileName, compressed);
         }
 
+        public static ScenarioMetaData GetMetadata(string fileName)
+        {
+            var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
+            var json = Utility.Compress.Unzip(compressedSaveFile);
+            var saveFile = JsonConvert.DeserializeObject<ScenarioMetaEnumerator>(json);
+            return saveFile.Meta;
+        }
+
         /// <summary>
         /// Saves an entire game file, all levels, items and character state. All levels remain compressed in byte arrays.
         /// </summary>

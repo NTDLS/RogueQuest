@@ -84,13 +84,13 @@ namespace Game.Engine
             this.Display.BackgroundOffset.X = Player.X / 2;
         }
 
-        public void NewGame(string characterName, int avatar,
+        public void NewGame(string scenarioFile, string characterName, int avatar,
             int dexterity, int constitution, int intelligence, int strength)
         {
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
 
-            Load(Assets.Constants.GetAssetPath(@"Scenario\Default.rqm"));
+            Load(scenarioFile);
 
             this.State.Character = new PlayerState()
             {

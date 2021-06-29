@@ -61,6 +61,8 @@ namespace Game
             this.pictureBoxPlayer4 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.buttonRandom = new System.Windows.Forms.Button();
+            this.comboBoxScenario = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayer2)).BeginInit();
@@ -76,7 +78,7 @@ namespace Game
             this.progressBarAvailable.Minimum = 0;
             this.progressBarAvailable.Name = "progressBarAvailable";
             this.progressBarAvailable.ProgressBarColor = System.Drawing.Color.Blue;
-            this.progressBarAvailable.Size = new System.Drawing.Size(298, 23);
+            this.progressBarAvailable.Size = new System.Drawing.Size(298, 12);
             this.progressBarAvailable.TabIndex = 0;
             this.progressBarAvailable.Value = 0;
             // 
@@ -92,7 +94,7 @@ namespace Game
             // labelStrength
             // 
             this.labelStrength.AutoSize = true;
-            this.labelStrength.Location = new System.Drawing.Point(6, 66);
+            this.labelStrength.Location = new System.Drawing.Point(6, 56);
             this.labelStrength.Name = "labelStrength";
             this.labelStrength.Size = new System.Drawing.Size(52, 15);
             this.labelStrength.TabIndex = 3;
@@ -100,7 +102,7 @@ namespace Game
             // 
             // progressBarStrength
             // 
-            this.progressBarStrength.Location = new System.Drawing.Point(6, 84);
+            this.progressBarStrength.Location = new System.Drawing.Point(6, 74);
             this.progressBarStrength.Maximum = 100;
             this.progressBarStrength.Minimum = 0;
             this.progressBarStrength.Name = "progressBarStrength";
@@ -112,7 +114,7 @@ namespace Game
             // labelIntelligence
             // 
             this.labelIntelligence.AutoSize = true;
-            this.labelIntelligence.Location = new System.Drawing.Point(6, 110);
+            this.labelIntelligence.Location = new System.Drawing.Point(6, 100);
             this.labelIntelligence.Name = "labelIntelligence";
             this.labelIntelligence.Size = new System.Drawing.Size(68, 15);
             this.labelIntelligence.TabIndex = 5;
@@ -120,7 +122,7 @@ namespace Game
             // 
             // progressBarIntelligence
             // 
-            this.progressBarIntelligence.Location = new System.Drawing.Point(6, 128);
+            this.progressBarIntelligence.Location = new System.Drawing.Point(6, 118);
             this.progressBarIntelligence.Maximum = 100;
             this.progressBarIntelligence.Minimum = 0;
             this.progressBarIntelligence.Name = "progressBarIntelligence";
@@ -132,7 +134,7 @@ namespace Game
             // labelConstitution
             // 
             this.labelConstitution.AutoSize = true;
-            this.labelConstitution.Location = new System.Drawing.Point(6, 154);
+            this.labelConstitution.Location = new System.Drawing.Point(6, 144);
             this.labelConstitution.Name = "labelConstitution";
             this.labelConstitution.Size = new System.Drawing.Size(73, 15);
             this.labelConstitution.TabIndex = 7;
@@ -141,7 +143,7 @@ namespace Game
             // labelDexterity
             // 
             this.labelDexterity.AutoSize = true;
-            this.labelDexterity.Location = new System.Drawing.Point(6, 198);
+            this.labelDexterity.Location = new System.Drawing.Point(6, 188);
             this.labelDexterity.Name = "labelDexterity";
             this.labelDexterity.Size = new System.Drawing.Size(54, 15);
             this.labelDexterity.TabIndex = 9;
@@ -149,7 +151,7 @@ namespace Game
             // 
             // progressBarDexterity
             // 
-            this.progressBarDexterity.Location = new System.Drawing.Point(6, 216);
+            this.progressBarDexterity.Location = new System.Drawing.Point(6, 206);
             this.progressBarDexterity.Maximum = 100;
             this.progressBarDexterity.Minimum = 0;
             this.progressBarDexterity.Name = "progressBarDexterity";
@@ -160,7 +162,7 @@ namespace Game
             // 
             // progressBarConstitution
             // 
-            this.progressBarConstitution.Location = new System.Drawing.Point(6, 172);
+            this.progressBarConstitution.Location = new System.Drawing.Point(6, 162);
             this.progressBarConstitution.Maximum = 100;
             this.progressBarConstitution.Minimum = 0;
             this.progressBarConstitution.Name = "progressBarConstitution";
@@ -171,80 +173,80 @@ namespace Game
             // 
             // buttonStrengthUp
             // 
-            this.buttonStrengthUp.Location = new System.Drawing.Point(340, 84);
+            this.buttonStrengthUp.Location = new System.Drawing.Point(340, 74);
             this.buttonStrengthUp.Name = "buttonStrengthUp";
             this.buttonStrengthUp.Size = new System.Drawing.Size(24, 23);
-            this.buttonStrengthUp.TabIndex = 2;
+            this.buttonStrengthUp.TabIndex = 4;
             this.buttonStrengthUp.Text = "+";
             this.buttonStrengthUp.UseVisualStyleBackColor = true;
             this.buttonStrengthUp.Click += new System.EventHandler(this.buttonStrengthUp_Click);
             // 
             // buttonStrengthDown
             // 
-            this.buttonStrengthDown.Location = new System.Drawing.Point(310, 84);
+            this.buttonStrengthDown.Location = new System.Drawing.Point(310, 74);
             this.buttonStrengthDown.Name = "buttonStrengthDown";
             this.buttonStrengthDown.Size = new System.Drawing.Size(24, 23);
-            this.buttonStrengthDown.TabIndex = 1;
+            this.buttonStrengthDown.TabIndex = 3;
             this.buttonStrengthDown.Text = "-";
             this.buttonStrengthDown.UseVisualStyleBackColor = true;
             this.buttonStrengthDown.Click += new System.EventHandler(this.buttonStrengthDown_Click);
             // 
             // buttonIntelligenceDown
             // 
-            this.buttonIntelligenceDown.Location = new System.Drawing.Point(310, 128);
+            this.buttonIntelligenceDown.Location = new System.Drawing.Point(310, 118);
             this.buttonIntelligenceDown.Name = "buttonIntelligenceDown";
             this.buttonIntelligenceDown.Size = new System.Drawing.Size(24, 23);
-            this.buttonIntelligenceDown.TabIndex = 3;
+            this.buttonIntelligenceDown.TabIndex = 5;
             this.buttonIntelligenceDown.Text = "-";
             this.buttonIntelligenceDown.UseVisualStyleBackColor = true;
             this.buttonIntelligenceDown.Click += new System.EventHandler(this.buttonIntelligenceDown_Click);
             // 
             // buttonIntelligenceUp
             // 
-            this.buttonIntelligenceUp.Location = new System.Drawing.Point(340, 128);
+            this.buttonIntelligenceUp.Location = new System.Drawing.Point(340, 118);
             this.buttonIntelligenceUp.Name = "buttonIntelligenceUp";
             this.buttonIntelligenceUp.Size = new System.Drawing.Size(24, 23);
-            this.buttonIntelligenceUp.TabIndex = 4;
+            this.buttonIntelligenceUp.TabIndex = 6;
             this.buttonIntelligenceUp.Text = "+";
             this.buttonIntelligenceUp.UseVisualStyleBackColor = true;
             this.buttonIntelligenceUp.Click += new System.EventHandler(this.buttonIntelligenceUp_Click);
             // 
             // buttonConstitutionDown
             // 
-            this.buttonConstitutionDown.Location = new System.Drawing.Point(310, 172);
+            this.buttonConstitutionDown.Location = new System.Drawing.Point(310, 162);
             this.buttonConstitutionDown.Name = "buttonConstitutionDown";
             this.buttonConstitutionDown.Size = new System.Drawing.Size(24, 23);
-            this.buttonConstitutionDown.TabIndex = 5;
+            this.buttonConstitutionDown.TabIndex = 7;
             this.buttonConstitutionDown.Text = "-";
             this.buttonConstitutionDown.UseVisualStyleBackColor = true;
             this.buttonConstitutionDown.Click += new System.EventHandler(this.buttonConstitutionDown_Click);
             // 
             // buttonConstitutionUp
             // 
-            this.buttonConstitutionUp.Location = new System.Drawing.Point(340, 172);
+            this.buttonConstitutionUp.Location = new System.Drawing.Point(340, 162);
             this.buttonConstitutionUp.Name = "buttonConstitutionUp";
             this.buttonConstitutionUp.Size = new System.Drawing.Size(24, 23);
-            this.buttonConstitutionUp.TabIndex = 6;
+            this.buttonConstitutionUp.TabIndex = 8;
             this.buttonConstitutionUp.Text = "+";
             this.buttonConstitutionUp.UseVisualStyleBackColor = true;
             this.buttonConstitutionUp.Click += new System.EventHandler(this.buttonConstitutionUp_Click);
             // 
             // buttonDexterityDown
             // 
-            this.buttonDexterityDown.Location = new System.Drawing.Point(310, 216);
+            this.buttonDexterityDown.Location = new System.Drawing.Point(310, 206);
             this.buttonDexterityDown.Name = "buttonDexterityDown";
             this.buttonDexterityDown.Size = new System.Drawing.Size(24, 23);
-            this.buttonDexterityDown.TabIndex = 7;
+            this.buttonDexterityDown.TabIndex = 9;
             this.buttonDexterityDown.Text = "-";
             this.buttonDexterityDown.UseVisualStyleBackColor = true;
             this.buttonDexterityDown.Click += new System.EventHandler(this.buttonDexterityDown_Click);
             // 
             // buttonDexterityUp
             // 
-            this.buttonDexterityUp.Location = new System.Drawing.Point(340, 216);
+            this.buttonDexterityUp.Location = new System.Drawing.Point(340, 206);
             this.buttonDexterityUp.Name = "buttonDexterityUp";
             this.buttonDexterityUp.Size = new System.Drawing.Size(24, 23);
-            this.buttonDexterityUp.TabIndex = 8;
+            this.buttonDexterityUp.TabIndex = 10;
             this.buttonDexterityUp.Text = "+";
             this.buttonDexterityUp.UseVisualStyleBackColor = true;
             this.buttonDexterityUp.Click += new System.EventHandler(this.buttonDexterityUp_Click);
@@ -269,9 +271,9 @@ namespace Game
             this.groupBox1.Controls.Add(this.buttonStrengthUp);
             this.groupBox1.Controls.Add(this.labelDexterity);
             this.groupBox1.Controls.Add(this.progressBarConstitution);
-            this.groupBox1.Location = new System.Drawing.Point(12, 126);
+            this.groupBox1.Location = new System.Drawing.Point(12, 184);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(386, 264);
+            this.groupBox1.Size = new System.Drawing.Size(386, 245);
             this.groupBox1.TabIndex = 23;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Stats";
@@ -294,20 +296,20 @@ namespace Game
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(325, 396);
+            this.buttonCancel.Location = new System.Drawing.Point(324, 435);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 10;
+            this.buttonCancel.TabIndex = 12;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // buttonOk
             // 
-            this.buttonOk.Location = new System.Drawing.Point(244, 396);
+            this.buttonOk.Location = new System.Drawing.Point(243, 435);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 9;
+            this.buttonOk.TabIndex = 11;
             this.buttonOk.Text = "Ok";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -366,16 +368,36 @@ namespace Game
             this.buttonRandom.Location = new System.Drawing.Point(309, 56);
             this.buttonRandom.Name = "buttonRandom";
             this.buttonRandom.Size = new System.Drawing.Size(67, 64);
-            this.buttonRandom.TabIndex = 29;
+            this.buttonRandom.TabIndex = 1;
             this.buttonRandom.Text = "Random";
             this.buttonRandom.UseVisualStyleBackColor = true;
             this.buttonRandom.Click += new System.EventHandler(this.buttonRandom_Click);
+            // 
+            // comboBoxScenario
+            // 
+            this.comboBoxScenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxScenario.FormattingEnabled = true;
+            this.comboBoxScenario.Location = new System.Drawing.Point(12, 143);
+            this.comboBoxScenario.Name = "comboBoxScenario";
+            this.comboBoxScenario.Size = new System.Drawing.Size(387, 23);
+            this.comboBoxScenario.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 125);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(52, 15);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "Scenario";
             // 
             // FormNewCharacter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 432);
+            this.ClientSize = new System.Drawing.Size(411, 470);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboBoxScenario);
             this.Controls.Add(this.buttonRandom);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonOk);
@@ -435,5 +457,7 @@ namespace Game
         private System.Windows.Forms.PictureBox pictureBoxPlayer4;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button buttonRandom;
+        private System.Windows.Forms.ComboBox comboBoxScenario;
+        private System.Windows.Forms.Label label1;
     }
 }
