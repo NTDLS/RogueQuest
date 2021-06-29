@@ -56,8 +56,8 @@ namespace ScenarioEdit
             }
 
             listViewItems.MouseDoubleClick += ListViewItems_MouseDoubleClick;
-
         }
+        
 
         private void ButtonCancel_Click(object sender, EventArgs e)
         {
@@ -73,6 +73,12 @@ namespace ScenarioEdit
             }
 
             var selectedItem = listViewItems.SelectedItems[0];
+
+            if (selectedItem.SubItems.Count != 3)
+            {
+                return;
+            }
+
             var selectedTag = selectedItem.Tag as CustodyItem;
 
             int levelIndex = Int32.Parse(selectedItem.SubItems[3].Text);

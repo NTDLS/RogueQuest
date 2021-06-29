@@ -1,7 +1,0 @@
-{
-  "Name":"Wool Cloak",
-  "SubType": "Garment",
-  "AC":"1",
-  "Weight":"6",
-  "Bulk":"60"
-}

@@ -1,9 +1,9 @@
 ﻿using Assets;
-using ScenarioEdit.Engine;
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
+using ScenarioEdit.Engine;
 using System;
 using System.Data;
 using System.Drawing;
@@ -206,6 +206,18 @@ namespace ScenarioEdit
             }
         }
 
+        void DeleteTile(ActorBase tile)
+        {
+            if (tile.Meta != null && tile.Meta.UID != null && tile.Meta.IsContainer == true)
+            {
+                //If this is a container, then remove the items from the scenario collection.\
+                _core.State.Items.RemoveAll(o => o.ContainerId == tile.Meta.UID);
+            }
+
+            tile.QueueForDelete();
+        }
+
+
         private void drawingsurface_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -215,7 +227,7 @@ namespace ScenarioEdit
                     var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
                     foreach (var tile in selectedTiles)
                     {
-                        tile.QueueForDelete();
+                        DeleteTile(tile);
                     }
                 }
             }
@@ -479,42 +491,12 @@ namespace ScenarioEdit
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //If we already have an open file, then just save it.
-            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
-            {
-                _core.PushLevelAndSave(_currentMapFilename);
-                FormWelcome.AddToRecentList(_currentMapFilename);
-                _hasBeenModified = false;
-            }
-            else //If we do not have a current open file, then we need to "Save As".
-            {
-                TrySave();
-            }
+            TrySave();
         }
-
-        bool TrySave()
-        {
-            using (var dialog = new SaveFileDialog())
-            {
-                dialog.FileName = $"Newfile {_newFilenameIncrement++}";
-                dialog.Filter = "RQ Map (*.qrm)|*.rqm|All files (*.*)|*.*";
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    _currentMapFilename = dialog.FileName;
-                    _core.PushLevelAndSave(_currentMapFilename);
-                    FormWelcome.AddToRecentList(_currentMapFilename);
-                    _hasBeenModified = false;
-                    return true;
-                }
-            }
-            return false;
-        }
-
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TrySave();
+            SaveAs();
         }
 
         private void NewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -753,7 +735,7 @@ namespace ScenarioEdit
             {
                 if (hoverTile != null)
                 {
-                    hoverTile.QueueForDelete();
+                    DeleteTile(hoverTile);
                     _hasBeenModified = true;
                 }
             }
@@ -915,7 +897,7 @@ namespace ScenarioEdit
                 {
                     if (hoverTile != null)
                     {
-                        hoverTile.QueueForDelete();
+                        DeleteTile(hoverTile);
                         _hasBeenModified = true;
                     }
                 }
@@ -1021,7 +1003,7 @@ namespace ScenarioEdit
 
                     foreach (var obj in intersections)
                     {
-                        obj.QueueForDelete();
+                        DeleteTile(obj);
                     }
                 }
 
@@ -1399,7 +1381,7 @@ namespace ScenarioEdit
 
                     foreach (var tile in otherSpawnPoints)
                     {
-                        tile.QueueForDelete();
+                        DeleteTile(tile);
                     }
 
                     _core.PurgeAllDeletedTiles();
@@ -1447,6 +1429,41 @@ namespace ScenarioEdit
         private void FormMain_KeyPress(object sender, KeyPressEventArgs e)
         {
 
+        }
+
+        bool TrySave()
+        {
+            //If we already have an open file, then just save it.
+            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
+            {
+                _core.PushLevelAndSave(_currentMapFilename);
+                FormWelcome.AddToRecentList(_currentMapFilename);
+                _hasBeenModified = false;
+                return true;
+            }
+            else //If we do not have a current open file, then we need to "Save As".
+            {
+                return SaveAs();
+            }
+        }
+
+        bool SaveAs()
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.FileName = $"Newfile {_newFilenameIncrement++}";
+                dialog.Filter = "Rougue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _currentMapFilename = dialog.FileName;
+                    _core.PushLevelAndSave(_currentMapFilename);
+                    FormWelcome.AddToRecentList(_currentMapFilename);
+                    _hasBeenModified = false;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
