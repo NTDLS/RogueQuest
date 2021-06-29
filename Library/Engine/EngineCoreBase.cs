@@ -17,6 +17,7 @@ namespace Library.Engine
 
         public Levels Levels { get; set; }
         public GameState State { get; set; }
+        public ScenarioMetaData ScenarioMeta { get; set; }
         public bool IsRendering { get; private set; }
         public bool IsRunning { get; private set; }
         public EngineDisplay Display { get; private set; }
@@ -117,6 +118,15 @@ namespace Library.Engine
             Levels.AddNew("Home");
 
             State = new GameState();
+
+            ScenarioMeta = new ScenarioMetaData()
+            {
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                Name = "",
+                CreatedBy = "",
+                Description = ""
+            };
 
             Display.BackgroundOffset = new Point<double>();
         }

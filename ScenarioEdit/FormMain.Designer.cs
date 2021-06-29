@@ -64,7 +64,7 @@ namespace ScenarioEdit
             this.toolStripMenuItemChangeLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemDeleteLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemSetDefaultLevel = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.scenarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemResetAllTileMeta = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemViewWorldItems = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,6 +84,7 @@ namespace ScenarioEdit
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
+            this.toolStripMenuItemScenarioProperties = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel2.SuspendLayout();
             this.splitContainerBody.SuspendLayout();
@@ -213,8 +214,8 @@ namespace ScenarioEdit
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
+            this.scenarioToolStripMenuItem,
             this.levelToolStripMenuItem,
-            this.toolStripMenuItemTools,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -393,25 +394,26 @@ namespace ScenarioEdit
             this.toolStripMenuItemSetDefaultLevel.Size = new System.Drawing.Size(161, 22);
             this.toolStripMenuItemSetDefaultLevel.Text = "Set Default Level";
             // 
-            // toolStripMenuItemTools
+            // scenarioToolStripMenuItem
             // 
-            this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.scenarioToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemResetAllTileMeta,
-            this.toolStripMenuItemViewWorldItems});
-            this.toolStripMenuItemTools.Name = "toolStripMenuItemTools";
-            this.toolStripMenuItemTools.Size = new System.Drawing.Size(46, 20);
-            this.toolStripMenuItemTools.Text = "Tools";
+            this.toolStripMenuItemViewWorldItems,
+            this.toolStripMenuItemScenarioProperties});
+            this.scenarioToolStripMenuItem.Name = "scenarioToolStripMenuItem";
+            this.scenarioToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.scenarioToolStripMenuItem.Text = "Scenario";
             // 
             // toolStripMenuItemResetAllTileMeta
             // 
             this.toolStripMenuItemResetAllTileMeta.Name = "toolStripMenuItemResetAllTileMeta";
-            this.toolStripMenuItemResetAllTileMeta.Size = new System.Drawing.Size(175, 22);
-            this.toolStripMenuItemResetAllTileMeta.Text = "Reset All Tile Metas";
+            this.toolStripMenuItemResetAllTileMeta.Size = new System.Drawing.Size(193, 22);
+            this.toolStripMenuItemResetAllTileMeta.Text = "Reset All Tile Metadata";
             // 
             // toolStripMenuItemViewWorldItems
             // 
             this.toolStripMenuItemViewWorldItems.Name = "toolStripMenuItemViewWorldItems";
-            this.toolStripMenuItemViewWorldItems.Size = new System.Drawing.Size(175, 22);
+            this.toolStripMenuItemViewWorldItems.Size = new System.Drawing.Size(193, 22);
             this.toolStripMenuItemViewWorldItems.Text = "View World Items";
             // 
             // helpToolStripMenuItem
@@ -566,6 +568,12 @@ namespace ScenarioEdit
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
             // 
+            // toolStripMenuItemScenarioProperties
+            // 
+            this.toolStripMenuItemScenarioProperties.Name = "toolStripMenuItemScenarioProperties";
+            this.toolStripMenuItemScenarioProperties.Size = new System.Drawing.Size(193, 22);
+            this.toolStripMenuItemScenarioProperties.Text = "Scenario Properties";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -651,7 +659,7 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripButton toolStripButtonShapeMode;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton toolStripButtonPlayMap;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemTools;
+        private System.Windows.Forms.ToolStripMenuItem scenarioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemResetAllTileMeta;
         private System.Windows.Forms.ToolStripMenuItem levelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAddLevel;
@@ -659,6 +667,7 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemDeleteLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSetDefaultLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemViewWorldItems;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemScenarioProperties;
     }
 }
 

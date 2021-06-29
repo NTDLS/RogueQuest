@@ -26,8 +26,11 @@ namespace Library.Engine
             var saveFile = new SaveFile()
             {
                 Collection = this.Collection,
-                State = Core.State
+                State = Core.State,
+                Meta = Core.ScenarioMeta
             };
+
+            saveFile.Meta.ModifiedDate = DateTime.Now;
 
             var json = JsonConvert.SerializeObject(saveFile);
             var compressed = Utility.Compress.Zip(json);
@@ -49,6 +52,7 @@ namespace Library.Engine
             Collection = saveFile.Collection;
 
             Core.State = saveFile.State;
+            Core.ScenarioMeta = saveFile.Meta;
 
             if (Core.State == null)
             {

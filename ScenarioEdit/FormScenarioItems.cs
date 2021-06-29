@@ -7,13 +7,13 @@ using System.Collections.Generic;
 
 namespace ScenarioEdit
 {
-    public partial class FormWorldItems : Form
+    public partial class FormScenarioItems : Form
     {
         private List<List<LevelChunk>> _allLevelChunks;
         private Button buttonCancel = new Button();
 
         public EngineCore Core  { get; set; }
-        public FormWorldItems()
+        public FormScenarioItems()
         {
             InitializeComponent();
         }
@@ -99,7 +99,7 @@ namespace ScenarioEdit
             }
         }
 
-        public FormWorldItems(EngineCore core)
+        public FormScenarioItems(EngineCore core)
         {
             InitializeComponent();
             Core = core;

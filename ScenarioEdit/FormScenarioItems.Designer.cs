@@ -1,7 +1,7 @@
 ﻿
 namespace ScenarioEdit
 {
-    partial class FormWorldItems
+    partial class FormScenarioItems
     {
         /// <summary>
         /// Required designer variable.
@@ -73,7 +73,7 @@ namespace ScenarioEdit
             // 
             this.columnHeaderLevelIndex.Text = "Level #";
             // 
-            // FormWorldItems
+            // FormScenarioItems
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -83,9 +83,9 @@ namespace ScenarioEdit
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormWorldItems";
+            this.Name = "FormScenarioItems";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "World Items";
+            this.Text = "Scenario Items";
             this.Load += new System.EventHandler(this.FormWorldItems_Load);
             this.ResumeLayout(false);
 

@@ -165,6 +165,7 @@ namespace ScenarioEdit
             toolStripMenuItemResetAllTileMeta.Click += ToolStripMenuItemResetAllTileMeta_Click;
             treeViewTiles.MouseDown += TreeViewTiles_MouseDown;
             treeViewTiles.MouseUp += TreeViewTiles_MouseUp;
+            toolStripMenuItemScenarioProperties.Click += ToolStripMenuItemScenarioProperties_Click;
 
             toolStripMenuItemAddLevel.Click += ToolStripMenuItemAddLevel_Click;
             toolStripMenuItemChangeLevel.Click += ToolStripMenuItemChangeLevel_Click;
@@ -296,11 +297,19 @@ namespace ScenarioEdit
 
         #region Menu Clicks.
 
+        private void ToolStripMenuItemScenarioProperties_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormScenarioProperties(_core))
+            {
+                form.ShowDialog();
+            }
+        }
+
         private void ToolStripMenuItemViewWorldItems_Click(object sender, EventArgs e)
         {
             if (CheckForNeededSave())
             {
-                using (var form = new FormWorldItems(_core))
+                using (var form = new FormScenarioItems(_core))
                 {
                     if (form.ShowDialog() == DialogResult.OK)
                     {
