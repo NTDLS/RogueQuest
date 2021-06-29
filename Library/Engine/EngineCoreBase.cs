@@ -108,6 +108,19 @@ namespace Library.Engine
             State.DefaultLevel = levelIndex;
         }
 
+        public void Reset()
+        {
+            QueueAllForDelete();
+            PurgeAllDeletedTiles();
+
+            Levels.Collection.Clear();
+            Levels.AddNew("Home");
+
+            State = new GameState();
+
+            Display.BackgroundOffset = new Point<double>();
+        }
+
         public EngineCoreBase(Control drawingSurface, Size visibleSize)
         {
             Display = new EngineDisplay(drawingSurface, visibleSize);

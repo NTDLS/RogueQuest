@@ -174,8 +174,6 @@ namespace LevelEditor
 
             ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
-            //_core.LoadLevlesAndPopCurrent(Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
-
             NewToolStripMenuItem_Click(null, null);
         }
 
@@ -487,10 +485,7 @@ namespace LevelEditor
                 return;
             }
 
-            _core.QueueAllForDelete();
-            _core.Levels.Collection.Clear();
-            _core.Levels.AddNew("Home");
-            _core.Display.BackgroundOffset = new Point<double>();
+            _core.Reset();
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1307,7 +1302,7 @@ namespace LevelEditor
         {
             ImageList imageList = new ImageList();
             treeViewTiles.ImageList = imageList;
-            CreateImageListAndAssets(imageList, null, Assets.Constants.BasePath, "Tiles");
+            CreateImageListAndAssets(imageList, null, Assets.Constants.BaseAssetPath, "Tiles");
             if (treeViewTiles.Nodes.Count > 0)
             {
                 treeViewTiles.Nodes[0].Expand();

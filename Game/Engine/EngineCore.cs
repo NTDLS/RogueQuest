@@ -90,7 +90,7 @@ namespace Game.Engine
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
 
-            Load(Assets.Constants.GetAssetPath(@"Scenario\Default Scenario.rqm"));
+            Load(Assets.Constants.GetAssetPath(@"Scenario\Default.rqm"));
 
             this.State.Character = new PlayerState()
             {

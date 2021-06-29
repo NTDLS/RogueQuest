@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Game": {
-      "commandName": "Project",
-      "commandLineArgs": "/levelfile:\"C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Newfile 1.rqm\" /levelindex:0"
+      "commandName": "Project"
     }
   }
 }
