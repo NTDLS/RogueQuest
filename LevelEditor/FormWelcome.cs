@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace Game
+namespace LevelEditor
 {
     public partial class FormWelcome : Form
     {
@@ -12,7 +12,7 @@ namespace Game
         {
             get
             {
-                return Assets.Constants.GetAssetPath(@"Saves\Recent.txt");
+                return Assets.Constants.GetAssetPath(@"Scenario\Recent.txt");
             }
         }
 
@@ -157,13 +157,13 @@ namespace Game
         {
             using (var dialog = new OpenFileDialog())
             {
-                dialog.Filter = "RogueQuest Games (*.rqg)|*.rqg|All files (*.*)|*.*";
+                dialog.Filter = "Rogue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     SelectedFileName = dialog.FileName;
-                    AddToRecentList(SelectedFileName);
                     this.DialogResult = DialogResult.OK;
+                    AddToRecentList(SelectedFileName);
                     this.Close();
                 }
             }

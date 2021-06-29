@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FormWelcome.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormWorldItems.cs">
       <SubType>Form</SubType>
     </Compile>

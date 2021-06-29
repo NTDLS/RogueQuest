@@ -32,6 +32,7 @@ namespace LevelEditor
             Select,
         }
 
+        private bool _firstShown = true;
         private EngineCore _core;
         private bool _fullScreen = false;
         private bool _hasBeenModified = false;
@@ -124,6 +125,8 @@ namespace LevelEditor
                     .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             controlProperty.SetValue(drawingsurface, true, null);
 
+            this.Shown += FormMain_Shown;
+
             splitContainerBody.Panel1.Controls.Add(drawingsurface);
             drawingsurface.Dock = DockStyle.Fill;
 
@@ -134,12 +137,12 @@ namespace LevelEditor
             drawingsurface.MouseDoubleClick += new MouseEventHandler(drawingsurface_MouseDoubleClick);
             drawingsurface.MouseDown += new MouseEventHandler(drawingsurface_MouseDown);
             drawingsurface.MouseMove += new MouseEventHandler(drawingsurface_MouseMove);
-            drawingsurface.MouseUp += new MouseEventHandler(this.drawingsurface_MouseUp);
+            drawingsurface.MouseUp += new MouseEventHandler(drawingsurface_MouseUp);
 
             drawingsurface.Select();
             drawingsurface.Focus();
 
-            this.PreviewKeyDown += drawingsurface_PreviewKeyDown;
+            PreviewKeyDown += drawingsurface_PreviewKeyDown;
             listViewProperties.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             toolStrip.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             treeViewTiles.PreviewKeyDown += drawingsurface_PreviewKeyDown;
@@ -175,6 +178,31 @@ namespace LevelEditor
             ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
             NewToolStripMenuItem_Click(null, null);
+        }
+
+        private void FormMain_Shown(object sender, EventArgs e)
+        {
+            if (_firstShown)
+            {
+                using (var form = new FormWelcome())
+                {
+                    var result = form.ShowDialog();
+
+                    if (result == DialogResult.Yes)
+                    {
+                        NewToolStripMenuItem_Click(null, null);
+                    }
+                    else if (result == DialogResult.OK)
+                    {
+                        _currentMapFilename = form.SelectedFileName;
+                        _core.LoadLevlesAndPopCurrent(_currentMapFilename);
+                        FormWelcome.AddToRecentList(_currentMapFilename);
+                        _hasBeenModified = false;
+                    }
+                }
+
+                _firstShown = false;
+            }
         }
 
         private void drawingsurface_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -428,12 +456,13 @@ namespace LevelEditor
 
             using (var dialog = new OpenFileDialog())
             {
-                dialog.Filter = "RogueQuest Maps (*.qrm)|*.rqm|All files (*.*)|*.*";
+                dialog.Filter = "Rogue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _currentMapFilename = dialog.FileName;
                     _core.LoadLevlesAndPopCurrent(_currentMapFilename);
+                    FormWelcome.AddToRecentList(_currentMapFilename);
                     _hasBeenModified = false;
                 }
             }
@@ -445,6 +474,7 @@ namespace LevelEditor
             if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
             {
                 _core.PushLevelAndSave(_currentMapFilename);
+                FormWelcome.AddToRecentList(_currentMapFilename);
                 _hasBeenModified = false;
             }
             else //If we do not have a current open file, then we need to "Save As".
@@ -463,8 +493,8 @@ namespace LevelEditor
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _currentMapFilename = dialog.FileName;
-
                     _core.PushLevelAndSave(_currentMapFilename);
+                    FormWelcome.AddToRecentList(_currentMapFilename);
                     _hasBeenModified = false;
                     return true;
                 }
