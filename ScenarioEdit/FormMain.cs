@@ -1365,6 +1365,12 @@ namespace ScenarioEdit
                 return null;
             }
 
+            if (treeViewTiles.SelectedNode.Nodes.Count == 1 && treeViewTiles.SelectedNode.Nodes[0].Text == "<dummy>")
+            {
+                treeViewTiles.SelectedNode.Expand();
+            }
+
+
             var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
             if (selectedItem != null)
             {
