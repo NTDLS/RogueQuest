@@ -85,6 +85,7 @@ namespace ScenarioEdit
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonInsertSwatch = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel2.SuspendLayout();
             this.splitContainerBody.SuspendLayout();
@@ -450,6 +451,7 @@ namespace ScenarioEdit
             this.toolStripButtonSelectMode,
             this.toolStripButtonShapeMode,
             this.toolStripSeparator5,
+            this.toolStripButtonInsertSwatch,
             this.toolStripButtonMoveTileUp,
             this.toolStripButtonMoveTileDown,
             this.toolStripSeparator6,
@@ -574,6 +576,15 @@ namespace ScenarioEdit
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
             // 
+            // toolStripButtonInsertSwatch
+            // 
+            this.toolStripButtonInsertSwatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonInsertSwatch.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonInsertSwatch.Image")));
+            this.toolStripButtonInsertSwatch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonInsertSwatch.Name = "toolStripButtonInsertSwatch";
+            this.toolStripButtonInsertSwatch.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonInsertSwatch.Text = "Insert Swatch";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -591,7 +602,6 @@ namespace ScenarioEdit
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FormMain_KeyPress);
             this.splitContainerBody.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).EndInit();
             this.splitContainerBody.ResumeLayout(false);
@@ -668,6 +678,7 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSetDefaultLevel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemViewWorldItems;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemScenarioProperties;
+        private System.Windows.Forms.ToolStripButton toolStripButtonInsertSwatch;
     }
 }
 

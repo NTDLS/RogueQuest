@@ -72,6 +72,26 @@ namespace Library.Engine
             }
         }
 
+        public static List<LevelChunk> LoadChunks(string fileName, int levelNumber)
+        {
+            var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
+
+            var fileJson = Utility.Compress.Unzip(compressedSaveFile);
+
+            var saveFile = JsonConvert.DeserializeObject<SaveFile>(fileJson);
+
+            var bytes = saveFile.Collection[levelNumber].Bytes;
+
+            if (bytes.Length > 0)
+            {
+                var levelJson = Utility.Compress.Unzip(bytes);
+                var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(levelJson);
+                return chunks;
+            }
+
+            return new List<LevelChunk>();
+        }
+
         public bool RenameLevel(string oldName, string newName)
         {
             if (oldName == newName)

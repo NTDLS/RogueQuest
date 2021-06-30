@@ -33,6 +33,7 @@ namespace ScenarioEdit
             Select,
         }
 
+        private Control drawingsurface = new Control();
         private bool _firstShown = true;
         private EngineCore _core;
         private bool _fullScreen = false;
@@ -97,9 +98,6 @@ namespace ScenarioEdit
         {
             InitializeComponent();
         }
-
-        private Control drawingsurface = new Control();
-
 
         private void FormMain_Load(object sender, EventArgs e)
         {
@@ -169,6 +167,7 @@ namespace ScenarioEdit
             treeViewTiles.MouseUp += TreeViewTiles_MouseUp;
             treeViewTiles.BeforeExpand += TreeViewTiles_BeforeExpand;
             toolStripMenuItemScenarioProperties.Click += ToolStripMenuItemScenarioProperties_Click;
+            toolStripButtonInsertSwatch.Click += ToolStripButtonInsertSwatch_Click;
 
             toolStripMenuItemAddLevel.Click += ToolStripMenuItemAddLevel_Click;
             toolStripMenuItemChangeLevel.Click += ToolStripMenuItemChangeLevel_Click;
@@ -190,7 +189,7 @@ namespace ScenarioEdit
             return (attr.HasFlag(FileAttributes.Directory));
         }
 
-        public string BaseTilesPath => Assets.Constants.BaseAssetPath;
+        public string BaseAssetPath => Assets.Constants.BaseAssetPath;
         public string PartialTilesPath => "Tiles\\";
 
         private void TreeViewTiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -208,7 +207,7 @@ namespace ScenarioEdit
 
             treeViewTiles.ImageList = _assetBrowserImageList;
 
-            foreach (string d in Directory.GetDirectories(BaseTilesPath + PartialTilesPath))
+            foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialTilesPath))
             {
                 var directory = Path.GetFileName(d);
                 if (directory.StartsWith("@") || directory.ToLower() == "player")
@@ -223,7 +222,7 @@ namespace ScenarioEdit
 
         public void PopChildNodes(TreeNode parent, string partialPath)
         {
-            foreach (string d in Directory.GetDirectories(BaseTilesPath + PartialTilesPath + partialPath))
+            foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialTilesPath + partialPath))
             {
                 var directory = Path.GetFileName(d);
                 if (directory.StartsWith("@") || directory.ToLower() == "player")
@@ -235,7 +234,7 @@ namespace ScenarioEdit
                 directoryNode.Nodes.Add("<dummy>");
             }
 
-            foreach (var f in Directory.GetFiles(BaseTilesPath + PartialTilesPath + partialPath, "*.png"))
+            foreach (var f in Directory.GetFiles(BaseAssetPath + PartialTilesPath + partialPath, "*.png"))
             {
                 if (Path.GetFileName(f).StartsWith("@"))
                 {
@@ -286,7 +285,6 @@ namespace ScenarioEdit
 
             tile.QueueForDelete();
         }
-
 
         private void drawingsurface_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
@@ -576,6 +574,8 @@ namespace ScenarioEdit
                 return;
             }
 
+            _currentMapFilename = string.Empty;
+
             _core.Reset();
         }
 
@@ -716,6 +716,11 @@ namespace ScenarioEdit
             }
         }
 
+        private bool AreMultipleTilesSelected()
+        {
+            return _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).Count() > 1;
+        }
+
         private void drawingsurface_MouseDown(object sender, MouseEventArgs e)
         {
             drawingsurface.Select();
@@ -737,8 +742,11 @@ namespace ScenarioEdit
             //dragging (since we arent over a selected tile, then assume this is a new operation and deslect all tiles.
             if (IsShiftDown() == false && IsControlDown() == false && (hoverTile == null || hoverTile?.SelectedHighlight == false))
             {
-                ClearMultiSelection();
-                selectedTile = null;
+                if (e.Button != MouseButtons.Middle) //Still allow panning while items are selected.
+                {
+                    ClearMultiSelection();
+                    selectedTile = null;
+                }
             }
 
             if (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
@@ -762,7 +770,7 @@ namespace ScenarioEdit
             {
                 if (selectedTile != hoverTile && hoverTile != null)
                 {
-                    if (selectedTile != null && highlightSelectedTile)
+                    if (selectedTile != null && highlightSelectedTile && AreMultipleTilesSelected() == false)
                     {
                         selectedTile.SelectedHighlight = false;
                     }
@@ -1372,7 +1380,7 @@ namespace ScenarioEdit
 
 
             var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
-            if (selectedItem != null)
+            if (selectedItem != null && selectedItem.Text != "<dummy>")
             {
                 insertedTile = _core.Actors.AddNew<ActorBase>(x, y, PartialTilesPath + selectedItem.FullPath);
 
@@ -1432,11 +1440,6 @@ namespace ScenarioEdit
             }
         }
 
-        private void FormMain_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
-        }
-
         bool TrySave()
         {
             //If we already have an open file, then just save it.
@@ -1471,5 +1474,53 @@ namespace ScenarioEdit
             }
             return false;
         }
+
+        private void ToolStripButtonInsertSwatch_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormSelectSwatch())
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    ClearMultiSelection();
+
+                    CurrentPrimaryMode = PrimaryMode.Select;
+
+                    var chunks = Levels.LoadChunks(form.SelectedSwatchFileName, 0);
+
+                    double deltaX = 0;
+                    double deltaY = 0;
+
+                    double x = _core.Display.BackgroundOffset.X + 20;
+                    double y = _core.Display.BackgroundOffset.Y + 20;
+
+                    var firstChunk = chunks.FirstOrDefault();
+                    if (firstChunk != null)
+                    {
+                        deltaX = firstChunk.X - x;
+                        deltaY = firstChunk.Y - y;
+                    }
+
+                    foreach (var chunk in chunks)
+                    {
+                        var tile = new ActorBase(_core)
+                        {
+                            X = chunk.X - deltaX,
+                            Y = chunk.Y - deltaY,
+                            TilePath = chunk.TilePath,
+                            DrawOrder = chunk.DrawOrder,
+                            Meta = chunk.Meta
+                        };
+
+                        tile.Velocity.Angle.Degrees = chunk.Angle;
+                        tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
+
+                        tile.SelectedHighlight = true;
+
+                        _core.Actors.Add(tile);
+                    }
+                }
+            }
+        }
     }
 }
+
