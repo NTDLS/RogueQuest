@@ -190,36 +190,25 @@ namespace ScenarioEdit
             return (attr.HasFlag(FileAttributes.Directory));
         }
 
+        public string BaseTilesPath => Assets.Constants.BaseAssetPath;
+        public string PartialTilesPath => "Tiles\\";
+
         private void TreeViewTiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            string basePath = Assets.Constants.BaseAssetPath;
-
-
             if (e.Node.Nodes.Count == 1 && e.Node.Nodes[0].Text == "<dummy>")
             {
                 e.Node.Nodes.Clear();
-                PopChildNodes(e.Node, basePath, e.Node.FullPath);
+                PopChildNodes(e.Node, e.Node.FullPath);
             }
         }
 
         void PopulateMaterials()
         {
-            treeViewTiles.ImageList = _assetBrowserImageList;
-
             _assetBrowserImageList.Images.Add("<folder>", Resources.AssetTreeView_Folder);
 
-            TreeNode rootNode = treeViewTiles.Nodes.Add("Tiles", "Tiles", "<folder>");
-            rootNode.Nodes.Add("<dummy>");
+            treeViewTiles.ImageList = _assetBrowserImageList;
 
-            if (treeViewTiles.Nodes.Count > 0)
-            {
-                treeViewTiles.Nodes[0].Expand();
-            }
-        }
-
-        public void PopChildNodes(TreeNode parent, string basePath, string partialPath)
-        {
-            foreach (string d in Directory.GetDirectories(basePath + partialPath))
+            foreach (string d in Directory.GetDirectories(BaseTilesPath + PartialTilesPath))
             {
                 var directory = Path.GetFileName(d);
                 if (directory.StartsWith("@") || directory.ToLower() == "player")
@@ -227,11 +216,26 @@ namespace ScenarioEdit
                     continue;
                 }
 
-                var directoryNode = parent.Nodes.Add(directory, directory, "<folder>");
+                var directoryNode = treeViewTiles.Nodes.Add(PartialTilesPath + directory, directory, "<folder>");
+                directoryNode.Nodes.Add("<dummy>");
+            }
+        }
+
+        public void PopChildNodes(TreeNode parent, string partialPath)
+        {
+            foreach (string d in Directory.GetDirectories(BaseTilesPath + PartialTilesPath + partialPath))
+            {
+                var directory = Path.GetFileName(d);
+                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                {
+                    continue;
+                }
+
+                var directoryNode = parent.Nodes.Add(PartialTilesPath + directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
             }
 
-            foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
+            foreach (var f in Directory.GetFiles(BaseTilesPath + PartialTilesPath + partialPath, "*.png"))
             {
                 if (Path.GetFileName(f).StartsWith("@"))
                 {
@@ -239,7 +243,7 @@ namespace ScenarioEdit
                 }
                 var file = new FileInfo(f);
 
-                string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
+                string fileKey = $"{PartialTilesPath}{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
 
                 _assetBrowserImageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
 
@@ -659,7 +663,7 @@ namespace ScenarioEdit
                     return;
                 }
 
-                var meta = TileMetadata.GetFreshMetadata(selectedItem.FullPath);
+                var meta = TileMetadata.GetFreshMetadata(PartialTilesPath + selectedItem.FullPath);
                 if (meta.ActorClass == ActorClassName.ActorItem)
                 {
                     string text = meta.Name;
@@ -1364,7 +1368,7 @@ namespace ScenarioEdit
             var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
             if (selectedItem != null)
             {
-                insertedTile = _core.Actors.AddNew<ActorBase>(x, y, selectedItem.FullPath);
+                insertedTile = _core.Actors.AddNew<ActorBase>(x, y, PartialTilesPath + selectedItem.FullPath);
 
                 insertedTile.RefreshMetadata(false);
 
