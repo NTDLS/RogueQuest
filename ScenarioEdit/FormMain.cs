@@ -4,6 +4,7 @@ using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
 using ScenarioEdit.Engine;
+using ScenarioEdit.Properties;
 using System;
 using System.Data;
 using System.Drawing;
@@ -40,6 +41,7 @@ namespace ScenarioEdit
         private int _newFilenameIncrement = 1;
         private ToolTip _interrogationTip = new ToolTip();
         private Rectangle? shapeSelectionRect = null;
+        private ImageList _assetBrowserImageList = new ImageList();
 
         #region Settings.
 
@@ -165,6 +167,7 @@ namespace ScenarioEdit
             toolStripMenuItemResetAllTileMeta.Click += ToolStripMenuItemResetAllTileMeta_Click;
             treeViewTiles.MouseDown += TreeViewTiles_MouseDown;
             treeViewTiles.MouseUp += TreeViewTiles_MouseUp;
+            treeViewTiles.BeforeExpand += TreeViewTiles_BeforeExpand;
             toolStripMenuItemScenarioProperties.Click += ToolStripMenuItemScenarioProperties_Click;
 
             toolStripMenuItemAddLevel.Click += ToolStripMenuItemAddLevel_Click;
@@ -179,6 +182,69 @@ namespace ScenarioEdit
             ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
             NewToolStripMenuItem_Click(null, null);
+        }
+
+        private bool IsDirectory(string path)
+        {
+            FileAttributes attr = File.GetAttributes(path);
+            return (attr.HasFlag(FileAttributes.Directory));
+        }
+
+        private void TreeViewTiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            string basePath = Assets.Constants.BaseAssetPath;
+
+
+            if (e.Node.Nodes.Count == 1 && e.Node.Nodes[0].Text == "<dummy>")
+            {
+                e.Node.Nodes.Clear();
+                PopChildNodes(e.Node, basePath, e.Node.FullPath);
+            }
+        }
+
+        void PopulateMaterials()
+        {
+            treeViewTiles.ImageList = _assetBrowserImageList;
+
+            _assetBrowserImageList.Images.Add("<folder>", Resources.AssetTreeView_Folder);
+
+            TreeNode rootNode = treeViewTiles.Nodes.Add("Tiles", "Tiles", "<folder>");
+            rootNode.Nodes.Add("<dummy>");
+
+            if (treeViewTiles.Nodes.Count > 0)
+            {
+                treeViewTiles.Nodes[0].Expand();
+            }
+        }
+
+        public void PopChildNodes(TreeNode parent, string basePath, string partialPath)
+        {
+            foreach (string d in Directory.GetDirectories(basePath + partialPath))
+            {
+                var directory = Path.GetFileName(d);
+                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                {
+                    continue;
+                }
+
+                var directoryNode = parent.Nodes.Add(directory, directory, "<folder>");
+                directoryNode.Nodes.Add("<dummy>");
+            }
+
+            foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
+            {
+                if (Path.GetFileName(f).StartsWith("@"))
+                {
+                    continue;
+                }
+                var file = new FileInfo(f);
+
+                string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
+
+                _assetBrowserImageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
+
+                parent.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey, fileKey);
+            }
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
@@ -1264,76 +1330,6 @@ namespace ScenarioEdit
         }
 
         #endregion
-
-        public TreeNode CreateImageListAndAssets(ImageList imageList, TreeNode parent, string basePath, string partialPath)
-        {
-            TreeNode node = null;
-
-            if (parent == null)
-            {
-                node = treeViewTiles.Nodes.Add(Path.GetFileName(partialPath));
-            }
-            else
-            {
-                node = parent.Nodes.Add(Path.GetFileName(partialPath));
-            }
-
-            foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
-            {
-                if (Path.GetFileName(f).StartsWith("@"))
-                {
-                    continue;
-                }
-                var file = new FileInfo(f);
-
-                string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
-
-                imageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
-
-                node.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey, fileKey);
-            }
-            foreach (string d in Directory.GetDirectories(basePath + partialPath))
-            {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@") || directory.ToLower() == "player")
-                {
-                    continue;
-                }
-                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
-
-                //Set the folder image to the first image in the children.
-                TreeNode imageFind = addedNode;
-                while (String.IsNullOrWhiteSpace(imageFind.ImageKey))
-                {
-                    if (imageFind.Nodes.Count > 0)
-                    {
-                        imageFind = imageFind.Nodes[0];
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (imageFind != null)
-                {
-                    addedNode.ImageKey = imageFind.ImageKey;
-                    addedNode.SelectedImageKey = imageFind.SelectedImageKey;
-                }
-            }
-
-            return node;
-        }
-
-        void PopulateMaterials()
-        {
-            ImageList imageList = new ImageList();
-            treeViewTiles.ImageList = imageList;
-            CreateImageListAndAssets(imageList, null, Assets.Constants.BaseAssetPath, "Tiles");
-            if (treeViewTiles.Nodes.Count > 0)
-            {
-                treeViewTiles.Nodes[0].Expand();
-            }
-        }
 
         TreeNode GetRandomChildNode(TreeNode node)
         {

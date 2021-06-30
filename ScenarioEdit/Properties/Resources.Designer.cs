@@ -59,5 +59,15 @@ namespace ScenarioEdit.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AssetTreeView_Folder {
+            get {
+                object obj = ResourceManager.GetObject("AssetTreeView_Folder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
