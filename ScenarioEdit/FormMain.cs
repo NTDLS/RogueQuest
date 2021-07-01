@@ -1248,6 +1248,10 @@ namespace ScenarioEdit
                                 else if (selectedRow.Text == "Dialog")
                                 {
                                     selectedTile.Meta.Dialog = dialog.PropertyValue;
+                                    if (selectedTile.Meta.OnlyDialogOnce == null)
+                                    {
+                                        selectedTile.Meta.OnlyDialogOnce = true;
+                                    }
                                 }
                                 else if (selectedRow.Text == "Armor Class")
                                 {

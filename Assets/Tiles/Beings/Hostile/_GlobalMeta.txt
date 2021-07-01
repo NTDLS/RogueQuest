@@ -2,5 +2,6 @@
   "CanTakeDamage": "True",
   "HitPoints": "100",
   "ActorClass": "ActorHostileBeing",
-  "CanWalkOn": "False"
+  "CanWalkOn": "False",
+  "IsContainer": "True"
 }

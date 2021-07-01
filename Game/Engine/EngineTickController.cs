@@ -522,7 +522,7 @@ namespace Game.Engine
                 return;
             }
 
-            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 10)
+            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 20)
                 .Where(o => o.Meta.CanTakeDamage == true);
 
             var hostileInteractions = new List<ActorHostileBeing>();
@@ -589,6 +589,12 @@ namespace Game.Engine
 
                         Core.LogLine($"{Core.State.Character.Name} kills {actorToAttack.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
 
+                        if (actorToAttack.Meta.IsContainer == true)
+                        {
+                            //If the enemy has loot, they drop it when they die.
+                            EmptyContainerToGround((Guid)actorToAttack.Meta.UID);
+                        }
+
                         Core.State.Character.Experience += experience;
                     }
                 }
@@ -645,7 +651,40 @@ namespace Game.Engine
                 }
             }
         }
-        
+
+        private void EmptyContainerToGround(Guid containerId)
+        {
+            var items = Core.State.Items.Where(o => o.ContainerId == containerId).ToList();
+
+            foreach (var item in items)
+            {
+                bool wasStacked = false;
+
+                if (item.Tile.Meta.CanStack == true)
+                {
+                    var itemUnderfoot = Core.Actors.Intersections(Core.Player)
+                        .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == item.Tile.TilePath)
+                        .Cast<ActorItem>().FirstOrDefault();
+
+                    if (itemUnderfoot != null)
+                    {
+                        itemUnderfoot.Meta.Quantity += item.Tile.Meta.Quantity;
+                        wasStacked = true;
+                    }
+                }
+
+                if (wasStacked == false)
+                {
+                    var droppedItem = Core.Actors.AddDynamic(item.Tile.Meta.ActorClass.ToString(),
+                        Core.Player.X, Core.Player.Y, item.Tile.TilePath);
+
+                    droppedItem.Meta = item.Tile.Meta;
+                }
+
+                Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == item.Tile.Meta.UID);
+            }
+        }
+
         /// <summary>
         /// Moves an actor in the direction of their vector and returns a list of any
         /// encountered colissions as well as passes back distanct the axtor was moved.
