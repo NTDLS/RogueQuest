@@ -50,8 +50,6 @@ namespace ScenarioEdit
         #region Settings.
 
         private int tilePaintOverlap = 5;
-        private bool highlightSelectedTile = true;
-        private bool highlightHoverTile = true;
 
         #endregion
 
@@ -80,8 +78,7 @@ namespace ScenarioEdit
         /// </summary>
         private ShapeFillMode shapeFillMode = ShapeFillMode.Insert;
         private Size lastPlacedItemSize = new Size(0, 0);
-        private ActorBase selectedTile = null;
-        private ActorBase previousHoverTile = null;
+        private ActorBase lastHoverTile = null;
         private PrimaryMode CurrentPrimaryMode { get; set; } = PrimaryMode.Select;
 
         //This really shouldn't be necessary! :(
@@ -605,8 +602,6 @@ namespace ScenarioEdit
             toolStripButtonShapeMode.Checked = true;
 
             ClearMultiSelection();
-
-            if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
         private void ToolStripButtonSelectMode_Click(object sender, EventArgs e)
@@ -617,8 +612,6 @@ namespace ScenarioEdit
             toolStripButtonShapeMode.Checked = false;
 
             ClearMultiSelection();
-
-            if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
         private void ToolStripButtonInsertMode_Click(object sender, EventArgs e)
@@ -629,8 +622,6 @@ namespace ScenarioEdit
             toolStripButtonShapeMode.Checked = false;
 
             ClearMultiSelection();
-
-            if (selectedTile != null) selectedTile.SelectedHighlight = false;
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -719,11 +710,8 @@ namespace ScenarioEdit
 
         private void ClearMultiSelection()
         {
-            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-            foreach (var tile in selectedTiles)
-            {
-                tile.SelectedHighlight = false;
-            }
+            _core.Actors.Tiles.Where(o => o.SelectedHighlight == true)
+                .ToList().ForEach(o => o.SelectedHighlight = false);
         }
 
         private bool AreMultipleTilesSelected()
@@ -755,7 +743,6 @@ namespace ScenarioEdit
                 if (e.Button != MouseButtons.Middle) //Still allow panning while items are selected.
                 {
                     ClearMultiSelection();
-                    selectedTile = null;
                 }
             }
 
@@ -779,32 +766,22 @@ namespace ScenarioEdit
                 var placedItem = PlaceSelectedItem(x, y);
                 if (placedItem != null)
                 {
-                    selectedTile = placedItem;
                     placedItem.SelectedHighlight = true;
                 }
             }
 
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
             {
-                if (selectedTile != hoverTile && hoverTile != null)
+                if (hoverTile != null)
                 {
-                    if (selectedTile != null && highlightSelectedTile && AreMultipleTilesSelected() == false)
-                    {
-                        selectedTile.SelectedHighlight = false;
-                    }
-
                     //Place the mouse over the exact center of the tile.
                     Win32.POINT p = new Win32.POINT((int)hoverTile.ScreenX, (int)hoverTile.ScreenY);
                     Win32.ClientToScreen(drawingsurface.Handle, ref p);
                     Win32.SetCursorPos(p.x, p.y);
 
-                    selectedTile = hoverTile;
-                    PopulateSelectedItemProperties();
-                }
+                    hoverTile.SelectedHighlight = true;
 
-                if (selectedTile != null && highlightSelectedTile)
-                {
-                    selectedTile.SelectedHighlight = true;
+                    PopulateSelectedItemProperties();
                 }
             }
         }
@@ -877,30 +854,35 @@ namespace ScenarioEdit
                 var hoverTile = _core.Actors.Intersections(new Point<double>(x, y),
                     new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
+                if (e.Button == MouseButtons.None)
+                {
+                    if (e.Button != MouseButtons.Left) //Dont change the selection based on hover location while dragging.
+                    {
+                        if (lastHoverTile != null && hoverTile != lastHoverTile)
+                        {
+                            lastHoverTile.HoverHighlight = false;
+                        }
+                        lastHoverTile = hoverTile;
+                    }
+                }
+
                 if (e.Button != MouseButtons.Left) //Dont change the selection based on hover location while dragging.
                 {
-                    if (previousHoverTile != null && highlightHoverTile)
+                    if (lastHoverTile != null)
                     {
-                        previousHoverTile.HoverHighlight = false;
-                    }
+                        string hoverText = $"[{lastHoverTile.TilePath}]";
 
-                    if (hoverTile != null)
-                    {
-                        string hoverText = $"[{hoverTile.TilePath}]";
-
-                        if (hoverTile.Meta?.CanStack == true)
+                        if (lastHoverTile.Meta?.CanStack == true)
                         {
-                            hoverText += $" ({hoverTile.Meta.Quantity:N0})";
+                            hoverText += $" ({lastHoverTile.Meta.Quantity:N0})";
                         }
 
                         toolStripStatusLabelHoverObject.Text = hoverText;
 
-                        if (highlightHoverTile && CurrentPrimaryMode != PrimaryMode.Shape)
+                        if (CurrentPrimaryMode != PrimaryMode.Shape)
                         {
-                            hoverTile.HoverHighlight = true;
+                            lastHoverTile.HoverHighlight = true;
                         }
-
-                        previousHoverTile = hoverTile;
                     }
                     else
                     {
@@ -957,32 +939,24 @@ namespace ScenarioEdit
                 //Drag item.
                 if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)
                 {
-                    if (selectedTile == null)
-                    {
-                        selectedTile = hoverTile;
-                    }
-
                     var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    if (selectedTiles.Count == 1)
-                    {
-                        if (selectedTile != null)
-                        {
-                            selectedTile.X = x;
-                            selectedTile.Y = y;
-                            _hasBeenModified = true;
-                        }
-                    }
-                    else if (selectedTiles.Count > 1 && selectedTile != null)
-                    {
-                        int deltaX = (int)(selectedTile.X - x);
-                        int deltaY = (int)(selectedTile.Y - y);
 
-                        selectedTile.X = x;
-                        selectedTile.Y = y;
+                    if (selectedTiles.Count == 0 && lastHoverTile != null)
+                    {
+                        selectedTiles.Add(lastHoverTile);
+                    }
+
+                    if (selectedTiles.Count > 0)
+                    {
+                        int deltaX = (int)(lastHoverTile.X - x);
+                        int deltaY = (int)(lastHoverTile.Y - y);
+
+                        lastHoverTile.X = x;
+                        lastHoverTile.Y = y;
 
                         foreach (var tile in selectedTiles)
                         {
-                            if (tile != selectedTile)
+                            if (tile != lastHoverTile)
                             {
                                 tile.X -= deltaX;
                                 tile.Y -= deltaY;
@@ -994,9 +968,9 @@ namespace ScenarioEdit
                 //Paint deletion with right button.
                 if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
                 {
-                    if (hoverTile != null)
+                    if (lastHoverTile != null)
                     {
-                        DeleteTile(hoverTile);
+                        DeleteTile(lastHoverTile);
                         _hasBeenModified = true;
                     }
                 }
@@ -1137,7 +1111,7 @@ namespace ScenarioEdit
                         {
                             int levelIndex = form.SelectedLevelIndex;
                             var level = _core.Levels.ByIndex(levelIndex);
-                            selectedTile.Meta.LevelWarpName = level.Name;
+                            hoverTile.Meta.LevelWarpName = level.Name;
                             PopulateSelectedItemProperties();
                         }
                     }
@@ -1162,6 +1136,17 @@ namespace ScenarioEdit
         {
             try
             {
+                var selectedItems = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+
+                if (selectedItems.Count != 1)
+                {
+                    return;
+                }
+
+                var selectedTile = selectedItems.First();
+
+                listViewProperties.Tag = selectedTile;
+
                 if (listViewProperties.SelectedItems?.Count > 0)
                 {
                     var selectedRow = listViewProperties.SelectedItems[0];
@@ -1316,6 +1301,8 @@ namespace ScenarioEdit
         void PopulateSelectedItemProperties()
         {
             listViewProperties.Items.Clear();
+
+            var selectedTile = listViewProperties.Tag as ActorBase;
 
             if (selectedTile != null && selectedTile.Visible)
             {
