@@ -401,15 +401,24 @@ namespace Game.Engine
 
         public void HandleDialogInput()
         {
-            Core.Actors.Tiles.RemoveAll(o => o.Meta?.ActorClass == Library.Engine.Types.ActorClassName.ActorDialog);
-            Core.PurgeAllDeletedTiles();
-            Core.Display.DrawingSurface.Invalidate();
-            Core.State.IsDialogActive = false;
+            if ((DateTime.Now - dialogStartTime).TotalSeconds > 1)
+            {
+
+                Core.Actors.Tiles.RemoveAll(o => o.Meta?.ActorClass == Library.Engine.Types.ActorClassName.ActorDialog);
+                Core.PurgeAllDeletedTiles();
+                Core.Display.DrawingSurface.Invalidate();
+                Core.State.IsDialogActive = false;
+            }
         }
+
+
+        DateTime dialogStartTime;
+
 
         private void DrawDialog(string msg)
         {
             Core.State.IsDialogActive = true;
+            dialogStartTime = DateTime.Now;
 
             var brush = new SolidBrush(Color.Black);
 

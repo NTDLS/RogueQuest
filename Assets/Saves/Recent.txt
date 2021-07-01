@@ -1,1 +1,1 @@
-["C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Test.rqs"]
+["C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Game 1.rqg"]
