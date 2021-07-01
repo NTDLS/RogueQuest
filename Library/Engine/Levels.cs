@@ -237,40 +237,51 @@ namespace Library.Engine
                     }
                 }
 
+                int failedToLoadTiles = 0;
+
                 foreach (var chunk in chunks)
                 {
-                    ActorBase tile = null;
-
-                    object[] param = { Core };
-
-                    if (gameAssembly != null)
+                    try
                     {
-                        var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
-                        if (tileType != null)
+                        ActorBase tile = null;
+
+                        object[] param = { Core };
+
+                        if (gameAssembly != null)
                         {
-                            tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                            var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
+                            if (tileType != null)
+                            {
+                                tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                            }
                         }
-                    }
 
-                    if (tile == null)
+                        if (tile == null)
+                        {
+                            tile = (ActorBase)Activator.CreateInstance(Type.GetType("Library.Engine.ActorBase"), param);
+                        }
+
+                        tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
+                        tile.X = chunk.X;
+                        tile.Y = chunk.Y;
+                        tile.TilePath = chunk.TilePath;
+                        tile.Velocity.Angle.Degrees = chunk.Angle;
+                        tile.DrawOrder = chunk.DrawOrder;
+                        tile.Meta = chunk.Meta;
+
+                        if (refreshMetadata)
+                        {
+                            tile.RefreshMetadata(false);
+                        }
+
+                        Core.Actors.Add(tile);
+                    }
+                    catch
                     {
-                        tile = (ActorBase)Activator.CreateInstance(Type.GetType("Library.Engine.ActorBase"), param);
+                        failedToLoadTiles++;
                     }
 
-                    tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
-                    tile.X = chunk.X;
-                    tile.Y = chunk.Y;
-                    tile.TilePath = chunk.TilePath;
-                    tile.Velocity.Angle.Degrees = chunk.Angle;
-                    tile.DrawOrder = chunk.DrawOrder;
-                    tile.Meta = chunk.Meta;
 
-                    if (refreshMetadata)
-                    {
-                        tile.RefreshMetadata(false);
-                    }
-
-                    Core.Actors.Add(tile);
                 }
             }
         }

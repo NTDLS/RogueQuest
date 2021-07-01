@@ -43,6 +43,7 @@ namespace ScenarioEdit
         private ToolTip _interrogationTip = new ToolTip();
         private Rectangle? shapeSelectionRect = null;
         private ImageList _assetBrowserImageList = new ImageList();
+        private Point _lastMouseLocation = new Point();
 
         #region Settings.
 
@@ -288,7 +289,17 @@ namespace ScenarioEdit
 
         private void drawingsurface_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
+            _hasBeenModified = true;
+
+            if (e.KeyCode == Keys.Oemplus)
+            {
+                ToolStripButtonMoveTileUp_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.OemMinus)
+            {
+                ToolStripButtonMoveTileDown_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.Delete)
             {
                 if (CurrentPrimaryMode == PrimaryMode.Select)
                 {
@@ -343,36 +354,33 @@ namespace ScenarioEdit
                     }
                 }
             }
-
-
             else if (e.KeyCode == Keys.D)
             {
                 if (CurrentPrimaryMode == PrimaryMode.Select)
                 {
                     var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    foreach (var tile in selectedTiles)
+                    if (selectedTiles.Count > 0)
                     {
-                        tile.SelectedHighlight = false;
-                    }
+                        var firstTile = selectedTiles.First();
 
-                    foreach (var tile in selectedTiles)
-                    {
-                        var actor = new ActorBase(_core)
+                        int deltaX = (int)(_core.Display.BackgroundOffset.X + _lastMouseLocation.X - firstTile.X);
+                        int deltaY = (int)(_core.Display.BackgroundOffset.Y + _lastMouseLocation.Y - firstTile.Y);
+
+                        foreach (var tile in selectedTiles)
                         {
-                            Meta = tile.Meta,
-                            X = tile.X + 15,
-                            Y = tile.Y + 15
-                        };
+                            tile.SelectedHighlight = false;
 
-                        actor.SetImage(tile.GetImage());
+                            var clone = tile.Clone();
+                            clone.X += deltaX;
+                            clone.Y += deltaY;
 
-                        actor.SelectedHighlight = true;
+                            clone.SelectedHighlight = true;
 
-                        _core.Actors.Add(actor);
+                            _core.Actors.Add(clone);
+                        }
                     }
                 }
             }
-
         }
 
         #region Menu Clicks.
@@ -479,7 +487,7 @@ namespace ScenarioEdit
             var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             foreach (var tile in selectedTiles)
             {
-                selectedTile.DrawOrder--;
+                tile.DrawOrder--;
             }
         }
 
@@ -488,7 +496,7 @@ namespace ScenarioEdit
             var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             foreach (var tile in selectedTiles)
             {
-                selectedTile.DrawOrder++;
+                tile.DrawOrder++;
             }
         }
 
@@ -843,6 +851,9 @@ namespace ScenarioEdit
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
+            _lastMouseLocation.X = (int)e.X;
+            _lastMouseLocation.Y = (int)e.Y;
+
             toolStripStatusLabelMouseXY.Text = $"{x}x,{y}y";
 
             if (e.Button == MouseButtons.Middle)
@@ -951,7 +962,7 @@ namespace ScenarioEdit
                             _hasBeenModified = true;
                         }
                     }
-                    else if (selectedTiles.Count > 1)
+                    else if (selectedTiles.Count > 1 && selectedTile != null)
                     {
                         int deltaX = (int)(selectedTile.X - x);
                         int deltaY = (int)(selectedTile.Y - y);
@@ -1244,7 +1255,6 @@ namespace ScenarioEdit
 
                                     selectedTile.Meta.OnlyDialogOnce = result;
                                 }
-
                                 else if (selectedRow.Text == "Dialog")
                                 {
                                     selectedTile.Meta.Dialog = dialog.PropertyValue;

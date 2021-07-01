@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace Library.Engine
 {
@@ -48,6 +49,36 @@ namespace Library.Engine
             this.Visible = true;
             RotationMode = RotationMode.Upsize;
             Velocity.OnChange += Velocity_OnChange;
+        }
+
+        public ActorBase Clone()
+        {
+            var actor = new ActorBase(Core)
+            {
+                X = this.X,
+                Y = this.Y,
+                TilePath = this.TilePath,
+                AlwaysRender = AlwaysRender,
+                DoNotDraw = DoNotDraw,
+                DrawOrder = DrawOrder,
+                RotationMode = RotationMode,
+                Visible = Visible,
+                DrawRealitiveToBackgroundOffset = DrawRealitiveToBackgroundOffset,
+                SelectedHighlight = SelectedHighlight,
+                HoverHighlight = HoverHighlight,
+            };
+
+            actor.Children = new List<ActorBase>(this.Children.Select(o => o.Clone()));
+            actor.Velocity.Angle.Degrees = this.Velocity.Angle.Degrees;
+            actor.Velocity.MaxSpeed = this.Velocity.MaxSpeed;
+            actor.Velocity.MaxRotationSpeed = this.Velocity.MaxRotationSpeed;
+            actor.Velocity.ThrottlePercentage = this.Velocity.ThrottlePercentage;
+
+            actor.Meta.OverrideWith(this.Meta);
+
+            actor.SetImage(this.GetImage());
+
+            return actor;
         }
 
         public TileIdentifier CloneIdentifier()

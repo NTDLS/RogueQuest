@@ -1,1 +1,1 @@
-["C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Test.rqs"]
+["C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Test.rqs","C:\\NTDLS\\RougueQuest\\Assets\\Swatches\\Dirt\\Bank North.rqm","C:\\NTDLS\\RougueQuest\\Assets\\Swatches\\Dirt\\Bank South.rqm","C:\\NTDLS\\RougueQuest\\Assets\\Swatches\\Dirt\\East Bank.rqm","C:\\NTDLS\\RougueQuest\\Assets\\Swatches\\Dirt\\West Bank.rqm"]
