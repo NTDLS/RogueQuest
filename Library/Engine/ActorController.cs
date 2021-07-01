@@ -46,13 +46,19 @@ namespace Library.Engine
                 renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
                     .Where(o => o.Meta.ActorClass != Types.ActorClassName.ActorFriendyBeing
                         && o.Meta.ActorClass != Types.ActorClassName.ActorHostileBeing
-                        && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer)
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder).ToList());
 
                 renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
-                    .Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
+                    .Where(o => (o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
                         || o.Meta.ActorClass == Types.ActorClassName.ActorHostileBeing
                         || o.Meta.ActorClass == Types.ActorClassName.ActorPlayer)
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
+                    .OrderBy(o => o.DrawOrder).ToList());
+
+                renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
+                    .Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder).ToList());
 
                 foreach (var obj in renderTiles)
@@ -63,7 +69,7 @@ namespace Library.Engine
                         Core.Display.DrawingSurface.Width,
                         Core.Display.DrawingSurface.Height);
 
-                    if (window.IntersectsWith(obj.Bounds))
+                    if (obj.AlwaysRender || window.IntersectsWith(obj.Bounds) || obj.DrawRealitiveToBackgroundOffset == false)
                     {
                         Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);
                     }

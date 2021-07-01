@@ -70,7 +70,7 @@ namespace Game.Engine
             }
             PurgeAllDeletedTiles();
 
-            Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\Player\{this.State.Character.Avatar}\Front 1");
+            Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\@Player\{this.State.Character.Avatar}\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
 
@@ -118,7 +118,7 @@ namespace Game.Engine
                 return;
             }
 
-            Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\Player\{this.State.Character.Avatar}\Front 1");
+            Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\@Player\{this.State.Character.Avatar}\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
 
@@ -150,6 +150,41 @@ namespace Game.Engine
             PopCurrentLevel();
 
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+
+            if (this.Player == null)
+            {
+                //This is really only used when opening a scenario directly with the game - e.g. for debugging.
+                var spawnPoint = Actors.OfType<ActorSpawnPoint>().FirstOrDefault();
+                if (spawnPoint == null)
+                {
+                    MessageBox.Show("This level contains no Spawn Point and cannot be played.");
+                    return;
+                }
+
+                this.State.Character = new PlayerState()
+                {
+                    UID = Guid.NewGuid(),
+                    Experience = 0,
+                    Name = "Bug Slayer",
+                    Avatar = 1,
+                    Level = 1,
+                    StartingDexterity = 10,
+                    StartingConstitution = 10,
+                    StartingIntelligence = 10,
+                    StartingStrength = 10
+                };
+
+                this.State.Character.InitializeState();
+
+                Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\@Player\{this.State.Character.Avatar}\Front 1");
+                this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
+                this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
+
+                this.Player.Meta = new TileMetadata()
+                {
+                    ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
+                };
+            }
 
             this.Display.BackgroundOffset.Y = Player.Y / 2;
             this.Display.BackgroundOffset.X = Player.X / 2;
@@ -194,6 +229,15 @@ namespace Game.Engine
             Tick.Get();
             AfterTick?.Invoke(this, input, new Point<double>());
         }
+
+        public void ActionDialogInput()
+        {
+            var input = new Types.TickInput() { InputType = Types.TickInputType.DialogInput };
+            Tick.HandleDialogInput();
+            AfterTick?.Invoke(this, input, new Point<double>());
+        }
+
+        
 
         public override void HandleSingleKeyPress(Keys key)
         {

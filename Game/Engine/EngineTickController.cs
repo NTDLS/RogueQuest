@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using static Game.Engine.Types;
 
 namespace Game.Engine
@@ -297,7 +298,7 @@ namespace Game.Engine
                     playerAngle = "Left";
                 }
 
-                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Special\Player\{Core.State.Character.Avatar}\{playerAngle} {_avatarAnimationFrame}.png");
+                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Special\@Player\{Core.State.Character.Avatar}\{playerAngle} {_avatarAnimationFrame}.png");
                 Core.Player.SetImage(SpriteCache.GetBitmapCached(assetPath));
                 if (_avatarAnimationFrame++ == 2)
                 {
@@ -397,7 +398,101 @@ namespace Game.Engine
 
             return damage;
         }
-   
+
+        public void HandleDialogInput()
+        {
+            Core.Actors.Tiles.RemoveAll(o => o.Meta?.ActorClass == Library.Engine.Types.ActorClassName.ActorDialog);
+            Core.PurgeAllDeletedTiles();
+            Core.Display.DrawingSurface.Invalidate();
+            Core.State.IsDialogActive = false;
+        }
+
+        private void DrawDialog(string msg)
+        {
+            Core.State.IsDialogActive = true;
+
+            var brush = new SolidBrush(Color.Black);
+
+            ActorTextBlock textBlock = null;
+            int textSize = 20;
+
+            do
+            {
+                if (textBlock != null)
+                {
+                    textBlock.QueueForDelete();
+                }
+
+                textBlock = Core.AddNewTextBlock("Arial", brush, textSize, 0, 0, true, msg);
+                textSize -= 2;
+            }
+            while (textBlock.Size.Width > Core.Display.VisibleSize.Width - 40 && textSize > 5);
+
+            Core.PurgeAllDeletedTiles();
+
+            textBlock.X = (Core.Display.VisibleSize.Width / 2) - (textBlock.Size.Width / 2);
+            textBlock.Y = (Core.Display.VisibleSize.Height / 2) - (textBlock.Size.Height / 2);
+            textBlock.Invalidate();
+
+            textBlock.DrawOrder = 1010;
+
+            var dialogXWallE = textBlock.X + textBlock.Size.Width + 16;
+            var dialogYWallE = textBlock.Y - 16;
+
+            var dialogXWallW = textBlock.X - 16;
+            var dialogYWallW = textBlock.Y - 16;
+
+            var neCorner = Core.Actors.AddNew<ActorDialog>(dialogXWallE, dialogYWallE, @"Tiles\Special\@UI\Dialog\Dialog NE");
+            var nwCorner = Core.Actors.AddNew<ActorDialog>(dialogXWallW, dialogYWallW, @"Tiles\Special\@UI\Dialog\Dialog NW");
+
+            neCorner.DrawOrder = 1002;
+            nwCorner.DrawOrder = 1002;
+
+            ActorDialog lastEWall = null;
+            ActorDialog lastWWall = null;
+
+            for (double y = dialogYWallW + nwCorner.Size.Height; y < textBlock.Y + textBlock.Size.Height + 16;)
+            {
+                lastEWall = Core.Actors.AddNew<ActorDialog>(dialogXWallE, y, @"Tiles\Special\@UI\Dialog\Dialog E");
+                lastEWall.DrawOrder = 1001;
+                lastWWall = Core.Actors.AddNew<ActorDialog>(dialogXWallW, y, @"Tiles\Special\@UI\Dialog\Dialog W");
+                lastWWall.DrawOrder = 1001;
+                y += nwCorner.Size.Height;
+            }
+
+            var seCorner = Core.Actors.AddNew<ActorDialog>(lastEWall.X, lastEWall.Y + lastEWall.Size.Height, @"Tiles\Special\@UI\Dialog\Dialog SE");
+            var swCorner = Core.Actors.AddNew<ActorDialog>(lastWWall.X, lastWWall.Y + lastWWall.Size.Height, @"Tiles\Special\@UI\Dialog\Dialog SW");
+
+            seCorner.DrawOrder = 1002;
+            swCorner.DrawOrder = 1002;
+
+            for (double x = dialogXWallW + nwCorner.Size.Width; x < textBlock.X + textBlock.Size.Width + 16;)
+            {
+                var tile = Core.Actors.AddNew<ActorDialog>(x, neCorner.Y, @"Tiles\Special\@UI\Dialog\Dialog N");
+                tile.DrawOrder = 1001;
+                tile = Core.Actors.AddNew<ActorDialog>(x, swCorner.Y, @"Tiles\Special\@UI\Dialog\Dialog S");
+                tile.DrawOrder = 1001;
+                x += nwCorner.Size.Height;
+            }
+
+
+            for (double x = nwCorner.X + nwCorner.Size.Width; x < lastEWall.X;)
+            {
+                for (double y = nwCorner.Y + nwCorner.Size.Height; y < lastWWall.Y + lastWWall.Size.Height+ 16;)
+                {
+                    var fillTile = Core.Actors.AddNew<ActorDialog>(x, y, @"Tiles\Special\@UI\Dialog\Dialog Fill");
+
+                    fillTile.DrawOrder = 1000;
+
+                    y += nwCorner.Size.Height;
+                }
+                x += nwCorner.Size.Width;
+            }
+
+
+            Core.Display.DrawingSurface.Invalidate();
+        }
+
         /// <summary>
         /// Intersections contains all objects that the player collided with during their turn. If this
         /// contains actors that can be damaged, then these  would be the melee attack target for the player.
@@ -405,6 +500,17 @@ namespace Game.Engine
         /// <param name="intersections"></param>
         void GameLogic(List<ActorBase> intersections)
         {
+            var somethingToSay = intersections.Where(o => string.IsNullOrEmpty(o.Meta.Dialog) == false).FirstOrDefault();
+            if (somethingToSay != null)
+            {
+                DrawDialog(somethingToSay.Meta.Dialog);
+
+                if (somethingToSay.Meta.OnlyDialogOnce == true)
+                {
+                    somethingToSay.Meta.Dialog = "";
+                }
+            }
+
             if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp).Any())
             {
                 var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp).First();
@@ -416,7 +522,7 @@ namespace Game.Engine
                 return;
             }
 
-            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 150)
+            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 10)
                 .Where(o => o.Meta.CanTakeDamage == true);
 
             var hostileInteractions = new List<ActorHostileBeing>();

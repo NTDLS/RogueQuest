@@ -18,8 +18,13 @@ namespace Library.Engine
         /// Tells us exactly which tile this is. For terrain, it could be so many - so this allows us to differentiate.
         /// </summary>
         public string TilePath { get; set; }
+        public bool DrawRealitiveToBackgroundOffset { get; set; } = true;
         public RotationMode RotationMode { get; set; }
         public string Tag { get; set; }
+        /// <summary>
+        /// Always render even if x,y is offscreen. For instance, text at 0,0 would be at the upper corner regardless of BG offset.
+        /// </summary>
+        public bool AlwaysRender { get; set; }
         public List<ActorBase> Children { get; set; }
         public EngineCoreBase Core { get; set; }
         public TileMetadata Meta { get; set; } = new TileMetadata();
@@ -140,11 +145,18 @@ namespace Library.Engine
         {
             if (Visible && _image != null && !DoNotDraw)
             {
-                DrawImage(dc, _image);
+                if (DrawRealitiveToBackgroundOffset)
+                {
+                    DrawImageRealative(dc, _image);
+                }
+                else
+                {
+                    DrawImage(dc, _image);
+                }
             }
         }
 
-        private void DrawImage(Graphics dc, Image rawImage, double? angleInDegrees = null)
+        private void DrawImageRealative(Graphics dc, Image rawImage, double? angleInDegrees = null)
         {
             double angle = (double)(angleInDegrees == null ? Velocity.Angle.Degrees : angleInDegrees);
 
@@ -173,24 +185,6 @@ namespace Library.Engine
                 dc.DrawImage(bitmap, ScreenBounds);
             }
 
-            /*
-            if (this.GetType().ToString().Contains("Hostile"))
-            {
-                Pen pen = new Pen(Color.Red, 1);
-                dc.DrawRectangle(pen, this.ScreenBounds);
-            }
-            if (this.GetType().ToString().Contains("Friendly"))
-            {
-                Pen pen = new Pen(Color.Yellow, 1);
-                dc.DrawRectangle(pen, this.ScreenBounds);
-            }
-            if (this.GetType().ToString().Contains("Player"))
-            {
-                Pen pen = new Pen(Color.Red, 4);
-                dc.DrawRectangle(pen, ScreenBounds);
-            }
-            */
-
             if (HoverHighlight)
             {
                 Pen pen = new Pen(Color.Yellow, 1);
@@ -201,6 +195,49 @@ namespace Library.Engine
             {
                 Pen pen = new Pen(Color.Red, 2);
                 dc.DrawRectangle(pen, ScreenBounds);
+            }
+        }
+
+
+        private void DrawImage(Graphics dc, Image rawImage, double? angleInDegrees = null)
+        {
+            double angle = (double)(angleInDegrees == null ? Velocity.Angle.Degrees : angleInDegrees);
+
+            Bitmap bitmap = new Bitmap(rawImage);
+
+            if (angle != 0 && RotationMode != RotationMode.None)
+            {
+                if (RotationMode == RotationMode.Upsize) //Very expensize
+                {
+                    var image = GraphicsUtility.RotateImageWithUpsize(bitmap, angle, Color.Transparent);
+                    dc.DrawImage(image, Bounds);
+                    _size.Height = image.Height;
+                    _size.Width = image.Width;
+                }
+                else if (RotationMode == RotationMode.Clip) //Much less expensive.
+                {
+                    var image = GraphicsUtility.RotateImageWithClipping(bitmap, angle, Color.Transparent);
+                    dc.DrawImage(image, Bounds);
+
+                    _size.Height = image.Height;
+                    _size.Width = image.Width;
+                }
+            }
+            else //Almost free.
+            {
+                dc.DrawImage(bitmap, Bounds);
+            }
+
+            if (HoverHighlight)
+            {
+                Pen pen = new Pen(Color.Yellow, 1);
+                dc.DrawRectangle(pen, BoundsI);
+            }
+
+            if (SelectedHighlight)
+            {
+                Pen pen = new Pen(Color.Red, 2);
+                dc.DrawRectangle(pen, BoundsI);
             }
         }
 

@@ -113,7 +113,13 @@ namespace Game
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            toolStripStatusLabelDebug.Text = $"Mouse: {e.X:N0}x,{e.Y:N0}y, Screen: {x:N0}x,{y:N0}y, Offset: {_core.Display.BackgroundOffset.X:N0}x,{_core.Display.BackgroundOffset.Y:N0}y";
+
+            /*
+
+
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
+                .Where(o => o.Visible == true).OrderBy(o => o.DrawOrder).LastOrDefault();
             if (hoverTile == null)
             {
                 return;
@@ -131,6 +137,7 @@ namespace Game
             }
 
             toolStripStatusLabelDebug.Text = tipText;
+            */
         }
 
         private void Drawingsurface_MouseUp(object sender, MouseEventArgs e)
@@ -352,7 +359,7 @@ namespace Game
                         return;
                     }
 
-                    _core.Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\Player\{_core.State.Character.Avatar}\Front 1");
+                    _core.Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\@Player\{_core.State.Character.Avatar}\Front 1");
                     _core.Player = _core.Actors.OfType<ActorPlayer>().FirstOrDefault();
                     _core.Player.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder) + 1;
 
@@ -451,6 +458,12 @@ namespace Game
             if (_core.Player.Visible == false)
             {
                 return; //Player is dead.
+            }
+
+            if (_core.State.IsDialogActive)
+            {
+                _core.ActionDialogInput();
+                return;
             }
 
             _hasBeenModified = true;

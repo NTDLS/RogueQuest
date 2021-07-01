@@ -12,5 +12,6 @@ namespace Library.Engine
         /// </summary>
         public int CurrentLevel { get; set; }
         public int DefaultLevel { get; set; }
+        public bool IsDialogActive { get; set; }
     }
 }

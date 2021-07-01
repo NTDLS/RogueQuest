@@ -36,7 +36,7 @@ namespace Game.Actors
         {
             get
             {
-                if (_size.IsEmpty || _text != _lastTextSizeCheck)
+                if ((_size.IsEmpty || _text != _lastTextSizeCheck) && _text != null)
                 {
                     var fSize = _genericDC.MeasureString(_text, _font);
 
@@ -62,6 +62,7 @@ namespace Game.Actors
                 //And invalidate them for the new text.
                 var stringSize = _genericDC.MeasureString(_text, _font);
                 _prevRegion = new Rectangle((int)X, (int)Y, (int)stringSize.Width, (int)stringSize.Height);
+                Invalidate();
             }
         }
 
@@ -72,9 +73,11 @@ namespace Game.Actors
         {
             IsPositionStatic = isPositionStatic;
             Location = new Point<double>(location);
+            AlwaysRender = isPositionStatic;
             _color = color;
             _font = new Font(font, (float)size);
             _genericDC = core.Display.DrawingSurface.CreateGraphics();
+            this.Meta.ActorClass = Library.Engine.Types.ActorClassName.ActorDialog;
         }
 
         public new void Render(Graphics dc)
@@ -82,9 +85,22 @@ namespace Game.Actors
             if (Visible)
             {
                 dc.DrawString(_text, _font, _color, (float)X, (float)Y);
-
-                //TODO: Rotate text is required.
             }
         }
+
+        public new void Invalidate()
+        {
+            int slop = 3; //This i just to take care of the debuging highlighting rectangles.
+
+            var rect = new Rectangle(
+                (int)(X - slop),
+                (int)(Y - slop),
+                (int)(Size.Width + (slop * 2)),
+                (int)(Size.Height + (slop * 2))
+                );
+
+            Core.Display.DrawingSurface.Invalidate(rect);
+        }
+
     }
 }

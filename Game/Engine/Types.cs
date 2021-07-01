@@ -14,7 +14,8 @@ namespace Game.Engine
         {
             Movement,
             Rest,
-            Get
+            Get,
+            DialogInput
             //Maybe later we can add other input types? Magic? Arrows?
         }
 

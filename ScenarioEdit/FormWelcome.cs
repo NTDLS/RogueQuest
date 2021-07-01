@@ -151,7 +151,7 @@ namespace ScenarioEdit
 
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            var result = MessageBox.Show("Clear all recent games??",
+            var result = MessageBox.Show("Clear all recent scenarios??",
                 "Clear list?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)

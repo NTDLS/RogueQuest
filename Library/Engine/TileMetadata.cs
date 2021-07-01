@@ -45,6 +45,15 @@ namespace Library.Engine
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorSubType? SubType { get; set; }
 
+        /// <summary>
+        /// This is what the object will say to the player when approached.
+        /// </summary>
+        public string Dialog { get; set; }
+        /// <summary>
+        /// Will the dialog be shown every time this tile is intersected?
+        /// </summary>
+        public bool? OnlyDialogOnce { get; set; }
+
         public void OverrideWith(TileMetadata with)
         {
             this.UID = with.UID ?? this.UID;
@@ -55,6 +64,8 @@ namespace Library.Engine
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;
             this.Name = with.Name ?? this.Name;
+            this.Dialog = with.Dialog ?? this.Dialog;
+            this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;
             this.IsContainer = with.IsContainer ?? this.IsContainer;
             this.CanStack = with.CanStack ?? this.CanStack;
             this.SubType = with.SubType ?? this.SubType;

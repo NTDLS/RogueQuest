@@ -1,0 +1,3 @@
+{
+  "ActorClass": "ActorDialog"
+}

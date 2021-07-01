@@ -49,13 +49,13 @@ namespace Game
 
             Image img;
 
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\Player\1\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\1\Front 1.png"));
             pictureBoxPlayer1.Image = img;
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\Player\2\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\2\Front 1.png"));
             pictureBoxPlayer2.Image = img;
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\Player\3\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\3\Front 1.png"));
             pictureBoxPlayer3.Image = img;
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\Player\4\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\4\Front 1.png"));
             pictureBoxPlayer4.Image = img;
 
             pictureBoxPlayer1.MouseClick += PictureBoxPlayer_MouseClick;

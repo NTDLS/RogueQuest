@@ -476,19 +476,19 @@ namespace ScenarioEdit
 
         private void ToolStripButtonMoveTileDown_Click(object sender, EventArgs e)
         {
-            if (selectedTile != null)
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+            foreach (var tile in selectedTiles)
             {
                 selectedTile.DrawOrder--;
-                PopulateSelectedItemProperties();
             }
         }
 
         private void ToolStripButtonMoveTileUp_Click(object sender, EventArgs e)
         {
-            if (selectedTile != null)
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+            foreach (var tile in selectedTiles)
             {
                 selectedTile.DrawOrder++;
-                PopulateSelectedItemProperties();
             }
         }
 
@@ -1233,6 +1233,22 @@ namespace ScenarioEdit
                                 {
                                     selectedTile.DrawOrder = int.Parse(dialog.PropertyValue);
                                 }
+                                else if (selectedRow.Text == "Only Dialog Once")
+                                {
+                                    bool result = false;
+
+                                    if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                                    {
+                                        result = int.Parse(dialog.PropertyValue) != 0;
+                                    }
+
+                                    selectedTile.Meta.OnlyDialogOnce = result;
+                                }
+
+                                else if (selectedRow.Text == "Dialog")
+                                {
+                                    selectedTile.Meta.Dialog = dialog.PropertyValue;
+                                }
                                 else if (selectedRow.Text == "Armor Class")
                                 {
                                     selectedTile.Meta.AC = int.Parse(dialog.PropertyValue);
@@ -1288,6 +1304,15 @@ namespace ScenarioEdit
                 listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
                 listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
                 listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
+
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorFriendyBeing
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorItem
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorBuilding)
+                {
+                    listViewProperties.Items.Add("Dialog").SubItems.Add(selectedTile.Meta.Dialog);
+                    listViewProperties.Items.Add("Only Dialog Once").SubItems.Add(selectedTile.Meta.OnlyDialogOnce.ToString());
+                }
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarp)
                 {
