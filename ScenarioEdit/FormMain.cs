@@ -773,7 +773,15 @@ namespace ScenarioEdit
             {
                 //Single item placement with left button.
                 insertStartMousePosition = new Point<double>(e.X, e.Y);
-                PlaceSelectedItem(x, y);
+
+                ClearMultiSelection();
+
+                var placedItem = PlaceSelectedItem(x, y);
+                if (placedItem != null)
+                {
+                    selectedTile = placedItem;
+                    placedItem.SelectedHighlight = true;
+                }
             }
 
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Select)

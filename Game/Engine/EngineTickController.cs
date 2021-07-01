@@ -16,6 +16,7 @@ namespace Game.Engine
     public class EngineTickController
     {
         private int _avatarAnimationFrame = 1;
+        private DateTime _dialogOpenTime;
 
         public EngineCore Core { get; private set; }
         public int TimePassed { get; set; }
@@ -401,9 +402,9 @@ namespace Game.Engine
 
         public void HandleDialogInput()
         {
-            if ((DateTime.Now - dialogStartTime).TotalSeconds > 1)
+            //Dant want the player to accidently skip the dialog.
+            if ((DateTime.Now - _dialogOpenTime).TotalSeconds > 1)
             {
-
                 Core.Actors.Tiles.RemoveAll(o => o.Meta?.ActorClass == Library.Engine.Types.ActorClassName.ActorDialog);
                 Core.PurgeAllDeletedTiles();
                 Core.Display.DrawingSurface.Invalidate();
@@ -411,14 +412,10 @@ namespace Game.Engine
             }
         }
 
-
-        DateTime dialogStartTime;
-
-
         private void DrawDialog(string msg)
         {
             Core.State.IsDialogActive = true;
-            dialogStartTime = DateTime.Now;
+            _dialogOpenTime = DateTime.Now;
 
             var brush = new SolidBrush(Color.Black);
 
