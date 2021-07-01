@@ -6,6 +6,7 @@ using Library.Utility;
 using ScenarioEdit.Engine;
 using ScenarioEdit.Properties;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -44,6 +45,7 @@ namespace ScenarioEdit
         private Rectangle? shapeSelectionRect = null;
         private ImageList _assetBrowserImageList = new ImageList();
         private Point _lastMouseLocation = new Point();
+        private List<ActorBase> _clipboardTiles = new List<ActorBase>();
 
         #region Settings.
 
@@ -169,6 +171,9 @@ namespace ScenarioEdit
             treeViewTiles.BeforeExpand += TreeViewTiles_BeforeExpand;
             toolStripMenuItemScenarioProperties.Click += ToolStripMenuItemScenarioProperties_Click;
             toolStripButtonInsertSwatch.Click += ToolStripButtonInsertSwatch_Click;
+            cutToolStripMenuItem.Click += CutToolStripMenuItem_Click;
+            copyToolStripMenuItem.Click += CopyToolStripMenuItem_Click;
+            pasteToolStripMenuItem.Click += PasteToolStripMenuItem_Click;
 
             toolStripMenuItemAddLevel.Click += ToolStripMenuItemAddLevel_Click;
             toolStripMenuItemChangeLevel.Click += ToolStripMenuItemChangeLevel_Click;
@@ -183,13 +188,6 @@ namespace ScenarioEdit
 
             NewToolStripMenuItem_Click(null, null);
         }
-
-        private bool IsDirectory(string path)
-        {
-            FileAttributes attr = File.GetAttributes(path);
-            return (attr.HasFlag(FileAttributes.Directory));
-        }
-
         public string BaseAssetPath => Assets.Constants.BaseAssetPath;
         public string PartialTilesPath => "Tiles\\";
 
@@ -276,11 +274,15 @@ namespace ScenarioEdit
             }
         }
 
+        /// <summary>
+        /// Ensures that the dependencies of the tile are also removed.
+        /// </summary>
+        /// <param name="tile"></param>
         void DeleteTile(ActorBase tile)
         {
             if (tile.Meta != null && tile.Meta.UID != null && tile.Meta.IsContainer == true)
             {
-                //If this is a container, then remove the items from the scenario collection.\
+                //If this is a container, then remove the items from the scenario collection.
                 _core.State.Items.RemoveAll(o => o.ContainerId == tile.Meta.UID);
             }
 
@@ -1380,6 +1382,106 @@ namespace ScenarioEdit
             }
         }
 
+
+        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ClearMultiSelection();
+
+            if (_clipboardTiles.Count > 0)
+            {
+                var firstTile = _clipboardTiles.First();
+
+                int deltaX = (int)(_core.Display.BackgroundOffset.X + _lastMouseLocation.X - firstTile.X);
+                int deltaY = (int)(_core.Display.BackgroundOffset.Y + _lastMouseLocation.Y - firstTile.Y);
+
+                foreach (var tile in _clipboardTiles)
+                {
+                    tile.SelectedHighlight = false;
+
+                    var clone = tile.Clone();
+                    clone.X += deltaX;
+                    clone.Y += deltaY;
+
+                    clone.SelectedHighlight = true;
+
+                    _core.Actors.Add(clone);
+                }
+            }
+        }
+
+        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _clipboardTiles.Clear();
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+            if (selectedTiles.Count > 0)
+            {
+                _clipboardTiles.AddRange(selectedTiles.Select(o => o.Clone()));
+            }
+
+        }
+
+        private void CutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _clipboardTiles.Clear();
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+            if (selectedTiles.Count > 0)
+            {
+                _clipboardTiles.AddRange(selectedTiles.Select(o => o.Clone()));
+            }
+
+            selectedTiles.ForEach(o => o.QueueForDelete());
+            _core.PurgeAllDeletedTiles();
+        }
+
+        private void ToolStripButtonInsertSwatch_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormSelectSwatch())
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    ClearMultiSelection();
+
+                    CurrentPrimaryMode = PrimaryMode.Select;
+
+                    var chunks = Levels.LoadChunks(form.SelectedSwatchFileName, 0);
+
+                    double deltaX = 0;
+                    double deltaY = 0;
+
+                    double x = _core.Display.BackgroundOffset.X + 20;
+                    double y = _core.Display.BackgroundOffset.Y + 20;
+
+                    var firstChunk = chunks.FirstOrDefault();
+                    if (firstChunk != null)
+                    {
+                        deltaX = firstChunk.X - x;
+                        deltaY = firstChunk.Y - y;
+                    }
+
+                    foreach (var chunk in chunks)
+                    {
+                        var tile = new ActorBase(_core)
+                        {
+                            X = chunk.X - deltaX,
+                            Y = chunk.Y - deltaY,
+                            TilePath = chunk.TilePath,
+                            DrawOrder = chunk.DrawOrder,
+                            Meta = chunk.Meta
+                        };
+
+                        tile.Velocity.Angle.Degrees = chunk.Angle;
+                        tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
+
+                        tile.SelectedHighlight = true;
+
+                        _core.Actors.Add(tile);
+                    }
+                }
+            }
+        }
+
         #endregion
 
         TreeNode GetRandomChildNode(TreeNode node)
@@ -1513,53 +1615,5 @@ namespace ScenarioEdit
             }
             return false;
         }
-
-        private void ToolStripButtonInsertSwatch_Click(object sender, EventArgs e)
-        {
-            using (var form = new FormSelectSwatch())
-            {
-                if (form.ShowDialog() == DialogResult.OK)
-                {
-                    ClearMultiSelection();
-
-                    CurrentPrimaryMode = PrimaryMode.Select;
-
-                    var chunks = Levels.LoadChunks(form.SelectedSwatchFileName, 0);
-
-                    double deltaX = 0;
-                    double deltaY = 0;
-
-                    double x = _core.Display.BackgroundOffset.X + 20;
-                    double y = _core.Display.BackgroundOffset.Y + 20;
-
-                    var firstChunk = chunks.FirstOrDefault();
-                    if (firstChunk != null)
-                    {
-                        deltaX = firstChunk.X - x;
-                        deltaY = firstChunk.Y - y;
-                    }
-
-                    foreach (var chunk in chunks)
-                    {
-                        var tile = new ActorBase(_core)
-                        {
-                            X = chunk.X - deltaX,
-                            Y = chunk.Y - deltaY,
-                            TilePath = chunk.TilePath,
-                            DrawOrder = chunk.DrawOrder,
-                            Meta = chunk.Meta
-                        };
-
-                        tile.Velocity.Angle.Degrees = chunk.Angle;
-                        tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
-
-                        tile.SelectedHighlight = true;
-
-                        _core.Actors.Add(tile);
-                    }
-                }
-            }
-        }
     }
 }
-
