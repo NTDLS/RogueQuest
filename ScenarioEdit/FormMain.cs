@@ -34,6 +34,7 @@ namespace ScenarioEdit
             Select,
         }
 
+        private ActorBase _mostRecentlySelectedTile = null;
         private Control drawingsurface = new Control();
         private bool _firstShown = true;
         private EngineCore _core;
@@ -45,7 +46,8 @@ namespace ScenarioEdit
         private Rectangle? shapeSelectionRect = null;
         private ImageList _assetBrowserImageList = new ImageList();
         private Point _lastMouseLocation = new Point();
-        
+        private string _partialTilesPath = "Tiles\\";
+
 
         #region Settings.
 
@@ -186,8 +188,6 @@ namespace ScenarioEdit
 
             NewToolStripMenuItem_Click(null, null);
         }
-        public string BaseAssetPath => Assets.Constants.BaseAssetPath;
-        public string PartialTilesPath => "Tiles\\";
 
         private void TreeViewTiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
@@ -204,7 +204,7 @@ namespace ScenarioEdit
 
             treeViewTiles.ImageList = _assetBrowserImageList;
 
-            foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialTilesPath))
+            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath))
             {
                 var directory = Path.GetFileName(d);
                 if (directory.StartsWith("@") || directory.ToLower() == "player")
@@ -212,14 +212,14 @@ namespace ScenarioEdit
                     continue;
                 }
 
-                var directoryNode = treeViewTiles.Nodes.Add(PartialTilesPath + directory, directory, "<folder>");
+                var directoryNode = treeViewTiles.Nodes.Add(_partialTilesPath + directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
             }
         }
 
         public void PopChildNodes(TreeNode parent, string partialPath)
         {
-            foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialTilesPath + partialPath))
+            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath + partialPath))
             {
                 var directory = Path.GetFileName(d);
                 if (directory.StartsWith("@") || directory.ToLower() == "player")
@@ -227,11 +227,11 @@ namespace ScenarioEdit
                     continue;
                 }
 
-                var directoryNode = parent.Nodes.Add(PartialTilesPath + directory, directory, "<folder>");
+                var directoryNode = parent.Nodes.Add(_partialTilesPath + directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
             }
 
-            foreach (var f in Directory.GetFiles(BaseAssetPath + PartialTilesPath + partialPath, "*.png"))
+            foreach (var f in Directory.GetFiles(Constants.BaseAssetPath + _partialTilesPath + partialPath, "*.png"))
             {
                 if (Path.GetFileName(f).StartsWith("@"))
                 {
@@ -239,7 +239,7 @@ namespace ScenarioEdit
                 }
                 var file = new FileInfo(f);
 
-                string fileKey = $"{PartialTilesPath}{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
+                string fileKey = $"{_partialTilesPath}{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
 
                 _assetBrowserImageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
 
@@ -287,101 +287,139 @@ namespace ScenarioEdit
             tile.QueueForDelete();
         }
 
-        private void drawingsurface_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+
+        TreeNode GetRandomChildNode(TreeNode node)
         {
+            if (node.Nodes.Count > 0)
+            {
+                int nodeIndex = MathUtility.RandomNumber(0, node.Nodes.Count);
+
+                if (node.Nodes[nodeIndex].Nodes.Count > 0)
+                {
+                    return GetRandomChildNode(node.Nodes[nodeIndex]);
+                }
+                else
+                {
+                    return node.Nodes[nodeIndex];
+                }
+            }
+
+            return node;
+        }
+
+        private ActorBase PlaceSelectedItem(double x, double y)
+        {
+            ActorBase insertedTile = null;
+
             _hasBeenModified = true;
 
-            if (e.KeyCode == Keys.Oemplus)
+            if (treeViewTiles.SelectedNode == null)
             {
-                ToolStripButtonMoveTileUp_Click(null, null);
+                return null;
             }
-            else if (e.KeyCode == Keys.OemMinus)
+
+            if (treeViewTiles.SelectedNode.Nodes.Count == 1 && treeViewTiles.SelectedNode.Nodes[0].Text == "<dummy>")
             {
-                ToolStripButtonMoveTileDown_Click(null, null);
+                treeViewTiles.SelectedNode.Expand();
             }
-            else if (e.KeyCode == Keys.Delete)
+
+
+            var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
+            if (selectedItem != null && selectedItem.Text != "<dummy>")
             {
-                if (CurrentPrimaryMode == PrimaryMode.Select)
+                insertedTile = _core.Actors.AddNew<ActorBase>(x, y, _partialTilesPath + selectedItem.FullPath);
+
+                insertedTile.RefreshMetadata(false);
+
+                if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawnPoint)
                 {
-                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    foreach (var tile in selectedTiles)
+                    insertedTile.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder) + 1;
+
+                    var otherSpawnPoints = _core.Actors.Tiles.Where(o =>
+                        o.Meta.ActorClass == ActorClassName.ActorSpawnPoint && o.Meta.UID != insertedTile.Meta.UID).ToList();
+
+                    foreach (var tile in otherSpawnPoints)
                     {
                         DeleteTile(tile);
                     }
+
+                    _core.PurgeAllDeletedTiles();
                 }
-            }
-            else if (e.KeyCode == Keys.Left)
-            {
-                if (CurrentPrimaryMode == PrimaryMode.Select)
+
+                //No need to create GUIDs for every terrain tile.
+                if (insertedTile.Meta.ActorClass != ActorClassName.ActorTerrain)
                 {
-                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    foreach (var tile in selectedTiles)
+                    insertedTile.Meta.UID = Guid.NewGuid();
+                }
+
+                if (insertedTile.Meta.CanTakeDamage != null && ((bool)insertedTile.Meta.CanTakeDamage) == true)
+                {
+                    if (insertedTile.Meta.HitPoints == null)
                     {
-                        tile.X--;
+                        insertedTile.Meta.HitPoints = 10;
+                    }
+
+                    if (insertedTile.Meta.Experience == null)
+                    {
+                        insertedTile.Meta.Experience = 10;
                     }
                 }
-            }
-            else if (e.KeyCode == Keys.Right)
-            {
-                if (CurrentPrimaryMode == PrimaryMode.Select)
+
+                if (insertedTile.Meta.CanStack == true && insertedTile.Meta.Quantity == 0)
                 {
-                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    foreach (var tile in selectedTiles)
-                    {
-                        tile.X++;
-                    }
+                    insertedTile.Meta.Quantity = 1;
                 }
+
+                lastPlacedItemSize = insertedTile.Size;
+                drawLastLocation = new Point<double>(x, y);
             }
-            else if (e.KeyCode == Keys.Up)
+
+            return insertedTile;
+        }
+
+        private void EditorContainer(Guid containerId)
+        {
+            using (var form = new FormEditContainer(_core, containerId))
             {
-                if (CurrentPrimaryMode == PrimaryMode.Select)
-                {
-                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    foreach (var tile in selectedTiles)
-                    {
-                        tile.Y--;
-                    }
-                }
-            }
-            else if (e.KeyCode == Keys.Down)
-            {
-                if (CurrentPrimaryMode == PrimaryMode.Select)
-                {
-                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    foreach (var tile in selectedTiles)
-                    {
-                        tile.Y++;
-                    }
-                }
-            }
-            else if (e.KeyCode == Keys.D)
-            {
-                if (CurrentPrimaryMode == PrimaryMode.Select)
-                {
-                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
-                    if (selectedTiles.Count > 0)
-                    {
-                        var firstTile = selectedTiles.First();
-
-                        int deltaX = (int)(_core.Display.BackgroundOffset.X + _lastMouseLocation.X - firstTile.X);
-                        int deltaY = (int)(_core.Display.BackgroundOffset.Y + _lastMouseLocation.Y - firstTile.Y);
-
-                        foreach (var tile in selectedTiles)
-                        {
-                            tile.SelectedHighlight = false;
-
-                            var clone = tile.Clone();
-                            clone.X += deltaX;
-                            clone.Y += deltaY;
-
-                            clone.SelectedHighlight = true;
-
-                            _core.Actors.Add(clone);
-                        }
-                    }
-                }
+                form.ShowDialog();
             }
         }
+
+        bool TrySave()
+        {
+            //If we already have an open file, then just save it.
+            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
+            {
+                _core.PushLevelAndSave(_currentMapFilename);
+                FormWelcome.AddToRecentList(_currentMapFilename);
+                _hasBeenModified = false;
+                return true;
+            }
+            else //If we do not have a current open file, then we need to "Save As".
+            {
+                return SaveAs();
+            }
+        }
+
+        bool SaveAs()
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.FileName = $"Newfile {_newFilenameIncrement++}";
+                dialog.Filter = "Rougue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _currentMapFilename = dialog.FileName;
+                    _core.PushLevelAndSave(_currentMapFilename);
+                    FormWelcome.AddToRecentList(_currentMapFilename);
+                    _hasBeenModified = false;
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         #region Menu Clicks.
 
@@ -665,7 +703,7 @@ namespace ScenarioEdit
                     return;
                 }
 
-                var meta = TileMetadata.GetFreshMetadata(PartialTilesPath + selectedItem.FullPath);
+                var meta = TileMetadata.GetFreshMetadata(_partialTilesPath + selectedItem.FullPath);
                 if (meta.ActorClass == ActorClassName.ActorItem)
                 {
                     string text = meta.Name;
@@ -709,16 +747,81 @@ namespace ScenarioEdit
 
         #region drawingsurface.
 
+        private void drawingsurface_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            _hasBeenModified = true;
+
+            if (e.KeyCode == Keys.Oemplus)
+            {
+                ToolStripButtonMoveTileUp_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.OemMinus)
+            {
+                ToolStripButtonMoveTileDown_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        DeleteTile(tile);
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Left)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.X--;
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.X++;
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.Y--;
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                if (CurrentPrimaryMode == PrimaryMode.Select)
+                {
+                    var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+                    foreach (var tile in selectedTiles)
+                    {
+                        tile.Y++;
+                    }
+                }
+            }
+        }
+
         private void ClearMultiSelection()
         {
             _core.Actors.Tiles.Where(o => o.SelectedHighlight == true)
                 .ToList().ForEach(o => o.SelectedHighlight = false);
         }
 
-        private bool AreMultipleTilesSelected()
-        {
-            return _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).Count() > 1;
-        }
 
         private void drawingsurface_MouseDown(object sender, MouseEventArgs e)
         {
@@ -768,6 +871,7 @@ namespace ScenarioEdit
                 if (placedItem != null)
                 {
                     placedItem.SelectedHighlight = true;
+                    _mostRecentlySelectedTile = placedItem;
                 }
             }
 
@@ -781,6 +885,7 @@ namespace ScenarioEdit
                     Win32.SetCursorPos(p.x, p.y);
 
                     hoverTile.SelectedHighlight = true;
+                    _mostRecentlySelectedTile = hoverTile;
 
                     PopulateSelectedItemProperties();
                 }
@@ -994,6 +1099,7 @@ namespace ScenarioEdit
                     if (IsShiftDown())
                     {
                         hoverTile.SelectedHighlight = true;
+                        _mostRecentlySelectedTile = hoverTile;
                     }
                     else if (IsControlDown())
                     {
@@ -1030,6 +1136,7 @@ namespace ScenarioEdit
                         foreach (var obj in intersections)
                         {
                             obj.SelectedHighlight = true;
+                            _mostRecentlySelectedTile = obj;
                         }
                     }
 
@@ -1399,6 +1506,7 @@ namespace ScenarioEdit
                     clone.Y += deltaY;
 
                     clone.SelectedHighlight = true;
+                    _mostRecentlySelectedTile = clone;
 
                     _core.Actors.Add(clone);
                 }
@@ -1470,6 +1578,7 @@ namespace ScenarioEdit
                         tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
 
                         tile.SelectedHighlight = true;
+                        _mostRecentlySelectedTile = tile;
 
                         _core.Actors.Add(tile);
                     }
@@ -1487,138 +1596,181 @@ namespace ScenarioEdit
             }
         }
 
+
+        private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+            if (selectedTiles.Count > 0)
+            {
+                var firstTile = selectedTiles.First();
+
+                int deltaX = (int)(_core.Display.BackgroundOffset.X + _lastMouseLocation.X - firstTile.X);
+                int deltaY = (int)(_core.Display.BackgroundOffset.Y + _lastMouseLocation.Y - firstTile.Y);
+
+                foreach (var tile in selectedTiles)
+                {
+                    tile.SelectedHighlight = false;
+
+                    var clone = tile.Clone();
+                    clone.X += deltaX;
+                    clone.Y += deltaY;
+
+                    clone.SelectedHighlight = true;
+                    _mostRecentlySelectedTile = clone;
+
+                    _core.Actors.Add(clone);
+                }
+            }
+        }
+
+        private void deselectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ClearMultiSelection();
+        }
+
+        private void invertSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _core.Actors.Tiles.ForEach(o => o.SelectedHighlight = !o.SelectedHighlight);
+            _mostRecentlySelectedTile = _core.Actors.Tiles.FirstOrDefault(o=>o.SelectedHighlight == true);
+        }
+
+        private void expandSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+            foreach (var tile in _core.Actors.Tiles)
+            {
+                foreach (var selection in selectedTiles)
+                {
+                    if (tile.SelectedHighlight == false && tile.Intersects(selection, 1))
+                    {
+                        tile.SelectedHighlight = true;
+                        _mostRecentlySelectedTile = tile;
+                    }
+                }
+            }
+        }
+
+        private void verticalCenterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActorBase alignWith = _mostRecentlySelectedTile;
+            if (alignWith == null)
+            {
+                alignWith = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
+            }
+
+            if (alignWith == null)
+            {
+                return;
+            }
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true && o != alignWith).ToList();
+            foreach (var tile in selectedTiles)
+            {
+                tile.X = alignWith.X;
+            }
+        }
+
+        private void horizontalCenterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActorBase alignWith = _mostRecentlySelectedTile;
+            if (alignWith == null)
+            {
+                alignWith = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
+            }
+
+            if (alignWith == null)
+            {
+                return;
+            }
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true && o != alignWith).ToList();
+            foreach (var tile in selectedTiles)
+            {
+                tile.Y = alignWith.Y;
+            }
+        }
+
+        private void topsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActorBase alignWith = _mostRecentlySelectedTile;
+            if (alignWith == null)
+            {
+                alignWith = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
+            }
+
+            if (alignWith == null)
+            {
+                return;
+            }
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true && o != alignWith).ToList();
+            foreach (var tile in selectedTiles)
+            {
+                tile.Y = (alignWith.BoundLocation.Y - (tile.Size.Height / 2)) + tile.Size.Height;
+            }
+        }
+
+        private void bottomsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActorBase alignWith = _mostRecentlySelectedTile;
+            if (alignWith == null)
+            {
+                alignWith = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
+            }
+
+            if (alignWith == null)
+            {
+                return;
+            }
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true && o != alignWith).ToList();
+            foreach (var tile in selectedTiles)
+            {
+                tile.Y = (alignWith.BoundLocation.Y + alignWith.Size.Height) - (tile.Size.Height / 2);
+            }
+        }
+
+        private void leftSidesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActorBase alignWith = _mostRecentlySelectedTile;
+            if (alignWith == null)
+            {
+                alignWith = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
+            }
+
+            if (alignWith == null)
+            {
+                return;
+            }
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true && o != alignWith).ToList();
+            foreach (var tile in selectedTiles)
+            {
+                tile.X = (alignWith.BoundLocation.X - (tile.Size.Width / 2)) + tile.Size.Width;
+            }
+        }
+
+        private void rightSidesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+                        ActorBase alignWith = _mostRecentlySelectedTile;
+            if (alignWith == null)
+            {
+                alignWith = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
+            }
+
+            if (alignWith == null)
+            {
+                return;
+            }
+
+            var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true && o != alignWith).ToList();
+            foreach (var tile in selectedTiles)
+            {
+                tile.X = (alignWith.BoundLocation.X + alignWith.Size.Width) - (tile.Size.Width / 2);
+            }
+        }
+
         #endregion
-
-        TreeNode GetRandomChildNode(TreeNode node)
-        {
-            if (node.Nodes.Count > 0)
-            {
-                int nodeIndex = MathUtility.RandomNumber(0, node.Nodes.Count);
-
-                if (node.Nodes[nodeIndex].Nodes.Count > 0)
-                {
-                    return GetRandomChildNode(node.Nodes[nodeIndex]);
-                }
-                else
-                {
-                    return node.Nodes[nodeIndex];
-                }
-            }
-
-            return node;
-        }
-
-        private ActorBase PlaceSelectedItem(double x, double y)
-        {
-            ActorBase insertedTile = null;
-
-            _hasBeenModified = true;
-
-            if (treeViewTiles.SelectedNode == null)
-            {
-                return null;
-            }
-
-            if (treeViewTiles.SelectedNode.Nodes.Count == 1 && treeViewTiles.SelectedNode.Nodes[0].Text == "<dummy>")
-            {
-                treeViewTiles.SelectedNode.Expand();
-            }
-
-
-            var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
-            if (selectedItem != null && selectedItem.Text != "<dummy>")
-            {
-                insertedTile = _core.Actors.AddNew<ActorBase>(x, y, PartialTilesPath + selectedItem.FullPath);
-
-                insertedTile.RefreshMetadata(false);
-
-                if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawnPoint)
-                {
-                    insertedTile.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder) + 1;
-
-                    var otherSpawnPoints = _core.Actors.Tiles.Where(o =>
-                        o.Meta.ActorClass == ActorClassName.ActorSpawnPoint && o.Meta.UID != insertedTile.Meta.UID).ToList();
-
-                    foreach (var tile in otherSpawnPoints)
-                    {
-                        DeleteTile(tile);
-                    }
-
-                    _core.PurgeAllDeletedTiles();
-                }
-
-                //No need to create GUIDs for every terrain tile.
-                if (insertedTile.Meta.ActorClass != ActorClassName.ActorTerrain)
-                {
-                    insertedTile.Meta.UID = Guid.NewGuid();
-                }
-
-                if (insertedTile.Meta.CanTakeDamage != null && ((bool)insertedTile.Meta.CanTakeDamage) == true)
-                {
-                    if (insertedTile.Meta.HitPoints == null)
-                    {
-                        insertedTile.Meta.HitPoints = 10;
-                    }
-
-                    if (insertedTile.Meta.Experience == null)
-                    {
-                        insertedTile.Meta.Experience = 10;
-                    }
-                }
-
-                if (insertedTile.Meta.CanStack == true && insertedTile.Meta.Quantity == 0)
-                {
-                    insertedTile.Meta.Quantity = 1;
-                }
-
-                lastPlacedItemSize = insertedTile.Size;
-                drawLastLocation = new Point<double>(x, y);
-            }
-
-            return insertedTile;
-        }
-
-        private void EditorContainer(Guid containerId)
-        {
-            using (var form = new FormEditContainer(_core, containerId))
-            {
-                form.ShowDialog();
-            }
-        }
-
-        bool TrySave()
-        {
-            //If we already have an open file, then just save it.
-            if (string.IsNullOrWhiteSpace(_currentMapFilename) == false)
-            {
-                _core.PushLevelAndSave(_currentMapFilename);
-                FormWelcome.AddToRecentList(_currentMapFilename);
-                _hasBeenModified = false;
-                return true;
-            }
-            else //If we do not have a current open file, then we need to "Save As".
-            {
-                return SaveAs();
-            }
-        }
-
-        bool SaveAs()
-        {
-            using (var dialog = new SaveFileDialog())
-            {
-                dialog.FileName = $"Newfile {_newFilenameIncrement++}";
-                dialog.Filter = "Rougue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    _currentMapFilename = dialog.FileName;
-                    _core.PushLevelAndSave(_currentMapFilename);
-                    FormWelcome.AddToRecentList(_currentMapFilename);
-                    _hasBeenModified = false;
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 }
+

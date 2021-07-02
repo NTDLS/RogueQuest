@@ -374,6 +374,16 @@ namespace Library.Engine
             return this.Bounds.IntersectsWith(alteredHitBox);
         }
 
+        public bool Intersects(ActorBase with, int slop = 0)
+        {
+            var alteredHitBox = new RectangleF(
+                (float)(with.BoundLocation.X - slop),
+                (float)(with.BoundLocation.Y - slop),
+                (float)(with.Size.Width + (slop * 2)), (float)(with.Size.Height + (slop * 2)));
+
+            return this.Bounds.IntersectsWith(alteredHitBox);
+        }
+
         private Point<double> _location = new Point<double>();
 
         /// <summary>
