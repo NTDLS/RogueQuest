@@ -45,7 +45,7 @@ namespace ScenarioEdit
         private Rectangle? shapeSelectionRect = null;
         private ImageList _assetBrowserImageList = new ImageList();
         private Point _lastMouseLocation = new Point();
-        private List<ActorBase> _clipboardTiles = new List<ActorBase>();
+        
 
         #region Settings.
 
@@ -147,6 +147,7 @@ namespace ScenarioEdit
             toolStrip.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             treeViewTiles.PreviewKeyDown += drawingsurface_PreviewKeyDown;
 
+            editSelectionToolStripMenuItem.Click += editSelectionStripMenuItem_Click;
             toolStripButtonInsertMode.Click += ToolStripButtonInsertMode_Click;
             toolStripButtonSelectMode.Click += ToolStripButtonSelectMode_Click;
             saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
@@ -1382,14 +1383,14 @@ namespace ScenarioEdit
         {
             ClearMultiSelection();
 
-            if (_clipboardTiles.Count > 0)
+            if (Singletons.ClipboardTiles.Count > 0)
             {
-                var firstTile = _clipboardTiles.First();
+                var firstTile = Singletons.ClipboardTiles.First();
 
                 int deltaX = (int)(_core.Display.BackgroundOffset.X + _lastMouseLocation.X - firstTile.X);
                 int deltaY = (int)(_core.Display.BackgroundOffset.Y + _lastMouseLocation.Y - firstTile.Y);
 
-                foreach (var tile in _clipboardTiles)
+                foreach (var tile in Singletons.ClipboardTiles)
                 {
                     tile.SelectedHighlight = false;
 
@@ -1406,24 +1407,23 @@ namespace ScenarioEdit
 
         private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _clipboardTiles.Clear();
+            Singletons.ClipboardTiles.Clear();
 
             var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             if (selectedTiles.Count > 0)
             {
-                _clipboardTiles.AddRange(selectedTiles.Select(o => o.Clone()));
+                Singletons.ClipboardTiles.AddRange(selectedTiles.Select(o => o.Clone()));
             }
-
         }
 
         private void CutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _clipboardTiles.Clear();
+            Singletons.ClipboardTiles.Clear();
 
             var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             if (selectedTiles.Count > 0)
             {
-                _clipboardTiles.AddRange(selectedTiles.Select(o => o.Clone()));
+                Singletons.ClipboardTiles.AddRange(selectedTiles.Select(o => o.Clone()));
             }
 
             selectedTiles.ForEach(o => o.QueueForDelete());
@@ -1473,6 +1473,16 @@ namespace ScenarioEdit
 
                         _core.Actors.Add(tile);
                     }
+                }
+            }
+        }
+
+        private void editSelectionStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormEditSelection(_core))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
                 }
             }
         }

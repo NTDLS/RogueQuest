@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FormEditSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormScenarioProperties.cs">
       <SubType>Form</SubType>
     </Compile>

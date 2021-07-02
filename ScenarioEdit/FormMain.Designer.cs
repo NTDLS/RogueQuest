@@ -68,6 +68,8 @@ namespace ScenarioEdit
             this.toolStripMenuItemChangeLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemDeleteLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemSetDefaultLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -81,11 +83,11 @@ namespace ScenarioEdit
             this.toolStripButtonSelectMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonShapeMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonInsertSwatch = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonMoveTileUp = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonInsertSwatch = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel2.SuspendLayout();
             this.splitContainerBody.SuspendLayout();
@@ -217,6 +219,7 @@ namespace ScenarioEdit
             this.editToolStripMenuItem,
             this.scenarioToolStripMenuItem,
             this.levelToolStripMenuItem,
+            this.selectionToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -423,6 +426,20 @@ namespace ScenarioEdit
             this.toolStripMenuItemSetDefaultLevel.Size = new System.Drawing.Size(161, 22);
             this.toolStripMenuItemSetDefaultLevel.Text = "Set Default Level";
             // 
+            // selectionToolStripMenuItem
+            // 
+            this.selectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.editSelectionToolStripMenuItem});
+            this.selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
+            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.selectionToolStripMenuItem.Text = "Selection";
+            // 
+            // editSelectionToolStripMenuItem
+            // 
+            this.editSelectionToolStripMenuItem.Name = "editSelectionToolStripMenuItem";
+            this.editSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editSelectionToolStripMenuItem.Text = "Edit";
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -542,6 +559,15 @@ namespace ScenarioEdit
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 41);
             // 
+            // toolStripButtonInsertSwatch
+            // 
+            this.toolStripButtonInsertSwatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonInsertSwatch.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonInsertSwatch.Image")));
+            this.toolStripButtonInsertSwatch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonInsertSwatch.Name = "toolStripButtonInsertSwatch";
+            this.toolStripButtonInsertSwatch.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonInsertSwatch.Text = "Insert Swatch";
+            // 
             // toolStripButtonMoveTileUp
             // 
             this.toolStripButtonMoveTileUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -575,15 +601,6 @@ namespace ScenarioEdit
             this.toolStripButtonPlayMap.Size = new System.Drawing.Size(23, 38);
             this.toolStripButtonPlayMap.Text = "Play Map";
             this.toolStripButtonPlayMap.ToolTipText = "Play Map";
-            // 
-            // toolStripButtonInsertSwatch
-            // 
-            this.toolStripButtonInsertSwatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonInsertSwatch.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonInsertSwatch.Image")));
-            this.toolStripButtonInsertSwatch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonInsertSwatch.Name = "toolStripButtonInsertSwatch";
-            this.toolStripButtonInsertSwatch.Size = new System.Drawing.Size(23, 38);
-            this.toolStripButtonInsertSwatch.Text = "Insert Swatch";
             // 
             // FormMain
             // 
@@ -679,6 +696,8 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemViewWorldItems;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemScenarioProperties;
         private System.Windows.Forms.ToolStripButton toolStripButtonInsertSwatch;
+        private System.Windows.Forms.ToolStripMenuItem selectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editSelectionToolStripMenuItem;
     }
 }
 

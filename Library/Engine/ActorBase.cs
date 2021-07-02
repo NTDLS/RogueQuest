@@ -216,15 +216,15 @@ namespace Library.Engine
                 dc.DrawImage(bitmap, ScreenBounds);
             }
 
-            if (HoverHighlight)
+            if (SelectedHighlight)
             {
-                Pen pen = new Pen(Color.Yellow, 1);
+                Pen pen = new Pen(Color.Red, 3);
                 dc.DrawRectangle(pen, ScreenBounds);
             }
 
-            if (SelectedHighlight)
+            if (HoverHighlight)
             {
-                Pen pen = new Pen(Color.Red, 2);
+                Pen pen = new Pen(Color.Yellow, 1);
                 dc.DrawRectangle(pen, ScreenBounds);
             }
         }
@@ -259,15 +259,15 @@ namespace Library.Engine
                 dc.DrawImage(bitmap, Bounds);
             }
 
-            if (HoverHighlight)
+            if (SelectedHighlight)
             {
-                Pen pen = new Pen(Color.Yellow, 1);
+                Pen pen = new Pen(Color.Red, 3);
                 dc.DrawRectangle(pen, BoundsI);
             }
 
-            if (SelectedHighlight)
+            if (HoverHighlight)
             {
-                Pen pen = new Pen(Color.Red, 2);
+                Pen pen = new Pen(Color.Yellow, 1);
                 dc.DrawRectangle(pen, BoundsI);
             }
         }
