@@ -15,6 +15,7 @@ namespace Library.Engine
         public Guid? UID { get; set; }
         public string Name { get; set; }
         public string Tag { get; set; }
+        public bool? SnapToGrid { get; set; }
         public int Quantity { get; set; } //Stacking because things like money only really matter in multiples.
         public bool? CanWalkOn { get; set; }
         public bool? CanTakeDamage { get; set; }
@@ -34,6 +35,15 @@ namespace Library.Engine
         public int? Dexterity { get; set; }
         public int? Strength { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ActorClassName? SpawnType { get; set; } //Used by the ActorSpawner.
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ActorSubType? SpawnSubType { get; set; } //Used by the ActorSpawner.
+        public int? MinLevel { get; set; } //Used by the ActorSpawner
+        public int? MaxLevel { get; set; } //Used by the ActorSpawner
+        public int? Level { get; set; } //Used to know when we should show items, enemies and what to populate in shops.
+        public int? Value { get; set; } //Rough monetary value of the item in a shop.
         /// <summary>
         /// Used for level warp tiles. This tells the engine which level to load.
         /// </summary>
@@ -79,6 +89,13 @@ namespace Library.Engine
             this.DamageAdditional = with.DamageAdditional ?? this.DamageAdditional;
             this.Strength = with.Strength ?? this.Strength;
             this.Dexterity = with.Dexterity ?? this.Dexterity;
+            this.SnapToGrid = with.SnapToGrid ?? this.SnapToGrid;
+            this.SpawnType = with.SpawnType ?? this.SpawnType;
+            this.SpawnSubType = with.SpawnSubType ?? this.SpawnSubType;
+            this.MinLevel = with.MinLevel ?? this.MinLevel;
+            this.MaxLevel = with.MaxLevel ?? this.MaxLevel;
+            this.Level = with.Level ?? this.Level;
+            this.Value = with.Value ?? this.Value;
         }
 
         /// <summary>

@@ -455,7 +455,7 @@ namespace Game
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_core.Player.Visible == false)
+            if (_core.Player == null || _core.Player.Visible == false)
             {
                 return; //Player is dead.
             }

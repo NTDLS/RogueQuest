@@ -81,6 +81,7 @@ namespace ScenarioEdit
             this.bottomsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.leftSidesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rightSidesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.snapToGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -445,7 +446,8 @@ namespace ScenarioEdit
             this.selectNoneToolStripMenuItem,
             this.invertSelectionToolStripMenuItem,
             this.expandSelectionToolStripMenuItem,
-            this.alignToolStripMenuItem});
+            this.alignToolStripMenuItem,
+            this.snapToGridToolStripMenuItem});
             this.selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
             this.selectionToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.selectionToolStripMenuItem.Text = "Selection";
@@ -504,44 +506,53 @@ namespace ScenarioEdit
             // verticalCenterToolStripMenuItem
             // 
             this.verticalCenterToolStripMenuItem.Name = "verticalCenterToolStripMenuItem";
-            this.verticalCenterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.verticalCenterToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.verticalCenterToolStripMenuItem.Text = "Vertical Center";
             this.verticalCenterToolStripMenuItem.Click += new System.EventHandler(this.verticalCenterToolStripMenuItem_Click);
             // 
             // horizontalCenterToolStripMenuItem
             // 
             this.horizontalCenterToolStripMenuItem.Name = "horizontalCenterToolStripMenuItem";
-            this.horizontalCenterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.horizontalCenterToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.horizontalCenterToolStripMenuItem.Text = "Horizontal Center";
             this.horizontalCenterToolStripMenuItem.Click += new System.EventHandler(this.horizontalCenterToolStripMenuItem_Click);
             // 
             // topsToolStripMenuItem
             // 
             this.topsToolStripMenuItem.Name = "topsToolStripMenuItem";
-            this.topsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.topsToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.topsToolStripMenuItem.Text = "Tops";
             this.topsToolStripMenuItem.Click += new System.EventHandler(this.topsToolStripMenuItem_Click);
             // 
             // bottomsToolStripMenuItem
             // 
             this.bottomsToolStripMenuItem.Name = "bottomsToolStripMenuItem";
-            this.bottomsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bottomsToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.bottomsToolStripMenuItem.Text = "Bottoms";
             this.bottomsToolStripMenuItem.Click += new System.EventHandler(this.bottomsToolStripMenuItem_Click);
             // 
             // leftSidesToolStripMenuItem
             // 
             this.leftSidesToolStripMenuItem.Name = "leftSidesToolStripMenuItem";
-            this.leftSidesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.leftSidesToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.leftSidesToolStripMenuItem.Text = "Left Sides";
             this.leftSidesToolStripMenuItem.Click += new System.EventHandler(this.leftSidesToolStripMenuItem_Click);
             // 
             // rightSidesToolStripMenuItem
             // 
             this.rightSidesToolStripMenuItem.Name = "rightSidesToolStripMenuItem";
-            this.rightSidesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.rightSidesToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.rightSidesToolStripMenuItem.Text = "Right Sides";
             this.rightSidesToolStripMenuItem.Click += new System.EventHandler(this.rightSidesToolStripMenuItem_Click);
+            // 
+            // snapToGridToolStripMenuItem
+            // 
+            this.snapToGridToolStripMenuItem.Checked = true;
+            this.snapToGridToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.snapToGridToolStripMenuItem.Name = "snapToGridToolStripMenuItem";
+            this.snapToGridToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.snapToGridToolStripMenuItem.Text = "Snap to Grid";
+            this.snapToGridToolStripMenuItem.Click += new System.EventHandler(this.snapToGridToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -812,6 +823,7 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripMenuItem bottomsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem leftSidesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rightSidesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem snapToGridToolStripMenuItem;
     }
 }
 

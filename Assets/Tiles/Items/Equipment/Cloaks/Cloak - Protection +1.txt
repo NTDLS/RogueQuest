@@ -3,5 +3,6 @@
   "SubType": "Garment",
   "AC":"2",
   "Weight":"15",
-  "Bulk":"40"
+  "Bulk":"40",
+  "Level":"2"
 }

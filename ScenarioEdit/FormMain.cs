@@ -34,6 +34,7 @@ namespace ScenarioEdit
             Select,
         }
 
+        private bool _snapToGrid = false;
         private ActorBase _mostRecentlySelectedTile = null;
         private Control drawingsurface = new Control();
         private bool _firstShown = true;
@@ -43,7 +44,8 @@ namespace ScenarioEdit
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
         private ToolTip _interrogationTip = new ToolTip();
-        private Rectangle? shapeSelectionRect = null;
+        private Rectangle? _shapeSelectionRect = null;
+        private Rectangle? _snapToGridRect = null;
         private ImageList _assetBrowserImageList = new ImageList();
         private Point _lastMouseLocation = new Point();
         private string _partialTilesPath = "Tiles\\";
@@ -130,8 +132,8 @@ namespace ScenarioEdit
             this.Shown += FormMain_Shown;
 
             splitContainerBody.Panel1.Controls.Add(drawingsurface);
-            drawingsurface.Dock = DockStyle.Fill;
 
+            drawingsurface.Dock = DockStyle.Fill;
             drawingsurface.BackColor = Color.FromArgb(60, 60, 60);
             drawingsurface.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             drawingsurface.Paint += new PaintEventHandler(drawingsurface_Paint);
@@ -148,7 +150,6 @@ namespace ScenarioEdit
             listViewProperties.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             toolStrip.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             treeViewTiles.PreviewKeyDown += drawingsurface_PreviewKeyDown;
-
             editSelectionToolStripMenuItem.Click += editSelectionStripMenuItem_Click;
             toolStripButtonInsertMode.Click += ToolStripButtonInsertMode_Click;
             toolStripButtonSelectMode.Click += ToolStripButtonSelectMode_Click;
@@ -174,10 +175,8 @@ namespace ScenarioEdit
             cutToolStripMenuItem.Click += CutToolStripMenuItem_Click;
             copyToolStripMenuItem.Click += CopyToolStripMenuItem_Click;
             pasteToolStripMenuItem.Click += PasteToolStripMenuItem_Click;
-
             toolStripMenuItemAddLevel.Click += ToolStripMenuItemAddLevel_Click;
             toolStripMenuItemChangeLevel.Click += ToolStripMenuItemChangeLevel_Click;
-
             toolStripMenuItemSetDefaultLevel.Click += ToolStripMenuItemSetDefaultLevel_Click;
             toolStripMenuItemDeleteLevel.Click += ToolStripMenuItemDeleteLevel_Click;
             toolStripMenuItemViewWorldItems.Click += ToolStripMenuItemViewWorldItems_Click;
@@ -331,7 +330,19 @@ namespace ScenarioEdit
 
                 insertedTile.RefreshMetadata(false);
 
-                if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawnPoint)
+                if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawner)
+                {
+                    //We do not default thses in the meta data files becaue a refresh of meta data would wipe them out. :(
+                    if (insertedTile.Meta.MinLevel == null)
+                    {
+                        insertedTile.Meta.MinLevel = 0;
+                    }
+                    if (insertedTile.Meta.MaxLevel == null)
+                    {
+                        insertedTile.Meta.MaxLevel = 1;
+                    }
+                }
+                else if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawnPoint)
                 {
                     insertedTile.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder) + 1;
 
@@ -410,6 +421,8 @@ namespace ScenarioEdit
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
+                    _core.Materials = EnumFlatMaterials();
+
                     _currentMapFilename = dialog.FileName;
                     _core.PushLevelAndSave(_currentMapFilename);
                     FormWelcome.AddToRecentList(_currentMapFilename);
@@ -420,8 +433,73 @@ namespace ScenarioEdit
             return false;
         }
 
+        private List<TileIdentifier> EnumFlatMaterials()
+        {
+            List<TileIdentifier> materials = new List<TileIdentifier>();
+
+            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath))
+            {
+                var directory = Path.GetFileName(d);
+                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                {
+                    continue;
+                }
+
+                materials.AddRange(EnumFlatMaterials(directory));
+            }
+
+            return materials;
+        }
+
+        private List<TileIdentifier> EnumFlatMaterials(string partialPath)
+        {
+            List<TileIdentifier> materials = new List<TileIdentifier>();
+
+            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath + partialPath))
+            {
+                var directory = Path.GetFileName(d);
+                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                {
+                    continue;
+                }
+
+                materials.AddRange(EnumFlatMaterials(partialPath + "\\" + directory));
+            }
+
+            foreach (var f in Directory.GetFiles(Constants.BaseAssetPath + _partialTilesPath + partialPath, "*.png"))
+            {
+                if (Path.GetFileName(f).StartsWith("@"))
+                {
+                    continue;
+                }
+                var file = new FileInfo(f);
+
+                string tilePath = $"{_partialTilesPath}{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
+
+                var meta = TileMetadata.GetFreshMetadata(tilePath);
+
+                materials.Add(new TileIdentifier(tilePath, meta));
+            }
+
+            return materials;
+        }
 
         #region Menu Clicks.
+
+        private void snapToGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _snapToGrid = !_snapToGrid;
+            snapToGridToolStripMenuItem.Checked = _snapToGrid;
+
+            if (_snapToGridRect != null)
+            {
+                drawingsurface.Invalidate(new Rectangle(
+                    ((Rectangle)_snapToGridRect).X - 2,
+                    ((Rectangle)_snapToGridRect).Y - 2,
+                    ((Rectangle)_snapToGridRect).Width + 4,
+                    ((Rectangle)_snapToGridRect).Height + 4));
+            }
+        }
 
         private void ToolStripMenuItemScenarioProperties_Click(object sender, EventArgs e)
         {
@@ -850,24 +928,45 @@ namespace ScenarioEdit
                 }
             }
 
-            if (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
-            {
-                shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
-            }
 
-            if (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+            if (
+                (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
+                || (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
+                || (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
+                )
             {
-                shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
+                double modX = e.X % 32;
+                double modY = e.Y % 32;
+                _snapToGridRect = new Rectangle((int)(e.X - modX), (int)(e.Y - modY), 32, 32);
+
+                if (_snapToGrid && _snapToGridRect != null &&
+                    (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
+                {
+                    shapeInsertStartMousePosition = new Point<double>(((Rectangle)_snapToGridRect).X, ((Rectangle)_snapToGridRect).Y);
+                }
+                else
+                {
+                    shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
+                }
             }
 
             if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
             {
                 //Single item placement with left button.
-                insertStartMousePosition = new Point<double>(e.X, e.Y);
 
                 ClearMultiSelection();
 
-                var placedItem = PlaceSelectedItem(x, y);
+                double placeX = x;
+                double placeY = y;
+
+                if (_snapToGrid && _snapToGridRect != null &&
+                    (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
+                {
+                    placeX = ((Rectangle)_snapToGridRect).X + 16;
+                    placeY = ((Rectangle)_snapToGridRect).Y + 16;
+                }
+
+                var placedItem = PlaceSelectedItem(placeX, placeY);
                 if (placedItem != null)
                 {
                     placedItem.SelectedHighlight = true;
@@ -909,6 +1008,13 @@ namespace ScenarioEdit
 
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
 
+            if (hoverTile != null)
+            {
+                listViewProperties.Tag = hoverTile;
+            }
+
+            PopulateSelectedItemProperties();
+
             //Single item deletion with right button.
             if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
             {
@@ -926,7 +1032,15 @@ namespace ScenarioEdit
 
             e.Graphics.DrawImage(image, 0, 0);
 
-            if (shapeSelectionRect != null)
+            if (_snapToGrid && _snapToGridRect != null &&
+                (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
+            {
+                Pen pen = new Pen(Color.Pink, 2);
+
+                e.Graphics.DrawRectangle(pen, (Rectangle)_snapToGridRect);
+            }
+
+            if (_shapeSelectionRect != null)
             {
                 Pen pen = new Pen(Color.Yellow, 2);
 
@@ -935,7 +1049,7 @@ namespace ScenarioEdit
                     pen = new Pen(Color.Red, 2);
                 }
 
-                e.Graphics.DrawRectangle(pen, (Rectangle)shapeSelectionRect);
+                e.Graphics.DrawRectangle(pen, (Rectangle)_shapeSelectionRect);
             }
         }
 
@@ -946,6 +1060,29 @@ namespace ScenarioEdit
 
             _lastMouseLocation.X = (int)e.X;
             _lastMouseLocation.Y = (int)e.Y;
+
+            if (_snapToGrid && (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
+            {
+                double modX = e.X % 32;
+                double modY = e.Y % 32;
+
+                if (_snapToGridRect != null)
+                {
+                    drawingsurface.Invalidate(new Rectangle(
+                        ((Rectangle)_snapToGridRect).X - 2,
+                        ((Rectangle)_snapToGridRect).Y - 2,
+                        ((Rectangle)_snapToGridRect).Width + 4,
+                        ((Rectangle)_snapToGridRect).Height + 4));
+                }
+
+                _snapToGridRect = new Rectangle((int)(e.X - modX), (int)(e.Y - modY), 32, 32);
+
+                drawingsurface.Invalidate(new Rectangle(
+                    ((Rectangle)_snapToGridRect).X - 2,
+                    ((Rectangle)_snapToGridRect).Y - 2,
+                    ((Rectangle)_snapToGridRect).Width + 4,
+                    ((Rectangle)_snapToGridRect).Height + 4));
+            }
 
             toolStripStatusLabelMouseXY.Text = $"{x}x,{y}y";
 
@@ -999,13 +1136,27 @@ namespace ScenarioEdit
                 if ((CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
                     || (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right))
                 {
-                    shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
-                                        (int)shapeInsertStartMousePosition.X,
-                                        (int)shapeInsertStartMousePosition.Y,
-                                        (int)(e.X - shapeInsertStartMousePosition.X),
-                                        (int)(e.Y - shapeInsertStartMousePosition.Y)));
+                    if (_snapToGrid)
+                    {
+                        double modX = (e.X - shapeInsertStartMousePosition.X) % 32;
+                        double modY = (e.Y - shapeInsertStartMousePosition.Y) % 32;
 
-                    var rc = (Rectangle)shapeSelectionRect;
+                        _shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
+                                            (int)shapeInsertStartMousePosition.X,
+                                            (int)shapeInsertStartMousePosition.Y,
+                                            ((int)(e.X - shapeInsertStartMousePosition.X) - (int)modX) + 32,
+                                            ((int)(e.Y - shapeInsertStartMousePosition.Y) - (int)modY) + 32));
+                    }
+                    else
+                    {
+                        _shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
+                                            (int)shapeInsertStartMousePosition.X,
+                                            (int)shapeInsertStartMousePosition.Y,
+                                            (int)(e.X - shapeInsertStartMousePosition.X),
+                                            (int)(e.Y - shapeInsertStartMousePosition.Y)));
+                    }
+
+                    var rc = (Rectangle)_shapeSelectionRect;
                     drawingsurface.Invalidate();
                     toolStripStatusLabelDebug.Text = $"{rc.X}x,{rc.Y}y->{rc.Width}x,{rc.Height}y";
 
@@ -1037,7 +1188,17 @@ namespace ScenarioEdit
                         if (Math.Abs(drawDeltaX) > lastPlacedItemSize.Width - tilePaintOverlap
                             || Math.Abs(drawDeltaY) > lastPlacedItemSize.Height - tilePaintOverlap)
                         {
-                            PlaceSelectedItem(x, y);
+                            double placeX = x;
+                            double placeY = y;
+
+                            if (_snapToGrid && _snapToGridRect != null &&
+                                (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
+                            {
+                                placeX = ((Rectangle)_snapToGridRect).X + 16;
+                                placeY = ((Rectangle)_snapToGridRect).Y + 16;
+                            }
+
+                            PlaceSelectedItem(placeX, placeY);
                         }
                     }
                 }
@@ -1109,7 +1270,7 @@ namespace ScenarioEdit
             }
 
             if (
-                shapeSelectionRect != null &&
+                _shapeSelectionRect != null &&
                    (
                         (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
                         || (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
@@ -1118,7 +1279,7 @@ namespace ScenarioEdit
             {
                 if (shapeFillMode == ShapeFillMode.Select)
                 {
-                    var rc = (Rectangle)shapeSelectionRect;
+                    var rc = (Rectangle)_shapeSelectionRect;
                     double x = rc.X + _core.Display.BackgroundOffset.X;
                     double y = rc.Y + _core.Display.BackgroundOffset.Y;
 
@@ -1143,7 +1304,14 @@ namespace ScenarioEdit
                 }
                 else if (shapeFillMode == ShapeFillMode.Insert)
                 {
-                    var rc = (Rectangle)shapeSelectionRect;
+                    var rc = (Rectangle)_shapeSelectionRect;
+
+                    if (_snapToGrid == true)
+                    {
+                        rc.X += 16;
+                        rc.Y += 16;
+                    }
+
                     double x = rc.X + _core.Display.BackgroundOffset.X;
                     double y = rc.Y + _core.Display.BackgroundOffset.Y;
 
@@ -1158,7 +1326,7 @@ namespace ScenarioEdit
                                 var placedTile = PlaceSelectedItem(x + px, y + py);
                                 if (placedTile == null) //No tiles are selected in the explorer.
                                 {
-                                    shapeSelectionRect = null;
+                                    _shapeSelectionRect = null;
                                     drawingsurface.Invalidate();
                                     return;
                                 }
@@ -1176,7 +1344,7 @@ namespace ScenarioEdit
                 }
                 else if (shapeFillMode == ShapeFillMode.Delete)
                 {
-                    var rc = (Rectangle)shapeSelectionRect;
+                    var rc = (Rectangle)_shapeSelectionRect;
                     double x = rc.X + _core.Display.BackgroundOffset.X;
                     double y = rc.Y + _core.Display.BackgroundOffset.Y;
 
@@ -1188,7 +1356,7 @@ namespace ScenarioEdit
                     }
                 }
 
-                shapeSelectionRect = null;
+                _shapeSelectionRect = null;
                 drawingsurface.Invalidate();
             }
         }
@@ -1323,6 +1491,22 @@ namespace ScenarioEdit
                                 {
                                     selectedTile.Meta.Name = dialog.PropertyValue;
                                 }
+                                else if (selectedRow.Text == "Min level")
+                                {
+                                    selectedTile.Meta.MaxLevel = int.Parse(dialog.PropertyValue);
+                                }
+                                else if (selectedRow.Text == "Max level")
+                                {
+                                    selectedTile.Meta.MaxLevel = int.Parse(dialog.PropertyValue);
+                                }
+                                //else if (selectedRow.Text == "Spawn Type")
+                                //{
+                                //    selectedTile.Meta.SpawnType = dialog.PropertyValue;
+                                //}
+                                //else if (selectedRow.Text == "Spawn Sub-Type")
+                                //{
+                                //    selectedTile.Meta.SpawnSubType = dialog.PropertyValue;
+                                //}
                                 else if (selectedRow.Text == "Tag")
                                 {
                                     selectedTile.Meta.Tag = dialog.PropertyValue;
@@ -1419,10 +1603,24 @@ namespace ScenarioEdit
                 listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
                 listViewProperties.Items.Add("Actor Class").SubItems.Add(selectedTile.Meta?.ActorClass.ToString());
                 listViewProperties.Items.Add("Sub Type").SubItems.Add(selectedTile.Meta?.SubType.ToString());
-                listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
-                listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
                 listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
                 listViewProperties.Items.Add("Size").SubItems.Add(selectedTile.Size.ToString());
+
+                if (selectedTile.Meta.ActorClass != ActorClassName.ActorSpawner
+                    && selectedTile.Meta.ActorClass != ActorClassName.ActorSpawnPoint
+                    && selectedTile.Meta.ActorClass != ActorClassName.ActorLevelWarp)
+                {
+                    listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
+                    listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
+                }
+
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorSpawner)
+                {
+                    listViewProperties.Items.Add("Min level").SubItems.Add(selectedTile.Meta?.MinLevel.ToString());
+                    listViewProperties.Items.Add("Max level").SubItems.Add(selectedTile.Meta?.MaxLevel.ToString());
+                    listViewProperties.Items.Add("Spawn Type").SubItems.Add(selectedTile.Meta.SpawnType.ToString());
+                    //listViewProperties.Items.Add("Spawn Sub-Type").SubItems.Add(selectedTile.Meta.SpawnSubType.ToString());
+                }
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorFriendyBeing
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing

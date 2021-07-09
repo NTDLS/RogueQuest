@@ -2,5 +2,6 @@
   "CanTakeDamage": "False",
   "HitPoints": "0",
   "ActorClass": "ActorTerrain",
-  "CanWalkOk": "True"
+  "CanWalkOk": "True",
+  "SnapToGrid": "True"
 }

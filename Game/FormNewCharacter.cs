@@ -65,7 +65,6 @@ namespace Game
 
             buttonRandom_Click(null, null);
 
-
             ToolTip toolTip = new ToolTip() { AutoPopDelay = 0, InitialDelay = 0, ReshowDelay = 0, ShowAlways = true, };
 
             comboBoxScenario.DrawMode = DrawMode.OwnerDrawFixed;

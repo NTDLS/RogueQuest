@@ -551,6 +551,26 @@ namespace Library.Engine
         #endregion
 
 
+        public bool IsPointingAt( ActorBase atObj, double toleranceDegrees)
+        {
+            var deltaAngle = Math.Abs(MathUtility.DeltaAngle(this, atObj));
+            return deltaAngle <= toleranceDegrees || deltaAngle >= (360 - toleranceDegrees);
+        }
+
+        public bool IsPointingAt( ActorBase atObj, double toleranceDegrees, double maxDistance, double offsetAngle = 0)
+        {
+            var deltaAngle = Math.Abs(MathUtility.DeltaAngle(this, atObj, offsetAngle));
+            if (deltaAngle <= toleranceDegrees || deltaAngle >= (360 - toleranceDegrees))
+            {
+                double distance = MathUtility.DistanceTo(this, atObj);
+
+                return distance <= maxDistance;
+            }
+
+            return false;
+        }
+
+
         /// <summary>
         /// Reads metadata from the asset directories and refreshes the values stored with the actor.
         /// </summary>

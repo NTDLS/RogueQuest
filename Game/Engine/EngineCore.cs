@@ -73,15 +73,18 @@ namespace Game.Engine
             Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\@Player\{this.State.Character.Avatar}\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
-
-            this.Player.Meta = new TileMetadata()
-            {
-                ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
-                //Should we store the player stats here???
-            };
-
+            this.Player.Meta = GetPlayerMeta();
             this.Display.BackgroundOffset.Y = Player.Y / 2;
             this.Display.BackgroundOffset.X = Player.X / 2;
+        }
+
+        private TileMetadata GetPlayerMeta()
+        {
+            return new TileMetadata()
+            {
+                ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
+                CanWalkOn = false
+            };
         }
 
         public void NewGame(string scenarioFile, string characterName, int avatar,
@@ -121,15 +124,7 @@ namespace Game.Engine
             Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\@Player\{this.State.Character.Avatar}\Front 1");
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
-
-            this.Player.Meta = new TileMetadata()
-            {
-                ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
-                //Should we store the player stats here???
-            };
-
-            spawnPoint.Visible = false; //Keep the spawn point here so we can place the player over it if we ever come back to this level.
-
+            this.Player.Meta = GetPlayerMeta();
             this.Display.BackgroundOffset.Y = Player.Y / 2;
             this.Display.BackgroundOffset.X = Player.X / 2;
         }
@@ -179,11 +174,7 @@ namespace Game.Engine
                 Actors.AddNew<ActorPlayer>(spawnPoint.X, spawnPoint.Y, @$"Tiles\Special\@Player\{this.State.Character.Avatar}\Front 1");
                 this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
                 this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
-
-                this.Player.Meta = new TileMetadata()
-                {
-                    ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
-                };
+                this.Player.Meta = GetPlayerMeta();
             }
 
             this.Display.BackgroundOffset.Y = Player.Y / 2;

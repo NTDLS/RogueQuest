@@ -27,9 +27,10 @@
         ActorPlayer,
         ActorTerrain,
         ActorTextBlock,
-        ActorSpawnPoint,
+        ActorSpawnPoint, //This is where the player spawns on each level.
         ActorLevelWarp,
-        ActorDialog
+        ActorDialog,
+        ActorSpawner //This is used to spawn random actors.
     }
 
     public enum ActorSubType

@@ -6,5 +6,6 @@
   "Dexterity":"5",
   "Strength":"3",
   "DamageDice":"1",
-  "DamageDiceFaces":"5"
+  "DamageDiceFaces":"5",
+  "Level":"1"
 }

@@ -5,5 +5,6 @@
   "DamageDiceFaces":"10",
   "DamageAdditional":"2",
   "Weight":"120",
-  "Bulk":"180"
+  "Bulk":"180",
+  "Level":"28"
 }

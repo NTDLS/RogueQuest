@@ -3,5 +3,6 @@
   "SubType": "Armor",
   "AC":"11",
   "Weight":"50",
-  "Bulk":"240"
+  "Bulk":"240",
+  "Level":"1"
 }

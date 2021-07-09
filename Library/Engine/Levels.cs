@@ -27,7 +27,8 @@ namespace Library.Engine
             {
                 Collection = this.Collection,
                 State = Core.State,
-                Meta = Core.ScenarioMeta
+                Meta = Core.ScenarioMeta,
+                Materials = Core.Materials
             };
 
             saveFile.Meta.ModifiedDate = DateTime.Now;
@@ -61,6 +62,7 @@ namespace Library.Engine
 
             Core.State = saveFile.State;
             Core.ScenarioMeta = saveFile.Meta;
+            Core.Materials = saveFile.Materials;
 
             if (Core.State == null)
             {
@@ -208,6 +210,8 @@ namespace Library.Engine
             return chunks;
         }
 
+        private Assembly _gameAssembly = null;
+
         /// <summary>
         /// Decompresses a level from bytes and pushes it to the game tiles. This is how you change maps.
         /// </summary>
@@ -225,15 +229,16 @@ namespace Library.Engine
                 var json = Utility.Compress.Unzip(bytes);
                 var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(json);
 
-                Assembly gameAssembly = null;
-
-                AppDomain currentDomain = AppDomain.CurrentDomain;
-                var assemblies = currentDomain.GetAssemblies();
-                foreach (var assembly in assemblies)
+                if (_gameAssembly == null)
                 {
-                    if (assembly.FullName.StartsWith("Game,"))
+                    AppDomain currentDomain = AppDomain.CurrentDomain;
+                    var assemblies = currentDomain.GetAssemblies();
+                    foreach (var assembly in assemblies)
                     {
-                        gameAssembly = Assembly.Load("Game");
+                        if (assembly.FullName.StartsWith("Game,"))
+                        {
+                            _gameAssembly = Assembly.Load("Game");
+                        }
                     }
                 }
 
@@ -247,9 +252,10 @@ namespace Library.Engine
 
                         object[] param = { Core };
 
-                        if (gameAssembly != null)
+                        //If the game assempy is loaded them create the actual tile class.
+                        if (_gameAssembly != null)
                         {
-                            var tileType = gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
+                            var tileType = _gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
                             if (tileType != null)
                             {
                                 tile = (ActorBase)Activator.CreateInstance(tileType, param);
@@ -274,16 +280,74 @@ namespace Library.Engine
                             tile.RefreshMetadata(false);
                         }
 
-                        Core.Actors.Add(tile);
+                        if (_gameAssembly != null && tile.Meta.ActorClass == Types.ActorClassName.ActorSpawner)
+                        {
+                            tile = InsertSpawnedTile(tile);
+                        }
+
+                        if (tile != null)
+                        {
+                            Core.Actors.Add(tile);
+                        }
                     }
                     catch
                     {
                         failedToLoadTiles++;
                     }
+                }
+            }
+        }
 
+        private ActorBase InsertSpawnedTile(ActorBase spawner)
+        {
+            ActorBase tile = null;
+            TileIdentifier randomTile = null;
+
+            object[] param = { Core };
+
+            if (spawner.Meta.SpawnType == Types.ActorClassName.ActorHostileBeing)
+            {
+                var randos = Core.Materials.Where(o => o.Meta.ActorClass == spawner.Meta.SpawnType
+                    && o.Meta.Level >= (o.Meta.MinLevel ?? 1)
+                    && o.Meta.Level <= (o.Meta.MaxLevel ?? 1)).ToList();
+
+                if (randos.Count > 0)
+                {
+                    int rand = Utility.MathUtility.RandomNumber(0, randos.Count);
+                    randomTile = randos[rand];
+
+                    var tileType = _gameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
+
+                    tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                }
+                else
+                {
 
                 }
             }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            if (randomTile != null)
+            {
+                tile.SetImage(Constants.GetAssetPath($"{randomTile.TilePath}.png"));
+                tile.X = spawner.X;
+                tile.Y = spawner.Y;
+                tile.TilePath = randomTile.TilePath;
+                tile.Velocity.Angle.Degrees = tile.Velocity.Angle.Degrees;
+                tile.DrawOrder = spawner.DrawOrder;
+                tile.Meta = randomTile.Meta;
+
+                var ownedItems = Core.State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
+                foreach (var ownedItem in ownedItems)
+                {
+                    ownedItem.ContainerId = tile.Meta.UID;
+                }
+            }
+
+            return tile;
         }
     }
 }

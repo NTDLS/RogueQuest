@@ -1,0 +1,6 @@
+{
+  "CanTakeDamage": "True",
+  "ActorClass": "ActorSpawner",
+  "SpawnType": "ActorHostileBeing",
+  "IsContainer":"True"
+}

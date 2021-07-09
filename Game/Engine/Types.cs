@@ -10,6 +10,14 @@ namespace Game.Engine
 {
     public class Types
     {
+        public enum HitType
+        {
+            CriticalMiss,
+            Miss,
+            Hit,
+            CriticalHit
+        }
+
         public enum TickInputType
         {
             Movement,

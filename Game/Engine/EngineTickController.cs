@@ -16,7 +16,6 @@ namespace Game.Engine
     public class EngineTickController
     {
         private int _avatarAnimationFrame = 1;
-        private DateTime _dialogOpenTime;
 
         public EngineCore Core { get; private set; }
         public int TimePassed { get; set; }
@@ -323,14 +322,6 @@ namespace Game.Engine
             return appliedOffset;
         }
 
-        enum HitType
-        {
-            CriticalMiss,
-            Miss,
-            Hit,
-            CriticalHit
-        }
-
         private HitType CalculateHitType(int agressorDexterity, int victimAC)
         {
             //https://roll20.net/compendium/dnd5e/Items:Leather%20Armor/#h-Leather%20Armor
@@ -403,100 +394,13 @@ namespace Game.Engine
         public void HandleDialogInput()
         {
             //Dant want the player to accidently skip the dialog.
-            if ((DateTime.Now - _dialogOpenTime).TotalSeconds > 1)
+            if ((DateTime.Now - Dialogs.DialogOpenTime).TotalSeconds > 1)
             {
                 Core.Actors.Tiles.RemoveAll(o => o.Meta?.ActorClass == Library.Engine.Types.ActorClassName.ActorDialog);
                 Core.PurgeAllDeletedTiles();
                 Core.Display.DrawingSurface.Invalidate();
                 Core.State.IsDialogActive = false;
             }
-        }
-
-        private void DrawDialog(string msg)
-        {
-            Core.State.IsDialogActive = true;
-            _dialogOpenTime = DateTime.Now;
-
-            var brush = new SolidBrush(Color.Black);
-
-            ActorTextBlock textBlock = null;
-            int textSize = 20;
-
-            do
-            {
-                if (textBlock != null)
-                {
-                    textBlock.QueueForDelete();
-                }
-
-                textBlock = Core.AddNewTextBlock("Arial", brush, textSize, 0, 0, true, msg);
-                textSize -= 2;
-            }
-            while (textBlock.Size.Width > Core.Display.VisibleSize.Width - 40 && textSize > 5);
-
-            Core.PurgeAllDeletedTiles();
-
-            textBlock.X = (Core.Display.VisibleSize.Width / 2) - (textBlock.Size.Width / 2);
-            textBlock.Y = (Core.Display.VisibleSize.Height / 2) - (textBlock.Size.Height / 2);
-            textBlock.Invalidate();
-
-            textBlock.DrawOrder = 1010;
-
-            var dialogXWallE = textBlock.X + textBlock.Size.Width + 16;
-            var dialogYWallE = textBlock.Y - 16;
-
-            var dialogXWallW = textBlock.X - 16;
-            var dialogYWallW = textBlock.Y - 16;
-
-            var neCorner = Core.Actors.AddNew<ActorDialog>(dialogXWallE, dialogYWallE, @"Tiles\Special\@UI\Dialog\Dialog NE");
-            var nwCorner = Core.Actors.AddNew<ActorDialog>(dialogXWallW, dialogYWallW, @"Tiles\Special\@UI\Dialog\Dialog NW");
-
-            neCorner.DrawOrder = 1002;
-            nwCorner.DrawOrder = 1002;
-
-            ActorDialog lastEWall = null;
-            ActorDialog lastWWall = null;
-
-            for (double y = dialogYWallW + nwCorner.Size.Height; y < textBlock.Y + textBlock.Size.Height + 16;)
-            {
-                lastEWall = Core.Actors.AddNew<ActorDialog>(dialogXWallE, y, @"Tiles\Special\@UI\Dialog\Dialog E");
-                lastEWall.DrawOrder = 1001;
-                lastWWall = Core.Actors.AddNew<ActorDialog>(dialogXWallW, y, @"Tiles\Special\@UI\Dialog\Dialog W");
-                lastWWall.DrawOrder = 1001;
-                y += nwCorner.Size.Height;
-            }
-
-            var seCorner = Core.Actors.AddNew<ActorDialog>(lastEWall.X, lastEWall.Y + lastEWall.Size.Height, @"Tiles\Special\@UI\Dialog\Dialog SE");
-            var swCorner = Core.Actors.AddNew<ActorDialog>(lastWWall.X, lastWWall.Y + lastWWall.Size.Height, @"Tiles\Special\@UI\Dialog\Dialog SW");
-
-            seCorner.DrawOrder = 1002;
-            swCorner.DrawOrder = 1002;
-
-            for (double x = dialogXWallW + nwCorner.Size.Width; x < textBlock.X + textBlock.Size.Width + 16;)
-            {
-                var tile = Core.Actors.AddNew<ActorDialog>(x, neCorner.Y, @"Tiles\Special\@UI\Dialog\Dialog N");
-                tile.DrawOrder = 1001;
-                tile = Core.Actors.AddNew<ActorDialog>(x, swCorner.Y, @"Tiles\Special\@UI\Dialog\Dialog S");
-                tile.DrawOrder = 1001;
-                x += nwCorner.Size.Height;
-            }
-
-
-            for (double x = nwCorner.X + nwCorner.Size.Width; x < lastEWall.X;)
-            {
-                for (double y = nwCorner.Y + nwCorner.Size.Height; y < lastWWall.Y + lastWWall.Size.Height+ 16;)
-                {
-                    var fillTile = Core.Actors.AddNew<ActorDialog>(x, y, @"Tiles\Special\@UI\Dialog\Dialog Fill");
-
-                    fillTile.DrawOrder = 1000;
-
-                    y += nwCorner.Size.Height;
-                }
-                x += nwCorner.Size.Width;
-            }
-
-
-            Core.Display.DrawingSurface.Invalidate();
         }
 
         /// <summary>
@@ -509,7 +413,7 @@ namespace Game.Engine
             var somethingToSay = intersections.Where(o => string.IsNullOrEmpty(o.Meta.Dialog) == false).FirstOrDefault();
             if (somethingToSay != null)
             {
-                DrawDialog(somethingToSay.Meta.Dialog);
+                Dialogs.DrawDialog(Core, somethingToSay.Meta.Dialog);
 
                 if (somethingToSay.Meta.OnlyDialogOnce == true)
                 {
@@ -560,7 +464,17 @@ namespace Game.Engine
             }
 
             //Player attack other actor.
-            var actorToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).FirstOrDefault();
+            var actorsToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).ToList();
+            ActorBase actorToAttack = null;
+            foreach (var otherActor in actorsToAttack)
+            {
+                if (Core.Player.IsPointingAt(otherActor, 60))
+                {
+                    actorToAttack = otherActor;
+                    break;
+                }
+            }
+
             if (actorToAttack != null)
             {
                 //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
@@ -584,6 +498,7 @@ namespace Game.Engine
                         Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp and hits.", Color.DarkGreen);
                     }
 
+                    /*
                     if (actorToAttack.Hit(playerHitsFor))
                     {
                         int experience = 0;
@@ -603,6 +518,7 @@ namespace Game.Engine
 
                         Core.State.Character.Experience += experience;
                     }
+                    */
                 }
                 else if(hitType == HitType.CriticalMiss)
                 {
@@ -613,7 +529,6 @@ namespace Game.Engine
                     Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
                 }
             }
-
 
             if (Core.State.Character.Experience > Core.State.Character.NextLevelExperience)
             {
@@ -641,8 +556,8 @@ namespace Game.Engine
                         Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp and hits.", Color.DarkRed);
                     }
 
-                    Core.State.Character.AvailableHitpoints -= hostileHitsFor;
-                    if (Core.State.Character.AvailableHitpoints == 0)
+                    //Core.State.Character.AvailableHitpoints -= hostileHitsFor;
+                    if (Core.State.Character.AvailableHitpoints <= 0)
                     {
                         Core.Player.QueueForDelete();
                     }

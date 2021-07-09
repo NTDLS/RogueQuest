@@ -17,6 +17,10 @@ namespace Library.Engine
 
         public Levels Levels { get; set; }
         public GameState State { get; set; }
+        /// <summary>
+        /// A list of all materials in the tile library when this level was initially created. Good for populating stores, spawns and drops.
+        /// </summary>
+        public List<TileIdentifier> Materials { get; set; }
         public ScenarioMetaData ScenarioMeta { get; set; }
         public bool IsRendering { get; private set; }
         public bool IsRunning { get; private set; }

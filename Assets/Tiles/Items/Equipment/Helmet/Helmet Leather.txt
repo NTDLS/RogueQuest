@@ -3,5 +3,6 @@
   "SubType": "Helment",
   "AC":"1",
   "Weight":"5",
-  "Bulk":"5"
+  "Bulk":"5",
+  "Level":"1"
 }
