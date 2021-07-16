@@ -74,8 +74,8 @@ namespace Game.Engine
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
             this.Player.Meta = GetPlayerMeta();
-            this.Display.BackgroundOffset.Y = Player.Y / 2;
-            this.Display.BackgroundOffset.X = Player.X / 2;
+            this.Display.BackgroundOffset.Y = Player.Y - (this.Display.DrawingSurface.Height / 2);
+            this.Display.BackgroundOffset.X = Player.X - (this.Display.DrawingSurface.Width / 2);
         }
 
         private TileMetadata GetPlayerMeta()

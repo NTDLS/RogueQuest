@@ -1213,7 +1213,7 @@ namespace ScenarioEdit
                         selectedTiles.Add(lastHoverTile);
                     }
 
-                    if (selectedTiles.Count > 0)
+                    if (selectedTiles.Count > 0 && lastHoverTile != null)
                     {
                         int deltaX = (int)(lastHoverTile.X - x);
                         int deltaY = (int)(lastHoverTile.Y - y);

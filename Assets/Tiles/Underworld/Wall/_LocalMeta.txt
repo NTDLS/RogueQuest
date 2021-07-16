@@ -1,0 +1,4 @@
+{
+  "CanWalkOn": "False",
+  "ActorClass": "ActorBlockaid",
+}
