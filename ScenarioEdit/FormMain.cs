@@ -1379,7 +1379,7 @@ namespace ScenarioEdit
                 {
                     EditorContainer((Guid)hoverTile.Meta.UID);
                 }
-                else if (hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarp)
+                else if (hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarp || hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarpVisible)
                 {
                     using (var form = new FormSelectLevel(_core))
                     {
@@ -1608,7 +1608,8 @@ namespace ScenarioEdit
 
                 if (selectedTile.Meta.ActorClass != ActorClassName.ActorSpawner
                     && selectedTile.Meta.ActorClass != ActorClassName.ActorSpawnPoint
-                    && selectedTile.Meta.ActorClass != ActorClassName.ActorLevelWarp)
+                    && selectedTile.Meta.ActorClass != ActorClassName.ActorLevelWarp
+                    && selectedTile.Meta.ActorClass != ActorClassName.ActorLevelWarpVisible)
                 {
                     listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
                     listViewProperties.Items.Add("Angle").SubItems.Add(selectedTile.Velocity.Angle.Degrees.ToString());
@@ -1631,7 +1632,7 @@ namespace ScenarioEdit
                     listViewProperties.Items.Add("Only Dialog Once").SubItems.Add(selectedTile.Meta.OnlyDialogOnce.ToString());
                 }
 
-                if (selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarp)
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarp || selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible)
                 {
                     listViewProperties.Items.Add("Warp to Level").SubItems.Add(selectedTile.Meta?.LevelWarpName?.ToString());
                 }

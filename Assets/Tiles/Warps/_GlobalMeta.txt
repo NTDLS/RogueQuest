@@ -1,0 +1,4 @@
+{
+  "Name":"Level Warp",
+  "ActorClass": "ActorLevelWarpVisible"
+}

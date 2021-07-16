@@ -421,9 +421,10 @@ namespace Game.Engine
                 }
             }
 
-            if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp).Any())
+            if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).Any())
             {
-                var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp).First();
+                var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp
+                    || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).First();
 
                 Core.LogLine($"After a long travel you arrive in {warp.Meta.LevelWarpName}");
 
