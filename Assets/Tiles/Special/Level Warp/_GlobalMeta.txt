@@ -1,4 +1,0 @@
-{
-  "Name":"Level Warp",
-  "ActorClass": "ActorLevelWarp"
-}

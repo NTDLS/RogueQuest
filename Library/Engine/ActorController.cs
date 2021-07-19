@@ -38,7 +38,6 @@ namespace Library.Engine
 
         public void Render(Graphics dc)
         {
-
             lock (Core.CollectionSemaphore)
             {
                 List<ActorBase> renderTiles = new List<ActorBase>();
@@ -61,6 +60,8 @@ namespace Library.Engine
                     .Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder).ToList());
 
+                var player = renderTiles.Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorPlayer).FirstOrDefault();
+
                 foreach (var obj in renderTiles)
                 {
                     RectangleF window = new RectangleF(
@@ -69,9 +70,22 @@ namespace Library.Engine
                         Core.Display.DrawingSurface.Width,
                         Core.Display.DrawingSurface.Height);
 
+                    if (Core.BlindPlay == true && player != null && obj.DistanceTo(player) < Core.BlindPlayDistance)
+                    {
+                        if (obj.HasBeenViewed == false)
+                        {
+                            obj.Invalidate();
+                        }
+                        obj.HasBeenViewed = true;
+                    }
+
                     if (obj.AlwaysRender || window.IntersectsWith(obj.Bounds) || obj.DrawRealitiveToBackgroundOffset == false)
                     {
-                        Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);
+                        if (Core.BlindPlay == false || obj.HasBeenViewed == true
+                            || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog)
+                        {
+                            Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);
+                        }
                     }
                 }
             }

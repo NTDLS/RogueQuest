@@ -48,6 +48,8 @@ namespace Library.Engine
         /// Used for level warp tiles. This tells the engine which level to load.
         /// </summary>
         public string LevelWarpName { get; set; }
+        /// Used for level warp tiles. This tells the engine which tile to spawn to.
+        public Guid LevelWarpTargetTileUID { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorClassName? ActorClass { get; set; }

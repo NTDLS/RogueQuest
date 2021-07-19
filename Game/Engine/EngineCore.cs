@@ -52,11 +52,11 @@ namespace Game.Engine
             OnLog?.Invoke(this, "\r\n" + text, color);
         }
 
-        public void LevelWarp(string levelName)
+        public void LevelWarp(string levelName, Guid targetTileUID)
         {
             SelectLevel(levelName);
 
-            var spawnPoint = Actors.OfType<ActorSpawnPoint>().FirstOrDefault();
+            var spawnPoint = Actors.Tiles.Where(o => o.Meta.UID == targetTileUID).FirstOrDefault();
             if (spawnPoint == null)
             {
                 MessageBox.Show("This level contains no Spawn Point and cannot be played.");

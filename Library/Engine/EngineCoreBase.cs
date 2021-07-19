@@ -15,6 +15,12 @@ namespace Library.Engine
     {
         #region Public properties.
 
+        /// <summary>
+        /// Whether the map will be slowly revealed to the player.
+        /// </summary>
+        public bool BlindPlay { get; set; } = false;
+        public int BlindPlayDistance { get; set; } = 200;
+
         public Levels Levels { get; set; }
         public GameState State { get; set; }
         /// <summary>

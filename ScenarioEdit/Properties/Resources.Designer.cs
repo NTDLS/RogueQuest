@@ -73,6 +73,26 @@ namespace ScenarioEdit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Folder_Closed {
+            get {
+                object obj = ResourceManager.GetObject("Folder_Closed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Folder_Open {
+            get {
+                object obj = ResourceManager.GetObject("Folder_Open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SwatchTreeView_Folder {
             get {
                 object obj = ResourceManager.GetObject("SwatchTreeView_Folder", resourceCulture);

@@ -24,6 +24,9 @@
     <Compile Update="FormScenarioProperties.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormSelectLevelTile.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormWelcome.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -50,17 +53,38 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="FormSelectLevel - Copy %282%29 - Copy %282%29.resx">
+      <DependentUpon>FormSelectLevel.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy %282%29 - Copy - Copy.resx">
+      <DependentUpon>FormSelectLevel - Copy (2).resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="FormSelectLevel - Copy %282%29 - Copy.resx">
       <DependentUpon>FormSelectLevel - Copy (2).resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="FormSelectLevel - Copy %282%29.resx">
       <DependentUpon>FormSelectLevel.resx</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy %283%29 - Copy.resx">
+      <DependentUpon>FormSelectLevel.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="FormSelectLevel - Copy %283%29.resx">
       <DependentUpon>FormSelectLevel.resx</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy - Copy %282%29 - Copy.resx">
+      <DependentUpon>FormSelectLevel - Copy.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="FormSelectLevel - Copy - Copy %282%29.resx">
       <DependentUpon>FormSelectLevel - Copy.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy - Copy %283%29.resx">
+      <DependentUpon>FormSelectLevel.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy - Copy - Copy %282%29.resx">
+      <DependentUpon>FormSelectLevel - Copy.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormSelectLevel - Copy - Copy - Copy - Copy.resx">
+      <DependentUpon>FormSelectLevel - Copy - Copy.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="FormSelectLevel - Copy - Copy - Copy.resx">
       <DependentUpon>FormSelectLevel - Copy - Copy.resx</DependentUpon>

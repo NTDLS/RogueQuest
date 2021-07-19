@@ -1,6 +1,7 @@
 ﻿using Assets;
 using Library.Engine;
 using ScenarioEdit.Engine;
+using ScenarioEdit.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -150,7 +151,10 @@ namespace ScenarioEdit
         {
             ImageList imageList = new ImageList();
             treeViewTiles.ImageList = imageList;
-            CreateImageListAndAssets(imageList, null, Assets.Constants.BaseAssetPath, "Tiles\\Items");
+
+            imageList.Images.Add("<Folder>", Resources.SwatchTreeView_Folder);
+
+            CreateImageListAndAssets(imageList, null, Constants.BaseAssetPath, "Tiles\\Items");
             if (treeViewTiles.Nodes.Count > 0)
             {
                 treeViewTiles.Nodes[0].Expand();
@@ -163,11 +167,24 @@ namespace ScenarioEdit
 
             if (parent == null)
             {
-                node = treeViewTiles.Nodes.Add(Path.GetFileName(partialPath));
+                node = treeViewTiles.Nodes.Add(Path.GetFileName(partialPath), Path.GetFileName(partialPath), "<Folder>", "<Folder>");
             }
             else
             {
                 node = parent.Nodes.Add(Path.GetFileName(partialPath));
+            }
+
+            foreach (string d in Directory.GetDirectories(basePath + partialPath))
+            {
+                var directory = Path.GetFileName(d);
+                if (directory.StartsWith("@"))
+                {
+                    continue;
+                }
+
+                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
+                addedNode.ImageKey = "<Folder>";
+                addedNode.SelectedImageKey = "<Folder>";
             }
 
             foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
@@ -180,38 +197,12 @@ namespace ScenarioEdit
 
                 string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
 
-                imageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
+                if (imageList.Images.ContainsKey(fileKey) == false)
+                {
+                    imageList.Images.Add(fileKey, SpriteCache.GetBitmapCached(file.FullName));
+                }
 
                 node.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), fileKey, fileKey);
-            }
-
-            foreach (string d in Directory.GetDirectories(basePath + partialPath))
-            {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@"))
-                {
-                    continue;
-                }
-                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
-
-                //Set the folder image to the first image in the children.
-                TreeNode imageFind = addedNode;
-                while (String.IsNullOrWhiteSpace(imageFind.ImageKey))
-                {
-                    if (imageFind.Nodes.Count > 0)
-                    {
-                        imageFind = imageFind.Nodes[0];
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (imageFind != null)
-                {
-                    addedNode.ImageKey = imageFind.ImageKey;
-                    addedNode.SelectedImageKey = imageFind.SelectedImageKey;
-                }
             }
 
             return node;

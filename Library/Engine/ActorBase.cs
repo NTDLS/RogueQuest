@@ -16,6 +16,11 @@ namespace Library.Engine
         #region Public properties.
 
         /// <summary>
+        /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
+        /// </summary>
+        public bool HasBeenViewed { get; set; }
+
+        /// <summary>
         /// Tells us exactly which tile this is. For terrain, it could be so many - so this allows us to differentiate.
         /// </summary>
         public string TilePath { get; set; }
@@ -549,7 +554,6 @@ namespace Library.Engine
         }
 
         #endregion
-
 
         public bool IsPointingAt( ActorBase atObj, double toleranceDegrees)
         {

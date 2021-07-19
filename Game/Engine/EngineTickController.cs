@@ -421,14 +421,18 @@ namespace Game.Engine
                 }
             }
 
-            if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).Any())
+            if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
+            || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).Any())
             {
-                var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarp
+                var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
                     || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).First();
 
-                Core.LogLine($"After a long travel you arrive in {warp.Meta.LevelWarpName}");
+                if (string.IsNullOrEmpty(warp.Meta.LevelWarpName) == false)
+                {
+                    Core.LogLine($"After a long travel you arrive in {warp.Meta.LevelWarpName}");
 
-                Core.LevelWarp(warp.Meta.LevelWarpName);
+                    Core.LevelWarp(warp.Meta.LevelWarpName, warp.Meta.LevelWarpTargetTileUID);
+                }
 
                 return;
             }

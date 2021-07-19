@@ -49,6 +49,7 @@ namespace ScenarioEdit
         private ImageList _assetBrowserImageList = new ImageList();
         private Point _lastMouseLocation = new Point();
         private string _partialTilesPath = "Tiles\\";
+        private ActorBase _lastPropertiesTabClicked = null;
 
 
         #region Settings.
@@ -262,6 +263,12 @@ namespace ScenarioEdit
                     {
                         _currentMapFilename = form.SelectedFileName;
                         _core.LoadLevlesAndPopCurrent(_currentMapFilename);
+
+                        if (_core.Levels.Collection[_core.State.CurrentLevel].LastEditBackgroundOffset != null)
+                        {
+                            _core.Display.BackgroundOffset = _core.Levels.Collection[_core.State.CurrentLevel].LastEditBackgroundOffset;
+                        }
+
                         FormWelcome.AddToRecentList(_currentMapFilename);
                         _hasBeenModified = false;
                     }
@@ -349,11 +356,7 @@ namespace ScenarioEdit
                     var otherSpawnPoints = _core.Actors.Tiles.Where(o =>
                         o.Meta.ActorClass == ActorClassName.ActorSpawnPoint && o.Meta.UID != insertedTile.Meta.UID).ToList();
 
-                    foreach (var tile in otherSpawnPoints)
-                    {
-                        DeleteTile(tile);
-                    }
-
+                    _core.Actors.Tiles.ForEach(o => o.QueueForDelete());
                     _core.PurgeAllDeletedTiles();
                 }
 
@@ -554,6 +557,11 @@ namespace ScenarioEdit
                 {
                     int levelIndex = form.SelectedLevelIndex;
                     _core.SelectLevel(levelIndex);
+
+                    if (_core.Levels.Collection[levelIndex].LastEditBackgroundOffset != null)
+                    {
+                        _core.Display.BackgroundOffset = _core.Levels.Collection[levelIndex].LastEditBackgroundOffset;
+                    }
                 }
             }
         }
@@ -577,6 +585,7 @@ namespace ScenarioEdit
 
             if (result == DialogResult.Yes)
             {
+                _core.Materials = EnumFlatMaterials();
                 _core.ResetAllTilesMetadata();
                 MessageBox.Show("Complete.");
             }
@@ -675,6 +684,12 @@ namespace ScenarioEdit
                 {
                     _currentMapFilename = dialog.FileName;
                     _core.LoadLevlesAndPopCurrent(_currentMapFilename);
+
+                    if (_core.Levels.Collection[_core.State.CurrentLevel].LastEditBackgroundOffset != null)
+                    {
+                        _core.Display.BackgroundOffset = _core.Levels.Collection[_core.State.CurrentLevel].LastEditBackgroundOffset;
+                    }
+
                     FormWelcome.AddToRecentList(_currentMapFilename);
                     _hasBeenModified = false;
                 }
@@ -683,7 +698,7 @@ namespace ScenarioEdit
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TrySave();
+             TrySave();
         }
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -986,7 +1001,12 @@ namespace ScenarioEdit
                     hoverTile.SelectedHighlight = true;
                     _mostRecentlySelectedTile = hoverTile;
 
-                    PopulateSelectedItemProperties();
+                    //Dont populate properties with every click. Its slow.
+                    if (listViewProperties.Tag != _lastPropertiesTabClicked)
+                    {
+                        PopulateSelectedItemProperties();
+                        _lastPropertiesTabClicked = hoverTile;
+                    }
                 }
             }
         }
@@ -1013,7 +1033,12 @@ namespace ScenarioEdit
                 listViewProperties.Tag = hoverTile;
             }
 
-            PopulateSelectedItemProperties();
+            //Dont populate properties with every click. Its slow.
+            if (listViewProperties.Tag != _lastPropertiesTabClicked)
+            {
+                PopulateSelectedItemProperties();
+                _lastPropertiesTabClicked = hoverTile;
+            }
 
             //Single item deletion with right button.
             if (e.Button == MouseButtons.Right && CurrentPrimaryMode == PrimaryMode.Insert)
@@ -1246,7 +1271,11 @@ namespace ScenarioEdit
 
         private void drawingsurface_MouseUp(object sender, MouseEventArgs e)
         {
-            PopulateSelectedItemProperties();
+            //Dont populate properties with every click. Its slow.
+            if (listViewProperties.Tag != _lastPropertiesTabClicked)
+            {
+                PopulateSelectedItemProperties();
+            }
 
             if (shapeFillMode == ShapeFillMode.Select && (IsShiftDown() || IsControlDown()))
             {
@@ -1379,15 +1408,15 @@ namespace ScenarioEdit
                 {
                     EditorContainer((Guid)hoverTile.Meta.UID);
                 }
-                else if (hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarp || hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarpVisible)
+                else if (hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarpHidden
+                    || hoverTile.Meta?.ActorClass == ActorClassName.ActorLevelWarpVisible)
                 {
-                    using (var form = new FormSelectLevel(_core))
+                    using (var form = new FormSelectLevelTile(_core, new ActorClassName[] { ActorClassName.ActorWarpTarget }))
                     {
                         if (form.ShowDialog() == DialogResult.OK)
                         {
-                            int levelIndex = form.SelectedLevelIndex;
-                            var level = _core.Levels.ByIndex(levelIndex);
-                            hoverTile.Meta.LevelWarpName = level.Name;
+                            hoverTile.Meta.LevelWarpName = form.LevelName;
+                            hoverTile.Meta.LevelWarpTargetTileUID = (Guid)form.SelectedTile.Meta.UID;
                             PopulateSelectedItemProperties();
                         }
                     }
@@ -1434,15 +1463,16 @@ namespace ScenarioEdit
                             EditorContainer((Guid)selectedTile.Meta.UID);
                         }
                     }
-                    else if (selectedRow.Text == "Warp to Level")
+                    else if (selectedRow.Text == "Warp to Tile")
                     {
-                        using (var form = new FormSelectLevel(_core))
+
+
+                        using (var form = new FormSelectLevelTile(_core, new ActorClassName[] { ActorClassName.ActorWarpTarget }))
                         {
                             if (form.ShowDialog() == DialogResult.OK)
                             {
-                                int levelIndex = form.SelectedLevelIndex;
-                                var level = _core.Levels.ByIndex(levelIndex);
-                                selectedTile.Meta.LevelWarpName = level.Name;
+                                selectedTile.Meta.LevelWarpName = form.LevelName;
+                                selectedTile.Meta.LevelWarpTargetTileUID = (Guid)form.SelectedTile.Meta.UID;
                                 PopulateSelectedItemProperties();
                             }
                         }
@@ -1493,7 +1523,7 @@ namespace ScenarioEdit
                                 }
                                 else if (selectedRow.Text == "Min level")
                                 {
-                                    selectedTile.Meta.MaxLevel = int.Parse(dialog.PropertyValue);
+                                    selectedTile.Meta.MinLevel = int.Parse(dialog.PropertyValue);
                                 }
                                 else if (selectedRow.Text == "Max level")
                                 {
@@ -1608,7 +1638,7 @@ namespace ScenarioEdit
 
                 if (selectedTile.Meta.ActorClass != ActorClassName.ActorSpawner
                     && selectedTile.Meta.ActorClass != ActorClassName.ActorSpawnPoint
-                    && selectedTile.Meta.ActorClass != ActorClassName.ActorLevelWarp
+                    && selectedTile.Meta.ActorClass != ActorClassName.ActorLevelWarpHidden
                     && selectedTile.Meta.ActorClass != ActorClassName.ActorLevelWarpVisible)
                 {
                     listViewProperties.Items.Add("Can Walk On").SubItems.Add(selectedTile.Meta?.CanWalkOn.ToString());
@@ -1632,9 +1662,24 @@ namespace ScenarioEdit
                     listViewProperties.Items.Add("Only Dialog Once").SubItems.Add(selectedTile.Meta.OnlyDialogOnce.ToString());
                 }
 
-                if (selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarp || selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible)
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible)
                 {
-                    listViewProperties.Items.Add("Warp to Level").SubItems.Add(selectedTile.Meta?.LevelWarpName?.ToString());
+                    string spawnTargetDisplay = "<orphaned>";
+
+                    int levelIndex = _core.Levels.GetIndex(selectedTile.Meta.LevelWarpName);
+                    if (levelIndex >= 0)
+                    {
+                        var levelChunks = _core.Levels.GetChunks(levelIndex);
+
+                        var spawnTarget = levelChunks.Where(o => o.Meta.UID == selectedTile.Meta?.LevelWarpTargetTileUID).FirstOrDefault();
+                        if (spawnTarget != null)
+                        {
+                            spawnTargetDisplay = $"Level: {_core.Levels.ByIndex(levelIndex).Name}, Tile: {spawnTarget.Meta?.Name}";
+                        }
+                    }
+
+                    listViewProperties.Items.Add("Warp to Tile").SubItems.Add(spawnTargetDisplay);
                 }
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing)

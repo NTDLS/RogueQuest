@@ -28,11 +28,12 @@
         ActorTerrain,
         ActorTextBlock,
         ActorSpawnPoint, //This is where the player spawns on each level.
-        ActorLevelWarp,
+        ActorLevelWarpHidden,
         ActorLevelWarpVisible,
         ActorDialog,
         ActorSpawner, //This is used to spawn random actors.
-        ActorBlockaid //This is like a wall. It cannot be intersected at all.
+        ActorBlockaid, //This is like a wall. It cannot be intersected at all.
+        ActorWarpTarget
     }
 
     public enum ActorSubType

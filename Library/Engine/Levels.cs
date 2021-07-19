@@ -176,6 +176,7 @@ namespace Library.Engine
             var compressed = Utility.Compress.Zip(json);
 
             this.Collection[levelNumber].Bytes = compressed;
+            Collection[levelNumber].LastEditBackgroundOffset = Core.Display.BackgroundOffset;
         }
 
         public List<LevelChunk> GetChunks(int levelNumber)
