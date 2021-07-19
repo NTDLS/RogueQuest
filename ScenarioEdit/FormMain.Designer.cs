@@ -90,6 +90,9 @@ namespace ScenarioEdit
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonRedo = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonUndo = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelMode = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonInsertMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSelectMode = new System.Windows.Forms.ToolStripButton();
@@ -577,6 +580,9 @@ namespace ScenarioEdit
             this.toolStripButtonOpen,
             this.toolStripButtonClose,
             this.toolStripSeparator2,
+            this.toolStripButtonUndo,
+            this.toolStripButtonRedo,
+            this.toolStripSeparator7,
             this.toolStripLabelMode,
             this.toolStripButtonInsertMode,
             this.toolStripButtonSelectMode,
@@ -632,6 +638,30 @@ namespace ScenarioEdit
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 41);
+            // 
+            // toolStripButtonRedo
+            // 
+            this.toolStripButtonRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonRedo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRedo.Image")));
+            this.toolStripButtonRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRedo.Name = "toolStripButtonRedo";
+            this.toolStripButtonRedo.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonRedo.Text = "Redo";
+            // 
+            // toolStripButtonUndo
+            // 
+            this.toolStripButtonUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUndo.Image")));
+            this.toolStripButtonUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonUndo.Name = "toolStripButtonUndo";
+            this.toolStripButtonUndo.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonUndo.Text = "Undo";
+            this.toolStripButtonUndo.ToolTipText = "Undo";
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 41);
             // 
             // toolStripLabelMode
             // 
@@ -824,6 +854,9 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripMenuItem leftSidesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rightSidesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem snapToGridToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripButtonRedo;
+        private System.Windows.Forms.ToolStripButton toolStripButtonUndo;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
     }
 }
 

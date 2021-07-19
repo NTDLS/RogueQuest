@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static ScenarioEdit.UndoItem;
 
 namespace ScenarioEdit
 {
@@ -34,6 +35,7 @@ namespace ScenarioEdit
             Select,
         }
 
+        public UndoBuffer _undoBuffer { get; set; }
         private bool _snapToGrid = false;
         private ActorBase _mostRecentlySelectedTile = null;
         private Control drawingsurface = new Control();
@@ -50,7 +52,7 @@ namespace ScenarioEdit
         private Point _lastMouseLocation = new Point();
         private string _partialTilesPath = "Tiles\\";
         private ActorBase _lastPropertiesTabClicked = null;
-
+        private Point<double>? _moveTilesStartPosition = null;
 
         #region Settings.
 
@@ -181,12 +183,28 @@ namespace ScenarioEdit
             toolStripMenuItemSetDefaultLevel.Click += ToolStripMenuItemSetDefaultLevel_Click;
             toolStripMenuItemDeleteLevel.Click += ToolStripMenuItemDeleteLevel_Click;
             toolStripMenuItemViewWorldItems.Click += ToolStripMenuItemViewWorldItems_Click;
+            undoToolStripMenuItem.Click += UndoToolStripMenuItem_Click;
+            toolStripButtonUndo.Click += UndoToolStripMenuItem_Click;
+            redoToolStripMenuItem.Click += RedoToolStripMenuItem_Click;
+            toolStripButtonRedo.Click += RedoToolStripMenuItem_Click;
+
+            _undoBuffer = new UndoBuffer(_core);
 
             PopulateMaterials();
 
             ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
             NewToolStripMenuItem_Click(null, null);
+        }
+
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _undoBuffer.Rollforward();
+        }
+
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _undoBuffer.Rollback();
         }
 
         private void TreeViewTiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -329,13 +347,13 @@ namespace ScenarioEdit
                 treeViewTiles.SelectedNode.Expand();
             }
 
-
             var selectedItem = GetRandomChildNode(treeViewTiles.SelectedNode);
             if (selectedItem != null && selectedItem.Text != "<dummy>")
             {
                 insertedTile = _core.Actors.AddNew<ActorBase>(x, y, _partialTilesPath + selectedItem.FullPath);
-
                 insertedTile.RefreshMetadata(false);
+
+                _undoBuffer.Record(insertedTile, ActionPerformed.Created);
 
                 if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawner)
                 {
@@ -351,10 +369,12 @@ namespace ScenarioEdit
                 }
                 else if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawnPoint)
                 {
-                    insertedTile.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder) + 1;
+                    insertedTile.DrawOrder = _core.Actors.Tiles.Max(o => o.DrawOrder ?? 0) + 1;
 
                     var otherSpawnPoints = _core.Actors.Tiles.Where(o =>
                         o.Meta.ActorClass == ActorClassName.ActorSpawnPoint && o.Meta.UID != insertedTile.Meta.UID).ToList();
+
+                    _undoBuffer.Record(otherSpawnPoints, ActionPerformed.Deleted);
 
                     _core.Actors.Tiles.ForEach(o => o.QueueForDelete());
                     _core.PurgeAllDeletedTiles();
@@ -614,7 +634,7 @@ namespace ScenarioEdit
             var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             foreach (var tile in selectedTiles)
             {
-                tile.DrawOrder--;
+                tile.DrawOrder = (tile.DrawOrder ?? 0) - 1;
             }
         }
 
@@ -623,7 +643,7 @@ namespace ScenarioEdit
             var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             foreach (var tile in selectedTiles)
             {
-                tile.DrawOrder++;
+                tile.DrawOrder = (tile.DrawOrder ?? 0) + 1;
             }
         }
 
@@ -859,6 +879,9 @@ namespace ScenarioEdit
                 if (CurrentPrimaryMode == PrimaryMode.Select)
                 {
                     var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+
+                    _undoBuffer.Record(selectedTiles, ActionPerformed.Deleted);
+
                     foreach (var tile in selectedTiles)
                     {
                         DeleteTile(tile);
@@ -926,7 +949,7 @@ namespace ScenarioEdit
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
             if (e.Button == MouseButtons.Middle)
             {
@@ -995,6 +1018,9 @@ namespace ScenarioEdit
             {
                 if (hoverTile != null)
                 {
+                    //Dragging items:
+                    _moveTilesStartPosition = new Point<double>(hoverTile.X, hoverTile.ScreenY);
+
                     //Place the mouse over the exact center of the tile.
                     Win32.POINT p = new Win32.POINT((int)hoverTile.ScreenX, (int)hoverTile.ScreenY);
                     Win32.ClientToScreen(drawingsurface.Handle, ref p);
@@ -1028,7 +1054,7 @@ namespace ScenarioEdit
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
             if (hoverTile != null)
             {
@@ -1047,6 +1073,7 @@ namespace ScenarioEdit
             {
                 if (hoverTile != null)
                 {
+                    _undoBuffer.Record(hoverTile, ActionPerformed.Deleted);
                     DeleteTile(hoverTile);
                     _hasBeenModified = true;
                 }
@@ -1122,7 +1149,7 @@ namespace ScenarioEdit
             else
             {
                 var hoverTile = _core.Actors.Intersections(new Point<double>(x, y),
-                    new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+                    new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
                 if (e.Button == MouseButtons.None)
                 {
@@ -1264,6 +1291,7 @@ namespace ScenarioEdit
                 {
                     if (lastHoverTile != null)
                     {
+                        _undoBuffer.Record(lastHoverTile, ActionPerformed.Deleted);
                         DeleteTile(lastHoverTile);
                         _hasBeenModified = true;
                     }
@@ -1279,12 +1307,28 @@ namespace ScenarioEdit
                 PopulateSelectedItemProperties();
             }
 
+            if (_moveTilesStartPosition != null && lastHoverTile != null)
+            {
+                var selectedTiles = _core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
+
+                if (selectedTiles.Count == 0 && lastHoverTile != null)
+                {
+                    selectedTiles.Add(lastHoverTile);
+                }
+
+                Point<double> offset = new Point<double>(
+                    _moveTilesStartPosition.X - lastHoverTile.X,
+                    _moveTilesStartPosition.Y - lastHoverTile.ScreenY);
+
+                _undoBuffer.Record(selectedTiles, ActionPerformed.Moved, offset);
+            }
+
             if (shapeFillMode == ShapeFillMode.Select && (IsShiftDown() || IsControlDown()))
             {
                 double x = e.X + _core.Display.BackgroundOffset.X;
                 double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-                var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+                var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
                 if (hoverTile != null)
                 {
@@ -1381,6 +1425,8 @@ namespace ScenarioEdit
 
                     var intersections = _core.Actors.Intersections(x, y, rc.Width, rc.Height);
 
+                    _undoBuffer.Record(intersections, ActionPerformed.Deleted);
+
                     foreach (var obj in intersections)
                     {
                         DeleteTile(obj);
@@ -1397,7 +1443,7 @@ namespace ScenarioEdit
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
             if (hoverTile == null)
             {
@@ -1780,6 +1826,8 @@ namespace ScenarioEdit
                 Singletons.ClipboardTiles.AddRange(selectedTiles.Select(o => o.Clone()));
             }
 
+            _undoBuffer.Record(selectedTiles, ActionPerformed.Deleted);
+
             selectedTiles.ForEach(o => o.QueueForDelete());
             _core.PurgeAllDeletedTiles();
         }
@@ -1841,7 +1889,6 @@ namespace ScenarioEdit
                 }
             }
         }
-
 
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
         {

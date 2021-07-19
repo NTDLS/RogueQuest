@@ -345,6 +345,10 @@ namespace Library.Engine
             {
                 return _readyForDeletion;
             }
+            set
+            {
+                _readyForDeletion = value;
+            }
         }
 
         #endregion
