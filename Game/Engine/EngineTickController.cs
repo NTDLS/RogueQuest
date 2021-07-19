@@ -427,11 +427,10 @@ namespace Game.Engine
                 var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
                     || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).First();
 
-                if (string.IsNullOrEmpty(warp.Meta.LevelWarpName) == false)
+                if (string.IsNullOrEmpty(warp.Meta.LevelWarpName) == false && warp.Meta.LevelWarpTargetTileUID != null)
                 {
                     Core.LogLine($"After a long travel you arrive in {warp.Meta.LevelWarpName}");
-
-                    Core.LevelWarp(warp.Meta.LevelWarpName, warp.Meta.LevelWarpTargetTileUID);
+                    Core.LevelWarp(warp.Meta.LevelWarpName, (Guid)warp.Meta.LevelWarpTargetTileUID);
                 }
 
                 return;

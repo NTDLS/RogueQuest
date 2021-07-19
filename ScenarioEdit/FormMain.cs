@@ -481,6 +481,8 @@ namespace ScenarioEdit
 
                 var meta = TileMetadata.GetFreshMetadata(tilePath);
 
+                meta.UID = null; //We do not need unique ids for materials. We reference these by path and the UIDs could change which would be baaaaad.
+
                 materials.Add(new TileIdentifier(tilePath, meta));
             }
 
@@ -1818,7 +1820,7 @@ namespace ScenarioEdit
                             Meta = chunk.Meta
                         };
 
-                        tile.Velocity.Angle.Degrees = chunk.Angle;
+                        tile.Velocity.Angle.Degrees = chunk.Angle ?? 0;
                         tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
 
                         tile.SelectedHighlight = true;

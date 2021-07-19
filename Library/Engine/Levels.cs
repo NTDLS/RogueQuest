@@ -33,9 +33,12 @@ namespace Library.Engine
 
             saveFile.Meta.ModifiedDate = DateTime.Now;
 
-            var json = JsonConvert.SerializeObject(saveFile);
+            var json = JsonConvert.SerializeObject(saveFile,
+                Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
             var compressed = Utility.Compress.Zip(json);
             System.IO.File.WriteAllBytes(fileName, compressed);
+            //System.IO.File.WriteAllText(fileName, json);
         }
 
         public static ScenarioMetaData GetMetadata(string fileName)
@@ -53,9 +56,8 @@ namespace Library.Engine
         public void Load(string fileName)
         {
             var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
-
             var json = Utility.Compress.Unzip(compressedSaveFile);
-
+            //string json = System.IO.File.ReadAllText(fileName);
             var saveFile = JsonConvert.DeserializeObject<SaveFile>(json);
 
             Collection = saveFile.Collection;
@@ -165,13 +167,14 @@ namespace Library.Engine
                     TilePath = obj.TilePath,
                     X = obj.X,
                     Y = obj.Y,
-                    Angle = obj.Velocity.Angle.Degrees,
-                    DrawOrder = obj.DrawOrder,
+                    Angle = obj.Velocity.Angle.Degrees == 0 ? null : obj.Velocity.Angle.Degrees,
+                    DrawOrder = obj.DrawOrder == 0 ? null : obj.DrawOrder,
                     Meta = obj.Meta
                 });
             }
 
-            var json = JsonConvert.SerializeObject(chunks);
+            var json = JsonConvert.SerializeObject(chunks,
+                Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
             var compressed = Utility.Compress.Zip(json);
 
@@ -272,9 +275,13 @@ namespace Library.Engine
                         tile.X = chunk.X;
                         tile.Y = chunk.Y;
                         tile.TilePath = chunk.TilePath;
-                        tile.Velocity.Angle.Degrees = chunk.Angle;
+                        tile.Velocity.Angle.Degrees = chunk.Angle ?? 0;
                         tile.DrawOrder = chunk.DrawOrder;
                         tile.Meta = chunk.Meta;
+
+                        if (string.IsNullOrEmpty(tile.TilePath))
+                        {
+                        }
 
                         if (refreshMetadata)
                         {

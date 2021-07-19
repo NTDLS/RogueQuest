@@ -14,6 +14,5 @@ namespace Library.Engine
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string FileName { get; set; }
-
     }
 }

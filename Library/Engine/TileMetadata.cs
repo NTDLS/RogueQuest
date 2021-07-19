@@ -9,62 +9,122 @@ namespace Library.Engine
 {
     public class TileMetadata
     {
-        /// <summary>
-        /// This is only populated for tiles that need it.
-        /// </summary>
-        public Guid? UID { get; set; }
-        public string Name { get; set; }
-        public string Tag { get; set; }
-        public bool? SnapToGrid { get; set; }
-        public int Quantity { get; set; } //Stacking because things like money only really matter in multiples.
-        public bool? CanWalkOn { get; set; }
-        public bool? CanTakeDamage { get; set; }
-        public int? Experience { get; set; }
-        public int? HitPoints { get; set; }
-        public int? AC { get; set; } //Armor Class. yay.
-        public int? DamageDice { get; set; }
-        public int? DamageDiceFaces { get; set; }
-        public int? DamageAdditional { get; set; }
-        public int? OriginalHitPoints { get; set; }
-        public bool? IsContainer { get; set; }
-        public bool? CanStack { get; set; }
-        public int? BulkCapacity { get; set; }
-        public int? WeightCapacity { get; set; }
-        public int? Weight { get; set; }
-        public int? Bulk { get; set; }
-        public int? Dexterity { get; set; }
-        public int? Strength { get; set; }
+        #region Backend fields.
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ActorClassName? SpawnType { get; set; } //Used by the ActorSpawner.
+        private Guid? _UID;
+        private string _Name;
+        private string _Tag;
+        private int? _Quantity; //Stacking because things like money only really matter in multiples.
+        private int? _Experience;
+        private int? _HitPoints;
+        private int? _AC; //Armor Class. yay.
+        private int? _DamageDice;
+        private int? _DamageDiceFaces;
+        private int? _DamageAdditional;
+        private int? _OriginalHitPoints;
+        private int? _BulkCapacity;
+        private int? _WeightCapacity;
+        private int? _Weight;
+        private int? _Bulk;
+        private int? _Dexterity;
+        private int? _Strength;
+        private ActorSubType? _SpawnSubType;
+        private string _Dialog;
+        private int? _MinLevel;
+        private int? _MaxLevel;
+        private int? _Level;
+        private int? _Value;
+        private string _LevelWarpName;
+        private Guid? _LevelWarpTargetTileUID;
+        private ActorSubType? _SubType;
+        private bool? _OnlyDialogOnce;
+        private bool? _IsContainer;
+        private bool? _CanStack;
+        private bool? _CanWalkOn;
+        private bool? _CanTakeDamage;
+        private bool? _SnapToGrid;
 
+        #endregion
+
+        // This is only populated for tiles that need it.
+        public Guid? UID { get { return _UID == Guid.Empty ? null : _UID; } set { _UID = value; } }
+
+        public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
+
+        public string Tag { get { return _Tag == string.Empty ? null : _Tag; } set { _Tag = value; } }
+
+        public bool? SnapToGrid { get { return _SnapToGrid == false ? null : _SnapToGrid; } set { _SnapToGrid = value; } }
+
+        //Stacking because things like money only really matter in multiples.
+        public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
+
+        public bool? CanWalkOn { get { return _CanWalkOn == false ? null : _CanWalkOn; } set { _CanWalkOn = value; } }
+
+        public bool? CanTakeDamage { get { return _CanTakeDamage == false ? null : _CanTakeDamage; } set { _CanTakeDamage = value; } }
+
+        public int? Experience { get { return _Experience == 0 ? null : _Experience; } set { _Experience = value; } }
+
+        public int? HitPoints { get { return _HitPoints == 0 ? null : _HitPoints; } set { _HitPoints = value; } }
+
+        public int? AC { get { return _AC == 0 ? null : _AC; } set { _AC = value; } }
+
+        public int? DamageDice { get { return _DamageDice == 0 ? null : _DamageDice; } set { _DamageDice = value; } }
+
+        public int? DamageDiceFaces { get { return _DamageDiceFaces == 0 ? null : _DamageDiceFaces; } set { _DamageDiceFaces = value; } }
+
+        public int? DamageAdditional { get { return _DamageAdditional == 0 ? null : _DamageAdditional; } set { _DamageAdditional = value; } }
+
+        public int? OriginalHitPoints { get { return _OriginalHitPoints == 0 ? null : _OriginalHitPoints; } set { _OriginalHitPoints = value; } }
+
+        public bool? IsContainer { get { return _IsContainer == false ? null : _IsContainer; } set { _IsContainer = value; } }
+
+        public bool? CanStack { get { return _CanStack == false ? null : _CanStack; } set { _CanStack = value; } }
+
+        public int? BulkCapacity { get { return _BulkCapacity == 0 ? null : _BulkCapacity; } set { _BulkCapacity = value; } }
+
+        public int? WeightCapacity { get { return _WeightCapacity == 0 ? null : _WeightCapacity; } set { _WeightCapacity = value; } }
+
+        public int? Weight { get { return _Weight == 0 ? null : _Weight; } set { _Weight = value; } }
+
+        public int? Bulk { get { return _Bulk == 0 ? null : _Bulk; } set { _Bulk = value; } }
+
+        public int? Dexterity { get { return _Dexterity == 0 ? null : _Dexterity; } set { _Dexterity = value; } }
+
+        public int? Strength { get { return _Strength == 0 ? null : _Strength; } set { _Strength = value; } }
+
+        //Used by the ActorSpawner
         [JsonConverter(typeof(StringEnumConverter))]
-        public ActorSubType? SpawnSubType { get; set; } //Used by the ActorSpawner.
-        public int? MinLevel { get; set; } //Used by the ActorSpawner
-        public int? MaxLevel { get; set; } //Used by the ActorSpawner
-        public int? Level { get; set; } //Used to know when we should show items, enemies and what to populate in shops.
-        public int? Value { get; set; } //Rough monetary value of the item in a shop.
-        /// <summary>
-        /// Used for level warp tiles. This tells the engine which level to load.
-        /// </summary>
-        public string LevelWarpName { get; set; }
+        public ActorClassName? SpawnType { get; set; }
+
+        //Used by the ActorSpawner
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ActorSubType? SpawnSubType { get { return _SpawnSubType ==  ActorSubType.Unspecified ? null : _SpawnSubType; } set { _SpawnSubType = value; } }
+
+        public int? MinLevel { get { return _MinLevel == 0 ? null : _MinLevel; } set { _MinLevel = value; } } //Used by the ActorSpawner
+
+        public int? MaxLevel { get { return _MaxLevel == 0 ? null : _MaxLevel; } set { _MaxLevel = value; } } //Used by the ActorSpawner
+
+        public int? Level { get { return _Level == 0 ? null : _Level; } set { _Level = value; } } //Used to know when we should show items, enemies and what to populate in shops.
+
+        public int? Value { get { return _Value == 0 ? null : _Value; } set { _Value = value; } } //Rough monetary value of the item in a shop.
+
+        // Used for level warp tiles. This tells the engine which level to load.
+        public string LevelWarpName { get { return _LevelWarpName == string.Empty ? null : _LevelWarpName; } set { _LevelWarpName = value; } }
+
         /// Used for level warp tiles. This tells the engine which tile to spawn to.
-        public Guid LevelWarpTargetTileUID { get; set; }
+        public Guid? LevelWarpTargetTileUID { get { return _LevelWarpTargetTileUID == Guid.Empty ? null : _LevelWarpTargetTileUID; } set { _LevelWarpTargetTileUID = value; } }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorClassName? ActorClass { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public ActorSubType? SubType { get; set; }
+        public ActorSubType? SubType { get { return _SubType == ActorSubType.Unspecified ? null : _SubType; } set { _SubType = value; } }
 
-        /// <summary>
-        /// This is what the object will say to the player when approached.
-        /// </summary>
-        public string Dialog { get; set; }
-        /// <summary>
-        /// Will the dialog be shown every time this tile is intersected?
-        /// </summary>
-        public bool? OnlyDialogOnce { get; set; }
+        // This is what the object will say to the player when approached.
+        public string Dialog { get { return _Dialog == string.Empty ? null : _Dialog; } set { _Dialog = value; } }
+
+        // Will the dialog be shown every time this tile is intersected?
+        public bool? OnlyDialogOnce { get { return _OnlyDialogOnce == false ? null : _OnlyDialogOnce; } set { _OnlyDialogOnce = value; } }
 
         public void OverrideWith(TileMetadata with)
         {

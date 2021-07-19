@@ -119,12 +119,15 @@ namespace ScenarioEdit
             }
         }
 
-        private void AddItemToContainer(string tilePath, int quantity)
+        private void AddItemToContainer(string tilePath, int ?quantity)
         {
             var metaData = TileMetadata.GetFreshMetadata(tilePath);
 
             ListViewItem item = new ListViewItem(metaData.Name);
-            item.SubItems.Add(quantity.ToString());
+            if (quantity != null)
+            {
+                item.SubItems.Add(quantity.ToString());
+            }
             item.ImageKey = tilePath;
             item.Tag = tilePath;
             listViewContainer.Items.Add(item);

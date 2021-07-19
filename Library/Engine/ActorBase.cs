@@ -277,12 +277,12 @@ namespace Library.Engine
             }
         }
 
-        private int _drawOrder = 0;
-        public int DrawOrder
+        private int? _drawOrder = 0;
+        public int? DrawOrder
         {
             get
             {
-                return _drawOrder;
+                return _drawOrder == 0 ? null : _drawOrder;
             }
             set
             {

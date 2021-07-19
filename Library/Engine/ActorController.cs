@@ -47,18 +47,18 @@ namespace Library.Engine
                         && o.Meta.ActorClass != Types.ActorClassName.ActorHostileBeing
                         && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
                         && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
-                    .OrderBy(o => o.DrawOrder).ToList());
+                    .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
                 renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
                     .Where(o => (o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
                         || o.Meta.ActorClass == Types.ActorClassName.ActorHostileBeing
                         || o.Meta.ActorClass == Types.ActorClassName.ActorPlayer)
                         && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
-                    .OrderBy(o => o.DrawOrder).ToList());
+                    .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
                 renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
                     .Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
-                    .OrderBy(o => o.DrawOrder).ToList());
+                    .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
                 var player = renderTiles.Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorPlayer).FirstOrDefault();
 

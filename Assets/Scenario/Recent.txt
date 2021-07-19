@@ -1,1 +1,1 @@
-["C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Test it like its HOT.rqs","C:\\NTDLS\\RougueQuest\\Assets\\Swatches\\Large Dungeon Seperator Walls Virt.rqs","C:\\NTDLS\\RougueQuest\\Assets\\Swatches\\Large Dungeon Room.rqs","C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Align Test.rqs"]
+["C:\\NTDLS\\RougueQuest\\Assets\\Scenario\\Test it like its HOT.rqs"]
