@@ -1,5 +1,3 @@
 {
-  "CanTakeDamage": "False",
-  "ActorClass": "ActorBuilding",
-  "CanWalkOn": "False"
+  "ActorClass": "ActorBuilding"
 }

@@ -1,5 +1,4 @@
 {
-  "CanTakeDamage": "False",
   "CanWalkOn":"True",
   "ActorClass": "ActorItem",
   "IsContainer": "True"

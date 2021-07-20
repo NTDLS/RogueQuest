@@ -47,12 +47,12 @@ namespace ScenarioEdit
         private int _newFilenameIncrement = 1;
         private ToolTip _interrogationTip = new ToolTip();
         private Rectangle? _shapeSelectionRect = null;
-        private Rectangle? _snapToGridRect = null;
+        private Rectangle<double> _snapToGridRect = null;
         private ImageList _assetBrowserImageList = new ImageList();
         private Point _lastMouseLocation = new Point();
         private string _partialTilesPath = "Tiles\\";
         private ActorBase _lastPropertiesTabClicked = null;
-        private Point<double>? _moveTilesStartPosition = null;
+        private Point<double> _moveTilesStartPosition = null;
 
         #region Settings.
 
@@ -195,6 +195,7 @@ namespace ScenarioEdit
             ToolStripButtonSelectMode_Click(new object(), new EventArgs());
 
             NewToolStripMenuItem_Click(null, null);
+            snapToGridToolStripMenuItem_Click(null, null);
         }
 
         private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -276,6 +277,11 @@ namespace ScenarioEdit
                     if (result == DialogResult.Yes)
                     {
                         NewToolStripMenuItem_Click(null, null);
+
+
+                        _core.Display.BackgroundOffset.X = -0;
+                        _core.Display.BackgroundOffset.Y = -0;
+
                     }
                     else if (result == DialogResult.OK)
                     {
@@ -519,10 +525,8 @@ namespace ScenarioEdit
             if (_snapToGridRect != null)
             {
                 drawingsurface.Invalidate(new Rectangle(
-                    ((Rectangle)_snapToGridRect).X - 2,
-                    ((Rectangle)_snapToGridRect).Y - 2,
-                    ((Rectangle)_snapToGridRect).Width + 4,
-                    ((Rectangle)_snapToGridRect).Height + 4));
+                    (int)_snapToGridRect.X - 2, (int)_snapToGridRect.Y - 2,
+                    (int)_snapToGridRect.Width + 4, (int)_snapToGridRect.Height + 4));
             }
         }
 
@@ -946,15 +950,24 @@ namespace ScenarioEdit
             drawingsurface.Select();
             drawingsurface.Focus();
 
-            double x = e.X + _core.Display.BackgroundOffset.X;
-            double y = e.Y + _core.Display.BackgroundOffset.Y;
+            double ex = e.X;
+            double ey = e.Y;
+
+            if (_snapToGrid)
+            {
+                //ex -= 16;
+                //ey -= 16;
+            }
+
+            double x = ex + _core.Display.BackgroundOffset.X;
+            double y = ey + _core.Display.BackgroundOffset.Y;
 
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
             if (e.Button == MouseButtons.Middle)
             {
                 dragStartOffset = new Point<double>(_core.Display.BackgroundOffset.X, _core.Display.BackgroundOffset.Y);
-                dragStartMouse = new Point<double>(e.X, e.Y);
+                dragStartMouse = new Point<double>(ex, ey);
             }
 
             //We have a bunch of tiles selected but now are clicking on a different tile while not holding shift or control.
@@ -968,25 +981,20 @@ namespace ScenarioEdit
                 }
             }
 
-
             if (
                 (CurrentPrimaryMode == PrimaryMode.Select && e.Button == MouseButtons.Right)
                 || (CurrentPrimaryMode == PrimaryMode.Shape && (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right))
                 || (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
                 )
             {
-                double modX = e.X % 32;
-                double modY = e.Y % 32;
-                _snapToGridRect = new Rectangle((int)(e.X - modX), (int)(e.Y - modY), 32, 32);
-
                 if (_snapToGrid && _snapToGridRect != null &&
                     (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
                 {
-                    shapeInsertStartMousePosition = new Point<double>(((Rectangle)_snapToGridRect).X, ((Rectangle)_snapToGridRect).Y);
+                    shapeInsertStartMousePosition = new Point<double>(_snapToGridRect.X, _snapToGridRect.Y);
                 }
                 else
                 {
-                    shapeInsertStartMousePosition = new Point<double>(e.X, e.Y);
+                    shapeInsertStartMousePosition = new Point<double>(ex, ey);
                 }
             }
 
@@ -1002,8 +1010,8 @@ namespace ScenarioEdit
                 if (_snapToGrid && _snapToGridRect != null &&
                     (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
                 {
-                    placeX = ((Rectangle)_snapToGridRect).X + 16;
-                    placeY = ((Rectangle)_snapToGridRect).Y + 16;
+                    placeX = (_snapToGridRect.X + _core.Display.BackgroundOffset.X) + 16;
+                    placeY = (_snapToGridRect.Y + _core.Display.BackgroundOffset.Y) + 16;
                 }
 
                 var placedItem = PlaceSelectedItem(placeX, placeY);
@@ -1091,7 +1099,10 @@ namespace ScenarioEdit
             {
                 Pen pen = new Pen(Color.Pink, 2);
 
-                e.Graphics.DrawRectangle(pen, (Rectangle)_snapToGridRect);
+                var rect = new Rectangle((int)_snapToGridRect.X, (int)_snapToGridRect.Y,
+                    (int)_snapToGridRect.Width, (int)_snapToGridRect.Height);
+
+                e.Graphics.DrawRectangle(pen, rect);
             }
 
             if (_shapeSelectionRect != null)
@@ -1109,41 +1120,52 @@ namespace ScenarioEdit
 
         private void drawingsurface_MouseMove(object sender, MouseEventArgs e)
         {
-            double x = e.X + _core.Display.BackgroundOffset.X;
-            double y = e.Y + _core.Display.BackgroundOffset.Y;
+            double ex = e.X;
+            double ey = e.Y;
 
-            _lastMouseLocation.X = (int)e.X;
-            _lastMouseLocation.Y = (int)e.Y;
+            double x = ex + _core.Display.BackgroundOffset.X;
+            double y = ey + _core.Display.BackgroundOffset.Y;
+
+            _lastMouseLocation.X = (int)ex;
+            _lastMouseLocation.Y = (int)ey;
 
             if (_snapToGrid && (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
             {
-                double modX = e.X % 32;
-                double modY = e.Y % 32;
-
                 if (_snapToGridRect != null)
                 {
                     drawingsurface.Invalidate(new Rectangle(
-                        ((Rectangle)_snapToGridRect).X - 2,
-                        ((Rectangle)_snapToGridRect).Y - 2,
-                        ((Rectangle)_snapToGridRect).Width + 4,
-                        ((Rectangle)_snapToGridRect).Height + 4));
+                        (int)_snapToGridRect.X - 2, (int)_snapToGridRect.Y - 2,
+                        (int)_snapToGridRect.Width + 4, (int)_snapToGridRect.Height + 4));
                 }
 
-                _snapToGridRect = new Rectangle((int)(e.X - modX), (int)(e.Y - modY), 32, 32);
+                double placeX = (x - 16);
+                double placeY = (y - 16);
+
+                //I really wish I knew why this was necessary.
+                if (placeX > 0)
+                {
+                    placeX += 32;
+                }
+                if (placeY > 0)
+                {
+                    placeY += 32;
+                }
+
+                _snapToGridRect = new Rectangle<double>(
+                    ((placeX - (placeX % 32)) - _core.Display.BackgroundOffset.X) - 16,
+                    ((placeY - (placeY % 32)) - _core.Display.BackgroundOffset.Y) - 16, 32, 32);
 
                 drawingsurface.Invalidate(new Rectangle(
-                    ((Rectangle)_snapToGridRect).X - 2,
-                    ((Rectangle)_snapToGridRect).Y - 2,
-                    ((Rectangle)_snapToGridRect).Width + 4,
-                    ((Rectangle)_snapToGridRect).Height + 4));
+                    (int)_snapToGridRect.X - 2, (int)_snapToGridRect.Y - 2,
+                    (int)_snapToGridRect.Width + 4, (int)_snapToGridRect.Height + 4));
             }
 
             toolStripStatusLabelMouseXY.Text = $"{x}x,{y}y";
 
             if (e.Button == MouseButtons.Middle)
             {
-                _core.Display.BackgroundOffset.X = dragStartOffset.X - (e.X - dragStartMouse.X);
-                _core.Display.BackgroundOffset.Y = dragStartOffset.Y - (e.Y - dragStartMouse.Y);
+                _core.Display.BackgroundOffset.X = dragStartOffset.X - (ex - dragStartMouse.X);
+                _core.Display.BackgroundOffset.Y = dragStartOffset.Y - (ey - dragStartMouse.Y);
                 _core.Display.DrawingSurface.Invalidate();
             }
             else
@@ -1192,22 +1214,32 @@ namespace ScenarioEdit
                 {
                     if (_snapToGrid)
                     {
-                        double modX = (e.X - shapeInsertStartMousePosition.X) % 32;
-                        double modY = (e.Y - shapeInsertStartMousePosition.Y) % 32;
+                        if (ex - shapeInsertStartMousePosition.X < 0)
+                        {
+                            ex -= 32;
+                        }
+                        if (ey - shapeInsertStartMousePosition.Y < 0)
+                        {
+                            ey -= 32;
+                        }
+
+                        double modX = (ex - shapeInsertStartMousePosition.X) % 32;
+                        double modY = (ey - shapeInsertStartMousePosition.Y) % 32;
+
 
                         _shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
                                             (int)shapeInsertStartMousePosition.X,
                                             (int)shapeInsertStartMousePosition.Y,
-                                            ((int)(e.X - shapeInsertStartMousePosition.X) - (int)modX) + 32,
-                                            ((int)(e.Y - shapeInsertStartMousePosition.Y) - (int)modY) + 32));
+                                            ((int)(ex - shapeInsertStartMousePosition.X) - (int)modX) + 32,
+                                            ((int)(ey - shapeInsertStartMousePosition.Y) - (int)modY) + 32));
                     }
                     else
                     {
                         _shapeSelectionRect = GraphicsUtility.SortRectangle(new Rectangle(
                                             (int)shapeInsertStartMousePosition.X,
                                             (int)shapeInsertStartMousePosition.Y,
-                                            (int)(e.X - shapeInsertStartMousePosition.X),
-                                            (int)(e.Y - shapeInsertStartMousePosition.Y)));
+                                            (int)(ex - shapeInsertStartMousePosition.X),
+                                            (int)(ey - shapeInsertStartMousePosition.Y)));
                     }
 
                     var rc = (Rectangle)_shapeSelectionRect;
@@ -1234,8 +1266,8 @@ namespace ScenarioEdit
                 //Paint with left button.
                 if (e.Button == MouseButtons.Left && CurrentPrimaryMode == PrimaryMode.Insert)
                 {
-                    double drawDeltaX = e.X - (drawLastLocation.X - _core.Display.BackgroundOffset.X);
-                    double drawDeltaY = e.Y - (drawLastLocation.Y - _core.Display.BackgroundOffset.Y);
+                    double drawDeltaX = ex - (drawLastLocation.X - _core.Display.BackgroundOffset.X);
+                    double drawDeltaY = ey - (drawLastLocation.Y - _core.Display.BackgroundOffset.Y);
 
                     if (lastPlacedItemSize.Width > 0)
                     {
@@ -1248,8 +1280,8 @@ namespace ScenarioEdit
                             if (_snapToGrid && _snapToGridRect != null &&
                                 (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
                             {
-                                placeX = ((Rectangle)_snapToGridRect).X + 16;
-                                placeY = ((Rectangle)_snapToGridRect).Y + 16;
+                                placeX = _snapToGridRect.X + 16;
+                                placeY = _snapToGridRect.Y + 16;
                             }
 
                             PlaceSelectedItem(placeX, placeY);
