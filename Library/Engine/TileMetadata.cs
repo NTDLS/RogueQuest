@@ -37,14 +37,14 @@ namespace Library.Engine
         private string _LevelWarpName;
         private Guid? _LevelWarpTargetTileUID;
         private ActorSubType? _SubType;
-        private bool? _OnlyDialogOnce;
-        private bool? _IsContainer;
-        private bool? _CanStack;
-        private bool? _CanWalkOn;
-        private bool? _CanTakeDamage;
-        private bool? _SnapToGrid;
 
         #endregion
+
+        public bool? OnlyDialogOnce { get; set; }
+        public bool? IsContainer { get; set; }
+        public bool? CanStack { get; set; }
+        public bool? CanWalkOn { get; set; }
+        public bool? CanTakeDamage { get; set; }
 
         // This is only populated for tiles that need it.
         public Guid? UID { get { return _UID == Guid.Empty ? null : _UID; } set { _UID = value; } }
@@ -53,14 +53,8 @@ namespace Library.Engine
 
         public string Tag { get { return _Tag == string.Empty ? null : _Tag; } set { _Tag = value; } }
 
-        public bool? SnapToGrid { get { return _SnapToGrid == false ? null : _SnapToGrid; } set { _SnapToGrid = value; } }
-
         //Stacking because things like money only really matter in multiples.
         public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
-
-        public bool? CanWalkOn { get { return _CanWalkOn == false ? null : _CanWalkOn; } set { _CanWalkOn = value; } }
-
-        public bool? CanTakeDamage { get { return _CanTakeDamage == false ? null : _CanTakeDamage; } set { _CanTakeDamage = value; } }
 
         public int? Experience { get { return _Experience == 0 ? null : _Experience; } set { _Experience = value; } }
 
@@ -75,10 +69,6 @@ namespace Library.Engine
         public int? DamageAdditional { get { return _DamageAdditional == 0 ? null : _DamageAdditional; } set { _DamageAdditional = value; } }
 
         public int? OriginalHitPoints { get { return _OriginalHitPoints == 0 ? null : _OriginalHitPoints; } set { _OriginalHitPoints = value; } }
-
-        public bool? IsContainer { get { return _IsContainer == false ? null : _IsContainer; } set { _IsContainer = value; } }
-
-        public bool? CanStack { get { return _CanStack == false ? null : _CanStack; } set { _CanStack = value; } }
 
         public int? BulkCapacity { get { return _BulkCapacity == 0 ? null : _BulkCapacity; } set { _BulkCapacity = value; } }
 
@@ -123,8 +113,6 @@ namespace Library.Engine
         // This is what the object will say to the player when approached.
         public string Dialog { get { return _Dialog == string.Empty ? null : _Dialog; } set { _Dialog = value; } }
 
-        // Will the dialog be shown every time this tile is intersected?
-        public bool? OnlyDialogOnce { get { return _OnlyDialogOnce == false ? null : _OnlyDialogOnce; } set { _OnlyDialogOnce = value; } }
 
         public void OverrideWith(TileMetadata with)
         {
@@ -151,7 +139,6 @@ namespace Library.Engine
             this.DamageAdditional = with.DamageAdditional ?? this.DamageAdditional;
             this.Strength = with.Strength ?? this.Strength;
             this.Dexterity = with.Dexterity ?? this.Dexterity;
-            this.SnapToGrid = with.SnapToGrid ?? this.SnapToGrid;
             this.SpawnType = with.SpawnType ?? this.SpawnType;
             this.SpawnSubType = with.SpawnSubType ?? this.SpawnSubType;
             this.MinLevel = with.MinLevel ?? this.MinLevel;

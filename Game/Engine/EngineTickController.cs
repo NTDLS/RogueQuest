@@ -625,10 +625,10 @@ namespace Game.Engine
 
             var intersections = Core.Actors.Intersections(actor)
                 .Where(o => o.Meta.ActorClass != ActorClassName.ActorTerrain)
-                .Where(o => o.Meta.CanWalkOn == false).ToList();
+                  .Where(o => o.Meta.CanWalkOn == false).ToList();
 
             //Only get the top terrain block, we dont want to dig to the ocean.
-            var topTerrainBlock = Core.Actors.Intersections(actor)
+                var topTerrainBlock = Core.Actors.Intersections(actor)
                 .Where(o => o.Meta.ActorClass == ActorClassName.ActorTerrain)
                 .OrderBy(o => o.DrawOrder).LastOrDefault();
 

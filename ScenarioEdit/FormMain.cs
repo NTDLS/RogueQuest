@@ -382,7 +382,7 @@ namespace ScenarioEdit
 
                     _undoBuffer.Record(otherSpawnPoints, ActionPerformed.Deleted);
 
-                    _core.Actors.Tiles.ForEach(o => o.QueueForDelete());
+                    otherSpawnPoints.ForEach(o => o.QueueForDelete());
                     _core.PurgeAllDeletedTiles();
                 }
 

@@ -5,7 +5,6 @@ namespace Library.Engine
     public class LevelChunk
     {
         private int? _DrawOrder = null;
-
         public double? _Angle { get; set; }
         public string TilePath { get; set; }
         public double X { get; set; }
