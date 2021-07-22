@@ -1256,9 +1256,31 @@ namespace ScenarioEdit
                     ((placeX - (placeX % 32)) - _core.Display.BackgroundOffset.X) - 16,
                     ((placeY - (placeY % 32)) - _core.Display.BackgroundOffset.Y) - 16, 32, 32);
 
+                toolStripStatusLabelDebug.Text = $"{_snapToGridRect.X:N0},{_snapToGridRect.Y:N0}";
+
                 drawingsurface.Invalidate(new Rectangle(
                     (int)_snapToGridRect.X - 2, (int)_snapToGridRect.Y - 2,
                     (int)_snapToGridRect.Width + 4, (int)_snapToGridRect.Height + 4));
+            }
+            else if (_snapToGrid && (CurrentPrimaryMode == PrimaryMode.Insert))
+            {
+                double placeX = (x - 16);
+                double placeY = (y - 16);
+
+                //I really wish I knew why this was necessary.
+                if (placeX > 0)
+                {
+                    placeX += 32;
+                }
+                if (placeY > 0)
+                {
+                    placeY += 32;
+                }
+
+                _snapToGridRect = new Rectangle<double>(
+                    ((placeX - (placeX % 32)) - _core.Display.BackgroundOffset.X) - 16,
+                    ((placeY - (placeY % 32)) - _core.Display.BackgroundOffset.Y) - 16, 32, 32);
+
             }
 
             toolStripStatusLabelMouseXY.Text = $"{x}x,{y}y";
@@ -1381,8 +1403,8 @@ namespace ScenarioEdit
                             if (_snapToGrid && _snapToGridRect != null &&
                                 (CurrentPrimaryMode == PrimaryMode.Insert || CurrentPrimaryMode == PrimaryMode.Shape))
                             {
-                                placeX = _snapToGridRect.X + 16;
-                                placeY = _snapToGridRect.Y + 16;
+                                placeX = _snapToGridRect.X + _core.Display.BackgroundOffset.X + 16;
+                                placeY = _snapToGridRect.Y + _core.Display.BackgroundOffset.Y + 16;
                             }
 
                             PlaceSelectedItem(placeX, placeY);
