@@ -153,6 +153,10 @@ namespace ScenarioEdit
             listViewProperties.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             toolStrip.PreviewKeyDown += drawingsurface_PreviewKeyDown;
             treeViewTiles.PreviewKeyDown += drawingsurface_PreviewKeyDown;
+
+            toolStripButtonCollapseAll.Click += ToolStripButtonCollapseAll_Click;
+            toolStripButtonFindSelectedTile.Click += ToolStripButtonFindSelectedTile_Click;
+
             editSelectionToolStripMenuItem.Click += editSelectionStripMenuItem_Click;
             toolStripButtonInsertMode.Click += ToolStripButtonInsertMode_Click;
             toolStripButtonSelectMode.Click += ToolStripButtonSelectMode_Click;
@@ -196,16 +200,6 @@ namespace ScenarioEdit
 
             NewToolStripMenuItem_Click(null, null);
             snapToGridToolStripMenuItem_Click(null, null);
-        }
-
-        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _undoBuffer.Rollforward();
-        }
-
-        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _undoBuffer.Rollback();
         }
 
         private void TreeViewTiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -516,6 +510,71 @@ namespace ScenarioEdit
         }
 
         #region Menu Clicks.
+
+        bool _haveAllMaterialsBeenLoaded = false;
+
+        private void ToolStripButtonFindSelectedTile_Click(object sender, EventArgs e)
+        {
+            if (_haveAllMaterialsBeenLoaded == false)
+            {
+                var result = MessageBox.Show("Finding the selected tile will require that all materials be populated. This could take seconds to minutes depending on the speed of your machine. Continue?",
+                    "Populate all metadata?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                treeViewTiles.BeginUpdate();
+                var needToBeLoaded = treeViewTiles.Descendants().Where(o => o.Text == "<dummy>").ToList();
+                while (needToBeLoaded.Count > 0)
+                {
+                    needToBeLoaded.ForEach(o => o.Parent.Expand());
+                    needToBeLoaded = treeViewTiles.Descendants().Where(o => o.Text == "<dummy>").ToList();
+                }
+               
+                _haveAllMaterialsBeenLoaded = true;
+                treeViewTiles.CollapseAll();
+                treeViewTiles.EndUpdate();
+            }
+
+            if (_mostRecentlySelectedTile != null)
+            {
+                var result = treeViewTiles.Descendants()
+                    .Where(x => x.ImageKey == _mostRecentlySelectedTile.TilePath).FirstOrDefault();
+
+                if (result != null)
+                {
+                    var expandNode = result;
+                    while (expandNode != null)
+                    {
+                        if (expandNode.IsExpanded == false)
+                        {
+                            expandNode.Expand();
+                        }
+                        expandNode = expandNode.Parent;
+                    }
+
+                    treeViewTiles.SelectedNode = result;
+                    result.EnsureVisible();
+                }
+            }
+        }
+
+        private void ToolStripButtonCollapseAll_Click(object sender, EventArgs e)
+        {
+            treeViewTiles.CollapseAll();
+        }
+
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _undoBuffer.Rollforward();
+        }
+
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _undoBuffer.Rollback();
+        }
 
         private void snapToGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1301,11 +1360,36 @@ namespace ScenarioEdit
 
                     if (selectedTiles.Count > 0 && lastHoverTile != null)
                     {
-                        int deltaX = (int)(lastHoverTile.X - x);
-                        int deltaY = (int)(lastHoverTile.Y - y);
+                        int deltaX = 0;
+                        int deltaY = 0;
 
-                        lastHoverTile.X = x;
-                        lastHoverTile.Y = y;
+                        if (_snapToGrid)
+                        {
+                            var lastX = lastHoverTile.X;
+                            var lastY = lastHoverTile.Y;
+
+                            lastHoverTile.X = (x - (x % 32));
+                            lastHoverTile.Y = (y - (y % 32));
+
+                            toolStripStatusLabelDebug.Text = $"{lastHoverTile.X:N0},{lastHoverTile.Y:N0}";
+
+                            if (lastHoverTile.X != lastX)
+                            {
+                                deltaX = (int)(lastX - lastHoverTile.X);
+                            }
+                            if (lastHoverTile.Y != lastY)
+                            {
+                                deltaY = (int)(lastY - lastHoverTile.Y);
+                            }
+                        }
+                        else
+                        {
+                            lastHoverTile.X = x;
+                            lastHoverTile.Y = y;
+
+                            deltaX = (int)(lastHoverTile.X - x);
+                            deltaY = (int)(lastHoverTile.Y - y);
+                        }
 
                         foreach (var tile in selectedTiles)
                         {
@@ -1315,6 +1399,7 @@ namespace ScenarioEdit
                                 tile.Y -= deltaY;
                             }
                         }
+
                     }
                 }
 

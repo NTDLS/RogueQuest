@@ -33,6 +33,9 @@ namespace ScenarioEdit
             this.splitContainerBody = new System.Windows.Forms.SplitContainer();
             this.splitContainerTools1 = new System.Windows.Forms.SplitContainer();
             this.treeViewTiles = new System.Windows.Forms.TreeView();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonFindSelectedTile = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.groupBoxProperties = new System.Windows.Forms.GroupBox();
             this.listViewProperties = new System.Windows.Forms.ListView();
             this.columnHeaderPropertiesName = new System.Windows.Forms.ColumnHeader();
@@ -90,8 +93,8 @@ namespace ScenarioEdit
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonRedo = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonUndo = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonRedo = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelMode = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonInsertMode = new System.Windows.Forms.ToolStripButton();
@@ -110,6 +113,7 @@ namespace ScenarioEdit
             this.splitContainerTools1.Panel1.SuspendLayout();
             this.splitContainerTools1.Panel2.SuspendLayout();
             this.splitContainerTools1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.groupBoxProperties.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -141,6 +145,7 @@ namespace ScenarioEdit
             // splitContainerTools1.Panel1
             // 
             this.splitContainerTools1.Panel1.Controls.Add(this.treeViewTiles);
+            this.splitContainerTools1.Panel1.Controls.Add(this.toolStrip1);
             // 
             // splitContainerTools1.Panel2
             // 
@@ -152,10 +157,42 @@ namespace ScenarioEdit
             // treeViewTiles
             // 
             this.treeViewTiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewTiles.Location = new System.Drawing.Point(0, 0);
+            this.treeViewTiles.HideSelection = false;
+            this.treeViewTiles.Location = new System.Drawing.Point(0, 25);
             this.treeViewTiles.Name = "treeViewTiles";
-            this.treeViewTiles.Size = new System.Drawing.Size(280, 236);
+            this.treeViewTiles.Size = new System.Drawing.Size(280, 211);
             this.treeViewTiles.TabIndex = 0;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonFindSelectedTile,
+            this.toolStripButtonCollapseAll});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(280, 25);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButtonFindSelectedTile
+            // 
+            this.toolStripButtonFindSelectedTile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonFindSelectedTile.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonFindSelectedTile.Image")));
+            this.toolStripButtonFindSelectedTile.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonFindSelectedTile.Name = "toolStripButtonFindSelectedTile";
+            this.toolStripButtonFindSelectedTile.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonFindSelectedTile.Text = "Find Selected Tile";
+            this.toolStripButtonFindSelectedTile.ToolTipText = "Find Selected Tile";
+            // 
+            // toolStripButtonCollapseAll
+            // 
+            this.toolStripButtonCollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonCollapseAll.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCollapseAll.Image")));
+            this.toolStripButtonCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonCollapseAll.Name = "toolStripButtonCollapseAll";
+            this.toolStripButtonCollapseAll.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonCollapseAll.Text = "Collapse All";
+            this.toolStripButtonCollapseAll.ToolTipText = "Collapse All";
             // 
             // groupBoxProperties
             // 
@@ -639,15 +676,6 @@ namespace ScenarioEdit
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 41);
             // 
-            // toolStripButtonRedo
-            // 
-            this.toolStripButtonRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonRedo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRedo.Image")));
-            this.toolStripButtonRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonRedo.Name = "toolStripButtonRedo";
-            this.toolStripButtonRedo.Size = new System.Drawing.Size(23, 38);
-            this.toolStripButtonRedo.Text = "Redo";
-            // 
             // toolStripButtonUndo
             // 
             this.toolStripButtonUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -657,6 +685,15 @@ namespace ScenarioEdit
             this.toolStripButtonUndo.Size = new System.Drawing.Size(23, 38);
             this.toolStripButtonUndo.Text = "Undo";
             this.toolStripButtonUndo.ToolTipText = "Undo";
+            // 
+            // toolStripButtonRedo
+            // 
+            this.toolStripButtonRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonRedo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRedo.Image")));
+            this.toolStripButtonRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRedo.Name = "toolStripButtonRedo";
+            this.toolStripButtonRedo.Size = new System.Drawing.Size(23, 38);
+            this.toolStripButtonRedo.Text = "Redo";
             // 
             // toolStripSeparator7
             // 
@@ -767,9 +804,12 @@ namespace ScenarioEdit
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).EndInit();
             this.splitContainerBody.ResumeLayout(false);
             this.splitContainerTools1.Panel1.ResumeLayout(false);
+            this.splitContainerTools1.Panel1.PerformLayout();
             this.splitContainerTools1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTools1)).EndInit();
             this.splitContainerTools1.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.groupBoxProperties.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
@@ -857,6 +897,9 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripButton toolStripButtonRedo;
         private System.Windows.Forms.ToolStripButton toolStripButtonUndo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButtonFindSelectedTile;
+        private System.Windows.Forms.ToolStripButton toolStripButtonCollapseAll;
     }
 }
 

@@ -72,11 +72,25 @@ namespace ScenarioEdit
                     node.ImageKey = GetImageKey(group.Key);
                     node.SelectedImageKey = GetImageKey(group.Key);
                 }
+
+                ExpandAllParents(groupNode.Parent);
             }
 
             root.Expand();
 
             _ignoreCheckedEvent = false;
+        }
+
+        void ExpandAllParents(TreeNode node)
+        {
+            while (node != null)
+            {
+                if (node.IsExpanded == false)
+                {
+                    node.Expand();
+                }
+                node = node.Parent;
+            }
         }
 
         private TreeNode AddParsedNode(TreeNode root, string tilePath)
@@ -101,6 +115,8 @@ namespace ScenarioEdit
                     groupNode.Checked = _checkedByDefault;
                 }
             }
+
+            groupNode.Expand();
 
             return groupNode;
         }
