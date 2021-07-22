@@ -208,7 +208,7 @@ namespace ScenarioEdit
             var selectedTiles = Core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             foreach (var tile in selectedTiles)
             {
-                tile.DrawOrder++;
+                tile.DrawOrder = (tile.DrawOrder ?? 0) + 1;
             }
         }
 
@@ -217,7 +217,7 @@ namespace ScenarioEdit
             var selectedTiles = Core.Actors.Tiles.Where(o => o.SelectedHighlight == true).ToList();
             foreach (var tile in selectedTiles)
             {
-                tile.DrawOrder--;
+                tile.DrawOrder = (tile.DrawOrder ?? 0) - 1;
             }
         }
 

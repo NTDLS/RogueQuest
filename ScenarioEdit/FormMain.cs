@@ -192,6 +192,8 @@ namespace ScenarioEdit
             redoToolStripMenuItem.Click += RedoToolStripMenuItem_Click;
             toolStripButtonRedo.Click += RedoToolStripMenuItem_Click;
 
+            this.MouseWheel += FormMain_MouseWheel;
+
             _undoBuffer = new UndoBuffer(_core);
 
             PopulateMaterials();
@@ -200,6 +202,46 @@ namespace ScenarioEdit
 
             NewToolStripMenuItem_Click(null, null);
             snapToGridToolStripMenuItem_Click(null, null);
+        }
+
+        private void FormMain_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                switch (CurrentPrimaryMode)
+                {
+                    case PrimaryMode.Insert:
+                        CurrentPrimaryMode = PrimaryMode.Select;
+                        break;
+                    case PrimaryMode.Select:
+                        CurrentPrimaryMode = PrimaryMode.Shape;
+                        break;
+                    case PrimaryMode.Shape:
+                        CurrentPrimaryMode = PrimaryMode.Insert;
+                        break;
+
+                }
+            }
+            else if (e.Delta < 0)
+            {
+                switch (CurrentPrimaryMode)
+                {
+                    case PrimaryMode.Shape:
+                        CurrentPrimaryMode = PrimaryMode.Select;
+                        break;
+                    case PrimaryMode.Select:
+                        CurrentPrimaryMode = PrimaryMode.Insert;
+                        break;
+                    case PrimaryMode.Insert:
+                        CurrentPrimaryMode = PrimaryMode.Shape;
+                        break;
+
+                }
+            }
+
+            toolStripButtonInsertMode.Checked = CurrentPrimaryMode == PrimaryMode.Insert;
+            toolStripButtonSelectMode.Checked = CurrentPrimaryMode == PrimaryMode.Select;
+            toolStripButtonShapeMode.Checked = CurrentPrimaryMode == PrimaryMode.Shape;
         }
 
         private void TreeViewTiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
