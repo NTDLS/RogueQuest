@@ -31,7 +31,27 @@ namespace Assets
             }
         }
 
+        public static string RecentScenariosFile
+        {
+            get
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RougeQuest\\Saves";
 
+                if (System.IO.Directory.Exists(path) == false)
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                path += "\\RecentScenarios.txt";
+
+                if (System.IO.File.Exists(path) == false)
+                {
+                    System.IO.File.WriteAllText(path, string.Empty);
+                }
+
+                return path;
+            }
+        }
 
         public static string GetAssetPath(string partialAssetPath)
         {

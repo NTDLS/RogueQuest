@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -8,14 +9,6 @@ namespace ScenarioEdit
     {
         public string SelectedFileName { get; set; }
 
-        public static string RecentSaveFilename
-        {
-            get
-            {
-                return Assets.Constants.GetAssetPath(@"Scenario\Recent.txt");
-            }
-        }
-
         public FormWelcome()
         {
             InitializeComponent();
@@ -23,12 +16,7 @@ namespace ScenarioEdit
 
         public static void AddToRecentList(string fileName)
         {
-            if (System.IO.File.Exists(RecentSaveFilename) == false)
-            {
-                System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
-            }
-
-            string json = System.IO.File.ReadAllText(RecentSaveFilename);
+            string json = System.IO.File.ReadAllText(Constants.RecentScenariosFile);
 
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(json);
             if (list == null)
@@ -42,17 +30,12 @@ namespace ScenarioEdit
 
             json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
 
-            System.IO.File.WriteAllText(RecentSaveFilename, json);
+            System.IO.File.WriteAllText(Constants.RecentScenariosFile, json);
         }
 
         public static void RemoveFromList(string fileName)
         {
-            if (System.IO.File.Exists(RecentSaveFilename) == false)
-            {
-                System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
-            }
-
-            string json = System.IO.File.ReadAllText(RecentSaveFilename);
+            string json = System.IO.File.ReadAllText(Constants.RecentScenariosFile);
 
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(json);
             if (list == null)
@@ -64,23 +47,19 @@ namespace ScenarioEdit
 
             json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
 
-            System.IO.File.WriteAllText(RecentSaveFilename, json);
+            System.IO.File.WriteAllText(Constants.RecentScenariosFile, json);
         }
 
         public static void ClearList()
         {
-            System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
+            System.IO.File.WriteAllText(Constants.RecentScenariosFile, string.Empty);
         }
 
         private void PopulateList()
         {
             listBoxSaves.Items.Clear();
-            if (System.IO.File.Exists(RecentSaveFilename) == false)
-            {
-                System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
-            }
 
-            string json = System.IO.File.ReadAllText(RecentSaveFilename);
+            string json = System.IO.File.ReadAllText(Constants.RecentScenariosFile);
 
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(json);
             if (list == null)
