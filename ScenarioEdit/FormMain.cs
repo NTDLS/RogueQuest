@@ -1659,7 +1659,10 @@ namespace ScenarioEdit
 
         private void FormMain_SizeChanged(object sender, EventArgs e)
         {
-            _core.ResizeDrawingSurface(new Size(drawingsurface.Width, drawingsurface.Height));
+            if (_core != null)
+            {
+                _core.ResizeDrawingSurface(new Size(drawingsurface.Width, drawingsurface.Height));
+            }
         }
 
         #endregion

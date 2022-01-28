@@ -12,5 +12,35 @@ namespace Game
         public static int MaxStartingStatLevel = 30;
         public static int MinStartingStatLevel = 1;
         public static int StartingStatLevel = 2;
+
+        public static string SaveFolder
+        {
+            get
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RougeQuest\\Saves";
+
+                if (System.IO.Directory.Exists(path) == false)
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public static string RecentSaveFilename
+        {
+            get
+            {
+                string path = $@"{SaveFolder}\Recent.txt";
+
+                if (System.IO.File.Exists(path) == false)
+                {
+                    System.IO.File.WriteAllText(path, string.Empty);
+                }
+
+                return path;
+            }
+        }
     }
 }

@@ -8,13 +8,7 @@ namespace Game
     {
         public string SelectedFileName { get; set; }
 
-        public static string RecentSaveFilename
-        {
-            get
-            {
-                return Assets.Constants.GetAssetPath(@"Saves\Recent.txt");
-            }
-        }
+
 
         public FormWelcome()
         {
@@ -23,12 +17,7 @@ namespace Game
 
         public static void AddToRecentList(string fileName)
         {
-            if (System.IO.File.Exists(RecentSaveFilename) == false)
-            {
-                System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
-            }
-
-            string json = System.IO.File.ReadAllText(RecentSaveFilename);
+            string json = System.IO.File.ReadAllText(Constants.RecentSaveFilename);
 
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(json);
             if (list == null)
@@ -42,17 +31,12 @@ namespace Game
 
             json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
 
-            System.IO.File.WriteAllText(RecentSaveFilename, json);
+            System.IO.File.WriteAllText(Constants.RecentSaveFilename, json);
         }
 
         public static void RemoveFromList(string fileName)
         {
-            if (System.IO.File.Exists(RecentSaveFilename) == false)
-            {
-                System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
-            }
-
-            string json = System.IO.File.ReadAllText(RecentSaveFilename);
+            string json = System.IO.File.ReadAllText(Constants.RecentSaveFilename);
 
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(json);
             if (list == null)
@@ -64,23 +48,19 @@ namespace Game
 
             json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
 
-            System.IO.File.WriteAllText(RecentSaveFilename, json);
+            System.IO.File.WriteAllText(Constants.RecentSaveFilename, json);
         }
 
         public static void ClearList()
         {
-            System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
+            System.IO.File.WriteAllText(Constants.RecentSaveFilename, string.Empty);
         }
 
         private void PopulateList()
         {
             listBoxSaves.Items.Clear();
-            if (System.IO.File.Exists(RecentSaveFilename) == false)
-            {
-                System.IO.File.WriteAllText(RecentSaveFilename, string.Empty);
-            }
 
-            string json = System.IO.File.ReadAllText(RecentSaveFilename);
+            string json = System.IO.File.ReadAllText(Constants.RecentSaveFilename);
 
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(json);
             if (list == null)
@@ -138,6 +118,7 @@ namespace Game
             using (var dialog = new OpenFileDialog())
             {
                 dialog.Filter = "RogueQuest Games (*.rqg)|*.rqg|All files (*.*)|*.*";
+                dialog.InitialDirectory = Constants.SaveFolder;
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {

@@ -281,6 +281,7 @@ namespace Game
             {
                 dialog.FileName = $"Game {_newFilenameIncrement++}";
                 dialog.Filter = "RogueQuest Games (*.rqg)|*.rqg|All files (*.*)|*.*";
+                dialog.InitialDirectory = Constants.SaveFolder;
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
