@@ -214,6 +214,9 @@ namespace Library.Engine
             return chunks;
         }
 
+        public int FailedToLoadTilesCount { get; set; }
+        public List<string> LoadErrors { get; set; } = new List<string>();
+
         private Assembly _gameAssembly = null;
 
         /// <summary>
@@ -223,6 +226,9 @@ namespace Library.Engine
         /// <param name="refreshMetadata"></param>
         public void PopLevel(int levelNumber, bool refreshMetadata = false)
         {
+            FailedToLoadTilesCount = 0;
+            LoadErrors = new List<string>();
+
             var bytes = Collection[levelNumber].Bytes;
 
             Core.QueueAllForDelete();
@@ -246,10 +252,10 @@ namespace Library.Engine
                     }
                 }
 
-                int failedToLoadTiles = 0;
-
                 foreach (var chunk in chunks)
                 {
+                    string tilePath = Constants.GetAssetPath($"{chunk.TilePath}.png");
+
                     try
                     {
                         ActorBase tile = null;
@@ -271,7 +277,7 @@ namespace Library.Engine
                             tile = (ActorBase)Activator.CreateInstance(Type.GetType("Library.Engine.ActorBase"), param);
                         }
 
-                        tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
+                        tile.SetImage(tilePath);
                         tile.X = chunk.X;
                         tile.Y = chunk.Y;
                         tile.TilePath = chunk.TilePath;
@@ -300,7 +306,8 @@ namespace Library.Engine
                     }
                     catch
                     {
-                        failedToLoadTiles++;
+                        FailedToLoadTilesCount++;
+                        LoadErrors.Add($"Failed to load {tilePath}.");
                     }
                 }
             }

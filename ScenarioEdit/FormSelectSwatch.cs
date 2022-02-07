@@ -1,4 +1,5 @@
-﻿using ScenarioEdit.Engine;
+﻿using Library.Types;
+using ScenarioEdit.Engine;
 using ScenarioEdit.Properties;
 using System;
 using System.Drawing;
@@ -9,6 +10,9 @@ namespace ScenarioEdit
 {
     public partial class FormSelectSwatch : Form
     {
+        private Point<double> dragStartOffset = new Point<double>();
+        private Point<double> dragStartMouse = new Point<double>();
+
         private string BaseAssetPath => Assets.Constants.BaseAssetPath;
         private string PartialSwatchPath => "Swatches\\";
         private Control drawingsurface = new Control();
@@ -33,7 +37,7 @@ namespace ScenarioEdit
                     .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             controlProperty.SetValue(drawingsurface, true, null);
 
-            this.Shown += FormSwatch_Shown; ;
+            this.Shown += FormSwatch_Shown;
 
             splitContainerBody.Panel1.Controls.Add(drawingsurface);
             drawingsurface.Dock = DockStyle.Fill;
@@ -50,7 +54,44 @@ namespace ScenarioEdit
             drawingsurface.Select();
             drawingsurface.Focus();
 
+            drawingsurface.MouseMove += Drawingsurface_MouseMove;
+            drawingsurface.MouseDown += Drawingsurface_MouseDown;
+            drawingsurface.MouseUp += Drawingsurface_MouseUp;
+
             PopulateSwatches();
+        }
+
+        private void Drawingsurface_MouseUp(object sender, MouseEventArgs e)
+        {
+            drawingsurface.Invalidate();
+        }
+
+        private void Drawingsurface_MouseDown(object sender, MouseEventArgs e)
+        {
+            drawingsurface.Select();
+            drawingsurface.Focus();
+
+            double ex = e.X;
+            double ey = e.Y;
+
+            if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
+            {
+                dragStartOffset = new Point<double>(_core.Display.BackgroundOffset.X, _core.Display.BackgroundOffset.Y);
+                dragStartMouse = new Point<double>(ex, ey);
+            }
+        }
+
+        private void Drawingsurface_MouseMove(object sender, MouseEventArgs e)
+        {
+            double ex = e.X;
+            double ey = e.Y;
+
+            if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
+            {
+                _core.Display.BackgroundOffset.X = dragStartOffset.X - (ex - dragStartMouse.X);
+                _core.Display.BackgroundOffset.Y = dragStartOffset.Y - (ey - dragStartMouse.Y);
+                _core.Display.DrawingSurface.Invalidate();
+            }
         }
 
         private void TreeViewSwatches_AfterSelect(object sender, TreeViewEventArgs e)
@@ -64,15 +105,26 @@ namespace ScenarioEdit
                 _core.Reset();
                 _core.Load(fileName);
                 _core.PopCurrentLevel();
+
+                textBoxInfo.Text = $"Loaded {_core.Actors.Tiles.Count:N0} tiles.";
+
+                if (_core.Levels.FailedToLoadTilesCount != 0)
+                {
+                    textBoxInfo.Text = $"Failed to load {_core.Levels.FailedToLoadTilesCount:N0} tiles.\r\nWarnings:\r\n" +
+                        String.Join("\r\n", _core.Levels.LoadErrors);
+                }
             }
         }
 
         private void TreeViewSwatches_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(SelectedSwatchFileName) == false)
+            if (string.IsNullOrWhiteSpace(SelectedSwatchFileName) == false && treeViewSwatches.SelectedNode != null)
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                if (treeViewSwatches.SelectedNode.ImageKey != "<folder>")
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
         }
 
@@ -138,15 +190,21 @@ namespace ScenarioEdit
             if (_firstShown)
             {
                 _firstShown = false;
-
             }
         }
 
         private void drawingsurface_Paint(object sender, PaintEventArgs e)
         {
             var image = _core.Render();
-
             e.Graphics.DrawImage(image, 0, 0);
+        }
+
+        private void FormSelectSwatch_SizeChanged(object sender, EventArgs e)
+        {
+            if (_core != null)
+            {
+                _core.ResizeDrawingSurface(new Size(drawingsurface.Width, drawingsurface.Height));
+            }
         }
     }
 }
