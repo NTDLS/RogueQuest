@@ -285,10 +285,6 @@ namespace Library.Engine
                         tile.DrawOrder = chunk.DrawOrder;
                         tile.Meta = chunk.Meta;
 
-                        if (string.IsNullOrEmpty(tile.TilePath))
-                        {
-                        }
-
                         if (refreshMetadata)
                         {
                             tile.RefreshMetadata(false);
