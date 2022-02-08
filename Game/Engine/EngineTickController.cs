@@ -502,8 +502,7 @@ namespace Game.Engine
                         Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp and hits.", Color.DarkGreen);
                     }
 
-                    /*
-                    if (actorToAttack.Hit(playerHitsFor))
+                    if (actorToAttack.ApplyDamage(playerHitsFor))
                     {
                         int experience = 0;
 
@@ -517,12 +516,11 @@ namespace Game.Engine
                         if (actorToAttack.Meta.IsContainer == true)
                         {
                             //If the enemy has loot, they drop it when they die.
-                            EmptyContainerToGround((Guid)actorToAttack.Meta.UID);
+                            EmptyContainerToGround(actorToAttack.Meta.UID);
                         }
 
                         Core.State.Character.Experience += experience;
                     }
-                    */
                 }
                 else if(hitType == HitType.CriticalMiss)
                 {
@@ -560,10 +558,12 @@ namespace Game.Engine
                         Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp and hits.", Color.DarkRed);
                     }
 
-                    //Core.State.Character.AvailableHitpoints -= hostileHitsFor;
+                    Core.State.Character.AvailableHitpoints -= hostileHitsFor;
                     if (Core.State.Character.AvailableHitpoints <= 0)
                     {
+                        Core.LogLine($"{PlayerDeathText()}", Color.Red);
                         Core.Player.QueueForDelete();
+                        break;
                     }
                 }
                 else if(hitType == HitType.CriticalMiss)
@@ -577,8 +577,13 @@ namespace Game.Engine
             }
         }
 
-        private void EmptyContainerToGround(Guid containerId)
+        private void EmptyContainerToGround(Guid? containerId)
         {
+            if (containerId == null)
+            {
+                return;
+            }
+
             var items = Core.State.Items.Where(o => o.ContainerId == containerId).ToList();
 
             foreach (var item in items)
@@ -612,7 +617,7 @@ namespace Game.Engine
 
         /// <summary>
         /// Moves an actor in the direction of their vector and returns a list of any
-        /// encountered colissions as well as passes back distanct the axtor was moved.
+        /// encountered collisions as well as passes back distance the actor was moved.
         /// </summary>
         public List<ActorBase> MoveActor(ActorBase actor, out Point<double> finalAppliedOffset)
         {
@@ -642,7 +647,7 @@ namespace Game.Engine
                 return intersections;
             }
 
-            //Only act on the top terrain block if it turns out to be one we cant walk on.
+            //Only act on the top terrain block if it turns out to be one we can't walk on.
             if (topTerrainBlock.Meta.CanWalkOn == false)
             {
                 actor.X -= appliedOffset.X;
@@ -682,49 +687,33 @@ namespace Game.Engine
                     if (appliedOffset.X > 0)
                     {
                         if (Math.Abs(delta.Width) > Math.Abs(appliedOffset.X))
-                        {
                             appliedOffset.X = 0;
-                        }
                         else
-                        {
                             appliedOffset.X -= delta.Width;
-                        }
                     }
 
                     if (appliedOffset.X < 0)
                     {
                         if (Math.Abs(delta.Width) > Math.Abs(appliedOffset.X))
-                        {
                             appliedOffset.X = 0;
-                        }
                         else
-                        {
                             appliedOffset.X += delta.Width;
-                        }
                     }
 
                     if (appliedOffset.Y > 0)
                     {
                         if (Math.Abs(delta.Height) > Math.Abs(appliedOffset.Y))
-                        {
                             appliedOffset.Y = 0;
-                        }
                         else
-                        {
                             appliedOffset.Y -= delta.Height;
-                        }
                     }
 
                     if (appliedOffset.Y < 0)
                     {
                         if (Math.Abs(delta.Height) > Math.Abs(appliedOffset.Y))
-                        {
                             appliedOffset.Y = 0;
-                        }
                         else
-                        {
                             appliedOffset.Y += delta.Height;
-                        }
                     }
                 }
 
@@ -738,7 +727,6 @@ namespace Game.Engine
                 .Where(o => o.Meta.ActorClass != ActorClassName.ActorTerrain).ToList();
 
             intersections.AddRange(finalIntersections);
-
 
             return intersections;
         }
@@ -775,6 +763,23 @@ namespace Game.Engine
 
         #region Misc.
 
+        string PlayerDeathText()
+        {
+            var strs = new string[] {
+                "DEATH! You have been bested!",
+                "DEATH! The beast that dealt your final blow laughs as they rummage through their new spoils.",
+                "DEATH! Like a candle in the wind, your flame fades quickly. Your body lies still as it cools.",
+                "DEATH! With a final blow, your ambitions are flung from your body.",
+                "DEATH! The wretched beast dashes all signs of life from your body.",
+                "DEATH! Too much damage... Your body caves in as your mind loses hope for the last time.",
+                "DEATH! You gave it your all, it wasn't enough.",
+                "DEATH! Your final breath was as much as a whimper.",
+                "DEATH! Gone too soon, forgotten even sooner.",
+            };
+
+            return strs[MathUtility.RandomNumber(0, strs.Count())];
+        }
+
         string GetCriticalHitText()
         {
             var strs = new string[] {
@@ -782,11 +787,13 @@ namespace Game.Engine
                 "landing a crushing blow!.",
                 "hitting them in the head!.",
                 "hitting them in the torso!",
+                "riping them open at the joint!",
                 "nearly removing a limb!",
                 "leaving them in a state of shock!",
                 "nearly blinding them!",
                 "causing them to stumble!",
-                "knocking them to the ground!"};
+                "knocking them to the ground!"
+            };
 
             return strs[MathUtility.RandomNumber(0, strs.Count())];
         }
@@ -797,8 +804,8 @@ namespace Game.Engine
                 "but they evade your clumsy blow!",
                 "but they were faster then you expected!",
                 "but they pull just out of your path!",
-                "are too slow to get an upper hand!",
-                "but nearly drop your weapon!",
+                "but you are too slow to get an upper hand!",
+                "but miss, nearly dropping your weapon!",
                 "but you were bested by their agility!"
             };
 

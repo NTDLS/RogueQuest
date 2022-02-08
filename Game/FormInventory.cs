@@ -670,8 +670,12 @@ namespace Game
                     });
                 }
 
-                var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
-                inventoryItem.ContainerId = null; //find the item in inventory and set its container id to null.
+                //If the item is in a container, find the item and set its container to NULL.
+                var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).FirstOrDefault();
+                if (inventoryItem != null)
+                {
+                    inventoryItem.ContainerId = null; //find the item in inventory and set its container id to null.
+                }
 
                 if (draggedItem.ListView == listViewGround)
                 {

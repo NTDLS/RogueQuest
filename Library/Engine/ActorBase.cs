@@ -103,7 +103,7 @@ namespace Library.Engine
         /// Removes hitpoints and returns true if killed.
         /// </summary>
         /// <returns></returns>
-        public bool Hit(int points)
+        public bool ApplyDamage(int points)
         {
             this.Meta.HitPoints -= points;
             if (this.Meta.HitPoints <= 0)
