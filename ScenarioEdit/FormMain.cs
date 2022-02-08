@@ -1665,6 +1665,14 @@ namespace ScenarioEdit
             }
         }
 
+        private void splitContainerBody_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (_core != null)
+            {
+                _core.ResizeDrawingSurface(new Size(drawingsurface.Width, drawingsurface.Height));
+            }
+        }
+
         #endregion
 
         #region ListViewProperties.
