@@ -562,6 +562,12 @@ namespace Game
                 string text = item.Tile.Meta.Name;
                 text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
                 text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+
+                if (item.Tile.Meta.SubType is ActorSubType.Weapon)
+                {
+                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
+                }
+
                 text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
@@ -753,6 +759,12 @@ namespace Game
                 string text = item.Tile.Meta.Name;
                 text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
                 text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+
+                if (item.Tile.Meta.SubType is ActorSubType.Weapon)
+                {
+                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
+                }
+
                 text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
@@ -780,6 +792,12 @@ namespace Game
                 string text = item.Tile.Meta.Name;
                 text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
                 text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+
+                if (item.Tile.Meta.SubType is ActorSubType.Weapon)
+                {
+                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
+                }
+
                 text += "\r\n" + $"Asking Price: {AskingPrice(item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
@@ -826,7 +844,9 @@ namespace Game
 
             var itemsInStore = Core.Materials
                 .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem
-                    && o.Meta.Value > 0 && o.Meta.Value < 1000)
+                    && o.Meta.Value > 0
+                    && (o.Meta.IsUnique ?? false) == false
+                    && o.Meta.Level <= Core.State.Character.Level)
                 .Cast<TileIdentifier>();
 
             foreach (var item in itemsInStore)

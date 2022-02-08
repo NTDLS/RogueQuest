@@ -44,6 +44,10 @@ namespace Library.Engine
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; }
         public bool? CanWalkOn { get; set; }
+        /// <summary>
+        /// There can only be one.
+        /// </summary>
+        public bool? IsUnique { get; set; }
         public bool? CanTakeDamage { get; set; }
 
         // This is only populated for tiles that need it.
@@ -114,6 +118,21 @@ namespace Library.Engine
         public string Dialog { get { return _Dialog == string.Empty ? null : _Dialog; } set { _Dialog = value; } }
 
 
+        public string DndDamageText
+        {
+            get
+            {
+                var text = $"{this.DamageDice}d{this.DamageDiceFaces}";
+
+                if (this.DamageAdditional > 0)
+                {
+                    text += $" +{this.DamageAdditional}";
+                }
+
+                return text;
+            }
+        }
+
         public void OverrideWith(TileMetadata with)
         {
             this.UID = with.UID ?? this.UID;
@@ -124,6 +143,7 @@ namespace Library.Engine
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;
             this.Name = with.Name ?? this.Name;
+            this.IsUnique = with.IsUnique ?? this.IsUnique;
             this.Dialog = with.Dialog ?? this.Dialog;
             this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;
             this.IsContainer = with.IsContainer ?? this.IsContainer;

@@ -43,9 +43,10 @@ namespace Game
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(408, 165);
+            this.buttonCancel.Location = new System.Drawing.Point(466, 220);
+            this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(78, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(89, 31);
             this.buttonCancel.TabIndex = 10;
             this.buttonCancel.Text = "Close";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -54,27 +55,32 @@ namespace Game
             // listBoxSaves
             // 
             this.listBoxSaves.FormattingEnabled = true;
-            this.listBoxSaves.ItemHeight = 15;
-            this.listBoxSaves.Location = new System.Drawing.Point(6, 22);
+            this.listBoxSaves.HorizontalScrollbar = true;
+            this.listBoxSaves.ItemHeight = 20;
+            this.listBoxSaves.Location = new System.Drawing.Point(7, 29);
+            this.listBoxSaves.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listBoxSaves.Name = "listBoxSaves";
-            this.listBoxSaves.Size = new System.Drawing.Size(375, 154);
+            this.listBoxSaves.Size = new System.Drawing.Size(428, 204);
             this.listBoxSaves.TabIndex = 11;
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.listBoxSaves);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(14, 16);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(387, 188);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox1.Size = new System.Drawing.Size(442, 251);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Recent Games (Double-Click to Load)";
             // 
             // buttonNewGame
             // 
-            this.buttonNewGame.Location = new System.Drawing.Point(408, 136);
+            this.buttonNewGame.Location = new System.Drawing.Point(466, 181);
+            this.buttonNewGame.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonNewGame.Name = "buttonNewGame";
-            this.buttonNewGame.Size = new System.Drawing.Size(78, 23);
+            this.buttonNewGame.Size = new System.Drawing.Size(89, 31);
             this.buttonNewGame.TabIndex = 13;
             this.buttonNewGame.Text = "New Game";
             this.buttonNewGame.UseVisualStyleBackColor = true;
@@ -82,9 +88,10 @@ namespace Game
             // 
             // buttonBrowse
             // 
-            this.buttonBrowse.Location = new System.Drawing.Point(408, 34);
+            this.buttonBrowse.Location = new System.Drawing.Point(466, 45);
+            this.buttonBrowse.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonBrowse.Name = "buttonBrowse";
-            this.buttonBrowse.Size = new System.Drawing.Size(78, 23);
+            this.buttonBrowse.Size = new System.Drawing.Size(89, 31);
             this.buttonBrowse.TabIndex = 14;
             this.buttonBrowse.Text = "Browse";
             this.buttonBrowse.UseVisualStyleBackColor = true;
@@ -92,9 +99,10 @@ namespace Game
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(408, 63);
+            this.buttonClear.Location = new System.Drawing.Point(466, 84);
+            this.buttonClear.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(78, 23);
+            this.buttonClear.Size = new System.Drawing.Size(89, 31);
             this.buttonClear.TabIndex = 15;
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
@@ -102,9 +110,9 @@ namespace Game
             // 
             // FormWelcome
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(495, 211);
+            this.ClientSize = new System.Drawing.Size(566, 281);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonBrowse);
             this.Controls.Add(this.buttonNewGame);
@@ -112,6 +120,7 @@ namespace Game
             this.Controls.Add(this.buttonCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormWelcome";

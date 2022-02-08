@@ -5,7 +5,8 @@
  AppCopyright                    = Copyright © 1995-2021 NetworkDLS.
  DefaultDirName                  = {commonpf}\NetworkDLS\Rougue Quest
  DefaultGroupName                = NetworkDLS\Rougue Quest
- UninstallDisplayIcon            = {app}\SSE.Exe
+ UninstallDisplayIcon            = {app}\Bin\Game.exe
+ SetupIconFile                   = RougueQuest.ico
  PrivilegesRequired              = PowerUser
  Uninstallable                   = Yes
  Compression                     = bZIP/9
@@ -26,20 +27,20 @@
  Name: "ScenarioEdit"; Description: "Scenario Editor";  Types: Full Custom;
 
 [Files]
- Source: "Game\bin\Debug\net5.0-windows\*.exe";          DestDir: "{app}\Game";          Components: Game;          Flags: IgnoreVersion; 
- Source: "Game\bin\Debug\net5.0-windows\*.dll";          DestDir: "{app}\Game";          Components: Game;          Flags: IgnoreVersion;
- Source: "Game\bin\Debug\net5.0-windows\*.json";         DestDir: "{app}\Game";          Components: Game;          Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Debug\net5.0-windows\*.exe";  DestDir: "{app}\ScenarioEdit";  Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Debug\net5.0-windows\*.json"; DestDir: "{app}\ScenarioEdit";  Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Debug\net5.0-windows\*.dll";  DestDir: "{app}\ScenarioEdit";  Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "Assets\*.*";                                   DestDir: "{app}\Assets";        Components: Assets;        Flags: IgnoreVersion recursesubdirs;
+ Source: "Game\bin\Release\net5.0-windows\*.exe";          DestDir: "{app}\Bin";     Components: Game;          Flags: IgnoreVersion; 
+ Source: "Game\bin\Release\net5.0-windows\*.dll";          DestDir: "{app}\Bin";     Components: Game;          Flags: IgnoreVersion;
+ Source: "Game\bin\Release\net5.0-windows\*.json";         DestDir: "{app}\Bin";     Components: Game;          Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net5.0-windows\*.exe";  DestDir: "{app}\Bin";     Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net5.0-windows\*.json"; DestDir: "{app}\Bin";     Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net5.0-windows\*.dll";  DestDir: "{app}\Bin";     Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "Assets\*.*";                                     DestDir: "{app}\Assets";  Components: Assets;        Flags: IgnoreVersion recursesubdirs;
 
 [Registry]
  Root: HKLM; Subkey: "Software\NetworkDLS\Rogue Quest"; ValueType: STRING;ValueName: "AssetPath"; ValueData:"{app}\Assets"; Flags: CreateValueIfDoesntExist;
 
 [Icons]
- Name: "{group}\Rougue Quest";    Filename: "{app}\Game\Game.exe";               Components: Game;
- Name: "{group}\Scenario Editor"; Filename: "{app}\ScenarioEdit\ScenarioEdit.exe"; Components: ScenarioEdit;
+ Name: "{group}\Rougue Quest";    Filename: "{app}\Bin\Game.exe";         Components: Game;
+ Name: "{group}\Scenario Editor"; Filename: "{app}\Bin\ScenarioEdit.exe"; Components: ScenarioEdit;
 
 [Run]
- Filename: "{app}\Game\Game.exe"; Description: "Run Rougue Quest now?"; Flags: postinstall nowait skipifsilent shellexec; Components: Game;
+ Filename: "{app}\Bin\Game.exe"; Description: "Run Rougue Quest now?"; Flags: postinstall nowait skipifsilent shellexec; Components: Game;
