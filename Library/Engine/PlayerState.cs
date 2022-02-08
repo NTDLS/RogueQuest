@@ -7,6 +7,19 @@ namespace Library.Engine
 {
     public class PlayerState
     {
+        private EngineCoreBase _core;
+
+        public PlayerState(EngineCoreBase core)
+        {
+            _core = core;
+            Equipment = new List<Equip>();
+        }
+
+        public void SetCore(EngineCoreBase core)
+        {
+            _core = core;
+        }
+
         public List<Equip> Equipment { get; set; }
         public Guid UID { get; set; }
         public string Name { get; set; }
@@ -29,10 +42,30 @@ namespace Library.Engine
         public int Dexterity => StartingDexterity + AugmentedDexterity;
         public int Intelligence => StartingIntelligence + AugmentedIntelligence;
         public int Strength => StartingStrength + AugmentedStrength;
-
         public int Experience { get; set; }
         public int NextLevelExperience { get; set; }
         public int Level { get; set; }
+
+        /// <summary>
+        /// Gets the aggregate amount of money in gold equivalent.
+        /// </summary>
+        public int Money
+        {
+            get
+            {
+                //Get the purse that is equiped.
+                var equipSlot = _core.State.Character.GetEquipSlot(EquipSlot.Purse);
+                if (equipSlot != null)
+                {
+                    //Find all the money in the purse.
+                    var money = _core.State.Items.Where(o => o.ContainerId == equipSlot.Tile.Meta.UID).ToList();
+                    int value = (int)(money.Sum(o => o.Tile.Meta.Quantity * o.Tile.Meta.Value) ?? 0.0);
+
+                    return value;
+                }
+                return 0;
+            }
+        }
 
         //Availabe start at the base rates and are reduced as consumed.
         private int _availableHitpoints;
@@ -85,11 +118,6 @@ namespace Library.Engine
 
             AvailableHitpoints = Hitpoints;
             AvailableMana = Manna;
-        }
-
-        public PlayerState()
-        {
-            Equipment = new List<Equip>();
         }
 
         public Equip GetEquipSlot(EquipSlot slot)

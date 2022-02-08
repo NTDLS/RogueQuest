@@ -4,8 +4,23 @@ namespace Library.Engine
 {
     public class GameState
     {
-        public PlayerState Character { get; set; } = new PlayerState();
-        public List<CustodyItem> Items { get; set; } = new List<CustodyItem>();
+        private EngineCoreBase _core;
+
+        public GameState(EngineCoreBase core)
+        {
+            _core = core;
+
+            Character = new PlayerState(core);
+        }
+
+        public void SetCore(EngineCoreBase core)
+        {
+            _core = core;
+            Character.SetCore(core);
+        }
+
+        public PlayerState Character { get; set; }
+        public List<CustodyItem> Items { get; private set; } = new List<CustodyItem>();
 
         /// <summary>
         /// The level/map-number that the player is currently on.

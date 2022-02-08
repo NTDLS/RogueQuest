@@ -53,8 +53,8 @@ namespace Game
             listViewSelectedContainer.DragDrop += ListViewSelectedContainer_DragDrop;
             listViewSelectedContainer.AllowDrop = true;
             listViewSelectedContainer.MouseDoubleClick += ListViewSelectedContainer_MouseDoubleClick;
-            listViewSelectedContainer.MouseUp += ListViewe_Shared_MouseUp;
-            listViewSelectedContainer.MouseDown += ListViewe_Shared_MouseDown;
+            listViewSelectedContainer.MouseUp += ListView_Shared_MouseUp;
+            listViewSelectedContainer.MouseDown += ListView_Shared_MouseDown;
 
             listViewGround.SmallImageList = _imageList;
             listViewGround.LargeImageList = _imageList;
@@ -63,8 +63,8 @@ namespace Game
             listViewGround.DragDrop += ListViewGround_DragDrop;
             listViewGround.AllowDrop = true;
             listViewGround.MouseDoubleClick += ListViewGround_MouseDoubleClick;
-            listViewGround.MouseUp += ListViewe_Shared_MouseUp;
-            listViewGround.MouseDown += ListViewe_Shared_MouseDown;
+            listViewGround.MouseUp += ListView_Shared_MouseUp;
+            listViewGround.MouseDown += ListView_Shared_MouseDown;
 
             listViewPlayerPack.SmallImageList = _imageList;
             listViewPlayerPack.LargeImageList = _imageList;
@@ -73,8 +73,8 @@ namespace Game
             listViewPlayerPack.DragDrop += ListViewPlayerPack_DragDrop;
             listViewPlayerPack.AllowDrop = true;
             listViewPlayerPack.MouseDoubleClick += ListViewPlayerPack_MouseDoubleClick;
-            listViewPlayerPack.MouseUp += ListViewe_Shared_MouseUp;
-            listViewPlayerPack.MouseDown += ListViewe_Shared_MouseDown;
+            listViewPlayerPack.MouseUp += ListView_Shared_MouseUp;
+            listViewPlayerPack.MouseDown += ListView_Shared_MouseDown;
 
             InitEquipSlot(listViewArmor, ActorSubType.Armor, EquipSlot.Armor);
             InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
@@ -260,6 +260,13 @@ namespace Game
             }
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            if (_currentlySelectedPack.Meta.SubType == ActorSubType.Purse
+                && draggedItemTag.Tile.Meta.SubType != ActorSubType.Money)
+            {
+                Constants.Alert("You can only store coins in the purse");
+                return;
+            }
 
             ActorItem itemOnGround = null;
 
@@ -564,8 +571,14 @@ namespace Game
                 var item = lv.Items[0].Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
-                text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
+
+                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
+                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
+                else if (item.Tile.Meta.SubType == ActorSubType.Money)
+                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -741,7 +754,7 @@ namespace Game
 
         #region Form Events.
 
-        private void ListViewe_Shared_MouseDown(object sender, MouseEventArgs e)
+        private void ListView_Shared_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -756,16 +769,15 @@ namespace Game
                 var item = selection.Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType == ActorSubType.Money)
-                {
+                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
+                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
+                else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
-                }
-                else
-                {
-                    text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                    text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
-                }
+
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -775,7 +787,7 @@ namespace Game
             }
         }
 
-        private void ListViewe_Shared_MouseUp(object sender, MouseEventArgs e)
+        private void ListView_Shared_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {

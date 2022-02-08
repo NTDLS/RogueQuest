@@ -73,12 +73,14 @@ namespace Library.Engine
 
             if (Core.State == null)
             {
-                Core.State = new GameState();
+                Core.State = new GameState(Core);
             }
             if (Core.State.Character == null)
             {
-                Core.State.Character = new PlayerState();
+                Core.State.Character = new PlayerState(Core);
             }
+
+            Core.State.SetCore(Core);
         }
 
         public static List<LevelChunk> LoadChunks(string fileName, int levelNumber)

@@ -255,6 +255,13 @@ namespace Game
                 return;
             }
 
+            if (_currentlySelectedPack.Meta.SubType == ActorSubType.Purse
+                && draggedItemTag.Tile.Meta.SubType != ActorSubType.Money)
+            {
+                Constants.Alert("You can only store coins in the purse");
+                return;
+            }
+
             //If we are draging from the primary pack slot, then close the pack.
             if (draggedItem.ListView == listViewPack)
             {
@@ -581,13 +588,21 @@ namespace Game
                 var item = lv.Items[0].Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
-                text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType is ActorSubType.Weapon)
-                {
+                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
+                else if (item.Tile.Meta.SubType == ActorSubType.Money)
+                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
+
+                if (string.IsNullOrWhiteSpace(text) == false)
+                {
+                    var location = new Point(e.X + 10, e.Y - 25);
+                    _interrogationTip.Show(text, lv, location, 5000);
                 }
+
 
                 text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
 
@@ -777,13 +792,14 @@ namespace Game
                 var item = selection.Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
-                text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType is ActorSubType.Weapon)
-                {
+                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
-                }
+                else if (item.Tile.Meta.SubType == ActorSubType.Money)
+                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
 
                 text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
 
@@ -810,13 +826,14 @@ namespace Game
                 var item = selection.Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
-                text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType is ActorSubType.Weapon)
-                {
+                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
-                }
+                else if (item.Tile.Meta.SubType == ActorSubType.Money)
+                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
 
                 text += "\r\n" + $"Asking Price: {AskingPrice(item.Tile):N0}";
 

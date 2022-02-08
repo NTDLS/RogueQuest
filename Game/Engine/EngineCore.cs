@@ -96,7 +96,7 @@ namespace Game.Engine
 
             Load(scenarioFile);
 
-            this.State.Character = new PlayerState()
+            this.State.Character = new PlayerState(this)
             {
                 UID = Guid.NewGuid(),
                 Experience = 0,
@@ -174,7 +174,7 @@ namespace Game.Engine
                     return;
                 }
 
-                this.State.Character = new PlayerState()
+                this.State.Character = new PlayerState(this)
                 {
                     UID = Guid.NewGuid(),
                     Experience = 0,

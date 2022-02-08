@@ -127,7 +127,7 @@ namespace Library.Engine
             Levels.Collection.Clear();
             Levels.AddNew("Home");
 
-            State = new GameState();
+            State = new GameState(this);
 
             ScenarioMeta = new ScenarioMetaData()
             {
@@ -145,7 +145,7 @@ namespace Library.Engine
         {
             Display = new EngineDisplay(drawingSurface, visibleSize);
             Levels = new Levels(this);
-            State = new GameState();
+            State = new GameState(this);
 
             lock (CollectionSemaphore)
             {

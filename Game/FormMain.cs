@@ -335,7 +335,7 @@ namespace Game
                 {
                     _core.Load(_levelPathPassedToGame);
 
-                    _core.State.Character = new PlayerState()
+                    _core.State.Character = new PlayerState(_core)
                     {
                         UID = Guid.NewGuid(),
                         Experience = 0,
@@ -428,18 +428,7 @@ namespace Game
             labelHP.Text = $"{core.State.Character.AvailableHitpoints:N0}";
             labelMana.Text = $"{core.State.Character.AvailableMana:N0}";
             labelTime.Text = time.ToString(@"dd\:hh\:mm\:ss");
-
-            //Get the purse that is equiped.
-            var equipSlot = _core.State.Character.GetEquipSlot(EquipSlot.Purse);
-            if (equipSlot != null)
-            {
-                //Find all the money in the purse.
-                var money = _core.State.Items.Where(o => o.ContainerId == equipSlot.Tile.Meta.UID).ToList();
-
-                int value = (int)(money.Sum(o => o.Tile.Meta.Quantity * o.Tile.Meta.Value) ?? 0.0);
-
-                labelGold.Text = $"{value:N0}gp";
-            }
+            labelGold.Text = $"{core.State.Character.Money:N0}gp";
         }
 
         private void _core_OnStart(EngineCoreBase sender)
