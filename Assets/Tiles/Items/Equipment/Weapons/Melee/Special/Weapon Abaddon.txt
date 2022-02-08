@@ -1,6 +1,7 @@
 {
   "Name":"Abaddon",
   "SubType": "Weapon",
+  "Value": "4500",
   "DamageDice":"2",
   "DamageDiceFaces":"9",
   "DamageAdditional":"4",

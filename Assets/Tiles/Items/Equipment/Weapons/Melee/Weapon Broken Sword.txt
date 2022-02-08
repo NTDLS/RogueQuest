@@ -1,6 +1,7 @@
 {
   "Name":"Broken Sword",
   "SubType": "Weapon",
+  "Value": "0",
   "DamageDice":"0",
   "DamageDiceFaces":"0",
   "DamageAdditional":"0",

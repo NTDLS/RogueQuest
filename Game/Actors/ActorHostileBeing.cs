@@ -6,7 +6,22 @@ namespace Game.Actors
 {
     public class ActorHostileBeing : ActorBase
     {
-        public int MaxFollowDistance { get; set; } = 100;
+        private int _maxFollowDistance = 20;
+
+        /// <summary>
+        /// Max follow distance is 20 + (Dextirity * 5).
+        /// </summary>
+        public int MaxFollowDistance
+        {
+            get
+            {
+                return _maxFollowDistance + ((this.Meta.Dexterity ?? 0) * 5);
+            }
+            set
+            {
+                _maxFollowDistance = value;
+            }
+        }
 
         public ActorHostileBeing(EngineCore core)
             : base(core)
@@ -43,7 +58,7 @@ namespace Game.Actors
                     return "Near Death";
                 }
 
-                return "Godlike"; //:D
+                throw new System.Exception("Entity can not have this much health!");
             }
         }
     }

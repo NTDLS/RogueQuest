@@ -1,6 +1,7 @@
 {
   "Name":"Diabolus",
   "SubType": "Weapon",
+  "Value": "3600",
   "DamageDice":"3",
   "DamageDiceFaces":"10",
   "DamageAdditional":"2",

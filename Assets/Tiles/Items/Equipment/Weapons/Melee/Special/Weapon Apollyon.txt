@@ -1,6 +1,7 @@
 {
   "Name":"Apollyon",
   "SubType": "Weapon",
+  "Value": "3200",
   "DamageDice":"4",
   "DamageDiceFaces":"5",
   "DamageAdditional":"2",

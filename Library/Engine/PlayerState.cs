@@ -1,5 +1,4 @@
 ﻿using Library.Engine.Types;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +77,7 @@ namespace Library.Engine
         {
             Level++;
 
-            NextLevelExperience = (int)(((float)Experience) * 1.5f);
+            NextLevelExperience = (int)(((float)NextLevelExperience) * 1.5f);
 
             Hitpoints += 6 + StartingConstitution + (AugmentedConstitution * 3);
             Manna += 6 + StartingIntelligence + (AugmentedIntelligence * 3);

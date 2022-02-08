@@ -1,6 +1,7 @@
 {
   "Name":"Cloak of Protection",
   "SubType": "Garment",
+  "Value": "30",
   "AC":"1",
   "Weight":"15",
   "Bulk":"40",

@@ -15,7 +15,7 @@ using System.Windows.Forms;
 
 namespace Game
 {
-    public partial class FormInventory : Form
+    public partial class FormStore : Form
     {
         private ImageList _imageList = new ImageList();
         private Button _buttonClose = new Button();
@@ -30,18 +30,18 @@ namespace Game
         }
 
         public EngineCore Core { get; set; }
-        public FormInventory()
+        public FormStore()
         {
             InitializeComponent();
         }
 
-        public FormInventory(EngineCore core)
+        public FormStore(EngineCore core)
         {
             InitializeComponent();
             Core = core;
         }
 
-        private void FormInventory_Load(object sender, EventArgs e)
+        private void FormStore_Load(object sender, EventArgs e)
         {
             _buttonClose.Click += _buttonClose_Click;
             this.CancelButton = _buttonClose;
@@ -56,15 +56,15 @@ namespace Game
             listViewSelectedContainer.MouseUp += ListViewe_Shared_MouseUp;
             listViewSelectedContainer.MouseDown += ListViewe_Shared_MouseDown;
 
-            listViewGround.SmallImageList = _imageList;
-            listViewGround.LargeImageList = _imageList;
-            listViewGround.ItemDrag += ListViewGround_ItemDrag;
-            listViewGround.DragEnter += ListViewGround_DragEnter;
-            listViewGround.DragDrop += ListViewGround_DragDrop;
-            listViewGround.AllowDrop = true;
-            listViewGround.MouseDoubleClick += ListViewGround_MouseDoubleClick;
-            listViewGround.MouseUp += ListViewe_Shared_MouseUp;
-            listViewGround.MouseDown += ListViewe_Shared_MouseDown;
+            listViewStore.SmallImageList = _imageList;
+            listViewStore.LargeImageList = _imageList;
+            listViewStore.ItemDrag += ListViewStore_ItemDrag;
+            listViewStore.DragEnter += ListViewStore_DragEnter;
+            listViewStore.DragDrop += ListViewStore_DragDrop;
+            listViewStore.AllowDrop = true;
+            listViewStore.MouseDoubleClick += ListViewStore_MouseDoubleClick;
+            listViewStore.MouseUp += ListViewe_Shared_MouseUp;
+            listViewStore.MouseDown += ListView_Store_MouseDown;
 
             listViewPlayerPack.SmallImageList = _imageList;
             listViewPlayerPack.LargeImageList = _imageList;
@@ -99,26 +99,26 @@ namespace Game
                 PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
             }
 
-            PopulateContainerFromGround(listViewGround);
+            PopulateContainerFromStore(listViewStore);
         }
 
-        #region ListViewGround
+        #region ListViewStore
 
-        private void ListViewGround_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void ListViewStore_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (listViewGround.SelectedItems?.Count != 1)
+            if (listViewStore.SelectedItems?.Count != 1)
             {
                 return;
             }
 
-            var item = listViewGround.SelectedItems[0].Tag as EquipTag;
+            var item = listViewStore.SelectedItems[0].Tag as EquipTag;
             if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
             {
                 OpenPack(item);
             }
         }
 
-        private void ListViewGround_DragDrop(object sender, DragEventArgs e)
+        private void ListViewStore_DragDrop(object sender, DragEventArgs e)
         {
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
@@ -150,7 +150,7 @@ namespace Game
                 {
                     itemUnderfoot.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
 
-                    var listViewItem = FindListViewObjectByUid(listViewGround, (Guid)itemUnderfoot.Meta.UID);
+                    var listViewItem = FindListViewObjectByUid(listViewStore, (Guid)itemUnderfoot.Meta.UID);
                     if (listViewItem != null)
                     {
                         string text = itemUnderfoot.Meta.Name;
@@ -173,7 +173,7 @@ namespace Game
                     Core.Player.X, Core.Player.Y, inventoryItem.Tile.TilePath);
                 droppedItem.Meta = inventoryItem.Tile.Meta;
 
-                AddItemToListView(listViewGround, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                AddItemToListView(listViewStore, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
             }
 
             Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
@@ -198,12 +198,12 @@ namespace Game
             }
         }
 
-        private void ListViewGround_DragEnter(object sender, DragEventArgs e)
+        private void ListViewStore_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = e.AllowedEffect;
         }
 
-        private void ListViewGround_ItemDrag(object sender, ItemDragEventArgs e)
+        private void ListViewStore_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -257,17 +257,17 @@ namespace Game
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
 
-            ActorItem itemOnGround = null;
+            ActorItem itemInStore = null;
 
-            if (draggedItem.ListView == listViewGround)
+            if (draggedItem.ListView == listViewStore)
             {
-                itemOnGround = Core.Actors.Intersections(Core.Player)
+                itemInStore = Core.Actors.Intersections(Core.Player)
                     .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
                     .Cast<ActorItem>().FirstOrDefault();
 
                 Core.State.Items.Add(new CustodyItem()
                 {
-                    Tile = itemOnGround.CloneIdentifier()
+                    Tile = itemInStore.CloneIdentifier()
                 });
             }
 
@@ -323,9 +323,9 @@ namespace Game
                 inventoryItem.ContainerId = (Guid)_currentlySelectedPack.Meta.UID;
             }
 
-            if (draggedItem.ListView == listViewGround)
+            if (draggedItem.ListView == listViewStore)
             {
-                itemOnGround.QueueForDelete();
+                itemInStore.QueueForDelete();
                 draggedItem.ListView.Items.Remove(draggedItem);
             }
             else if (draggedItem.ListView == listViewPlayerPack)
@@ -402,17 +402,19 @@ namespace Game
                 listViewPlayerPack.Items.Clear();
             }
 
-            ActorItem itemOnGround = null;
+            ActorItem itemInStore = null;
 
-            if (draggedItem.ListView == listViewGround)
+            if (draggedItem.ListView == listViewStore)
             {
-                itemOnGround = Core.Actors.Intersections(Core.Player)
+                var listViewItem = FindListViewObjectByUid(listViewStore, (Guid)draggedItemTag.Tile.Meta.UID);
+
+                itemInStore = Core.Actors.Intersections(Core.Player)
                     .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
                     .Cast<ActorItem>().FirstOrDefault();
 
                 Core.State.Items.Add(new CustodyItem()
                 {
-                    Tile = itemOnGround.CloneIdentifier()
+                    Tile = itemInStore.CloneIdentifier()
                 });
             }
 
@@ -468,9 +470,9 @@ namespace Game
                 inventoryItem.ContainerId = (Guid)playersPack.Tile.Meta.UID;
             }
 
-            if (draggedItem.ListView == listViewGround)
+            if (draggedItem.ListView == listViewStore)
             {
-                itemOnGround.QueueForDelete();
+                itemInStore.QueueForDelete();
                 draggedItem.ListView.Items.Remove(draggedItem);
             }
             else if (draggedItem.ListView == listViewSelectedContainer)
@@ -560,6 +562,7 @@ namespace Game
                 string text = item.Tile.Meta.Name;
                 text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
                 text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -656,17 +659,17 @@ namespace Game
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
                 equipSlot.Tile = draggedItemTag.Tile;
 
-                ActorItem itemOnGround = null;
+                ActorItem itemInStore = null;
 
-                if (draggedItem.ListView == listViewGround)
+                if (draggedItem.ListView == listViewStore)
                 {
-                    itemOnGround = Core.Actors.Intersections(Core.Player)
+                    itemInStore = Core.Actors.Intersections(Core.Player)
                         .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
                         .Cast<ActorItem>().FirstOrDefault();
 
                     Core.State.Items.Add(new CustodyItem()
                     {
-                        Tile = itemOnGround.CloneIdentifier()
+                        Tile = itemInStore.CloneIdentifier()
                     });
                 }
 
@@ -677,9 +680,9 @@ namespace Game
                     inventoryItem.ContainerId = null; //find the item in inventory and set its container id to null.
                 }
 
-                if (draggedItem.ListView == listViewGround)
+                if (draggedItem.ListView == listViewStore)
                 {
-                    itemOnGround.QueueForDelete();
+                    itemInStore.QueueForDelete();
                     draggedItem.ListView.Items.Remove(draggedItem);
                 }
                 else if (draggedItem.ListView == listViewPlayerPack)
@@ -750,6 +753,34 @@ namespace Game
                 string text = item.Tile.Meta.Name;
                 text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
                 text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
+
+                if (string.IsNullOrWhiteSpace(text) == false)
+                {
+                    var location = new Point(e.X + 10, e.Y - 25);
+                    _interrogationTip.Show(text, lv, location, 5000);
+                }
+            }
+        }
+
+        private void ListView_Store_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var lv = sender as ListView;
+                var selection = lv.GetItemAt(e.X, e.Y);
+
+                if (selection == null)
+                {
+                    return;
+                }
+
+                var item = selection.Tag as EquipTag;
+
+                string text = item.Tile.Meta.Name;
+                text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
+                text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                text += "\r\n" + $"Asking Price: {AskingPrice(item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -789,18 +820,45 @@ namespace Game
             return tilePath;
         }
 
-        void PopulateContainerFromGround(ListView listView)
+        void PopulateContainerFromStore(ListView listView)
         {
             listView.Items.Clear();
 
-            var itemUnderfoot = Core.Actors.Intersections(Core.Player)
-                .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem)
-                .Cast<ActorItem>();
+            var itemsInStore = Core.Materials
+                .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem
+                    && o.Meta.Value > 0 && o.Meta.Value < 1000)
+                .Cast<TileIdentifier>();
 
-            foreach (var item in itemUnderfoot)
+            foreach (var item in itemsInStore)
             {
-                AddItemToListView(listView, item.TilePath, item.Meta);
+                var tile = item.Clone();
+                AddItemToListView(listView, tile.TilePath, tile.Meta);
             }
+        }
+
+        int AskingPrice(TileIdentifier tile)
+        {
+            double intelligenceDiscount = (Core.State.Character.Intelligence / 100.0);
+            int value = (tile.Meta.Value ?? 0) - (int)(tile.Meta.Value * intelligenceDiscount);
+            if (value > 0)
+            {
+                return value;
+            }
+
+            return 1;
+        }
+
+        int OfferPrice(TileIdentifier tile)
+        {
+            double intelligenceBonus = (Core.State.Character.Intelligence / 100.0);
+            int halfValue = (int)((tile.Meta.Value ?? 0.0) / 2.0);
+            int value = (int)(halfValue + (halfValue * intelligenceBonus));
+            if (value > 0)
+            {
+                return value;
+            }
+
+            return 1;
         }
 
         void PopulateContainerFromPack(ListView listView, Guid containerId)

@@ -1,6 +1,7 @@
 {
   "Name":"Broad Sword +2",
   "SubType": "Weapon",
+  "Value": "450",
   "DamageDice":"1",
   "DamageDiceFaces":"9",
   "DamageAdditional":"2",

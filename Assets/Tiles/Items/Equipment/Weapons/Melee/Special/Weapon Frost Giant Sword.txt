@@ -1,6 +1,7 @@
 {
   "Name":"Frost Giant Sword",
   "SubType": "Weapon",
+  "Value": "4000",
   "DamageDice":"2",
   "DamageDiceFaces":"10",
   "DamageAdditional":"3",

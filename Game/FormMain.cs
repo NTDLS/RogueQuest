@@ -154,7 +154,7 @@ namespace Game
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder).LastOrDefault();
+            var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
             if (e.Button == MouseButtons.Right)
             {
@@ -178,11 +178,9 @@ namespace Game
                         var location = new Point((int)hoverTile.ScreenX, (int)hoverTile.ScreenY - hoverTile.Size.Height);
                         _interrogationTip.Show(text, drawingsurface, location, 5000);
                     }
-
                 }
             }
         }
-
 
         #region Menu Clicks.
 
@@ -477,6 +475,13 @@ namespace Game
             else if (e.KeyCode == Keys.I)
             {
                 using (var form = new FormInventory(_core))
+                {
+                    form.ShowDialog();
+                }
+            }
+            else if (e.KeyCode == Keys.S) //This is for debugging.
+            {
+                using (var form = new FormStore(_core))
                 {
                     form.ShowDialog();
                 }

@@ -1,6 +1,7 @@
 {
   "Name":"Leather Boots",
   "SubType": "Boots",
+  "Value": "5",
   "Weight":"15",
   "Bulk":"40",
   "Level":"1"

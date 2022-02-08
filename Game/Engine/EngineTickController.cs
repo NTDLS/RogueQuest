@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using static Game.Engine.Types;
 
 namespace Game.Engine
@@ -244,6 +243,7 @@ namespace Game.Engine
             if (Core.State.Character.AvailableHitpoints >= Core.State.Character.Hitpoints)
             {
                 Core.LogLine($"Feeling no need to rest you press on.", Color.DarkGreen);
+                Advance(input);
                 return;
             }
 
@@ -436,13 +436,13 @@ namespace Game.Engine
                 return;
             }
 
-            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 20)
+            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 200)
                 .Where(o => o.Meta.CanTakeDamage == true);
 
             var hostileInteractions = new List<ActorHostileBeing>();
 
             //Find out which of the hostile beings in visible range are touching the
-            //  player bounds (not intersecting, because these should be none, but just touching.
+            //  player bounds (not intersecting, because there should be none, but just touching.
             foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.ActorClass == ActorClassName.ActorHostileBeing))
             {
                 var largerBounds = new Rectangle(obj.ScreenBounds.X - 1, obj.ScreenBounds.Y - 1, obj.ScreenBounds.Width + 2, obj.ScreenBounds.Height + 2);
@@ -535,6 +535,7 @@ namespace Game.Engine
             if (Core.State.Character.Experience > Core.State.Character.NextLevelExperience)
             {
                 Core.State.Character.LevelUp();
+                Core.LogLine($"{Core.State.Character.Name} reached level {Core.State.Character.Level}! Next level at {Core.State.Character.NextLevelExperience:N0}xp.", Color.Green);
             }
 
             var totalPlayerAC = Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);

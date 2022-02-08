@@ -1,6 +1,7 @@
 {
   "Name":"Short Sword +3",
   "SubType": "Weapon",
+  "Value": "400",
   "DamageDice":"1",
   "DamageDiceFaces":"6",
   "DamageAdditional":"3",
