@@ -55,7 +55,7 @@ namespace Library.Engine
             {
                 //Get the purse that is equiped.
                 var equipSlot = _core.State.Character.GetEquipSlot(EquipSlot.Purse);
-                if (equipSlot != null)
+                if (equipSlot != null && equipSlot.Tile != null)
                 {
                     //Find all the money in the purse.
                     var money = _core.State.Items.Where(o => o.ContainerId == equipSlot.Tile.Meta.UID).ToList();
