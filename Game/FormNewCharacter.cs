@@ -307,19 +307,19 @@ namespace Game
         {
             if (RemainPool > 0)
             {
-                MessageBox.Show("You have available attribute points to assign before you can continue.", "Character is incomplete.");
+                Constants.Alert("You have available attribute points to assign before you can continue.", "Character is incomplete.");
                 return;
             }
 
             if (comboBoxScenario.SelectedItem == null)
             {
-                MessageBox.Show("You must specify a scenario.", "Character is incomplete.");
+                Constants.Alert("You must specify a scenario.", "Character is incomplete.");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(textBoxName.Text))
             {
-                MessageBox.Show("Give you character a name.", "Character is incomplete.");
+                Constants.Alert("Give you character a name.", "Character is incomplete.");
                 return;
             }
 

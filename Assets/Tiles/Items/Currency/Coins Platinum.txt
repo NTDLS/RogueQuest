@@ -1,9 +1,9 @@
 {
-  "Name":"Silver Coins",
+  "Name":"Platinum Coins",
   "SubType":"Money",
   "CanStack":"True",
   "CanWalkOn":"True",
   "Weight":"0",
   "Bulk":"0",
-  "Value": "0.1"
+  "Value": "10"
 }

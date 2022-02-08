@@ -15,7 +15,8 @@
         Shield,
         Gauntlets,
         FreeHand,
-        LeftRing
+        LeftRing,
+        Purse
     }
 
     public enum ActorClassName
@@ -55,7 +56,8 @@
         Scroll,
         Wand,
         Money,
-        Chest
+        Chest,
+        Purse
     }
 
     public enum RotationMode

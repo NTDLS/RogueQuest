@@ -1,4 +1,6 @@
-﻿namespace Library.Engine
+﻿using System;
+
+namespace Library.Engine
 {
     public class TileIdentifier
     {
@@ -20,12 +22,19 @@
             this.Meta = meta;
         }
 
-        public TileIdentifier Clone()
+        public TileIdentifier Clone(bool ensureItemHasUid = false)
         {
-            return new TileIdentifier(this.TilePath)
+            var identifier = new TileIdentifier(this.TilePath)
             {
                 Meta = this.Meta
             };
+
+            if (ensureItemHasUid && identifier.Meta.UID == null)
+            {
+                identifier.Meta.UID = Guid.NewGuid();
+            }
+
+            return identifier;
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Library.Engine;
+using Library.Engine.Types;
 
 namespace Game.Engine
 {
@@ -127,6 +128,23 @@ namespace Game.Engine
             this.Player.Meta = GetPlayerMeta();
             this.Display.BackgroundOffset.Y = Player.Y / 2;
             this.Display.BackgroundOffset.X = Player.X / 2;
+
+            var purseTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Purse).First().Clone(true);
+
+            var goldTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Money && o.Meta.Name.Contains("Gold")).First().Clone(true);
+            goldTile.Meta.Quantity = 8;
+            var silverTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Money && o.Meta.Name.Contains("Silver")).First().Clone(true);
+            silverTile.Meta.Quantity = 22;
+            var copperTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Money && o.Meta.Name.Contains("Copper")).First().Clone(true);
+            copperTile.Meta.Quantity = 142;
+
+            this.State.Items.Add(new CustodyItem() { Tile = purseTile });
+            this.State.Items.Add(new CustodyItem() { Tile = goldTile, ContainerId = purseTile.Meta.UID });
+            this.State.Items.Add(new CustodyItem() { Tile = silverTile, ContainerId = purseTile.Meta.UID });
+            this.State.Items.Add(new CustodyItem() { Tile = copperTile, ContainerId = purseTile.Meta.UID });
+
+            var equipSlot = this.State.Character.GetEquipSlot(EquipSlot.Purse);
+            equipSlot.Tile = purseTile;
         }
 
         /// <summary>

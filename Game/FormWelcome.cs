@@ -88,7 +88,7 @@ namespace Game
 
                 if (System.IO.File.Exists(SelectedFileName) == false)
                 {
-                    MessageBox.Show("This file no longer exists.", "Missing File");
+                    Constants.Alert("This file no longer exists.", "Missing File");
 
                     RemoveFromList(SelectedFileName);
                     PopulateList();
@@ -107,7 +107,6 @@ namespace Game
         {
             this.DialogResult = DialogResult.Cancel;
         }
-
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Yes;

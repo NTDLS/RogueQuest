@@ -33,7 +33,7 @@ namespace Library.Engine
         private int? _MinLevel;
         private int? _MaxLevel;
         private int? _Level;
-        private int? _Value;
+        private double? _Value;
         private string _LevelWarpName;
         private Guid? _LevelWarpTargetTileUID;
         private ActorSubType? _SubType;
@@ -100,7 +100,7 @@ namespace Library.Engine
 
         public int? Level { get { return _Level == 0 ? null : _Level; } set { _Level = value; } } //Used to know when we should show items, enemies and what to populate in shops.
 
-        public int? Value { get { return _Value == 0 ? null : _Value; } set { _Value = value; } } //Rough monetary value of the item in a shop.
+        public double? Value { get { return _Value == 0 ? null : _Value; } set { _Value = value; } } //Rough monetary value of the item in a shop.
 
         // Used for level warp tiles. This tells the engine which level to load.
         public string LevelWarpName { get { return _LevelWarpName == string.Empty ? null : _LevelWarpName; } set { _LevelWarpName = value; } }

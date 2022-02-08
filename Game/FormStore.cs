@@ -53,8 +53,8 @@ namespace Game
             listViewSelectedContainer.DragDrop += ListViewSelectedContainer_DragDrop;
             listViewSelectedContainer.AllowDrop = true;
             listViewSelectedContainer.MouseDoubleClick += ListViewSelectedContainer_MouseDoubleClick;
-            listViewSelectedContainer.MouseUp += ListViewe_Shared_MouseUp;
-            listViewSelectedContainer.MouseDown += ListViewe_Shared_MouseDown;
+            listViewSelectedContainer.MouseUp += ListView_Shared_MouseUp;
+            listViewSelectedContainer.MouseDown += ListView_Shared_MouseDown;
 
             listViewStore.SmallImageList = _imageList;
             listViewStore.LargeImageList = _imageList;
@@ -63,7 +63,7 @@ namespace Game
             listViewStore.DragDrop += ListViewStore_DragDrop;
             listViewStore.AllowDrop = true;
             listViewStore.MouseDoubleClick += ListViewStore_MouseDoubleClick;
-            listViewStore.MouseUp += ListViewe_Shared_MouseUp;
+            listViewStore.MouseUp += ListView_Shared_MouseUp;
             listViewStore.MouseDown += ListView_Store_MouseDown;
 
             listViewPlayerPack.SmallImageList = _imageList;
@@ -73,8 +73,8 @@ namespace Game
             listViewPlayerPack.DragDrop += ListViewPlayerPack_DragDrop;
             listViewPlayerPack.AllowDrop = true;
             listViewPlayerPack.MouseDoubleClick += ListViewPlayerPack_MouseDoubleClick;
-            listViewPlayerPack.MouseUp += ListViewe_Shared_MouseUp;
-            listViewPlayerPack.MouseDown += ListViewe_Shared_MouseDown;
+            listViewPlayerPack.MouseUp += ListView_Shared_MouseUp;
+            listViewPlayerPack.MouseDown += ListView_Shared_MouseDown;
 
             InitEquipSlot(listViewArmor, ActorSubType.Armor, EquipSlot.Armor);
             InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
@@ -85,7 +85,7 @@ namespace Game
             InitEquipSlot(listViewNecklace, ActorSubType.Necklace, EquipSlot.Necklace);
             InitEquipSlot(listViewHelment, ActorSubType.Helment, EquipSlot.Helment);
             InitEquipSlot(listViewGarment, ActorSubType.Garment, EquipSlot.Garment);
-            //InitEquipSlot(listViewPurse, ActorSubType.Purse, EquipSlot.Purse);
+            InitEquipSlot(listViewPurse, ActorSubType.Purse, EquipSlot.Purse);
             InitEquipSlot(listViewBoots, ActorSubType.Boots, EquipSlot.Boots);
             InitEquipSlot(listViewLeftRing, ActorSubType.Ring, EquipSlot.LeftRing);
             InitEquipSlot(listViewFreeHand, ActorSubType.Unspecified, EquipSlot.FreeHand);
@@ -112,7 +112,9 @@ namespace Game
             }
 
             var item = listViewStore.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
             }
@@ -227,7 +229,9 @@ namespace Game
             }
 
             var item = listViewSelectedContainer.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
             }
@@ -237,12 +241,14 @@ namespace Game
         {
             if (_currentlySelectedPack == null)
             {
-                MessageBox.Show("You havn't opend a container yet.");
+                Constants.Alert("You havn't opend a container yet.");
                 return;
             }
 
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+            var draggedItemTag = draggedItem.Tag as EquipTag;
+            var clonedItem = draggedItemTag.Tile.Clone(true);
 
             if (destination == draggedItem.ListView)
             {
@@ -255,19 +261,29 @@ namespace Game
                 listViewPlayerPack.Items.Clear();
             }
 
-            var draggedItemTag = draggedItem.Tag as EquipTag;
+            int askingPrice = AskingPrice(draggedItemTag.Tile);
+            if (draggedItem.ListView == listViewStore)
+            {
+                var result = MessageBox.Show($"Item will cost you {askingPrice:N0} gold.\r\nPay the store?",
+                    "Buy the item?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            ActorItem itemInStore = null;
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            //If we are draging from the primary pack slot, then close the pack.
+            if (draggedItem.ListView == listViewPack)
+            {
+                listViewPlayerPack.Items.Clear();
+            }
 
             if (draggedItem.ListView == listViewStore)
             {
-                itemInStore = Core.Actors.Intersections(Core.Player)
-                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
-                    .Cast<ActorItem>().FirstOrDefault();
-
                 Core.State.Items.Add(new CustodyItem()
                 {
-                    Tile = itemInStore.CloneIdentifier()
+                    Tile = clonedItem
                 });
             }
 
@@ -276,8 +292,8 @@ namespace Game
 
             if (_currentlySelectedPack.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
-                //A container canot contain itsself.
-                MessageBox.Show($"A {_currentlySelectedPack.Meta.Name} cannot contain itself.");
+                //A container cannot contain itsself.
+                Constants.Alert($"A {_currentlySelectedPack.Meta.Name} cannot contain itself.");
                 return;
             }
             if (inventoryItem.ContainerId == (Guid)_currentlySelectedPack.Meta.UID)
@@ -325,7 +341,6 @@ namespace Game
 
             if (draggedItem.ListView == listViewStore)
             {
-                itemInStore.QueueForDelete();
                 draggedItem.ListView.Items.Remove(draggedItem);
             }
             else if (draggedItem.ListView == listViewPlayerPack)
@@ -372,7 +387,9 @@ namespace Game
             }
 
             var item = listViewPlayerPack.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
             }
@@ -383,17 +400,30 @@ namespace Game
             var playersPack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (playersPack.Tile == null)
             {
-                MessageBox.Show("You need to equip a pack.");
+                Constants.Alert("You need to equip a pack.");
                 return;
             }
 
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             var draggedItemTag = draggedItem.Tag as EquipTag;
+            var clonedItem = draggedItemTag.Tile.Clone(true);
 
             if (destination == draggedItem.ListView)
             {
                 return;
+            }
+
+            int askingPrice = AskingPrice(draggedItemTag.Tile);
+            if (draggedItem.ListView == listViewStore)
+            {
+                var result = MessageBox.Show($"Item will cost you {askingPrice:N0} gold.\r\nPay the store?",
+                    "Buy the item?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
             }
 
             //If we are draging from the primary pack slot, then close the pack.
@@ -402,19 +432,11 @@ namespace Game
                 listViewPlayerPack.Items.Clear();
             }
 
-            ActorItem itemInStore = null;
-
             if (draggedItem.ListView == listViewStore)
             {
-                var listViewItem = FindListViewObjectByUid(listViewStore, (Guid)draggedItemTag.Tile.Meta.UID);
-
-                itemInStore = Core.Actors.Intersections(Core.Player)
-                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
-                    .Cast<ActorItem>().FirstOrDefault();
-
                 Core.State.Items.Add(new CustodyItem()
                 {
-                    Tile = itemInStore.CloneIdentifier()
+                    Tile = clonedItem
                 });
             }
 
@@ -424,7 +446,7 @@ namespace Game
             if (playersPack.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
                 //A container canot contain itsself.
-                MessageBox.Show($"A {playersPack.Tile.Meta.Name} cannot contain itself.");
+                Constants.Alert($"A {playersPack.Tile.Meta.Name} cannot contain itself.");
                 return;
             }
             if (inventoryItem.ContainerId == (Guid)playersPack.Tile.Meta.UID)
@@ -472,7 +494,6 @@ namespace Game
 
             if (draggedItem.ListView == listViewStore)
             {
-                itemInStore.QueueForDelete();
                 draggedItem.ListView.Items.Remove(draggedItem);
             }
             else if (draggedItem.ListView == listViewSelectedContainer)
@@ -607,13 +628,14 @@ namespace Game
             else
             {
                 var item = listView.SelectedItems[0].Tag as EquipTag;
-                if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+                if (item.Tile.Meta.SubType == ActorSubType.Pack
+                    || item.Tile.Meta.SubType == ActorSubType.Chest
+                    || item.Tile.Meta.SubType == ActorSubType.Purse)
                 {
                     OpenPack(item);
                 }
             }
         }
-
 
         private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
         {
@@ -645,6 +667,21 @@ namespace Game
                 return;
             }
 
+            var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            int askingPrice = AskingPrice(draggedItemTag.Tile);
+
+            if (draggedItem.ListView == listViewStore)
+            {
+                var result = MessageBox.Show($"Item will cost you {askingPrice:N0} gold.\r\nPay the store?",
+                    "Buy the item?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
             //If we are draging from the primary pack slot, then close the pack.
             if (draggedItem.ListView == listViewPack)
             {
@@ -653,31 +690,15 @@ namespace Game
 
             var destinationTag = destination.Items[0].Tag as EquipTag;
 
-            var draggedItemTag = draggedItem.Tag as EquipTag;
-
             if (destinationTag.AcceptType == draggedItemTag.Tile.Meta.SubType
                 || destinationTag.AcceptType == ActorSubType.Unspecified)
             {
                 destination.Items[0].ImageKey = draggedItem.ImageKey;
                 destination.Items[0].Text = draggedItem.Text;
-                destinationTag.Tile = draggedItemTag.Tile;
+                destinationTag.Tile = draggedItemTag.Tile.Clone();
 
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
                 equipSlot.Tile = draggedItemTag.Tile;
-
-                ActorItem itemInStore = null;
-
-                if (draggedItem.ListView == listViewStore)
-                {
-                    itemInStore = Core.Actors.Intersections(Core.Player)
-                        .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
-                        .Cast<ActorItem>().FirstOrDefault();
-
-                    Core.State.Items.Add(new CustodyItem()
-                    {
-                        Tile = itemInStore.CloneIdentifier()
-                    });
-                }
 
                 //If the item is in a container, find the item and set its container to NULL.
                 var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).FirstOrDefault();
@@ -688,7 +709,6 @@ namespace Game
 
                 if (draggedItem.ListView == listViewStore)
                 {
-                    itemInStore.QueueForDelete();
                     draggedItem.ListView.Items.Remove(draggedItem);
                 }
                 else if (draggedItem.ListView == listViewPlayerPack)
@@ -742,7 +762,7 @@ namespace Game
 
         #region Form Events.
 
-        private void ListViewe_Shared_MouseDown(object sender, MouseEventArgs e)
+        private void ListView_Shared_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -808,7 +828,7 @@ namespace Game
             }
         }
 
-        private void ListViewe_Shared_MouseUp(object sender, MouseEventArgs e)
+        private void ListView_Shared_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -858,8 +878,13 @@ namespace Game
 
         int AskingPrice(TileIdentifier tile)
         {
+            if (tile.Meta.Value == null)
+            {
+                return 0;
+            }
+
             double intelligenceDiscount = (Core.State.Character.Intelligence / 100.0);
-            int value = (tile.Meta.Value ?? 0) - (int)(tile.Meta.Value * intelligenceDiscount);
+            int value = (int)((tile.Meta.Value ?? 0.0) - (int)(tile.Meta.Value * intelligenceDiscount));
             if (value > 0)
             {
                 return value;
@@ -870,6 +895,11 @@ namespace Game
 
         int OfferPrice(TileIdentifier tile)
         {
+            if (tile.Meta.Value == null)
+            {
+                return 0;
+            }
+
             double intelligenceBonus = (Core.State.Character.Intelligence / 100.0);
             int halfValue = (int)((tile.Meta.Value ?? 0.0) / 2.0);
             int value = (int)(halfValue + (halfValue * intelligenceBonus));
@@ -912,7 +942,9 @@ namespace Game
 
         private void OpenPack(EquipTag item)
         {
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 _currentlySelectedPack = item.Tile;
                 labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.Name})";

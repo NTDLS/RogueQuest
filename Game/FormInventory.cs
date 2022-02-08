@@ -85,7 +85,7 @@ namespace Game
             InitEquipSlot(listViewNecklace, ActorSubType.Necklace, EquipSlot.Necklace);
             InitEquipSlot(listViewHelment, ActorSubType.Helment, EquipSlot.Helment);
             InitEquipSlot(listViewGarment, ActorSubType.Garment, EquipSlot.Garment);
-            //InitEquipSlot(listViewPurse, ActorSubType.Purse, EquipSlot.Purse);
+            InitEquipSlot(listViewPurse, ActorSubType.Purse, EquipSlot.Purse);
             InitEquipSlot(listViewBoots, ActorSubType.Boots, EquipSlot.Boots);
             InitEquipSlot(listViewLeftRing, ActorSubType.Ring, EquipSlot.LeftRing);
             InitEquipSlot(listViewFreeHand, ActorSubType.Unspecified, EquipSlot.FreeHand);
@@ -112,7 +112,9 @@ namespace Game
             }
 
             var item = listViewGround.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
             }
@@ -227,7 +229,9 @@ namespace Game
             }
 
             var item = listViewSelectedContainer.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
             }
@@ -237,7 +241,7 @@ namespace Game
         {
             if (_currentlySelectedPack == null)
             {
-                MessageBox.Show("You havn't opend a container yet.");
+                Constants.Alert("You havn't opend a container yet.");
                 return;
             }
 
@@ -277,7 +281,7 @@ namespace Game
             if (_currentlySelectedPack.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
                 //A container canot contain itsself.
-                MessageBox.Show($"A {_currentlySelectedPack.Meta.Name} cannot contain itself.");
+                Constants.Alert($"A {_currentlySelectedPack.Meta.Name} cannot contain itself.");
                 return;
             }
             if (inventoryItem.ContainerId == (Guid)_currentlySelectedPack.Meta.UID)
@@ -372,7 +376,9 @@ namespace Game
             }
 
             var item = listViewPlayerPack.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
             }
@@ -383,7 +389,7 @@ namespace Game
             var playersPack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (playersPack.Tile == null)
             {
-                MessageBox.Show("You need to equip a pack.");
+                Constants.Alert("You need to equip a pack.");
                 return;
             }
 
@@ -422,7 +428,7 @@ namespace Game
             if (playersPack.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
                 //A container canot contain itsself.
-                MessageBox.Show($"A {playersPack.Tile.Meta.Name} cannot contain itself.");
+                Constants.Alert($"A {playersPack.Tile.Meta.Name} cannot contain itself.");
                 return;
             }
             if (inventoryItem.ContainerId == (Guid)playersPack.Tile.Meta.UID)
@@ -588,7 +594,7 @@ namespace Game
 
             if (listView == listViewPack)
             {
-                //Only open the worm pack to the main container view.
+                //Only open the worn pack to the main container view.
                 var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
                 if (pack.Tile != null)
                 {
@@ -598,7 +604,9 @@ namespace Game
             else
             {
                 var item = listView.SelectedItems[0].Tag as EquipTag;
-                if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+                if (item.Tile.Meta.SubType == ActorSubType.Pack
+                    || item.Tile.Meta.SubType == ActorSubType.Chest
+                    || item.Tile.Meta.SubType == ActorSubType.Purse)
                 {
                     OpenPack(item);
                 }
@@ -748,8 +756,16 @@ namespace Game
                 var item = selection.Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
-                text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+
+                if (item.Tile.Meta.SubType == ActorSubType.Money)
+                {
+                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
+                }
+                else
+                {
+                    text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
+                    text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                }
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -834,7 +850,9 @@ namespace Game
 
         private void OpenPack(EquipTag item)
         {
-            if (item.Tile.Meta.SubType == ActorSubType.Pack || item.Tile.Meta.SubType == ActorSubType.Chest)
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Chest
+                || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 _currentlySelectedPack = item.Tile;
                 labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.Name})";

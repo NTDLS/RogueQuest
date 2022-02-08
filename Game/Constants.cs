@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Game
 {
@@ -41,6 +42,16 @@ namespace Game
 
                 return path;
             }
+        }
+
+        public static void Alert(string text)
+        {
+            MessageBox.Show(text, "RougeQuest");
+        }
+
+        public static void Alert(string text, string caption)
+        {
+            MessageBox.Show(text, $"RougeQuest :: {caption}");
         }
     }
 }
