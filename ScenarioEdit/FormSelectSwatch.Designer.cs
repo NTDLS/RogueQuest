@@ -72,7 +72,7 @@ namespace ScenarioEdit
             // 
             // splitContainerBody
             // 
-            this.splitContainerBody.Cursor = System.Windows.Forms.Cursors.HSplit;
+            this.splitContainerBody.Cursor = System.Windows.Forms.Cursors.Default;
             this.splitContainerBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerBody.Location = new System.Drawing.Point(0, 0);
             this.splitContainerBody.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);

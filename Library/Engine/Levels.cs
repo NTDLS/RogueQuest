@@ -41,6 +41,11 @@ namespace Library.Engine
             //System.IO.File.WriteAllText(fileName, json);
         }
 
+        /// <summary>
+        /// Gets the metadata for a level file.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public static ScenarioMetaData GetMetadata(string fileName)
         {
             var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
@@ -254,15 +259,16 @@ namespace Library.Engine
 
                 foreach (var chunk in chunks)
                 {
-                    string tilePath = Constants.GetAssetPath($"{chunk.TilePath}.png");
+                    string tilePath = string.Empty;
 
                     try
                     {
                         ActorBase tile = null;
-
                         object[] param = { Core };
 
-                        //If the game assempy is loaded them create the actual tile class.
+                        tilePath = Constants.GetAssetPath($"{chunk.TilePath}.png");
+
+                        //If the game assembly is loaded them create the actual tile class.
                         if (_gameAssembly != null)
                         {
                             var tileType = _gameAssembly.GetType($"Game.Actors.{chunk.Meta.ActorClass}");
@@ -309,6 +315,11 @@ namespace Library.Engine
             }
         }
 
+        /// <summary>
+        /// Inserts a spawn tile. (e.g. a random tile of the type specified by the spawn tile).
+        /// </summary>
+        /// <param name="spawner"></param>
+        /// <returns></returns>
         private ActorBase InsertSpawnedTile(ActorBase spawner)
         {
             ActorBase tile = null;

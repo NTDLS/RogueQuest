@@ -254,7 +254,7 @@ namespace Game
         {
             if (_hasBeenModified && string.IsNullOrWhiteSpace(_levelPathPassedToGame))
             {
-                if (_core.Player.Visible == false)
+                if (_core.Player?.Visible == false)
                 {
                     return true; //Player is dead, probably a bad idea to save.
                 }
