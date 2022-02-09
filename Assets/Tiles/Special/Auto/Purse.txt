@@ -1,0 +1,10 @@
+{
+  "Name":"Purse",
+  "SubType":"Purse",
+  "BulkCapacity":"100000",
+  "WeightCapacity":"10000",
+  "CanWalkOn":"True",
+  "IsContainer":"True",
+  "Weight":"0",
+  "Bulk":"0"
+}

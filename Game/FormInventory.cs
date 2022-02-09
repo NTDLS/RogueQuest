@@ -241,7 +241,7 @@ namespace Game
         {
             if (_currentlySelectedPack == null)
             {
-                Constants.Alert("You havn't opend a container yet.");
+                Constants.Alert("You havn't opened a container yet.");
                 return;
             }
 
@@ -308,7 +308,7 @@ namespace Game
 
                 if (existingInventoryItem != null)
                 {
-                    existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    existingInventoryItem.Tile.Meta.Quantity = (existingInventoryItem.Tile.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
                     Core.State.Items.RemoveAll(o=>o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
                     var listViewItem = FindListViewObjectByUid(listViewSelectedContainer, (Guid)existingInventoryItem.Tile.Meta.UID);
@@ -455,7 +455,7 @@ namespace Game
 
                 if (existingInventoryItem != null)
                 {
-                    existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    existingInventoryItem.Tile.Meta.Quantity = (existingInventoryItem.Tile.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
                     Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
                     var listViewItem = FindListViewObjectByUid(listViewPlayerPack, (Guid)existingInventoryItem.Tile.Meta.UID);
@@ -529,14 +529,17 @@ namespace Game
             lv.LargeImageList = _imageList;
             lv.SmallImageList = _imageList;
             lv.Scrollable = false;
-            lv.AllowDrop = true;
 
-            lv.DragDrop += ListView_EquipSlot_DragDrop;
-            lv.DragEnter += ListView_EquipSlot_DragEnter;
-            lv.ItemDrag += ListView_EquipSlot_ItemDrag;
-            lv.MouseDoubleClick += Lv_MouseDoubleClick;
-            lv.MouseDown += Lv_MouseDown;
-            lv.MouseUp += Lv_MouseUp;
+            if (slot != EquipSlot.Purse)
+            {
+                lv.AllowDrop = true;
+                lv.DragDrop += ListView_EquipSlot_DragDrop;
+                lv.DragEnter += ListView_EquipSlot_DragEnter;
+                lv.ItemDrag += ListView_EquipSlot_ItemDrag;
+                lv.MouseDoubleClick += Lv_MouseDoubleClick;
+                lv.MouseDown += Lv_MouseDown;
+                lv.MouseUp += Lv_MouseUp;
+            }
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()

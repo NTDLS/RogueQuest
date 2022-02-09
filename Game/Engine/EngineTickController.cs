@@ -77,7 +77,7 @@ namespace Game.Engine
                         .Where(o => o.Tile.TilePath == item.Tile.TilePath && o.ContainerId == pack.Tile.Meta.UID).FirstOrDefault();
                     if (existingItem != null)
                     {
-                        existingItem.Tile.Meta.Quantity += item.Tile.Meta.Quantity;
+                        existingItem.Tile.Meta.Quantity = (existingItem.Tile.Meta.Quantity ?? 0) + item.Tile.Meta.Quantity;
                         itemsToDelete.Add((Guid)item.Tile.Meta.UID);
                         continue;
                     } 
@@ -126,7 +126,7 @@ namespace Game.Engine
                         .Where(o => o.Tile.TilePath == item.Tile.TilePath && o.ContainerId == pack.Tile.Meta.UID).FirstOrDefault();
                     if (existingItem != null)
                     {
-                        existingItem.Tile.Meta.Quantity += item.Tile.Meta.Quantity;
+                        existingItem.Tile.Meta.Quantity = (existingItem.Tile.Meta.Quantity ?? 0) + item.Tile.Meta.Quantity;
 
                         itemsToDelete.Add((Guid)item.Tile.Meta.UID);
                         continue;
@@ -217,7 +217,7 @@ namespace Game.Engine
                             .Where(o => o.Tile.TilePath == item.TilePath && o.ContainerId == pack.Tile.Meta.UID).FirstOrDefault();
                         if (existingItem != null)
                         {
-                            existingItem.Tile.Meta.Quantity += item.Meta.Quantity;
+                            existingItem.Tile.Meta.Quantity = (existingItem.Tile.Meta.Quantity ?? 0) + item.Meta.Quantity;
                             item.QueueForDelete();
                             continue;
                         }
@@ -599,7 +599,7 @@ namespace Game.Engine
 
                     if (itemUnderfoot != null)
                     {
-                        itemUnderfoot.Meta.Quantity += item.Tile.Meta.Quantity;
+                        itemUnderfoot.Meta.Quantity = (itemUnderfoot.Meta.Quantity ?? 0) + item.Tile.Meta.Quantity;
                         wasStacked = true;
                     }
                 }

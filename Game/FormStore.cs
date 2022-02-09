@@ -125,20 +125,43 @@ namespace Game
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             var draggedItemTag = draggedItem.Tag as EquipTag;
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             if (destination == draggedItem.ListView)
             {
                 return;
             }
 
-            //If we are draging from the primary pack slot, then close the pack.
-            if (draggedItem.ListView == listViewPack)
+            if (inventoryItem.Tile.Meta.SubType == ActorSubType.Money)
             {
-                listViewPlayerPack.Items.Clear();
+                Constants.Alert("You probably want to keep that!");
+                return;
             }
 
-            //Find the item in the players inventory and change its container id to that of the selected open pack.
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            //If we are draging from the primary pack slot, then close the pack.
+            if (inventoryItem.Tile.Meta.SubType == ActorSubType.Pack
+                || inventoryItem.Tile.Meta.SubType == ActorSubType.Chest)
+            {
+                var currentPackItems = Core.State.Items.Where(o => o.ContainerId == inventoryItem.Tile.Meta.UID).Count();
+
+                if (currentPackItems > 0)
+                {
+                    Constants.Alert("We only buy packs if they are empty!");
+                    return;
+                }
+            }
+
+            int offerPrice = OfferPrice(draggedItemTag.Tile);
+
+            var result = MessageBox.Show($"I'll give you {offerPrice:N0} gold for that.\r\nTake the offer?",
+                "Sell the item?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            Core.State.Character.AddMoney(offerPrice);
 
             bool wasStacked = false;
 
@@ -241,7 +264,7 @@ namespace Game
         {
             if (_currentlySelectedPack == null)
             {
-                Constants.Alert("You havn't opend a container yet.");
+                Constants.Alert("You havn't opened a container yet.");
                 return;
             }
 
@@ -278,6 +301,14 @@ namespace Game
                 {
                     return;
                 }
+
+                if (askingPrice > Core.State.Character.Money)
+                {
+                    Constants.Alert("You don't have enough money!");
+                    return;
+                }
+
+                Core.State.Character.DeductMoney(askingPrice);
             }
 
             //If we are draging from the primary pack slot, then close the pack.
@@ -320,7 +351,7 @@ namespace Game
 
                 if (existingInventoryItem != null)
                 {
-                    existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    existingInventoryItem.Tile.Meta.Quantity = (existingInventoryItem.Tile.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
                     Core.State.Items.RemoveAll(o=>o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
                     var listViewItem = FindListViewObjectByUid(listViewSelectedContainer, (Guid)existingInventoryItem.Tile.Meta.UID);
@@ -431,6 +462,14 @@ namespace Game
                 {
                     return;
                 }
+
+                if (askingPrice > Core.State.Character.Money)
+                {
+                    Constants.Alert("You don't have enough money!");
+                    return;
+                }
+
+                Core.State.Character.DeductMoney(askingPrice);
             }
 
             //If we are draging from the primary pack slot, then close the pack.
@@ -473,7 +512,7 @@ namespace Game
 
                 if (existingInventoryItem != null)
                 {
-                    existingInventoryItem.Tile.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    existingInventoryItem.Tile.Meta.Quantity = (existingInventoryItem.Tile.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
                     Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
                     var listViewItem = FindListViewObjectByUid(listViewPlayerPack, (Guid)existingInventoryItem.Tile.Meta.UID);
@@ -546,14 +585,17 @@ namespace Game
             lv.LargeImageList = _imageList;
             lv.SmallImageList = _imageList;
             lv.Scrollable = false;
-            lv.AllowDrop = true;
 
-            lv.DragDrop += ListView_EquipSlot_DragDrop;
-            lv.DragEnter += ListView_EquipSlot_DragEnter;
-            lv.ItemDrag += ListView_EquipSlot_ItemDrag;
-            lv.MouseDoubleClick += Lv_MouseDoubleClick;
-            lv.MouseDown += Lv_MouseDown;
-            lv.MouseUp += Lv_MouseUp;
+            if (slot != EquipSlot.Purse)
+            {
+                lv.AllowDrop = true;
+                lv.DragDrop += ListView_EquipSlot_DragDrop;
+                lv.DragEnter += ListView_EquipSlot_DragEnter;
+                lv.ItemDrag += ListView_EquipSlot_ItemDrag;
+                lv.MouseDoubleClick += Lv_MouseDoubleClick;
+                lv.MouseDown += Lv_MouseDown;
+                lv.MouseUp += Lv_MouseUp;
+            }
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
@@ -602,7 +644,6 @@ namespace Game
                     var location = new Point(e.X + 10, e.Y - 25);
                     _interrogationTip.Show(text, lv, location, 5000);
                 }
-
 
                 text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
 
@@ -683,7 +724,6 @@ namespace Game
             }
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
-
             int askingPrice = AskingPrice(draggedItemTag.Tile);
 
             if (draggedItem.ListView == listViewStore)
@@ -695,6 +735,14 @@ namespace Game
                 {
                     return;
                 }
+
+                if (askingPrice > Core.State.Character.Money)
+                {
+                    Constants.Alert("You don't have enough money!");
+                    return;
+                }
+
+                Core.State.Character.DeductMoney(askingPrice);
             }
 
             //If we are draging from the primary pack slot, then close the pack.
@@ -799,7 +847,7 @@ namespace Game
                 if (item.Tile.Meta.SubType == ActorSubType.Weapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
-                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
+                    text += "\r\n" + $"Value: {((int)((item.Tile.Meta.Quantity ?? 0) * item.Tile.Meta.Value)):N0} gold";
 
                 text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
 
