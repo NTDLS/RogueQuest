@@ -67,6 +67,29 @@ namespace Library.Engine
             }
         }
 
+        public void AddMoney(TileIdentifier moneyToAdd)
+        {
+            var equipSlot = _core.State.Character.GetEquipSlot(EquipSlot.Purse);
+            if (equipSlot != null && equipSlot.Tile != null)
+            {
+                //Find all the money in the purse.
+                var money = _core.State.Items.Where(o => o.ContainerId == equipSlot.Tile.Meta.UID).ToList();
+
+                //If we dont have a the coin type, add a zero quantity one.
+                if (money.Where(o => o.Tile.Meta.Name.Contains(moneyToAdd.Meta.Name)).FirstOrDefault() == null)
+                {
+                    var addedTile = _core.Materials.Where(o => o.Meta.SubType == ActorSubType.Money && o.Meta.Name == moneyToAdd.Meta.Name).First().Clone(true);
+                    _core.State.Items.Add(new CustodyItem() { Tile = addedTile, ContainerId = equipSlot.Tile.Meta.UID });
+
+                    money = _core.State.Items.Where(o => o.ContainerId == equipSlot.Tile.Meta.UID).ToList();
+                }
+
+                var tileToModify = money.Where(o => o.Tile.Meta.Name == moneyToAdd.Meta.Name).First().Tile;
+
+                tileToModify.Meta.Quantity = (tileToModify.Meta.Quantity ?? 0) + moneyToAdd.Meta.Quantity;
+            }
+        }
+
         public void AddMoney(int amountOfMoneyToAdd)
         {
             var equipSlot = _core.State.Character.GetEquipSlot(EquipSlot.Purse);
@@ -86,7 +109,7 @@ namespace Library.Engine
 
                 var goldTiles = money.Where(o => o.Tile.Meta.Name.Contains("Gold")).First().Tile;
 
-                goldTiles.Meta.Quantity = goldTiles.Meta.Quantity + amountOfMoneyToAdd;
+                goldTiles.Meta.Quantity = (goldTiles.Meta.Quantity ?? 0) + amountOfMoneyToAdd;
             }
         }
 
@@ -121,7 +144,7 @@ namespace Library.Engine
 
                 var goldTiles = money.Where(o => o.Tile.Meta.Name.Contains("Gold")).First().Tile;
 
-                goldTiles.Meta.Quantity = goldTiles.Meta.Quantity - amountOfGoldToDeduct;
+                goldTiles.Meta.Quantity = (goldTiles.Meta.Quantity ?? 0) - amountOfGoldToDeduct;
             }
         }
 

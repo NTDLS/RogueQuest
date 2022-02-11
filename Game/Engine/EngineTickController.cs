@@ -17,7 +17,6 @@ namespace Game.Engine
         private int _avatarAnimationFrame = 1;
 
         public EngineCore Core { get; private set; }
-        public int TimePassed { get; set; }
         public EngineTickController(EngineCore core)
         {
             Core = core;
@@ -127,7 +126,6 @@ namespace Game.Engine
                     if (existingItem != null)
                     {
                         existingItem.Tile.Meta.Quantity = (existingItem.Tile.Meta.Quantity ?? 0) + item.Tile.Meta.Quantity;
-
                         itemsToDelete.Add((Guid)item.Tile.Meta.UID);
                         continue;
                     }
@@ -143,7 +141,25 @@ namespace Game.Engine
         {
             var itemsUnderfoot = Core.Actors.Intersections(Core.Player)
                 .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem)
-                .Cast<ActorItem>();
+                .Cast<ActorItem>().ToList();
+
+            //If there are money items underfoot, then add them to the purse instead of the pack.
+            {
+                var moneyItems = itemsUnderfoot.Where(o => o.Meta.SubType == ActorSubType.Money).ToList();
+
+                itemsUnderfoot.ForEach(x => x.QueueForDelete());
+                moneyItems.ForEach(x => itemsUnderfoot.Remove(x));
+
+                foreach (var moneyItem in moneyItems)
+                {
+                    Core.State.Character.AddMoney(moneyItem.CloneIdentifier());
+                }
+            }
+
+            if (itemsUnderfoot.Count() == 0)
+            {
+                return;
+            }
 
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (pack.Tile == null)
@@ -313,7 +329,17 @@ namespace Game.Engine
                 Core.Player.Velocity.ThrottlePercentage = 0;
             }
 
-            TimePassed++;
+            Core.State.TimePassed++;
+
+            if (intersections.Count == 1
+                && intersections.First().Meta.ActorClass == ActorClassName.ActorStore
+                && intersections.First().Meta.SubType != ActorSubType.RuinsStore)
+            {
+                using (var form = new FormStore(Core, intersections.First().Meta))
+                {
+                    form.ShowDialog();
+                }
+            }
 
             GameLogic(intersections);
 

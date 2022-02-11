@@ -21,6 +21,7 @@
 
     public enum ActorClassName
     {
+        ActorStore,
         ActorBuilding,
         ActorFriendyBeing,
         ActorHostileBeing,
@@ -57,7 +58,12 @@
         Wand,
         Money,
         Chest,
-        Purse
+        Purse,
+        AlchemistStore,
+        MageStore,
+        ArmorSmithStore,
+        WeaponSmithStore,
+        RuinsStore
     }
 
     public enum RotationMode

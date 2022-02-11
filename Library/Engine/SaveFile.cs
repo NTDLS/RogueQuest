@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Library.Engine
 {
@@ -12,5 +8,6 @@ namespace Library.Engine
         public ScenarioMetaData Meta { get; set; }
         public GameState State { get; set; }
         public List<Level> Collection { get; set; }
+        public List<PersistentStore> Stores { get; set; }
     }
 }

@@ -441,7 +441,7 @@ namespace ScenarioEdit
                     }
                 }
 
-                if (insertedTile.Meta.CanStack == true && insertedTile.Meta.Quantity == 0)
+                if (insertedTile.Meta.CanStack == true && (insertedTile.Meta.Quantity ?? 0) == 0)
                 {
                     insertedTile.Meta.Quantity = 1;
                 }

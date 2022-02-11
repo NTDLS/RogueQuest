@@ -349,7 +349,7 @@ namespace Game
             // 
             // splitContainerHoriz
             // 
-            this.splitContainerHoriz.Cursor = System.Windows.Forms.Cursors.HSplit;
+            this.splitContainerHoriz.Cursor = System.Windows.Forms.Cursors.Default;
             this.splitContainerHoriz.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerHoriz.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainerHoriz.IsSplitterFixed = true;

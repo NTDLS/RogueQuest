@@ -61,6 +61,9 @@ namespace Game
             this.UpdateStyles();
             this.Shown += FormMain_Shown1;
 
+            splitContainerHoriz.Cursor = Cursors.Default;
+            splitContainerVert.Cursor = Cursors.Default;
+
             if (_fullScreen)
             {
                 this.FormBorderStyle = FormBorderStyle.None;
@@ -422,7 +425,7 @@ namespace Game
 
         private void UpdatePlayerStatLabels(EngineCore core)
         {
-            var time = TimeSpan.FromMinutes(core.Tick.TimePassed);
+            var time = TimeSpan.FromMinutes(core.State.TimePassed);
             labelPlayer.Text = $"{core.State.Character.Name}, Level {core.State.Character.Level:N0}";
             labelXP.Text = $"{core.State.Character.Experience.ToString():N0}/{core.State.Character.NextLevelExperience.ToString():N0}";
             labelHP.Text = $"{core.State.Character.AvailableHitpoints:N0}";
@@ -477,13 +480,6 @@ namespace Game
             else if (e.KeyCode == Keys.I)
             {
                 using (var form = new FormInventory(_core))
-                {
-                    form.ShowDialog();
-                }
-            }
-            else if (e.KeyCode == Keys.S) //This is for debugging.
-            {
-                using (var form = new FormStore(_core))
                 {
                     form.ShowDialog();
                 }

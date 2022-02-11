@@ -1,0 +1,4 @@
+{
+  "SubType": "MageStore",
+  "Name": "Mage"
+}

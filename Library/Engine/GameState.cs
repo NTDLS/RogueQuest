@@ -9,7 +9,6 @@ namespace Library.Engine
         public GameState(EngineCoreBase core)
         {
             _core = core;
-
             Character = new PlayerState(core);
         }
 
@@ -28,5 +27,7 @@ namespace Library.Engine
         public int CurrentLevel { get; set; }
         public int DefaultLevel { get; set; }
         public bool IsDialogActive { get; set; }
+        public int TimePassed { get; set; } = 0;
+        public List<PersistentStore> Stores { get; set; } = new List<PersistentStore>();
     }
 }

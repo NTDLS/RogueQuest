@@ -1,0 +1,4 @@
+{
+  "SubType": "WeaponSmithStore",
+  "Name": "Weaponsmith"
+}

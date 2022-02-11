@@ -150,7 +150,7 @@ namespace Game
 
                 if (itemUnderfoot != null)
                 {
-                    itemUnderfoot.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    itemUnderfoot.Meta.Quantity = (itemUnderfoot.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
 
                     var listViewItem = FindListViewObjectByUid(listViewGround, (Guid)itemUnderfoot.Meta.UID);
                     if (listViewItem != null)
@@ -420,7 +420,7 @@ namespace Game
             if (draggedItem.ListView == listViewGround)
             {
                 itemOnGround = Core.Actors.Intersections(Core.Player)
-                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
+                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.Meta.UID == (Guid)draggedItemTag.Tile.Meta.UID)
                     .Cast<ActorItem>().FirstOrDefault();
 
                 Core.State.Items.Add(new CustodyItem()
@@ -536,10 +536,11 @@ namespace Game
                 lv.DragDrop += ListView_EquipSlot_DragDrop;
                 lv.DragEnter += ListView_EquipSlot_DragEnter;
                 lv.ItemDrag += ListView_EquipSlot_ItemDrag;
-                lv.MouseDoubleClick += Lv_MouseDoubleClick;
                 lv.MouseDown += Lv_MouseDown;
                 lv.MouseUp += Lv_MouseUp;
             }
+
+            lv.MouseDoubleClick += Lv_MouseDoubleClick;
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
@@ -780,7 +781,6 @@ namespace Game
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
-
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {

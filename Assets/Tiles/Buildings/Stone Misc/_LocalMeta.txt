@@ -1,0 +1,4 @@
+{
+  "CanTakeDamage": "False",
+  "CanWalkOn": "False",
+}

@@ -21,6 +21,8 @@ namespace Game
         private Button _buttonClose = new Button();
         private TileIdentifier _currentlySelectedPack = null;
         private ToolTip _interrogationTip = new ToolTip();
+        private TileMetadata _storeTileMeta;
+        private PersistentStore _persistentStore;
 
         public class EquipTag
         {
@@ -35,10 +37,11 @@ namespace Game
             InitializeComponent();
         }
 
-        public FormStore(EngineCore core)
+        public FormStore(EngineCore core, TileMetadata storeTileMeta)
         {
             InitializeComponent();
             Core = core;
+            _storeTileMeta = storeTileMeta;
         }
 
         private void FormStore_Load(object sender, EventArgs e)
@@ -99,7 +102,9 @@ namespace Game
                 PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
             }
 
-            PopulateContainerFromStore(listViewStore);
+            _persistentStore = PopulateContainerFromStore(listViewStore);
+
+            this.Text = _storeTileMeta.Name;
         }
 
         #region ListViewStore
@@ -125,16 +130,25 @@ namespace Game
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             var draggedItemTag = draggedItem.Tag as EquipTag;
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             if (destination == draggedItem.ListView)
             {
                 return;
             }
 
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+
             if (inventoryItem.Tile.Meta.SubType == ActorSubType.Money)
             {
                 Constants.Alert("You probably want to keep that!");
+                return;
+            }
+
+            List<ActorSubType> subtypes = GetStoreItemTypes();
+
+            if (subtypes.Contains(inventoryItem.Tile.Meta.SubType ?? ActorSubType.Unspecified) == false)
+            {
+                Constants.Alert("I'm sorry, we don't buy those.");
                 return;
             }
 
@@ -162,27 +176,36 @@ namespace Game
             }
 
             Core.State.Character.AddMoney(offerPrice);
+            if (_currentlySelectedPack != null && _currentlySelectedPack.Meta.SubType == ActorSubType.Purse)
+            {
+                var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
+                if (purse.Tile != null)
+                {
+                    PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                }
+            }
 
             bool wasStacked = false;
 
             if (inventoryItem.Tile.Meta.CanStack == true)
             {
-                var itemUnderfoot = Core.Actors.Intersections(Core.Player)
-                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
-                    .Cast<ActorItem>().FirstOrDefault();
+                //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
+                var existingInventoryItem = _persistentStore.Items
+                    .Where(o => o.TilePath == draggedItemTag.Tile.TilePath).FirstOrDefault();
 
-                if (itemUnderfoot != null)
+                if (existingInventoryItem != null)
                 {
-                    itemUnderfoot.Meta.Quantity += inventoryItem.Tile.Meta.Quantity;
+                    existingInventoryItem.Meta.Quantity = (existingInventoryItem.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
+                    Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
-                    var listViewItem = FindListViewObjectByUid(listViewStore, (Guid)itemUnderfoot.Meta.UID);
+                    var listViewItem = FindListViewObjectByUid(listViewStore, (Guid)existingInventoryItem.Meta.UID);
                     if (listViewItem != null)
                     {
-                        string text = itemUnderfoot.Meta.Name;
+                        string text = existingInventoryItem.Meta.Name;
 
-                        if (itemUnderfoot.Meta.CanStack == true && itemUnderfoot.Meta.Quantity > 0)
+                        if (existingInventoryItem.Meta.CanStack == true && existingInventoryItem.Meta.Quantity > 0)
                         {
-                            text += $" ({itemUnderfoot.Meta.Quantity})";
+                            text += $" ({existingInventoryItem.Meta.Quantity})";
                         }
 
                         listViewItem.Text = text;
@@ -194,11 +217,8 @@ namespace Game
 
             if (wasStacked == false)
             {
-                var droppedItem = Core.Actors.AddDynamic(inventoryItem.Tile.Meta.ActorClass.ToString(),
-                    Core.Player.X, Core.Player.Y, inventoryItem.Tile.TilePath);
-                droppedItem.Meta = inventoryItem.Tile.Meta;
-
                 AddItemToListView(listViewStore, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                _persistentStore.Items.Add(draggedItemTag.Tile);
             }
 
             Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
@@ -309,6 +329,14 @@ namespace Game
                 }
 
                 Core.State.Character.DeductMoney(askingPrice);
+                if (_currentlySelectedPack != null && _currentlySelectedPack.Meta.SubType == ActorSubType.Purse)
+                {
+                    var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
+                    if (purse.Tile != null)
+                    {
+                        PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                    }
+                }
             }
 
             //If we are draging from the primary pack slot, then close the pack.
@@ -470,6 +498,14 @@ namespace Game
                 }
 
                 Core.State.Character.DeductMoney(askingPrice);
+                if (_currentlySelectedPack != null && _currentlySelectedPack.Meta.SubType == ActorSubType.Purse)
+                {
+                    var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
+                    if (purse.Tile != null)
+                    {
+                        PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                    }
+                }
             }
 
             //If we are draging from the primary pack slot, then close the pack.
@@ -500,6 +536,9 @@ namespace Game
                 //No need to do anything if we are dragging to the same container.
                 return;
             }
+
+
+            _persistentStore.Items.RemoveAll(o => o.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
             bool wasStacked = false;
 
@@ -592,10 +631,11 @@ namespace Game
                 lv.DragDrop += ListView_EquipSlot_DragDrop;
                 lv.DragEnter += ListView_EquipSlot_DragEnter;
                 lv.ItemDrag += ListView_EquipSlot_ItemDrag;
-                lv.MouseDoubleClick += Lv_MouseDoubleClick;
                 lv.MouseDown += Lv_MouseDown;
                 lv.MouseUp += Lv_MouseUp;
             }
+
+            lv.MouseDoubleClick += Lv_MouseDoubleClick;
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
@@ -692,7 +732,6 @@ namespace Game
                 }
             }
         }
-
         private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
         {
             var destination = sender as ListView;
@@ -724,6 +763,7 @@ namespace Game
             }
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
+            var clonedItem = draggedItemTag.Tile.Clone(true);
             int askingPrice = AskingPrice(draggedItemTag.Tile);
 
             if (draggedItem.ListView == listViewStore)
@@ -743,6 +783,14 @@ namespace Game
                 }
 
                 Core.State.Character.DeductMoney(askingPrice);
+                if (_currentlySelectedPack != null && _currentlySelectedPack.Meta.SubType == ActorSubType.Purse)
+                {
+                    var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
+                    if (purse.Tile != null)
+                    {
+                        PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                    }
+                }
             }
 
             //If we are draging from the primary pack slot, then close the pack.
@@ -750,6 +798,8 @@ namespace Game
             {
                 listViewPlayerPack.Items.Clear();
             }
+
+            _persistentStore.Items.RemoveAll(o => o.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
             var destinationTag = destination.Items[0].Tag as EquipTag;
 
@@ -762,6 +812,14 @@ namespace Game
 
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
                 equipSlot.Tile = draggedItemTag.Tile;
+
+                if (draggedItem.ListView == listViewStore)
+                {
+                    Core.State.Items.Add(new CustodyItem()
+                    {
+                        Tile = clonedItem
+                    });
+                }
 
                 //If the item is in a container, find the item and set its container to NULL.
                 var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).FirstOrDefault();
@@ -923,22 +981,82 @@ namespace Game
             return tilePath;
         }
 
-        void PopulateContainerFromStore(ListView listView)
+        private List<ActorSubType> GetStoreItemTypes()
+        {
+            var subtypes = new List<ActorSubType>();
+
+            if (_storeTileMeta.SubType == ActorSubType.WeaponSmithStore)
+            {
+                subtypes.Add(ActorSubType.Weapon);
+            }
+            else if (_storeTileMeta.SubType == ActorSubType.ArmorSmithStore)
+            {
+                subtypes.Add(ActorSubType.Armor);
+                subtypes.Add(ActorSubType.Boots);
+                subtypes.Add(ActorSubType.Belt);
+                subtypes.Add(ActorSubType.Garment);
+                subtypes.Add(ActorSubType.Helment);
+                subtypes.Add(ActorSubType.Gauntlets);
+                subtypes.Add(ActorSubType.Shield);
+            }
+            else if (_storeTileMeta.SubType == ActorSubType.AlchemistStore)
+            {
+                subtypes.Add(ActorSubType.Potion);
+            }
+            else if (_storeTileMeta.SubType == ActorSubType.MageStore)
+            {
+                subtypes.Add(ActorSubType.Scroll);
+                subtypes.Add(ActorSubType.Wand);
+                subtypes.Add(ActorSubType.Necklace);
+                subtypes.Add(ActorSubType.Ring);
+            }
+
+            return subtypes;
+        }
+
+        PersistentStore PopulateContainerFromStore(ListView listView)
         {
             listView.Items.Clear();
 
-            var itemsInStore = Core.Materials
-                .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem
-                    && o.Meta.Value > 0
-                    && (o.Meta.IsUnique ?? false) == false
-                    && o.Meta.Level <= Core.State.Character.Level)
-                .Cast<TileIdentifier>();
+            List<ActorSubType> subtypes = GetStoreItemTypes();
 
-            foreach (var item in itemsInStore)
+            var persistentStore = Core.State.Stores.Where(o => o.StoreID == _storeTileMeta.UID).FirstOrDefault();
+
+            //Populate the store once and then again every 1 game day.
+            if (persistentStore == null || Core.State.TimePassed - persistentStore.GameTime > 1440)
+            {
+                if (persistentStore == null)
+                {
+                    persistentStore = new PersistentStore()
+                    {
+                        StoreID = (Guid)_storeTileMeta.UID,
+                        GameTime = Core.State.TimePassed,
+                        Items = new List<TileIdentifier>()
+                    };
+                }
+
+                var itemsInStore = Core.Materials
+                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem
+                        && o.Meta.Value > 0
+                        && persistentStore.Items.Where(i => i.TilePath == o.TilePath).FirstOrDefault() == null //Don't add duplicate items.
+                        && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified)
+                        && (o.Meta.IsUnique ?? false) == false
+                        && o.Meta.Level <= Core.State.Character.Level)
+                    .Cast<TileIdentifier>();
+
+                persistentStore.Items.AddRange(itemsInStore);
+
+                Core.State.Stores.Add(persistentStore);
+            }
+
+            foreach (var item in persistentStore.Items)
             {
                 var tile = item.Clone();
+                tile.Meta.UID = Guid.NewGuid();
                 AddItemToListView(listView, tile.TilePath, tile.Meta);
             }
+
+            return persistentStore;
         }
 
         int AskingPrice(TileIdentifier tile)

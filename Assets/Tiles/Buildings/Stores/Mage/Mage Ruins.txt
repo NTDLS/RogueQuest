@@ -1,0 +1,4 @@
+{
+  "SubType": "RuinsStore",
+  "Name": "Mage"
+}
