@@ -2094,8 +2094,18 @@ namespace ScenarioEdit
                     double deltaX = 0;
                     double deltaY = 0;
 
-                    double x = _core.Display.BackgroundOffset.X + 20;
-                    double y = _core.Display.BackgroundOffset.Y + 20;
+                    double x = _core.Display.BackgroundOffset.X + 16;
+                    double y = _core.Display.BackgroundOffset.Y + 16;
+
+                    if (_snapToGrid)
+                    {
+                        _snapToGridRect = new Rectangle<double>(
+                            ((x - (x % 32)) - _core.Display.BackgroundOffset.X) - 16,
+                            ((y - (y % 32)) - _core.Display.BackgroundOffset.Y) - 16, 32, 32);
+
+                        x = (_snapToGridRect.X + _core.Display.BackgroundOffset.X) + 16;
+                        y = (_snapToGridRect.Y + _core.Display.BackgroundOffset.Y) + 16;
+                    }
 
                     var firstChunk = chunks.FirstOrDefault();
                     if (firstChunk != null)
