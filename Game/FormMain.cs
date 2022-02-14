@@ -432,6 +432,16 @@ namespace Game
             labelMana.Text = $"{core.State.Character.AvailableMana:N0}";
             labelTime.Text = time.ToString(@"dd\:hh\:mm\:ss");
             labelGold.Text = $"{core.State.Character.Money:N0}gp";
+
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.Poisoned))
+            {
+                labelPlayer.Text += " (POISONED!)";
+                labelPlayer.ForeColor = Color.Red;
+            }
+            else
+            {
+                labelPlayer.ForeColor = Color.Black;
+            }
         }
 
         private void _core_OnStart(EngineCoreBase sender)
@@ -482,6 +492,7 @@ namespace Game
                 using (var form = new FormInventory(_core))
                 {
                     form.ShowDialog();
+                    UpdatePlayerStatLabels(_core);
                 }
             }
             else if (e.KeyCode == Keys.R)

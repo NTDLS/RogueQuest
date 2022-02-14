@@ -1,0 +1,12 @@
+{
+  "Name":"Potion of Health",
+  "SubType": "Potion",
+  "Value": "20",
+  "Effect": "Heal",
+  "EffectFormula": "10",
+  "IsConsumable":"True",
+  "Charges":"1",
+  "Weight":"10",
+  "Bulk":"9",
+  "Level":"1"
+}

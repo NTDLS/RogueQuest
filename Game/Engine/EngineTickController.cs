@@ -137,6 +137,87 @@ namespace Game.Engine
             Core.State.Items.RemoveAll(o => itemsToDelete.Contains((Guid)o.Tile?.Meta?.UID));
         }
 
+        public bool UseConsumableItem(Guid itemUid)
+        {
+            var item = Core.State.Items.Where(o => o.Tile.Meta.UID == itemUid).First();
+
+            if (item == null || item.Tile.Meta.UID == null)
+            {
+                return false;
+            }
+
+            if (item.Tile.Meta.Effect == ItemEffect.Heal)
+            {
+                int totalHealing = 0;
+
+                var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                foreach (var formula in formulas)
+                {
+                    if (formula[0] == '%') //Raise the hitpoints by a percentage.
+                    {
+                        var pct = int.Parse(formula.Substring(1)) / 100.0;
+                        int hpToAdd = (int)((double)Core.State.Character.Hitpoints * pct);
+                        totalHealing += hpToAdd;
+                        Core.State.Character.AvailableHitpoints += hpToAdd;
+                    }
+                    else //Raise the hitpoints by a fixed ammount.
+                    {
+                        var hpToAdd = int.Parse(formula);
+                        totalHealing += hpToAdd;
+                        Core.State.Character.AvailableHitpoints += hpToAdd;
+                    }
+                }
+
+                if (Core.State.Character.AvailableHitpoints > Core.State.Character.Hitpoints)
+                {
+                    Core.State.Character.AvailableHitpoints = Core.State.Character.Hitpoints;
+                }
+
+                Core.LogLine($"Healed {totalHealing} hitpoints.");
+            }
+            else if (item.Tile.Meta.Effect == ItemEffect.Poison)
+            {
+                int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
+                if (damage == 0) damage = 1;
+                Core.State.Character.AvailableHitpoints -= damage;
+
+                Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                Core.LogLine($"You have been poisoned! {damage} damage!", Color.DarkRed);
+            }
+            else if (item.Tile.Meta.Effect == ItemEffect.CurePoison)
+            {
+                if (Core.State.ActorStates.HasState(Core.State.Character.UID, StateOfBeing.Poisoned))
+                {
+                    Core.LogLine($"Your body has been purged of all poisons!", Color.DarkGreen);
+                    Core.State.ActorStates.RemoveState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                }
+                else
+                {
+                    Core.LogLine($"Your needlesly drink a lifesaving potion...");
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            if (item.Tile.Meta.Charges > 0)
+            {
+                item.Tile.Meta.Charges--;
+
+                if ((item.Tile.Meta.Charges ?? 0) == 0)
+                {
+                    Core.State.Items.Remove(item);
+                }
+            }
+            else
+            {
+                Core.State.Items.Remove(item);
+            }
+
+            return true;
+        }
+
         public void Get()
         {
             var itemsUnderfoot = Core.Actors.Intersections(Core.Player)
@@ -147,12 +228,13 @@ namespace Game.Engine
             {
                 var moneyItems = itemsUnderfoot.Where(o => o.Meta.SubType == ActorSubType.Money).ToList();
 
-                itemsUnderfoot.ForEach(x => x.QueueForDelete());
+                moneyItems.ForEach(x => x.QueueForDelete());
                 moneyItems.ForEach(x => itemsUnderfoot.Remove(x));
 
                 foreach (var moneyItem in moneyItems)
                 {
                     Core.State.Character.AddMoney(moneyItem.CloneIdentifier());
+                    Core.LogLine($"Picked up {moneyItem.Meta.Quantity} {moneyItem.Meta.Name} and placed them in your purse.");
                 }
             }
 
@@ -648,6 +730,52 @@ namespace Game.Engine
         /// </summary>
         public List<ActorBase> MoveActor(ActorBase actor, out Point<double> finalAppliedOffset)
         {
+            if (actor.Meta.UID != null && Core.State.ActorStates.HasState((Guid)actor.Meta.UID, StateOfBeing.Poisoned))
+            {
+                if (actor == Core.Player)
+                {
+                    int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
+                    if (damage == 0) damage = 1;
+                    Core.State.Character.AvailableHitpoints -= damage;
+                    Core.LogLine($"{Core.State.Character.Name} took {damage} poison damage!", Color.DarkRed);
+
+                    if (Core.State.Character.AvailableHitpoints <= 0)
+                    {
+                        Core.LogLine($"{PlayerDeathText()}", Color.Red);
+                        Core.Player.QueueForDelete();
+
+                        finalAppliedOffset = new Point<double>(0, 0);
+                        return new List<ActorBase>();
+                    }
+                }
+                else
+                {
+                    int damage = (int)((actor.Meta.OriginalHitPoints ?? 0) * 0.1);
+                    if (damage == 0) damage = 1;
+                    Core.LogLine($"{actor.Meta.Name} took {damage} poison damage!", Color.DarkGreen);
+
+                    if (actor.ApplyDamage(damage))
+                    {
+                        int experience = 0;
+
+                        if (actor.Meta != null && actor.Meta.Experience != null)
+                        {
+                            experience = (int)actor.Meta.Experience;
+                        }
+
+                        Core.LogLine($"{Core.State.Character.Name} dies of poisoning, gaining you {experience}xp!", Color.DarkGreen);
+
+                        if (actor.Meta.IsContainer == true)
+                        {
+                            //If the enemy has loot, they drop it when they die.
+                            EmptyContainerToGround(actor.Meta.UID);
+                        }
+
+                        Core.State.Character.Experience += experience;
+                    }
+                }
+            }
+
             Point<double> appliedOffset = new Point<double>(
                 (int)(actor.Velocity.Angle.X * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage),
                 (int)(actor.Velocity.Angle.Y * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage));

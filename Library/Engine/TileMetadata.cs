@@ -27,6 +27,7 @@ namespace Library.Engine
         private int? _Weight;
         private int? _Bulk;
         private int? _Dexterity;
+        private int? _Charges;
         private int? _Strength;
         private ActorSubType? _SpawnSubType;
         private string _Dialog;
@@ -59,6 +60,11 @@ namespace Library.Engine
 
         //Stacking because things like money only really matter in multiples.
         public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
+
+        public ItemEffect Effect { get; set; }
+        public string EffectFormula { get; set; }
+        public bool? IsConsumable { get; set; }
+        public int? Charges { get { return _Charges == 0 ? null : _Charges; } set { _Charges = value; } }
 
         public int? Experience { get { return _Experience == 0 ? null : _Experience; } set { _Experience = value; } }
 
@@ -139,6 +145,10 @@ namespace Library.Engine
             this.Tag = with.Tag ?? this.Tag;
             this.CanWalkOn = with.CanWalkOn ?? this.CanWalkOn;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
+            this.Effect = with.Effect;
+            this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
+            this.IsConsumable = with.IsConsumable ?? this.IsConsumable;
+            this.Charges = with.Charges ?? this.Charges;
             this.HitPoints = with.HitPoints ?? this.HitPoints;
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;

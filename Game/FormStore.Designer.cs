@@ -63,7 +63,7 @@ namespace Game
             this.listViewShield = new System.Windows.Forms.ListView();
             this.listViewStore = new System.Windows.Forms.ListView();
             this.listViewPlayerPack = new System.Windows.Forms.ListView();
-            this.label10 = new System.Windows.Forms.Label();
+            this.labelPack = new System.Windows.Forms.Label();
             this.labelGround = new System.Windows.Forms.Label();
             this.labelSelectedContainer = new System.Windows.Forms.Label();
             this.listViewSelectedContainer = new System.Windows.Forms.ListView();
@@ -403,14 +403,14 @@ namespace Game
             this.listViewPlayerPack.UseCompatibleStateImageBehavior = false;
             this.listViewPlayerPack.View = System.Windows.Forms.View.SmallIcon;
             // 
-            // label10
+            // labelPack
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(424, 276);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(38, 20);
-            this.label10.TabIndex = 35;
-            this.label10.Text = "Pack";
+            this.labelPack.AutoSize = true;
+            this.labelPack.Location = new System.Drawing.Point(424, 276);
+            this.labelPack.Name = "labelPack";
+            this.labelPack.Size = new System.Drawing.Size(38, 20);
+            this.labelPack.TabIndex = 35;
+            this.labelPack.Text = "Pack";
             // 
             // labelGround
             // 
@@ -449,7 +449,7 @@ namespace Game
             this.Controls.Add(this.labelSelectedContainer);
             this.Controls.Add(this.listViewSelectedContainer);
             this.Controls.Add(this.labelGround);
-            this.Controls.Add(this.label10);
+            this.Controls.Add(this.labelPack);
             this.Controls.Add(this.listViewPlayerPack);
             this.Controls.Add(this.listViewStore);
             this.Controls.Add(this.label11);
@@ -533,7 +533,7 @@ namespace Game
         private System.Windows.Forms.ListView listViewShield;
         private System.Windows.Forms.ListView listViewStore;
         private System.Windows.Forms.ListView listViewPlayerPack;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label labelPack;
         private System.Windows.Forms.Label labelGround;
         private System.Windows.Forms.Label labelSelectedContainer;
         private System.Windows.Forms.ListView listViewSelectedContainer;

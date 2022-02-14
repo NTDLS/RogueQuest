@@ -1,0 +1,11 @@
+{
+  "Name":"Antidote",
+  "SubType": "Potion",
+  "Value": "40",
+  "Effect": "CurePoison",
+  "IsConsumable":"True",
+  "Charges":"1",
+  "Weight":"10",
+  "Bulk":"9",
+  "Level":"1"
+}

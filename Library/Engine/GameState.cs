@@ -18,6 +18,7 @@ namespace Library.Engine
             Character.SetCore(core);
         }
 
+        public ActorStates ActorStates { get; set; } = new ActorStates();
         public PlayerState Character { get; set; }
         public List<CustodyItem> Items { get; private set; } = new List<CustodyItem>();
 

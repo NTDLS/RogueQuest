@@ -1,0 +1,12 @@
+{
+  "Name":"Potion of Cure Critical Wounds",
+  "SubType": "Potion",
+  "Value": "100",
+  "Effect": "Heal",
+  "EffectFormula": "%90,25",
+  "IsConsumable":"True",
+  "Charges":"1",
+  "Weight":"10",
+  "Bulk":"9",
+  "Level":"2"
+}

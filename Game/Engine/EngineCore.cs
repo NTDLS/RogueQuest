@@ -84,7 +84,8 @@ namespace Game.Engine
             return new TileMetadata()
             {
                 ActorClass = Library.Engine.Types.ActorClassName.ActorPlayer,
-                CanWalkOn = false
+                CanWalkOn = false,
+                UID = this.State.Character.UID
             };
         }
 

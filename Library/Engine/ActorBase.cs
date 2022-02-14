@@ -105,7 +105,7 @@ namespace Library.Engine
         /// <returns></returns>
         public bool ApplyDamage(int points)
         {
-            this.Meta.HitPoints -= points;
+            this.Meta.HitPoints = (this.Meta.HitPoints ?? 0) - points;
             if (this.Meta.HitPoints <= 0)
             {
                 this.QueueForDelete();

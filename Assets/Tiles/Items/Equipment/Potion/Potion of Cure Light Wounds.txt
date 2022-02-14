@@ -1,0 +1,12 @@
+{
+  "Name":"Potion of Cure Light Wounds",
+  "SubType": "Potion",
+  "Value": "20",
+  "Effect": "Heal",
+  "EffectFormula": "30",
+  "IsConsumable":"True",
+  "Charges":"1",
+  "Weight":"10",
+  "Bulk":"9",
+  "Level":"1"
+}

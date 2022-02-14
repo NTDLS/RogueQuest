@@ -99,7 +99,7 @@ namespace Game
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (pack.Tile != null)
             {
-                PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
             }
 
             _persistentStore = PopulateContainerFromStore(listViewStore);
@@ -181,7 +181,7 @@ namespace Game
                 var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
                 if (purse.Tile != null)
                 {
-                    PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                    PopulateContainerFromPack(listViewSelectedContainer, purse.Tile);
                 }
             }
 
@@ -334,7 +334,7 @@ namespace Game
                     var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
                     if (purse.Tile != null)
                     {
-                        PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                        PopulateContainerFromPack(listViewSelectedContainer, purse.Tile);
                     }
                 }
             }
@@ -504,7 +504,7 @@ namespace Game
                     var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
                     if (purse.Tile != null)
                     {
-                        PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                        PopulateContainerFromPack(listViewSelectedContainer, purse.Tile);
                     }
                 }
             }
@@ -719,7 +719,7 @@ namespace Game
                 var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
                 if (pack.Tile != null)
                 {
-                    PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                    PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
                 }
             }
             else
@@ -789,7 +789,7 @@ namespace Game
                     var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
                     if (purse.Tile != null)
                     {
-                        PopulateContainerFromPack(listViewSelectedContainer, (Guid)purse.Tile.Meta.UID);
+                        PopulateContainerFromPack(listViewSelectedContainer, purse.Tile);
                     }
                 }
             }
@@ -862,7 +862,7 @@ namespace Game
                             listViewSelectedContainer.Items.Clear();
                         }
 
-                        PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                        PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
                     }
                 }
             }
@@ -1095,11 +1095,13 @@ namespace Game
             return 1;
         }
 
-        void PopulateContainerFromPack(ListView listView, Guid containerId)
+        void PopulateContainerFromPack(ListView listView, TileIdentifier containerTile)
         {
             listView.Items.Clear();
 
-            foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerId))
+            labelPack.Text = $"Pack: ({containerTile.Meta.Name})";
+
+            foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
                 AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
             }
@@ -1132,7 +1134,7 @@ namespace Game
             {
                 _currentlySelectedPack = item.Tile;
                 labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.Name})";
-                PopulateContainerFromPack(listViewSelectedContainer, (Guid)item.Tile.Meta.UID);
+                PopulateContainerFromPack(listViewSelectedContainer, item.Tile);
             }
         }
 

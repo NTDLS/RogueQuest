@@ -66,6 +66,20 @@
         RuinsStore
     }
 
+    public enum ItemEffect
+    {
+        Heal,
+        Poison,
+        CurePoison
+    }
+
+    public enum StateOfBeing
+    {
+        Poisoned,
+        Slowed,
+        Frozen
+    }
+
     public enum RotationMode
     {
         None, //Almost free.

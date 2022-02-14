@@ -55,7 +55,7 @@ namespace Game
             listViewSelectedContainer.MouseDoubleClick += ListViewSelectedContainer_MouseDoubleClick;
             listViewSelectedContainer.MouseUp += ListView_Shared_MouseUp;
             listViewSelectedContainer.MouseDown += ListView_Shared_MouseDown;
-
+            
             listViewGround.SmallImageList = _imageList;
             listViewGround.LargeImageList = _imageList;
             listViewGround.ItemDrag += ListViewGround_ItemDrag;
@@ -96,10 +96,32 @@ namespace Game
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (pack.Tile != null)
             {
-                PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
             }
 
             PopulateContainerFromGround(listViewGround);
+        }
+
+        private bool UseItem(TileIdentifier item)
+        {
+            string text = $"Use {item.Meta.Name}?";
+
+            if (item.Meta.Charges > 0)
+            {
+                text += $"\r\n{item.Meta.Charges} charges remaining.";
+            }
+
+            if (MessageBox.Show(text, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == item.Meta.UID).First();
+
+                if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
+                {
+                    return Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID);
+                }
+            }
+
+            return false;
         }
 
         #region ListViewGround
@@ -117,6 +139,14 @@ namespace Game
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
+            }
+            else
+            {
+                if (item.Tile.Meta.IsConsumable == true)
+                {
+                    //We cant use items on the ground because they dont exist in the world inventory collection.
+                    //UseItem(item.Tile);
+                }
             }
         }
 
@@ -228,12 +258,23 @@ namespace Game
                 return;
             }
 
-            var item = listViewSelectedContainer.SelectedItems[0].Tag as EquipTag;
+            var selectedItem = listViewSelectedContainer.SelectedItems[0];
+            var item = selectedItem.Tag as EquipTag;
             if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
+            }
+            else
+            {
+                if (item.Tile.Meta.IsConsumable == true)
+                {
+                    if (UseItem(item.Tile))
+                    {
+                        listViewSelectedContainer.Items.Remove(selectedItem);
+                    }
+                }
             }
         }
 
@@ -383,12 +424,23 @@ namespace Game
                 return;
             }
 
-            var item = listViewPlayerPack.SelectedItems[0].Tag as EquipTag;
+            var selectedItem = listViewPlayerPack.SelectedItems[0];
+            var item = selectedItem.Tag as EquipTag;
             if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
+            }
+            else
+            {
+                if (item.Tile.Meta.IsConsumable == true)
+                {
+                    if (UseItem(item.Tile))
+                    {
+                        listViewPlayerPack.Items.Remove(selectedItem);
+                    }
+                }
             }
         }
 
@@ -616,21 +668,31 @@ namespace Game
                 var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
                 if (pack.Tile != null)
                 {
-                    PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                    PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
                 }
             }
             else
             {
-                var item = listView.SelectedItems[0].Tag as EquipTag;
+                var selectedItem = listView.SelectedItems[0];
+                var item = selectedItem.Tag as EquipTag;
                 if (item.Tile.Meta.SubType == ActorSubType.Pack
                     || item.Tile.Meta.SubType == ActorSubType.Chest
                     || item.Tile.Meta.SubType == ActorSubType.Purse)
                 {
                     OpenPack(item);
                 }
+                else
+                {
+                    if (item.Tile.Meta.IsConsumable == true)
+                    {
+                        if (UseItem(item.Tile))
+                        {
+                            listViewPlayerPack.Items.Remove(selectedItem);
+                        }
+                    }
+                }
             }
         }
-
 
         private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
         {
@@ -737,7 +799,7 @@ namespace Game
                             listViewSelectedContainer.Items.Clear();
                         }
 
-                        PopulateContainerFromPack(listViewPlayerPack, (Guid)pack.Tile.Meta.UID);
+                        PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
                     }
                 }
             }
@@ -835,11 +897,13 @@ namespace Game
             }
         }
 
-        void PopulateContainerFromPack(ListView listView, Guid containerId)
+        void PopulateContainerFromPack(ListView listView, TileIdentifier containerTile)
         {
             listView.Items.Clear();
 
-            foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerId))
+            labelPack.Text = $"Pack: ({containerTile.Meta.Name})";
+
+            foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
                 AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
             }
@@ -872,7 +936,7 @@ namespace Game
             {
                 _currentlySelectedPack = item.Tile;
                 labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.Name})";
-                PopulateContainerFromPack(listViewSelectedContainer, (Guid)item.Tile.Meta.UID);
+                PopulateContainerFromPack(listViewSelectedContainer, item.Tile);
             }
         }
 
