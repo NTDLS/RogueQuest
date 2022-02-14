@@ -146,6 +146,7 @@ namespace Game.Engine
                 return false;
             }
 
+            #region Heal.
             if (item.Tile.Meta.Effect == ItemEffect.Heal)
             {
                 int totalHealing = 0;
@@ -175,15 +176,175 @@ namespace Game.Engine
 
                 Core.LogLine($"Healed {totalHealing} hitpoints.");
             }
+            #endregion
+            #region IncreaseDexterity
+            else if (item.Tile.Meta.Effect == ItemEffect.IncreaseDexterity)
+            {
+                int totalAdded = 0;
+
+                var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                foreach (var formula in formulas)
+                {
+                    int toAdd = 0;
+
+                    if (formula[0] == '%') //Raise the attribute by a percentage.
+                    {
+                        var pct = int.Parse(formula.Substring(1)) / 100.0;
+                        toAdd = (int)((double)Core.State.Character.Dexterity * pct);
+                    }
+                    else //Raise the hitpoints by a fixed ammount.
+                    {
+                        toAdd = int.Parse(formula);
+                    }
+
+                    Core.State.Character.AugmentedDexterity += toAdd;
+                    totalAdded += toAdd;
+                }
+
+                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseDexterity);
+                state.ModificationAmount = totalAdded;
+                state.ExpireTime = item.Tile.Meta.ExpireTime;
+
+                Core.LogLine($"Dexterity increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+            }
+            #endregion
+            #region IncreaseConstitution
+            else if (item.Tile.Meta.Effect == ItemEffect.IncreaseConstitution)
+            {
+                int totalAdded = 0;
+
+                var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                foreach (var formula in formulas)
+                {
+                    int toAdd = 0;
+
+                    if (formula[0] == '%') //Raise the attribute by a percentage.
+                    {
+                        var pct = int.Parse(formula.Substring(1)) / 100.0;
+                        toAdd = (int)((double)Core.State.Character.Hitpoints * pct);
+                    }
+                    else //Raise the hitpoints by a fixed ammount.
+                    {
+                        toAdd = int.Parse(formula);
+                    }
+
+                    Core.State.Character.AugmentedConstitution += toAdd;
+                    totalAdded += toAdd;
+                }
+
+                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseConstitution);
+                state.ModificationAmount = totalAdded;
+                state.ExpireTime = item.Tile.Meta.ExpireTime;
+
+                Core.LogLine($"Constitution increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+            }
+            #endregion
+            #region IncreaseArmorClass
+            else if (item.Tile.Meta.Effect == ItemEffect.IncreaseArmorClass)
+            {
+                int totalAdded = 0;
+
+                var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                foreach (var formula in formulas)
+                {
+                    int toAdd = 0;
+
+                    if (formula[0] == '%') //Raise the attribute by a percentage.
+                    {
+                        var pct = int.Parse(formula.Substring(1)) / 100.0;
+                        toAdd = (int)((double)Core.State.Character.AugmentedAC * pct);
+                    }
+                    else //Raise the hitpoints by a fixed ammount.
+                    {
+                        toAdd = int.Parse(formula);
+                    }
+
+                    Core.State.Character.AugmentedAC += toAdd;
+                    totalAdded += toAdd;
+                }
+
+                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseArmorClass);
+                state.ModificationAmount = totalAdded;
+                state.ExpireTime = item.Tile.Meta.ExpireTime;
+
+                Core.LogLine($"AC increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+            }
+            #endregion
+            #region IncreaseIntelligence
+            else if (item.Tile.Meta.Effect == ItemEffect.IncreaseIntelligence)
+            {
+                int totalAdded = 0;
+
+                var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                foreach (var formula in formulas)
+                {
+                    int toAdd = 0;
+
+                    if (formula[0] == '%') //Raise the attribute by a percentage.
+                    {
+                        var pct = int.Parse(formula.Substring(1)) / 100.0;
+                        toAdd = (int)((double)Core.State.Character.Manna * pct);
+                    }
+                    else //Raise the hitpoints by a fixed ammount.
+                    {
+                        toAdd = int.Parse(formula);
+                    }
+
+                    Core.State.Character.AugmentedIntelligence += toAdd;
+                    totalAdded += toAdd;
+                }
+
+                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIntelligence);
+                state.ModificationAmount = totalAdded;
+                state.ExpireTime = item.Tile.Meta.ExpireTime;
+
+                Core.LogLine($"Intelligence increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+            }
+            #endregion
+            #region IncreaseStrength
+            else if (item.Tile.Meta.Effect == ItemEffect.IncreaseStrength)
+            {
+                int totalAdded = 0;
+
+                var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                foreach (var formula in formulas)
+                {
+                    int toAdd = 0;
+
+                    if (formula[0] == '%') //Raise the attribute by a percentage.
+                    {
+                        var pct = int.Parse(formula.Substring(1)) / 100.0;
+                        toAdd = (int)((double)Core.State.Character.Strength * pct);
+                    }
+                    else //Raise the hitpoints by a fixed ammount.
+                    {
+                        toAdd = int.Parse(formula);
+                    }
+
+                    Core.State.Character.AugmentedStrength += toAdd;
+                    totalAdded += toAdd;
+                }
+
+                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseStrength);
+                state.ModificationAmount = totalAdded;
+                state.ExpireTime = item.Tile.Meta.ExpireTime;
+
+                Core.LogLine($"Strength increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+            }
+            #endregion
+            #region Poison
             else if (item.Tile.Meta.Effect == ItemEffect.Poison)
             {
                 int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
                 if (damage == 0) damage = 1;
                 Core.State.Character.AvailableHitpoints -= damage;
 
-                Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                state.ExpireTime = item.Tile.Meta.ExpireTime;
                 Core.LogLine($"You have been poisoned! {damage} damage!", Color.DarkRed);
             }
+            #endregion
+            #region CurePoison
             else if (item.Tile.Meta.Effect == ItemEffect.CurePoison)
             {
                 if (Core.State.ActorStates.HasState(Core.State.Character.UID, StateOfBeing.Poisoned))
@@ -196,6 +357,7 @@ namespace Game.Engine
                     Core.LogLine($"Your needlesly drink a lifesaving potion...");
                 }
             }
+            #endregion
             else
             {
                 throw new NotImplementedException();

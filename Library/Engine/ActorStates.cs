@@ -16,16 +16,35 @@ namespace Library.Engine
             return StateDictonary.Where(o => o.ActorUID == actorUID).Select(o => o.State).ToList();
         }
 
-        public void AddState(Guid actorUID, StateOfBeing state)
+        public ActorState UpsertState(Guid actorUID, StateOfBeing state)
         {
-            if (StatesOfBeing(actorUID)?.Contains(StateOfBeing.Poisoned) == false)
+            ActorState actorState = StateDictonary.Where(o => o.ActorUID == actorUID && o.State == state).FirstOrDefault();
+
+            if (actorState == null)
             {
-                StateDictonary.Add(new ActorState()
+                actorState = new ActorState()
                 {
                     ActorUID = actorUID,
                     State = state
-                });
+                };
+
+                StateDictonary.Add(actorState);
             }
+
+            return actorState;
+        }
+
+        public ActorState AddState(Guid actorUID, StateOfBeing state)
+        {
+            var actorState = new ActorState()
+            {
+                ActorUID = actorUID,
+                State = state
+            };
+
+            StateDictonary.Add(actorState);
+
+            return actorState;
         }
 
         public void RemoveState(Guid actorUID, StateOfBeing state)

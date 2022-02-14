@@ -4,8 +4,11 @@
   "Value": "1",
   "Effect": "Poison",
   "IsConsumable":"True",
+  "ExpireTime": "10",
   "Charges":"1",
   "Weight":"10",
   "Bulk":"9",
-  "Level":"1"
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"1",
 }

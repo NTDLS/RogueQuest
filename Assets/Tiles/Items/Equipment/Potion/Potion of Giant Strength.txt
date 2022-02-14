@@ -1,14 +1,15 @@
 {
-  "Name":"Potion of Cure Critical Wounds",
+  "Name":"Potion of Giant Strength",
   "SubType": "Potion",
   "Value": "100",
-  "Effect": "Heal",
-  "EffectFormula": "%90,25",
+  "Effect": "IncreaseStrength",
+  "EffectFormula": "15",
   "IsConsumable":"True",
+  "ExpireTime": "60",
   "Charges":"1",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2"
+  "Level":"3"
 }

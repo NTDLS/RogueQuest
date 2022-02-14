@@ -7,5 +7,7 @@
   "Charges":"1",
   "Weight":"10",
   "Bulk":"9",
+  "CanStack":"True",
+  "CanWalkOn":"True",
   "Level":"1"
 }

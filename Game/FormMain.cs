@@ -433,14 +433,41 @@ namespace Game
             labelTime.Text = time.ToString(@"dd\:hh\:mm\:ss");
             labelGold.Text = $"{core.State.Character.Money:N0}gp";
 
+            labelPlayer.ForeColor = Color.Black;
+
+            string modifier = "";
+
             if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.Poisoned))
             {
-                labelPlayer.Text += " (POISONED!)";
+                modifier += $"POISON,";
                 labelPlayer.ForeColor = Color.Red;
             }
-            else
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.StrengthUp))
             {
-                labelPlayer.ForeColor = Color.Black;
+                modifier += "STR+,";
+            }
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.IntelligenceUp))
+            {
+                modifier += "INT+,";
+            }
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ConstitutionUp))
+            {
+                modifier += "CON+,";
+            }
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.DexterityUp))
+            {
+                modifier += "DEX+,";
+            }
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ArmorClassUp))
+            {
+                modifier += "AC+,";
+            }
+
+            modifier = modifier.Trim(new char[] { ',' });
+
+            if (modifier.Length > 0)
+            {
+                labelPlayer.Text += $" ({modifier})";
             }
         }
 

@@ -1,14 +1,15 @@
 {
-  "Name":"Potion of Cure Light Wounds",
+  "Name":"Oil of Speed",
   "SubType": "Potion",
-  "Value": "20",
-  "Effect": "Heal",
-  "EffectFormula": "30",
+  "Value": "100",
+  "Effect": "IncreaseDexterity",
+  "EffectFormula": "5",
   "IsConsumable":"True",
+  "ExpireTime": "60",
   "Charges":"1",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"1"
+  "Level":"2"
 }

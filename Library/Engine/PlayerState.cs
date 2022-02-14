@@ -36,6 +36,7 @@ namespace Library.Engine
         public int AugmentedDexterity { get; set; }
         public int AugmentedIntelligence { get; set; }
         public int AugmentedStrength { get; set; }
+        public int AugmentedAC { get; set; }
 
         //Starting + Augmented attributes.
         public int Constitution => StartingConstitution + AugmentedConstitution;

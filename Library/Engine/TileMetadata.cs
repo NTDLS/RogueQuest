@@ -64,6 +64,10 @@ namespace Library.Engine
         public ItemEffect Effect { get; set; }
         public string EffectFormula { get; set; }
         public bool? IsConsumable { get; set; }
+        /// <summary>
+        /// Game time for expiration.
+        /// </summary>
+        public int? ExpireTime { get; set; }
         public int? Charges { get { return _Charges == 0 ? null : _Charges; } set { _Charges = value; } }
 
         public int? Experience { get { return _Experience == 0 ? null : _Experience; } set { _Experience = value; } }
@@ -149,6 +153,7 @@ namespace Library.Engine
             this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
             this.IsConsumable = with.IsConsumable ?? this.IsConsumable;
             this.Charges = with.Charges ?? this.Charges;
+            this.ExpireTime = with.ExpireTime ?? this.ExpireTime;
             this.HitPoints = with.HitPoints ?? this.HitPoints;
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;

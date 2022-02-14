@@ -70,14 +70,24 @@
     {
         Heal,
         Poison,
-        CurePoison
+        CurePoison,
+        IncreaseStrength,
+        IncreaseDexterity,
+        IncreaseConstitution,
+        IncreaseArmorClass,
+        IncreaseIntelligence
     }
 
     public enum StateOfBeing
     {
         Poisoned,
         Slowed,
-        Frozen
+        Frozen,
+        IncreaseStrength,
+        IncreaseDexterity,
+        IncreaseConstitution,
+        IncreaseArmorClass,
+        IncreaseIntelligence
     }
 
     public enum RotationMode
