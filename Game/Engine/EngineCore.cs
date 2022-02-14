@@ -28,7 +28,7 @@ namespace Game.Engine
         public event LogEvent OnLog;
 
         public EngineCore(Control drawingSurface, Size visibleSize)
-            : base (drawingSurface, visibleSize)
+            : base(drawingSurface, visibleSize)
         {
             Tick = new EngineTickController(this);
         }
@@ -246,7 +246,7 @@ namespace Game.Engine
             AfterTick?.Invoke(this, input, new Point<double>());
         }
 
-        
+
 
         public override void HandleSingleKeyPress(Keys key)
         {

@@ -309,7 +309,7 @@ namespace Game
                 if (existingInventoryItem != null)
                 {
                     existingInventoryItem.Tile.Meta.Quantity = (existingInventoryItem.Tile.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
-                    Core.State.Items.RemoveAll(o=>o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
+                    Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
                     var listViewItem = FindListViewObjectByUid(listViewSelectedContainer, (Guid)existingInventoryItem.Tile.Meta.UID);
                     if (listViewItem != null)
@@ -356,12 +356,13 @@ namespace Game
         }
 
         private void ListViewSelectedContainer_DragEnter(object sender, DragEventArgs e)
-        {       
+        {
             e.Effect = e.AllowedEffect;
         }
 
         private void ListViewSelectedContainer_ItemDrag(object sender, ItemDragEventArgs e)
-        {            if (e.Button == MouseButtons.Left)
+        {
+            if (e.Button == MouseButtons.Left)
             {
                 DoDragDrop(e.Item, DragDropEffects.Move);
             }
@@ -763,7 +764,7 @@ namespace Game
             if (e.Button == MouseButtons.Right)
             {
                 var lv = sender as ListView;
-                var selection =  lv.GetItemAt(e.X, e.Y);
+                var selection = lv.GetItemAt(e.X, e.Y);
 
                 if (selection == null)
                 {

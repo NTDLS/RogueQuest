@@ -574,7 +574,7 @@ namespace ScenarioEdit
                     needToBeLoaded.ForEach(o => o.Parent.Expand());
                     needToBeLoaded = treeViewTiles.Descendants().Where(o => o.Text == "<dummy>").ToList();
                 }
-               
+
                 _haveAllMaterialsBeenLoaded = true;
                 treeViewTiles.CollapseAll();
                 treeViewTiles.EndUpdate();
@@ -825,7 +825,7 @@ namespace ScenarioEdit
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-             TrySave();
+            TrySave();
         }
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2181,7 +2181,7 @@ namespace ScenarioEdit
         private void invertSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _core.Actors.Tiles.ForEach(o => o.SelectedHighlight = !o.SelectedHighlight);
-            _mostRecentlySelectedTile = _core.Actors.Tiles.FirstOrDefault(o=>o.SelectedHighlight == true);
+            _mostRecentlySelectedTile = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
         }
 
         private void expandSelectionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2302,7 +2302,7 @@ namespace ScenarioEdit
 
         private void rightSidesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-                        ActorBase alignWith = _mostRecentlySelectedTile;
+            ActorBase alignWith = _mostRecentlySelectedTile;
             if (alignWith == null)
             {
                 alignWith = _core.Actors.Tiles.FirstOrDefault(o => o.SelectedHighlight == true);
@@ -2323,4 +2323,3 @@ namespace ScenarioEdit
         #endregion
     }
 }
-

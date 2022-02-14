@@ -49,7 +49,7 @@ namespace Game.Engine
 
             //We typically add the pack to our existing pack, unless the pack we are picking up is the one in the players pack slot.
             //This happens when the player picks up a pack when one is not already equipped.
-            if (putItemsIntoContainerId != packOnGround.Meta.UID) 
+            if (putItemsIntoContainerId != packOnGround.Meta.UID)
             {
                 //Add the pack on the ground to the players inventory pack.
                 var nestedPack = new CustodyItem()
@@ -79,7 +79,7 @@ namespace Game.Engine
                         existingItem.Tile.Meta.Quantity = (existingItem.Tile.Meta.Quantity ?? 0) + item.Tile.Meta.Quantity;
                         itemsToDelete.Add((Guid)item.Tile.Meta.UID);
                         continue;
-                    } 
+                    }
                 }
 
                 item.ContainerId = putItemsIntoContainerId;
@@ -548,7 +548,7 @@ namespace Game.Engine
                         Core.State.Character.Experience += experience;
                     }
                 }
-                else if(hitType == HitType.CriticalMiss)
+                else if (hitType == HitType.CriticalMiss)
                 {
                     Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} {GetCriticalMissText()}", Color.DarkRed);
                 }
@@ -593,7 +593,7 @@ namespace Game.Engine
                         break;
                     }
                 }
-                else if(hitType == HitType.CriticalMiss)
+                else if (hitType == HitType.CriticalMiss)
                 {
                     Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} resulting in a critical miss!", Color.DarkGreen);
                 }

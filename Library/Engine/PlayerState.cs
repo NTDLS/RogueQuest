@@ -219,7 +219,8 @@ namespace Library.Engine
                     _availableHitpoints = 0;
                 }
                 else
-                { _availableHitpoints = value;
+                {
+                    _availableHitpoints = value;
                 }
             }
         }
