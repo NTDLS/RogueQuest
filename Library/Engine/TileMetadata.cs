@@ -43,7 +43,7 @@ namespace Library.Engine
 
         public bool? OnlyDialogOnce { get; set; }
         public bool? IsContainer { get; set; }
-        public bool? CanStack { get; set; }
+        public bool? CanStack { get; set; } //Remember that items with charges are NOT stackable.
         public bool? CanWalkOn { get; set; }
         /// <summary>
         /// There can only be one.
@@ -68,7 +68,7 @@ namespace Library.Engine
         /// Game time for expiration.
         /// </summary>
         public int? ExpireTime { get; set; }
-        public int? Charges { get { return _Charges == 0 ? null : _Charges; } set { _Charges = value; } }
+        public int? Charges { get { return _Charges == 0 ? null : _Charges; } set { _Charges = value; } } //Remember that items with charges are NOT stackable.
 
         public int? Experience { get { return _Experience == 0 ? null : _Experience; } set { _Experience = value; } }
 

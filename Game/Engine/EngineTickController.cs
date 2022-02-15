@@ -146,6 +146,8 @@ namespace Game.Engine
                 return false;
             }
 
+            item.Tile.Meta.Quantity--;
+
             #region Heal.
             if (item.Tile.Meta.Effect == ItemEffect.Heal)
             {
@@ -363,7 +365,7 @@ namespace Game.Engine
                 throw new NotImplementedException();
             }
 
-            if (item.Tile.Meta.Charges > 0)
+            if (item.Tile.Meta.Charges > 0) //Remember that items with charges are NOT stackable.
             {
                 item.Tile.Meta.Charges--;
 

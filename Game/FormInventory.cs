@@ -272,7 +272,19 @@ namespace Game
                 {
                     if (UseItem(item.Tile))
                     {
-                        listViewSelectedContainer.Items.Remove(selectedItem);
+                        if ((item.Tile.Meta.Quantity ?? 0) == 0)
+                        {
+                            listViewPlayerPack.Items.Remove(selectedItem);
+                        }
+                        else
+                        {
+                            string text = item.Tile.Meta.Name;
+                            if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                            {
+                                text += $" ({item.Tile.Meta.Quantity})";
+                            }
+                            selectedItem.Text = text;
+                        }
                     }
                 }
             }
@@ -438,7 +450,19 @@ namespace Game
                 {
                     if (UseItem(item.Tile))
                     {
-                        listViewPlayerPack.Items.Remove(selectedItem);
+                        if ((item.Tile.Meta.Quantity ?? 0) == 0)
+                        {
+                            listViewPlayerPack.Items.Remove(selectedItem);
+                        }
+                        else
+                        {
+                            string text = item.Tile.Meta.Name;
+                            if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                            {
+                                text += $" ({item.Tile.Meta.Quantity})";
+                            }
+                            selectedItem.Text = text;
+                        }
                     }
                 }
             }
@@ -687,7 +711,19 @@ namespace Game
                     {
                         if (UseItem(item.Tile))
                         {
-                            listViewPlayerPack.Items.Remove(selectedItem);
+                            if ((item.Tile.Meta.Quantity ?? 0) == 0)
+                            {
+                                listViewPlayerPack.Items.Remove(selectedItem);
+                            }
+                            else
+                            {
+                                string text = item.Tile.Meta.Name;
+                                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                                {
+                                    text += $" ({item.Tile.Meta.Quantity})";
+                                }
+                                selectedItem.Text = text;
+                            }
                         }
                     }
                 }
