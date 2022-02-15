@@ -6,7 +6,6 @@
   "EffectFormula": "5",
   "IsConsumable":"True",
   "ExpireTime": "60",
-  "Charges":"1",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",

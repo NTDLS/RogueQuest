@@ -117,7 +117,7 @@ namespace Game
 
                 if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
                 {
-                    return Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID);
+                    return Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
                 }
             }
 
@@ -268,7 +268,8 @@ namespace Game
             {
                 OpenPack(item);
             }
-            else
+            else if (item.Tile.Meta.SubType == ActorSubType.Scroll
+                         || item.Tile.Meta.SubType == ActorSubType.Potion)
             {
                 if (item.Tile.Meta.IsConsumable == true)
                 {
@@ -475,7 +476,8 @@ namespace Game
             {
                 OpenPack(item);
             }
-            else
+            else if (item.Tile.Meta.SubType == ActorSubType.Scroll
+                         || item.Tile.Meta.SubType == ActorSubType.Potion)
             {
                 if (item.Tile.Meta.IsConsumable == true)
                 {
@@ -766,7 +768,8 @@ namespace Game
                 {
                     OpenPack(item);
                 }
-                else
+                else if (item.Tile.Meta.SubType == ActorSubType.Scroll
+                        || item.Tile.Meta.SubType == ActorSubType.Potion)
                 {
                     if (item.Tile.Meta.IsConsumable == true)
                     {

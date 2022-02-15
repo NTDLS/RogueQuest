@@ -1,5 +1,6 @@
 ﻿using Assets;
 using Game.Actors;
+using Game.Classes;
 using Game.Engine;
 using Game.Extensions;
 using Library.Engine;
@@ -15,6 +16,12 @@ namespace Game
 {
     public partial class FormMain : Form
     {
+        enum MouseMode
+        {
+            None,
+            WandTargetSelction
+        }
+
         private EngineCore _core;
         private bool _fullScreen = false;
         private ToolTip _interrogationTip = new ToolTip();
@@ -22,6 +29,9 @@ namespace Game
         private bool _hasBeenModified = false;
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
+
+        private MouseMode CurrentMouseMode = MouseMode.None;
+        private QuickItemButtonInfo PendingQuickItemMouseOperation = null;
 
         /// <summary>
         /// Really just for debugging.
@@ -99,6 +109,7 @@ namespace Game
             drawingsurface.MouseDown += Drawingsurface_MouseDown;
             drawingsurface.MouseUp += Drawingsurface_MouseUp;
             drawingsurface.MouseMove += Drawingsurface_MouseMove;
+            drawingsurface.MouseClick += Drawingsurface_MouseClick;
 
             drawingsurface.Select();
             drawingsurface.Focus();
@@ -113,6 +124,64 @@ namespace Game
             toolStripButtonGet.Click += ToolStripButtonGet_Click;
             toolStripButtonRest.Click += ToolStripButtonRest_Click;
             toolStripButtonSave.Click += ToolStripButtonSave_Click;
+        }
+
+        private void Drawingsurface_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (CurrentMouseMode == MouseMode.WandTargetSelction)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    PendingQuickItemMouseOperation = null;
+                    CurrentMouseMode = MouseMode.None;
+                    splitContainerHoriz.Cursor = Cursors.Default;
+                }
+                else if (e.Button == MouseButtons.Left)
+                {
+                    var tag = PendingQuickItemMouseOperation;
+                    var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tag.UID).First();
+
+                    double x = e.X + _core.Display.BackgroundOffset.X;
+                    double y = e.Y + _core.Display.BackgroundOffset.Y;
+
+                    var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
+                        .Where(o => o.Visible == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing)
+                        .OrderBy(o => o.DrawOrder).LastOrDefault();
+                    if (hoverTile == null)
+                    {
+                        return;
+                    }
+
+                    PendingQuickItemMouseOperation = null;
+                    CurrentMouseMode = MouseMode.None;
+                    splitContainerHoriz.Cursor = Cursors.Default;
+
+                    if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand)
+                    {
+                        if (inventoryItem.Tile.Meta.IsConsumable == true)
+                        {
+                            if (UseWand(inventoryItem.Tile, hoverTile))
+                            {
+                                if ((inventoryItem.Tile.Meta.Quantity ?? 0) == 0)
+                                {
+                                    toolStripQuick.Items.Remove(tag.Button);
+                                }
+                                else
+                                {
+                                    string text = inventoryItem.Tile.Meta.Name;
+                                    if (inventoryItem.Tile.Meta.CanStack == true && inventoryItem.Tile.Meta.Quantity > 0)
+                                    {
+                                        text += $" ({inventoryItem.Tile.Meta.Quantity})";
+                                    }
+                                    tag.Button.ToolTipText = text;
+                                }
+                            }
+                        }
+                    }
+
+                    UpdatePlayerStatLabels(_core);
+                }
+            }
         }
 
         private void Drawingsurface_MouseMove(object sender, MouseEventArgs e)
@@ -444,13 +513,6 @@ namespace Game
 
         #endregion
 
-        class QuickItemButtonInfo
-        {
-            public Guid UID { get; set; }
-            public TileIdentifier Tile { get; set; }
-            public ToolStripButton Button { get; set; }
-        }
-
         private void UpdateQuickSlots()
         {
             if (toolStripQuick.ImageList == null)
@@ -495,6 +557,7 @@ namespace Game
                     button.ImageKey = GetImageKey(freeHand.Tile.TilePath);
                     button.Tag = info;
                     button.ToolTipText = text;
+                    button.Click += Button_Click;
 
                     info.Button = button;
 
@@ -533,6 +596,7 @@ namespace Game
                         button.ImageKey = GetImageKey(beltItem.Tile.TilePath);
                         button.Tag = info;
                         button.ToolTipText = text;
+                                            button.Click += Button_Click;
 
                         info.Button = button;
 
@@ -549,6 +613,79 @@ namespace Game
             {
                 toolStripQuick.Items.Remove(existingButtons.Where(o => o.UID == removedItemsUid).First().Button);
             }
+        }
+
+        private void Button_Click(object sender, EventArgs e)
+        {
+            PendingQuickItemMouseOperation = null;
+            CurrentMouseMode = MouseMode.None;
+            splitContainerHoriz.Cursor = Cursors.Default;
+
+            if (sender is ToolStripButton && ((ToolStripButton)sender).Tag is QuickItemButtonInfo)
+            {
+                var tag = (QuickItemButtonInfo)(((ToolStripButton)sender).Tag);
+                var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tag.UID).First();
+
+                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand)
+                {
+                    splitContainerHoriz.Cursor = Cursors.Cross;
+                    _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.Name}... (right-click to cancel)");
+                    CurrentMouseMode = MouseMode.WandTargetSelction;
+                    PendingQuickItemMouseOperation = tag;
+                }
+                else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll
+                             || inventoryItem.Tile.Meta.SubType == ActorSubType.Potion)
+                {
+                    if (inventoryItem.Tile.Meta.IsConsumable == true)
+                    {
+                        if (UsePotion(inventoryItem.Tile))
+                        {
+                            if ((inventoryItem.Tile.Meta.Quantity ?? 0) == 0)
+                            {
+                                toolStripQuick.Items.Remove(tag.Button);
+                            }
+                            else
+                            {
+                                string text = inventoryItem.Tile.Meta.Name;
+                                if (inventoryItem.Tile.Meta.CanStack == true && inventoryItem.Tile.Meta.Quantity > 0)
+                                {
+                                    text += $" ({inventoryItem.Tile.Meta.Quantity})";
+                                }
+                                tag.Button.ToolTipText = text;
+                            }
+                        }
+                    }
+                }
+            }
+
+            UpdatePlayerStatLabels(_core);
+        }
+
+        private bool UseWand(TileIdentifier item, ActorBase target)
+        {
+            var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == item.Meta.UID).First();
+
+            if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
+            {
+                return _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target);
+            }
+
+            return false;
+        }
+
+        private bool UsePotion(TileIdentifier item)
+        {
+            if (MessageBox.Show($"Use {item.Meta.Name}?", $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == item.Meta.UID).First();
+
+                if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
+                {
+                    return _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
+                }
+            }
+
+            return false;
         }
 
         private void UpdatePlayerStatLabels(EngineCore core)

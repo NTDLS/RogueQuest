@@ -4,7 +4,6 @@
   "Value": "40",
   "Effect": "CurePoison",
   "IsConsumable":"True",
-  "Charges":"1",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",
