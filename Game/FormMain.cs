@@ -1,10 +1,12 @@
-﻿using Game.Actors;
+﻿using Assets;
+using Game.Actors;
 using Game.Engine;
 using Game.Extensions;
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -423,6 +425,132 @@ namespace Game
             UpdatePlayerStatLabels(core);
         }
 
+        #region Utility.
+
+        private ImageList _imageList = new ImageList();
+
+        private string GetImageKey(string tilePath)
+        {
+            if (_imageList.Images.Keys.Contains(tilePath))
+            {
+                return tilePath;
+            }
+
+            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetAssetPath($"{tilePath}.png"));
+            _imageList.Images.Add(tilePath, bitmap);
+
+            return tilePath;
+        }
+
+        #endregion
+
+        class QuickItemButtonInfo
+        {
+            public Guid UID { get; set; }
+            public TileIdentifier Tile { get; set; }
+            public ToolStripButton Button { get; set; }
+        }
+
+        private void UpdateQuickSlots()
+        {
+            if (toolStripQuick.ImageList == null)
+            {
+                toolStripQuick.ImageList = _imageList;
+            }
+
+            List<QuickItemButtonInfo> existingButtons = new List<QuickItemButtonInfo>();
+            //A list of what items would have been added. We use to remove items that are no longer available.
+            List<QuickItemButtonInfo> availableButtons = new List<QuickItemButtonInfo>();
+
+            foreach (var item in toolStripQuick.Items)
+            {
+                if (item is ToolStripButton && ((ToolStripButton)item).Tag is QuickItemButtonInfo)
+                {
+                    existingButtons.Add((QuickItemButtonInfo)((ToolStripButton)item).Tag);
+                }
+            }
+
+            var freeHand = _core.State.Character.GetEquipSlot(EquipSlot.FreeHand);
+            if (freeHand.Tile != null)
+            {
+                var info = new QuickItemButtonInfo()
+                {
+                    UID = (Guid)freeHand.Tile.Meta.UID,
+                    Tile = freeHand.Tile
+                };
+
+                if (existingButtons.Where(o => o.UID == (Guid)freeHand.Tile.Meta.UID).Any())
+                {
+                    info.Button = existingButtons.Where(o => o.UID == (Guid)freeHand.Tile.Meta.UID).First().Button;
+                }
+                else
+                {
+                    string text = freeHand.Tile.Meta.Name;
+                    if (freeHand.Tile.Meta.Charges > 0)
+                    {
+                        text += $"\r\n{freeHand.Tile.Meta.Charges} charges remaining.";
+                    }
+
+                    var button = new ToolStripButton();
+                    button.ImageKey = GetImageKey(freeHand.Tile.TilePath);
+                    button.Tag = info;
+                    button.ToolTipText = text;
+
+                    info.Button = button;
+
+                    toolStripQuick.Items.Add(button);
+                }
+
+                availableButtons.Add(info);
+            }
+
+            var belt = _core.State.Character.GetEquipSlot(EquipSlot.Belt);
+            if (belt.Tile != null)
+            {
+                var beltItems = _core.State.Items.Where(o => o.ContainerId == belt.Tile.Meta.UID).ToList();
+
+                foreach (var beltItem in beltItems)
+                {
+                    var info = new QuickItemButtonInfo()
+                    {
+                        UID = (Guid)beltItem.Tile.Meta.UID,
+                        Tile = beltItem.Tile
+                    };
+
+                    if (existingButtons.Where(o => o.UID == (Guid)beltItem.Tile.Meta.UID).Any())
+                    {
+                        info.Button = existingButtons.Where(o => o.UID == (Guid)beltItem.Tile.Meta.UID).First().Button;
+                    }
+                    else
+                    {
+                        string text = beltItem.Tile.Meta.Name;
+                        if (beltItem.Tile.Meta.Charges > 0)
+                        {
+                            text += $"\r\n{beltItem.Tile.Meta.Charges} charges remaining.";
+                        }
+
+                        var button = new ToolStripButton();
+                        button.ImageKey = GetImageKey(beltItem.Tile.TilePath);
+                        button.Tag = info;
+                        button.ToolTipText = text;
+
+                        info.Button = button;
+
+                        toolStripQuick.Items.Add(button);
+                    }
+
+                    availableButtons.Add(info);
+                }
+            }
+
+            var removedItemsUids = existingButtons.Select(o=>o.UID).Except(availableButtons.Select(o=>o.UID));
+
+            foreach (var removedItemsUid in removedItemsUids)
+            {
+                toolStripQuick.Items.Remove(existingButtons.Where(o => o.UID == removedItemsUid).First().Button);
+            }
+        }
+
         private void UpdatePlayerStatLabels(EngineCore core)
         {
             var time = TimeSpan.FromMinutes(core.State.TimePassed);
@@ -432,6 +560,8 @@ namespace Game
             labelMana.Text = $"{core.State.Character.AvailableMana:N0}";
             labelTime.Text = time.ToString(@"dd\:hh\:mm\:ss");
             labelGold.Text = $"{core.State.Character.Money:N0}gp";
+
+            UpdateQuickSlots();
 
             labelPlayer.ForeColor = Color.Black;
 

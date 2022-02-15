@@ -1,0 +1,14 @@
+{
+  "Name":"Wand of Magic Arrow",
+  "SubType": "Wand",
+  "Value": "40",
+  "Effect": "MagicArrow",
+  "EffectFormula": "5",
+  "IsConsumable":"True",
+  "Charges":"10",
+  "Weight":"10",
+  "Bulk":"9",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"1"
+}

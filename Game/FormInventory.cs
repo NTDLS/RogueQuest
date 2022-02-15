@@ -55,7 +55,7 @@ namespace Game
             listViewSelectedContainer.MouseDoubleClick += ListViewSelectedContainer_MouseDoubleClick;
             listViewSelectedContainer.MouseUp += ListView_Shared_MouseUp;
             listViewSelectedContainer.MouseDown += ListView_Shared_MouseDown;
-            
+
             listViewGround.SmallImageList = _imageList;
             listViewGround.LargeImageList = _imageList;
             listViewGround.ItemDrag += ListViewGround_ItemDrag;
@@ -135,6 +135,7 @@ namespace Game
 
             var item = listViewGround.SelectedItems[0].Tag as EquipTag;
             if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
@@ -261,6 +262,7 @@ namespace Game
             var selectedItem = listViewSelectedContainer.SelectedItems[0];
             var item = selectedItem.Tag as EquipTag;
             if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
@@ -321,6 +323,37 @@ namespace Game
                 return;
             }
 
+            //Find the item in the players inventory and change its container id to that of the selected open pack.
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            int maxBulk = (int)_currentlySelectedPack.Meta.BulkCapacity;
+            int maxWeight = (int)_currentlySelectedPack.Meta.WeightCapacity;
+            int? maxItems = _currentlySelectedPack.Meta.ItemCapacity;
+
+            //Do weight/bulk math.
+            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == _currentlySelectedPack.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+            if (inventoryItem.Tile.Meta.Weight + currentPackWeight > maxWeight)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too bulky for your {_currentlySelectedPack.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == _currentlySelectedPack.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+            if (inventoryItem.Tile.Meta.Bulk + currentPackBulk > maxBulk)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too heavy for your {_currentlySelectedPack.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            if (maxItems != null)
+            {
+                var currentPackItems = Core.State.Items.Where(o => o.ContainerId == _currentlySelectedPack.Meta.UID).Count();
+                if (currentPackItems + 1 > (int)maxItems)
+                {
+                    Constants.Alert($"{_currentlySelectedPack.Meta.Name} can only carry {maxItems} items. Drop something or move to free hand?");
+                    return;
+                }
+            }
+
             ActorItem itemOnGround = null;
 
             if (draggedItem.ListView == listViewGround)
@@ -334,9 +367,6 @@ namespace Game
                     Tile = itemOnGround.CloneIdentifier()
                 });
             }
-
-            //Find the item in the players inventory and change its container id to that of the selected open pack.
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             if (_currentlySelectedPack.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
@@ -439,6 +469,7 @@ namespace Game
             var selectedItem = listViewPlayerPack.SelectedItems[0];
             var item = selectedItem.Tag as EquipTag;
             if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
@@ -486,6 +517,37 @@ namespace Game
                 return;
             }
 
+            //Find the item in the players inventory and change its container id to that of the selected open pack.
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            int maxBulk = (int)playersPack.Tile.Meta.BulkCapacity;
+            int maxWeight = (int)playersPack.Tile.Meta.WeightCapacity;
+            int? maxItems = playersPack.Tile.Meta.ItemCapacity;
+
+            //Do weight/bulk math.
+            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == playersPack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+            if (inventoryItem.Tile.Meta.Weight + currentPackWeight > maxWeight)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too bulky for your {playersPack.Tile.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == playersPack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+            if (inventoryItem.Tile.Meta.Bulk + currentPackBulk > maxBulk)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too heavy for your {playersPack.Tile.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            if (maxItems != null)
+            {
+                var currentPackItems = Core.State.Items.Where(o => o.ContainerId == playersPack.Tile.Meta.UID).Count();
+                if (currentPackItems + 1 > (int)maxItems)
+                {
+                    Constants.Alert($"{playersPack.Tile.Meta.Name} can only carry {maxItems} items. Drop something or move to free hand?");
+                    return;
+                }
+            }
+
             //If we are draging from the primary pack slot, then close the pack.
             if (draggedItem.ListView == listViewPack)
             {
@@ -506,8 +568,6 @@ namespace Game
                 });
             }
 
-            //Find the item in the playes inventory and change its container id to that of the players pack.
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             if (playersPack.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
@@ -700,6 +760,7 @@ namespace Game
                 var selectedItem = listView.SelectedItems[0];
                 var item = selectedItem.Tag as EquipTag;
                 if (item.Tile.Meta.SubType == ActorSubType.Pack
+                    || item.Tile.Meta.SubType == ActorSubType.Belt
                     || item.Tile.Meta.SubType == ActorSubType.Chest
                     || item.Tile.Meta.SubType == ActorSubType.Purse)
                 {
@@ -937,7 +998,10 @@ namespace Game
         {
             listView.Items.Clear();
 
-            labelPack.Text = $"Pack: ({containerTile.Meta.Name})";
+            if (listView == listViewPlayerPack)
+            {
+                labelPack.Text = $"Pack: ({containerTile.Meta.Name})";
+            }
 
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
@@ -967,6 +1031,7 @@ namespace Game
         private void OpenPack(EquipTag item)
         {
             if (item.Tile.Meta.SubType == ActorSubType.Pack
+                || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {

@@ -24,6 +24,7 @@ namespace Library.Engine
         private int? _OriginalHitPoints;
         private int? _BulkCapacity;
         private int? _WeightCapacity;
+        private int? _ItemCapacity;
         private int? _Weight;
         private int? _Bulk;
         private int? _Dexterity;
@@ -87,6 +88,8 @@ namespace Library.Engine
         public int? BulkCapacity { get { return _BulkCapacity == 0 ? null : _BulkCapacity; } set { _BulkCapacity = value; } }
 
         public int? WeightCapacity { get { return _WeightCapacity == 0 ? null : _WeightCapacity; } set { _WeightCapacity = value; } }
+
+        public int? ItemCapacity { get { return _ItemCapacity == 0 ? null : _ItemCapacity; } set { _ItemCapacity = value; } }
 
         public int? Weight { get { return _Weight == 0 ? null : _Weight; } set { _Weight = value; } }
 
@@ -167,6 +170,7 @@ namespace Library.Engine
             this.AC = with.AC ?? this.AC;
             this.BulkCapacity = with.BulkCapacity ?? this.BulkCapacity;
             this.WeightCapacity = with.WeightCapacity ?? this.WeightCapacity;
+            this.ItemCapacity = with.ItemCapacity ?? this.ItemCapacity;
             this.Bulk = with.Bulk ?? this.Bulk;
             this.Weight = with.Weight ?? this.Weight;
             this.DamageDice = with.DamageDice ?? this.DamageDice;

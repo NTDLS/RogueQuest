@@ -439,6 +439,7 @@ namespace Game.Engine
             Guid containerId = (Guid)pack.Tile.Meta.UID;
             int maxBulk = (int)pack.Tile.Meta.BulkCapacity;
             int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
+            int? maxItems = pack.Tile.Meta.ItemCapacity;
 
             foreach (var item in itemsUnderfoot)
             {
@@ -469,6 +470,16 @@ namespace Game.Engine
                     {
                         Core.LogLine($"{item.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                         break;
+                    }
+
+                    if (maxItems != null)
+                    {
+                        var currentPackItems = Core.State.Items.Where(o => o.ContainerId == containerId).Count();
+                        if (currentPackItems + 1 > (int)maxItems)
+                        {
+                            Core.LogLine($"{pack.Tile.Meta.Name} can only carry {maxItems} items. Drop something or move to free hand?");
+                            break;
+                        }
                     }
 
                     Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.Name}");

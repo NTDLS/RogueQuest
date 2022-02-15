@@ -1,0 +1,11 @@
+{
+  "Name":"2 Slot Belt",
+  "SubType":"Belt",
+  "Weight":"5",
+  "Bulk":"10",
+  "Value":"80",
+  "ItemCapacity":"2",
+  "BulkCapacity":"7000",
+  "WeightCapacity":"3000",
+  "Level":"1"
+}

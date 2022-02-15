@@ -305,6 +305,37 @@ namespace Game
                 return;
             }
 
+            //Find the item in the players inventory and change its container id to that of the selected open pack.
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            int maxBulk = (int)_currentlySelectedPack.Meta.BulkCapacity;
+            int maxWeight = (int)_currentlySelectedPack.Meta.WeightCapacity;
+            int? maxItems = _currentlySelectedPack.Meta.ItemCapacity;
+
+            //Do weight/bulk math.
+            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == _currentlySelectedPack.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+            if (inventoryItem.Tile.Meta.Weight + currentPackWeight > maxWeight)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too bulky for your {_currentlySelectedPack.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == _currentlySelectedPack.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+            if (inventoryItem.Tile.Meta.Bulk + currentPackBulk > maxBulk)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too heavy for your {_currentlySelectedPack.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            if (maxItems != null)
+            {
+                var currentPackItems = Core.State.Items.Where(o => o.ContainerId == _currentlySelectedPack.Meta.UID).Count();
+                if (currentPackItems + 1 > (int)maxItems)
+                {
+                    Constants.Alert($"{_currentlySelectedPack.Meta.Name} can only carry {maxItems} items. Drop something or move to free hand?");
+                    return;
+                }
+            }
+
             //If we are draging from the primary pack slot, then close the pack.
             if (draggedItem.ListView == listViewPack)
             {
@@ -352,9 +383,6 @@ namespace Game
                     Tile = clonedItem
                 });
             }
-
-            //Find the item in the players inventory and change its container id to that of the selected open pack.
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
 
             if (_currentlySelectedPack.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
@@ -481,6 +509,37 @@ namespace Game
                 return;
             }
 
+            //Find the item in the players inventory and change its container id to that of the selected open pack.
+            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            int maxBulk = (int)playersPack.Tile.Meta.BulkCapacity;
+            int maxWeight = (int)playersPack.Tile.Meta.WeightCapacity;
+            int? maxItems = playersPack.Tile.Meta.ItemCapacity;
+
+            //Do weight/bulk math.
+            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == playersPack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+            if (inventoryItem.Tile.Meta.Weight + currentPackWeight > maxWeight)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too bulky for your {playersPack.Tile.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == playersPack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+            if (inventoryItem.Tile.Meta.Bulk + currentPackBulk > maxBulk)
+            {
+                Constants.Alert($"{inventoryItem.Tile.Meta.Name} is too heavy for your {playersPack.Tile.Meta.Name}. Drop something or move to free hand?");
+                return;
+            }
+
+            if (maxItems != null)
+            {
+                var currentPackItems = Core.State.Items.Where(o => o.ContainerId == playersPack.Tile.Meta.UID).Count();
+                if (currentPackItems + 1 > (int)maxItems)
+                {
+                    Constants.Alert($"{playersPack.Tile.Meta.Name} can only carry {maxItems} items. Drop something or move to free hand?");
+                    return;
+                }
+            }
+
             int askingPrice = AskingPrice(draggedItemTag.Tile);
             if (draggedItem.ListView == listViewStore)
             {
@@ -523,9 +582,6 @@ namespace Game
                 });
             }
 
-            //Find the item in the playes inventory and change its container id to that of the players pack.
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
-
             if (playersPack.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
                 //A container canot contain itsself.
@@ -537,7 +593,6 @@ namespace Game
                 //No need to do anything if we are dragging to the same container.
                 return;
             }
-
 
             _persistentStore.Items.RemoveAll(o => o.Meta.UID == draggedItemTag.Tile.Meta.UID);
 

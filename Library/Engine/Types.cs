@@ -75,7 +75,8 @@
         IncreaseDexterity,
         IncreaseConstitution,
         IncreaseArmorClass,
-        IncreaseIntelligence
+        IncreaseIntelligence,
+        MagicArrow
     }
 
     public enum StateOfBeing

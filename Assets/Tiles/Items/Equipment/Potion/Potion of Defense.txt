@@ -2,7 +2,7 @@
   "Name":"Potion of Defense",
   "SubType": "Potion",
   "Value": "100",
-  "Effect": "IncreaseAC",
+  "Effect": "IncreaseArmorClass",
   "EffectFormula": "5",
   "IsConsumable":"True",
   "ExpireTime": "60",

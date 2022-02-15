@@ -76,10 +76,12 @@ namespace Game
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripQuick = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonGet = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonRest = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHoriz)).BeginInit();
@@ -89,7 +91,7 @@ namespace Game
             this.splitContainerVert.Panel1.SuspendLayout();
             this.splitContainerVert.Panel2.SuspendLayout();
             this.splitContainerVert.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.toolStripQuick.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -394,7 +396,7 @@ namespace Game
             this.splitContainerVert.Panel2.Controls.Add(this.label3);
             this.splitContainerVert.Panel2.Controls.Add(this.label1);
             this.splitContainerVert.Size = new System.Drawing.Size(896, 161);
-            this.splitContainerVert.SplitterDistance = 659;
+            this.splitContainerVert.SplitterDistance = 657;
             this.splitContainerVert.SplitterWidth = 5;
             this.splitContainerVert.TabIndex = 0;
             // 
@@ -405,7 +407,7 @@ namespace Game
             this.richTextBoxLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.ReadOnly = true;
-            this.richTextBoxLog.Size = new System.Drawing.Size(659, 161);
+            this.richTextBoxLog.Size = new System.Drawing.Size(657, 161);
             this.richTextBoxLog.TabIndex = 0;
             this.richTextBoxLog.Text = "";
             // 
@@ -509,18 +511,20 @@ namespace Game
             this.label1.TabIndex = 0;
             this.label1.Text = "HP";
             // 
-            // toolStrip1
+            // toolStripQuick
             // 
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripQuick.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStripQuick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonGet,
             this.toolStripButtonRest,
-            this.toolStripButtonSave});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 30);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(896, 27);
-            this.toolStrip1.TabIndex = 4;
-            this.toolStrip1.Text = "toolStrip1";
+            this.toolStripButtonSave,
+            this.toolStripSeparator6,
+            this.toolStripLabel1});
+            this.toolStripQuick.Location = new System.Drawing.Point(0, 30);
+            this.toolStripQuick.Name = "toolStripQuick";
+            this.toolStripQuick.Size = new System.Drawing.Size(896, 27);
+            this.toolStripQuick.TabIndex = 4;
+            this.toolStripQuick.Text = "toolStrip1";
             // 
             // toolStripButtonGet
             // 
@@ -549,6 +553,17 @@ namespace Game
             this.toolStripButtonSave.Size = new System.Drawing.Size(44, 24);
             this.toolStripButtonSave.Text = "Save";
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 27);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(85, 24);
+            this.toolStripLabel1.Text = "Quick Slots:";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -557,7 +572,7 @@ namespace Game
             this.ClientSize = new System.Drawing.Size(896, 748);
             this.Controls.Add(this.splitContainerHoriz);
             this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.toolStripQuick);
             this.Controls.Add(this.menuStrip);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -581,8 +596,8 @@ namespace Game
             this.splitContainerVert.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerVert)).EndInit();
             this.splitContainerVert.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.toolStripQuick.ResumeLayout(false);
+            this.toolStripQuick.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -633,13 +648,15 @@ namespace Game
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip toolStripQuick;
         private System.Windows.Forms.ToolStripButton toolStripButtonGet;
         private System.Windows.Forms.ToolStripButton toolStripButtonRest;
         private System.Windows.Forms.ToolStripButton toolStripButtonSave;
         private System.Windows.Forms.Label labelPlayer;
         private System.Windows.Forms.Label labelGold;
         private System.Windows.Forms.Label labelGoldLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
     }
 }
 
