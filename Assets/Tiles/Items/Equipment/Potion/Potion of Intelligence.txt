@@ -2,7 +2,7 @@
   "Name":"Potion of Intelligence",
   "SubType": "Potion",
   "Value": "20",
-  "Effect": "IncreaseMana",
+  "Effect": "IncreaseIntelligence",
   "EffectFormula": "5",
   "IsConsumable":"True",
   "ExpireTime": "60",

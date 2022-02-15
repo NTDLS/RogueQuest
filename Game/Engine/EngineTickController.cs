@@ -203,7 +203,7 @@ namespace Game.Engine
 
                 var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseDexterity);
                 state.ModificationAmount = totalAdded;
-                state.ExpireTime = item.Tile.Meta.ExpireTime;
+                state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
 
                 Core.LogLine($"Dexterity increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
             }
@@ -234,7 +234,7 @@ namespace Game.Engine
 
                 var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseConstitution);
                 state.ModificationAmount = totalAdded;
-                state.ExpireTime = item.Tile.Meta.ExpireTime;
+                state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
 
                 Core.LogLine($"Constitution increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
             }
@@ -265,7 +265,7 @@ namespace Game.Engine
 
                 var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseArmorClass);
                 state.ModificationAmount = totalAdded;
-                state.ExpireTime = item.Tile.Meta.ExpireTime;
+                state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
 
                 Core.LogLine($"AC increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
             }
@@ -283,7 +283,7 @@ namespace Game.Engine
                     if (formula[0] == '%') //Raise the attribute by a percentage.
                     {
                         var pct = int.Parse(formula.Substring(1)) / 100.0;
-                        toAdd = (int)((double)Core.State.Character.Manna * pct);
+                        toAdd = (int)((double)Core.State.Character.Intelligence * pct);
                     }
                     else //Raise the hitpoints by a fixed ammount.
                     {
@@ -294,9 +294,9 @@ namespace Game.Engine
                     totalAdded += toAdd;
                 }
 
-                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIntelligence);
-                state.ModificationAmount = totalAdded;
-                state.ExpireTime = item.Tile.Meta.ExpireTime;
+                var stateInt = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIntelligence);
+                stateInt.ModificationAmount = totalAdded;
+                stateInt.ExpireTime = item.Tile.Meta.ExpireTime;
 
                 Core.LogLine($"Intelligence increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
             }
@@ -327,7 +327,7 @@ namespace Game.Engine
 
                 var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseStrength);
                 state.ModificationAmount = totalAdded;
-                state.ExpireTime = item.Tile.Meta.ExpireTime;
+                state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
 
                 Core.LogLine($"Strength increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
             }
@@ -340,7 +340,7 @@ namespace Game.Engine
                 Core.State.Character.AvailableHitpoints -= damage;
 
                 var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
-                state.ExpireTime = item.Tile.Meta.ExpireTime;
+                state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
                 Core.LogLine($"You have been poisoned! {damage} damage!", Color.DarkRed);
             }
             #endregion
@@ -844,6 +844,68 @@ namespace Game.Engine
                 else
                 {
                     Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} but missed.", Color.DarkGreen);
+                }
+            }
+
+            var states = Core.State.ActorStates.States(Core.State.Character.UID);
+            var expiredStates = states.Where(o => Core.State.TimePassed >= o.ExpireTime).ToList();
+
+            foreach (var state in expiredStates)
+            {
+                #region IncreaseDexterity
+                if (state.State == StateOfBeing.IncreaseDexterity)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.State.Character.AugmentedDexterity -= (int)state.ModificationAmount;
+                    Core.LogLine($"Dexterity augmentation expired, decreased by {state.ModificationAmount}.");
+                }
+                #endregion
+                #region IncreaseConstitution
+                else if (state.State == StateOfBeing.IncreaseConstitution)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.State.Character.AugmentedConstitution -= (int)state.ModificationAmount;
+                    Core.LogLine($"Constitution augmentation expired, decreased by {state.ModificationAmount}.");
+                }
+                #endregion
+                #region IncreaseArmorClass
+                else if (state.State == StateOfBeing.IncreaseArmorClass)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.State.Character.AugmentedAC -= (int)state.ModificationAmount;
+                    Core.LogLine($"AC augmentation expired, decreased by {state.ModificationAmount}.");
+                }
+                #endregion
+                #region IncreaseIntelligence
+                else if (state.State == StateOfBeing.IncreaseIntelligence)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.State.Character.AugmentedIntelligence -= (int)state.ModificationAmount;
+                    Core.LogLine($"Intelligence augmentation expired, decreased by {state.ModificationAmount}.");
+                }
+                #endregion
+                #region IncreaseStrength
+                else if (state.State == StateOfBeing.IncreaseStrength)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.State.Character.AugmentedStrength -= (int)state.ModificationAmount;
+                    Core.LogLine($"Strength augmentation expired, decreased by {state.ModificationAmount}.");
+                }
+                #endregion
+                #region Poison
+                else if (state.State == StateOfBeing.Poisoned)
+                {
+                    int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
+                    if (damage == 0) damage = 1;
+                    Core.State.Character.AvailableHitpoints -= damage;
+
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
+                }
+                #endregion
+                else
+                {
+                    throw new NotImplementedException();
                 }
             }
         }

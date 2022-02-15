@@ -87,7 +87,7 @@
         IncreaseDexterity,
         IncreaseConstitution,
         IncreaseArmorClass,
-        IncreaseIntelligence
+        IncreaseIntelligence //Also increases mana.
     }
 
     public enum RotationMode

@@ -16,6 +16,19 @@ namespace Library.Engine
             return StateDictonary.Where(o => o.ActorUID == actorUID).Select(o => o.State).ToList();
         }
 
+        public List<ActorState> States(Guid actorUID)
+        {
+            return StateDictonary.Where(o => o.ActorUID == actorUID).ToList();
+        }
+
+        public void Remove(List<ActorState> toRemove)
+        {
+            foreach (var item in toRemove)
+            {
+                StateDictonary.Remove(item);
+            }
+        }
+
         public ActorState UpsertState(Guid actorUID, StateOfBeing state)
         {
             ActorState actorState = StateDictonary.Where(o => o.ActorUID == actorUID && o.State == state).FirstOrDefault();
@@ -45,6 +58,11 @@ namespace Library.Engine
             StateDictonary.Add(actorState);
 
             return actorState;
+        }
+
+        public void RemoveState(ActorState state)
+        {
+            StateDictonary.Remove(state);
         }
 
         public void RemoveState(Guid actorUID, StateOfBeing state)

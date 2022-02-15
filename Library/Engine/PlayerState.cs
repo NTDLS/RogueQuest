@@ -31,10 +31,38 @@ namespace Library.Engine
         public int StartingIntelligence { get; set; }
         public int StartingStrength { get; set; }
 
-        //Augmented attributes can be increased each time the character levels up/
-        public int AugmentedConstitution { get; set; }
+        //Augmented attributes are increased/decreased via enchanted items, potions, etc.
+        private int _augmentedConstitution = 0;
+        public int AugmentedConstitution
+        {
+            get
+            {
+                return _augmentedConstitution;
+            }
+            set
+            {
+                var delta = value - _augmentedConstitution;
+                _augmentedConstitution = value;
+                AvailableHitpoints += delta;
+            }
+        }
+
+        private int _augmentedIntelligence = 0;
+        public int AugmentedIntelligence
+        {
+            get
+            {
+                return _augmentedIntelligence;
+            }
+            set
+            {
+                var delta = value - _augmentedIntelligence;
+                _augmentedIntelligence = value;
+                AvailableMana += delta;
+            }
+        }
+
         public int AugmentedDexterity { get; set; }
-        public int AugmentedIntelligence { get; set; }
         public int AugmentedStrength { get; set; }
         public int AugmentedAC { get; set; }
 
@@ -43,9 +71,38 @@ namespace Library.Engine
         public int Dexterity => StartingDexterity + AugmentedDexterity;
         public int Intelligence => StartingIntelligence + AugmentedIntelligence;
         public int Strength => StartingStrength + AugmentedStrength;
+        public int Mana => ((6 * Level) + StartingIntelligence) + AugmentedIntelligence;
+        public int Hitpoints => ((6 * Level) + StartingConstitution) + AugmentedConstitution;
+        public int MaxWeight => ((Level * 20) + StartingStrength) + AugmentedStrength;
         public int Experience { get; set; }
         public int NextLevelExperience { get; set; }
         public int Level { get; set; }
+
+        private int _availableMana;
+        public int AvailableMana
+        {
+            get
+            {
+                return _availableMana;
+            }
+            set
+            {
+                _availableMana = value < 0 ? 0 : value;
+            }
+        }
+
+        private int _availableHitpoints;
+        public int AvailableHitpoints
+        {
+            get
+            {
+                return _availableHitpoints;
+            }
+            set
+            {
+                _availableHitpoints = value < 0 ? 0 : value;
+            }
+        }
 
         /// <summary>
         /// Gets the aggregate amount of money in gold equivalent.
@@ -204,58 +261,19 @@ namespace Library.Engine
             }
         }
 
-        //Availabe start at the base rates and are reduced as consumed.
-        private int _availableHitpoints;
-        public int AvailableHitpoints
-        {
-            get
-            {
-                return _availableHitpoints;
-
-            }
-            set
-            {
-                if (value < 0)
-                {
-                    _availableHitpoints = 0;
-                }
-                else
-                {
-                    _availableHitpoints = value;
-                }
-            }
-        }
-        public int AvailableMana { get; set; }
-
-        //These are the base values.
-        public int Hitpoints { get; set; }
-        public int Manna { get; set; }
-        public int MaxWeight { get; set; }
-
         public void InitializeState()
         {
-            Hitpoints = 5 + StartingConstitution;
-            Manna = StartingIntelligence;
-            MaxWeight = 250 + (StartingStrength * 10);
-
             AvailableHitpoints = Hitpoints;
-            AvailableMana = Manna;
-
+            AvailableMana = Mana;
             NextLevelExperience = 300;
         }
 
         public void LevelUp()
         {
             Level++;
-
             NextLevelExperience = (int)(((float)NextLevelExperience) * 1.5f);
-
-            Hitpoints += 6 + StartingConstitution + (AugmentedConstitution * 3);
-            Manna += 6 + StartingIntelligence + (AugmentedIntelligence * 3);
-            MaxWeight += 20 + StartingStrength + (AugmentedStrength * 5);
-
             AvailableHitpoints = Hitpoints;
-            AvailableMana = Manna;
+            AvailableMana = Mana;
         }
 
         public Equip GetEquipSlot(EquipSlot slot)
