@@ -612,12 +612,24 @@ namespace Game.Engine
                 }
             }
 
-            GameLogic(intersections, Input);
+            System.Threading.Thread thread = new System.Threading.Thread(GameLogicThread);
+            thread.Start(new GameLogicParam()
+            {
+                Intersections = intersections,
+                Input = Input
+            });
 
-            Core.PurgeAllDeletedTiles();
+            //GameLogic(intersections, Input);
 
             return appliedOffset;
         }
+
+        class GameLogicParam
+        {
+            public TickInput Input { get; set; }
+            public List<ActorBase> Intersections { get; set; }
+        }
+
 
         private HitType CalculateHitType(int agressorDexterity, int victimAC)
         {
@@ -705,8 +717,13 @@ namespace Game.Engine
         /// contains actors that can be damaged, then these  would be the melee attack target for the player.
         /// </summary>
         /// <param name="intersections"></param>
-        void GameLogic(List<ActorBase> intersections, TickInput Input)
+        void GameLogicThread(object param)
         {
+            var p = (GameLogicParam)param;
+
+            List<ActorBase> intersections = p.Intersections;
+            TickInput Input = p.Input;
+
             var somethingToSay = intersections.Where(o => string.IsNullOrEmpty(o.Meta.Dialog) == false).FirstOrDefault();
             if (somethingToSay != null)
             {
@@ -730,6 +747,7 @@ namespace Game.Engine
                     Core.LevelWarp(warp.Meta.LevelWarpName, (Guid)warp.Meta.LevelWarpTargetTileUID);
                 }
 
+                Core.PurgeAllDeletedTiles();
                 return;
             }
 
@@ -784,6 +802,8 @@ namespace Game.Engine
             {
                 weapon = Input.RangedItem.Tile.Meta;
                 actorToAttack = Input.RangedTarget;
+
+                AnimateTo("", Core.Player, actorToAttack);
             }
 
             if (actorToAttack != null)
@@ -943,6 +963,53 @@ namespace Game.Engine
                     throw new NotImplementedException();
                 }
             }
+
+            Core.PurgeAllDeletedTiles();
+        }
+
+        private void AnimateTo(string imagePath, ActorBase from, ActorBase to)
+        {
+            imagePath = @"Tiles\Items\Equipment\Wands\Magic Arrow";
+
+            var item = Core.Actors.AddNew<ActorPlayer>(from.X, from.Y, imagePath);
+            item.DrawOrder = 1000;
+
+            item.Velocity.Angle.Degrees = item.AngleTo(to);
+            item.Velocity.ThrottlePercentage = 100;
+            item.Velocity.MaxSpeed = 3;
+            item.RotationMode = RotationMode.Upsize;
+
+            while (true)
+            {
+                item.X += (item.Velocity.Angle.X * (item.Velocity.MaxSpeed * item.Velocity.ThrottlePercentage));
+                item.Y += (item.Velocity.Angle.Y * (item.Velocity.MaxSpeed * item.Velocity.ThrottlePercentage));
+
+                item.Invalidate();
+                System.Threading.Thread.Sleep(5);
+
+                if (item.Intersects(to))
+                {
+                    break;
+                }
+            }
+
+            item.QueueForDelete();
+
+            /*
+            System.Threading.Thread thread = new System.Threading.Thread(AnimateThread);
+            thread.Start(new AnimateThreadParam()
+            {
+                 From = from,
+                 To = to,
+                 ImagePath = imagePath
+            });
+            */
+
+            //foreach (var item in Core.Actors.Tiles.Where(o => o.TilePath.Contains("Arrow")))
+            //{
+            //item.X += (item.Velocity.Angle.X * (item.Velocity.MaxSpeed * item.Velocity.ThrottlePercentage));
+            //item.Y += (item.Velocity.Angle.Y * (item.Velocity.MaxSpeed * item.Velocity.ThrottlePercentage));
+            //}
         }
 
         private void EmptyContainerToGround(Guid? containerId, ActorBase at)
@@ -977,6 +1044,10 @@ namespace Game.Engine
                         at.X, at.Y, item.Tile.TilePath);
 
                     droppedItem.Meta = item.Tile.Meta;
+
+                    droppedItem.Meta.HasBeenViewed = true;
+                    droppedItem.AlwaysRender = true;
+                    droppedItem.Invalidate();
                 }
 
                 Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == item.Tile.Meta.UID);

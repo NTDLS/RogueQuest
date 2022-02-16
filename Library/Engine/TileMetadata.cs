@@ -42,6 +42,10 @@ namespace Library.Engine
 
         #endregion
 
+        /// <summary>
+        /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
+        /// </summary>
+        public bool HasBeenViewed { get; set; }
         public bool? OnlyDialogOnce { get; set; }
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; } //Remember that items with charges are NOT stackable.

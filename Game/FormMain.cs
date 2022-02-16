@@ -483,10 +483,21 @@ namespace Game
 
         private void _core_OnLog(EngineCore core, string text, Color color)
         {
-            richTextBoxLog.AppendText(text, color);
-            richTextBoxLog.HideSelection = true;
-            richTextBoxLog.SelectionStart = richTextBoxLog.Text.Length;
-            richTextBoxLog.ScrollToCaret();
+            if (richTextBoxLog.InvokeRequired)
+            {
+                Action safeWrite = delegate
+                {
+                    _core_OnLog(core, text, color);
+                };
+                richTextBoxLog.Invoke(safeWrite);
+            }
+            else
+            {
+                richTextBoxLog.AppendText(text, color);
+                richTextBoxLog.HideSelection = true;
+                richTextBoxLog.SelectionStart = richTextBoxLog.Text.Length;
+                richTextBoxLog.ScrollToCaret();
+            }
         }
 
         private void _core_AfterTick(EngineCore core, Types.TickInput input, Library.Types.Point<double> offsetApplied)

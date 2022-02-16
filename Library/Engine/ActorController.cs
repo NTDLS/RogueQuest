@@ -64,6 +64,9 @@ namespace Library.Engine
 
                 foreach (var obj in renderTiles)
                 {
+                    if (obj.TilePath.Contains("Copper"))
+                    {
+                    }
                     RectangleF window = new RectangleF(
                         (int)Core.Display.BackgroundOffset.X,
                         (int)Core.Display.BackgroundOffset.Y,
@@ -72,16 +75,16 @@ namespace Library.Engine
 
                     if (Core.BlindPlay == true && player != null && obj.DistanceTo(player) < Core.BlindPlayDistance)
                     {
-                        if (obj.HasBeenViewed == false)
+                        if (obj.Meta.HasBeenViewed == false)
                         {
                             obj.Invalidate();
                         }
-                        obj.HasBeenViewed = true;
+                        obj.Meta.HasBeenViewed = true;
                     }
 
                     if (obj.AlwaysRender || window.IntersectsWith(obj.Bounds) || obj.DrawRealitiveToBackgroundOffset == false)
                     {
-                        if (Core.BlindPlay == false || obj.HasBeenViewed == true
+                        if (Core.BlindPlay == false || obj.Meta.HasBeenViewed == true
                             || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                         {
                             Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);

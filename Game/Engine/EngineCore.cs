@@ -247,8 +247,6 @@ namespace Game.Engine
             AfterTick?.Invoke(this, input, new Point<double>());
         }
 
-
-
         public override void HandleSingleKeyPress(Keys key)
         {
             if (Player == null || Player.Visible == false)
