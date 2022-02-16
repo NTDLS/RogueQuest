@@ -53,6 +53,7 @@
         Belt,
         Ring,
         Weapon,
+        RangedWeapon,
         Bracers,
         Armor,
         Necklace,

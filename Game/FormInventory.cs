@@ -1,5 +1,6 @@
 ﻿using Assets;
 using Game.Actors;
+using Game.Classes;
 using Game.Engine;
 using Library.Engine;
 using Library.Engine.Types;
@@ -21,13 +22,6 @@ namespace Game
         private Button _buttonClose = new Button();
         private TileIdentifier _currentlySelectedPack = null;
         private ToolTip _interrogationTip = new ToolTip();
-
-        public class EquipTag
-        {
-            public TileIdentifier Tile { get; set; }
-            public ActorSubType AcceptType { get; set; }
-            public EquipSlot Slot { get; set; }
-        }
 
         public EngineCore Core { get; set; }
         public FormInventory()
@@ -78,7 +72,7 @@ namespace Game
 
             InitEquipSlot(listViewArmor, ActorSubType.Armor, EquipSlot.Armor);
             InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
-            InitEquipSlot(listViewWeapon, ActorSubType.Weapon, EquipSlot.Weapon);
+            InitEquipSlot(listViewWeapon, new ActorSubType[] { ActorSubType.Weapon, ActorSubType.RangedWeapon }, EquipSlot.Weapon);
             InitEquipSlot(listViewPack, ActorSubType.Pack, EquipSlot.Pack);
             InitEquipSlot(listViewBelt, ActorSubType.Belt, EquipSlot.Belt);
             InitEquipSlot(listViewRightRing, ActorSubType.Ring, EquipSlot.RightRing);
@@ -664,6 +658,13 @@ namespace Game
 
         private void InitEquipSlot(ListView lv, ActorSubType acceptType, EquipSlot slot)
         {
+            var acceptTypeList = new List<ActorSubType>();
+            acceptTypeList.Add(acceptType);
+            InitEquipSlot(lv, acceptTypeList.ToArray(), slot);
+        }
+
+        private void InitEquipSlot(ListView lv, ActorSubType[] acceptTypes, EquipSlot slot)
+        {
             lv.HideSelection = true;
             lv.LargeImageList = _imageList;
             lv.SmallImageList = _imageList;
@@ -684,7 +685,7 @@ namespace Game
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
             {
-                AcceptType = acceptType,
+                AcceptTypes = acceptTypes.ToList(),
                 Slot = slot
             };
 
@@ -718,7 +719,7 @@ namespace Game
                 if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
+                if (item.Tile.Meta.SubType == ActorSubType.Weapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
@@ -807,8 +808,8 @@ namespace Game
                 return;
             }
 
-            if (destinationTag.AcceptType == draggedItemTag.Tile.Meta.SubType
-                || destinationTag.AcceptType == ActorSubType.Unspecified)
+            if ((draggedItemTag.Tile.Meta.SubType != null && destinationTag.AcceptTypes.Contains((ActorSubType)draggedItemTag.Tile.Meta.SubType))
+                || destinationTag.AcceptTypes.Contains(ActorSubType.Unspecified))
             {
                 e.Effect = e.AllowedEffect;
             }
@@ -834,8 +835,8 @@ namespace Game
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
 
-            if (destinationTag.AcceptType == draggedItemTag.Tile.Meta.SubType
-                || destinationTag.AcceptType == ActorSubType.Unspecified)
+            if ((draggedItemTag.Tile.Meta.SubType != null && destinationTag.AcceptTypes.Contains((ActorSubType)draggedItemTag.Tile.Meta.SubType))
+                || destinationTag.AcceptTypes.Contains(ActorSubType.Unspecified))
             {
                 destination.Items[0].ImageKey = draggedItem.ImageKey;
                 destination.Items[0].Text = draggedItem.Text;
@@ -940,7 +941,7 @@ namespace Game
                 if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
+                if (item.Tile.Meta.SubType == ActorSubType.Weapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
@@ -1021,13 +1022,16 @@ namespace Game
                 text += $" ({meta.Quantity})";
             }
 
-            ListViewItem item = new ListViewItem(text);
-            item.ImageKey = GetImageKey(tilePath);
-            item.Tag = new EquipTag()
+            var equipTag = new EquipTag()
             {
-                AcceptType = (ActorSubType)meta.SubType,
                 Tile = new TileIdentifier(tilePath, meta)
             };
+
+            equipTag.AcceptTypes.Add((ActorSubType)meta.SubType);
+
+            ListViewItem item = new ListViewItem(text);
+            item.ImageKey = GetImageKey(tilePath);
+            item.Tag = equipTag;
             listView.Items.Add(item);
         }
 

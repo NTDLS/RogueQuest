@@ -1,0 +1,11 @@
+{
+  "Name":"Small Wooden Sheild",
+  "SubType": "Shield",
+  "Value": "10",
+  "Weight":"10",
+  "Bulk":"9",
+  "AC":"1",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"1"
+}

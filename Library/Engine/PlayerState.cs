@@ -283,7 +283,7 @@ namespace Library.Engine
                 return null;
             }
 
-            return Equipment.Where(o => o.Tile.Meta.UID == (Guid)itemUid).FirstOrDefault();
+            return Equipment.Where(o => o.Tile != null && o.Tile.Meta != null && o.Tile.Meta.UID == (Guid)itemUid).FirstOrDefault();
         }
 
         public Equip GetEquipSlot(EquipSlot slot)
