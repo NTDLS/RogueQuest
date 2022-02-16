@@ -386,11 +386,21 @@ namespace Game.Engine
                 if ((item.Tile.Meta.Charges ?? 0) == 0)
                 {
                     Core.State.Items.Remove(item);
+                    var slotToVacate = Core.State.Character.FindEquipSlot(item.Tile.Meta.UID);
+                    if (slotToVacate != null)
+                    {
+                        slotToVacate.Tile = null;
+                    }
                 }
             }
             else
             {
                 Core.State.Items.Remove(item);
+                var slotToVacate = Core.State.Character.FindEquipSlot(item.Tile.Meta.UID);
+                if (slotToVacate != null)
+                {
+                    slotToVacate.Tile = null;
+                }
             }
 
             return true;
@@ -802,8 +812,7 @@ namespace Game.Engine
             {
                 weapon = Input.RangedItem.Tile.Meta;
                 actorToAttack = Input.RangedTarget;
-
-                AnimateTo("", Core.Player, actorToAttack);
+                AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
             }
 
             if (actorToAttack != null)
@@ -846,6 +855,8 @@ namespace Game.Engine
 
                         Core.State.Character.Experience += experience;
                     }
+
+                    AnimateAt(weapon.HitAnimationTilePath, actorToAttack);
                 }
                 else if (hitType == HitType.CriticalMiss)
                 {
@@ -969,8 +980,6 @@ namespace Game.Engine
 
         private void AnimateTo(string imagePath, ActorBase from, ActorBase to)
         {
-            imagePath = @"Tiles\Items\Equipment\Wands\Magic Arrow";
-
             var item = Core.Actors.AddNew<ActorPlayer>(from.X, from.Y, imagePath);
             item.DrawOrder = 1000;
 
@@ -994,22 +1003,20 @@ namespace Game.Engine
             }
 
             item.QueueForDelete();
+        }
 
-            /*
-            System.Threading.Thread thread = new System.Threading.Thread(AnimateThread);
-            thread.Start(new AnimateThreadParam()
+        private void AnimateAt(string imagePath, ActorBase at)
+        {
+            var item = Core.Actors.AddNewAnimation<ActorAnimation>(at.X, at.Y, imagePath, new Size(66, 66));
+
+            while (item.ReadyForDeletion == false)
             {
-                 From = from,
-                 To = to,
-                 ImagePath = imagePath
-            });
-            */
+                item.AdvanceImage();
+                item.Invalidate();
+                System.Threading.Thread.Sleep(25);
+            }
 
-            //foreach (var item in Core.Actors.Tiles.Where(o => o.TilePath.Contains("Arrow")))
-            //{
-            //item.X += (item.Velocity.Angle.X * (item.Velocity.MaxSpeed * item.Velocity.ThrottlePercentage));
-            //item.Y += (item.Velocity.Angle.Y * (item.Velocity.MaxSpeed * item.Velocity.ThrottlePercentage));
-            //}
+            item.QueueForDelete();
         }
 
         private void EmptyContainerToGround(Guid? containerId, ActorBase at)

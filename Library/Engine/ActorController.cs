@@ -46,12 +46,15 @@ namespace Library.Engine
                     .Where(o => o.Meta.ActorClass != Types.ActorClassName.ActorFriendyBeing
                         && o.Meta.ActorClass != Types.ActorClassName.ActorHostileBeing
                         && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorAnimation
                         && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
                 renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
                     .Where(o => (o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
                         || o.Meta.ActorClass == Types.ActorClassName.ActorHostileBeing
+                        || o.Meta.ActorClass == Types.ActorClassName.ActorAnimation
                         || o.Meta.ActorClass == Types.ActorClassName.ActorPlayer)
                         && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder ?? 0).ToList());
@@ -64,9 +67,11 @@ namespace Library.Engine
 
                 foreach (var obj in renderTiles)
                 {
-                    if (obj.TilePath.Contains("Copper"))
+                    /*
+                    if (obj.TilePath.Contains("Animation"))
                     {
                     }
+                    */
                     RectangleF window = new RectangleF(
                         (int)Core.Display.BackgroundOffset.X,
                         (int)Core.Display.BackgroundOffset.Y,
@@ -219,6 +224,27 @@ namespace Library.Engine
                 obj.SetImage(SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{TilePath}.png")));
                 obj.X = x;
                 obj.Y = y;
+
+                Tiles.Add(obj);
+
+                return (T)obj;
+            }
+        }
+
+        public T AddNewAnimation<T>(double x, double y, string imageFrames, Size? frameSize, int frameDelayMilliseconds = 10, PlayMode playMode = null) where T : ActorBase
+        {
+            lock (Core.CollectionSemaphore)
+            {
+                object[] param = { Core, Constants.GetAssetPath($"{imageFrames}.png"), frameSize, frameDelayMilliseconds, playMode };
+                var obj = (ActorBase)Activator.CreateInstance(typeof(T), param);
+
+                obj.TilePath = imageFrames;
+                obj.X = x;
+                obj.Y = y;
+                obj.Meta = new TileMetadata()
+                {
+                    ActorClass = Types.ActorClassName.ActorAnimation
+                };
 
                 Tiles.Add(obj);
 

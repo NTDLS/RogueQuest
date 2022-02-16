@@ -162,16 +162,16 @@ namespace Game
                         {
                             if (UseWand(inventoryItem.Tile, hoverTile))
                             {
-                                if ((inventoryItem.Tile.Meta.Quantity ?? 0) == 0)
+                                if ((inventoryItem.Tile.Meta.Charges ?? 0) == 0)
                                 {
                                     toolStripQuick.Items.Remove(tag.Button);
                                 }
                                 else
                                 {
                                     string text = inventoryItem.Tile.Meta.Name;
-                                    if (inventoryItem.Tile.Meta.CanStack == true && inventoryItem.Tile.Meta.Quantity > 0)
+                                    if (inventoryItem.Tile.Meta.Charges > 0)
                                     {
-                                        text += $" ({inventoryItem.Tile.Meta.Quantity})";
+                                        text += $"\r\n{inventoryItem.Tile.Meta.Charges} charges remaining.";
                                     }
                                     tag.Button.ToolTipText = text;
                                 }
@@ -635,7 +635,12 @@ namespace Game
             if (sender is ToolStripButton && ((ToolStripButton)sender).Tag is QuickItemButtonInfo)
             {
                 var tag = (QuickItemButtonInfo)(((ToolStripButton)sender).Tag);
-                var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tag.UID).First();
+                var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tag.UID).FirstOrDefault();
+
+                if (inventoryItem == null)
+                {
+                    return;
+                }
 
                 if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand)
                 {

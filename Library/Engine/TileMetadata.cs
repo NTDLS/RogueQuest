@@ -12,6 +12,8 @@ namespace Library.Engine
         #region Backend fields.
 
         private Guid? _UID;
+        private string _ProjectileTilePath;
+        private string _HitAnimationTilePath;
         private string _Name;
         private string _Tag;
         private int? _Quantity; //Stacking because things like money only really matter in multiples.
@@ -55,17 +57,15 @@ namespace Library.Engine
         /// </summary>
         public bool? IsUnique { get; set; }
         public bool? CanTakeDamage { get; set; }
-
         // This is only populated for tiles that need it.
         public Guid? UID { get { return _UID == Guid.Empty ? null : _UID; } set { _UID = value; } }
+        public string ProjectileTilePath { get { return _ProjectileTilePath == string.Empty ? null : _ProjectileTilePath; } set { _ProjectileTilePath = value; } }
+        public string HitAnimationTilePath { get { return _HitAnimationTilePath == string.Empty ? null : _HitAnimationTilePath; } set { _HitAnimationTilePath = value; } }
 
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
-
         public string Tag { get { return _Tag == string.Empty ? null : _Tag; } set { _Tag = value; } }
-
         //Stacking because things like money only really matter in multiples.
         public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
-
         public ItemEffect Effect { get; set; }
         public string EffectFormula { get; set; }
         public bool? IsConsumable { get; set; }
@@ -165,6 +165,8 @@ namespace Library.Engine
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;
             this.Name = with.Name ?? this.Name;
+            this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
+            this.HitAnimationTilePath = with.HitAnimationTilePath ?? this.HitAnimationTilePath;
             this.IsUnique = with.IsUnique ?? this.IsUnique;
             this.Dialog = with.Dialog ?? this.Dialog;
             this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;

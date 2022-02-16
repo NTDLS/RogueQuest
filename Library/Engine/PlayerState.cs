@@ -276,13 +276,23 @@ namespace Library.Engine
             AvailableMana = Mana;
         }
 
+        public Equip FindEquipSlot(Guid ?itemUid)
+        {
+            if (itemUid == null)
+            {
+                return null;
+            }
+
+            return Equipment.Where(o => o.Tile.Meta.UID == (Guid)itemUid).FirstOrDefault();
+        }
+
         public Equip GetEquipSlot(EquipSlot slot)
         {
-            var equip = this.Equipment.Where(o => o.Slot == slot).FirstOrDefault();
+            var equip = Equipment.Where(o => o.Slot == slot).FirstOrDefault();
             if (equip == null)
             {
                 equip = new Equip() { Slot = slot };
-                this.Equipment.Add(equip);
+                Equipment.Add(equip);
             }
 
             return equip;

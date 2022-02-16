@@ -1,5 +1,12 @@
 ﻿namespace Library.Engine.Types
 {
+    public enum ReplayMode
+    {
+        SinglePlay,
+        LoopedPlay,
+        StillFrame
+    }
+
     public enum EquipSlot
     {
         Pack,
@@ -35,7 +42,8 @@
         ActorDialog,
         ActorSpawner, //This is used to spawn random actors.
         ActorBlockaid, //This is like a wall. It cannot be intersected at all.
-        ActorWarpTarget
+        ActorWarpTarget,
+        ActorAnimation
     }
 
     public enum ActorSubType
@@ -68,6 +76,7 @@
 
     public enum ItemEffect
     {
+        Unspecified,
         Heal,
         Poison,
         CurePoison,
@@ -81,6 +90,7 @@
 
     public enum StateOfBeing
     {
+        Unspecified,
         Poisoned,
         Slowed,
         Frozen,
