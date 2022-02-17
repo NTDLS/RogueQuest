@@ -1,0 +1,11 @@
+{
+  "Name":"Small Metal Sheild",
+  "SubType": "Shield",
+  "Value": "20",
+  "Weight":"20",
+  "Bulk":"9",
+  "AC":"2",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"1"
+}

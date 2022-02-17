@@ -2,7 +2,7 @@
   "Name":"Wooden Arrow",
   "SubType": "Projectile",
   "ProjectileType":"Arrow",
-  "Value": "2",
+  "Value": "1",
   "DamageAdditional":"0",
   "Weight":"1",
   "Bulk":"2",

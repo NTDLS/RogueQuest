@@ -1,0 +1,10 @@
+
+{
+  "Name":"Ring of Protection +1",
+  "SubType": "Ring",
+  "Value": "20",
+  "AC":"2",
+  "Weight":"5",
+  "Bulk":"5",
+  "Level":"1"
+}

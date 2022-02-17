@@ -1,5 +1,5 @@
 {
-  "Name":"Wooden Arrow",
+  "Name":"Steel Arrow",
   "SubType": "Projectile",
   "ProjectileType":"Arrow",
   "Value": "5",

@@ -1,0 +1,10 @@
+
+{
+  "Name":"Robe of Protection",
+  "SubType": "Garment",
+  "Value": "20",
+  "AC":"2",
+  "Weight":"5",
+  "Bulk":"5",
+  "Level":"1"
+}

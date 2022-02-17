@@ -1,0 +1,10 @@
+
+{
+  "Name":"Metal Gauntlets",
+  "SubType": "Gauntlets",
+  "Value": "5",
+  "AC":"2",
+  "Weight":"5",
+  "Bulk":"5",
+  "Level":"1"
+}

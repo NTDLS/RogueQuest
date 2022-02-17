@@ -1,0 +1,9 @@
+{
+  "Name":"Chain Mail Armor",
+  "SubType": "Armor",
+  "Value": "20",
+  "AC":"13",
+  "Weight":"50",
+  "Bulk":"240",
+  "Level":"1"
+}
