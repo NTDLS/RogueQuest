@@ -23,7 +23,12 @@
         Gauntlets,
         FreeHand,
         LeftRing,
-        Purse
+        Purse,
+        Projectile1,
+        Projectile2,
+        Projectile3,
+        Projectile4,
+        Projectile5
     }
 
     public enum ActorClassName
@@ -64,6 +69,7 @@
         Boots,
         Potion,
         Scroll,
+        Projectile,
         Wand,
         Money,
         Chest,
@@ -73,6 +79,13 @@
         ArmorSmithStore,
         WeaponSmithStore,
         RuinsStore
+    }
+
+    public enum ProjectileType
+    {
+        Unspecified,
+        Arrow,
+        Bolt
     }
 
     public enum ItemEffect

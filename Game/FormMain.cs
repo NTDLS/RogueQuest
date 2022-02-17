@@ -19,7 +19,7 @@ namespace Game
         enum MouseMode
         {
             None,
-            WandTargetSelction
+            RangedTargetSelction //Wand or ranged weapon.
         }
 
         private EngineCore _core;
@@ -128,7 +128,7 @@ namespace Game
 
         private void Drawingsurface_MouseClick(object sender, MouseEventArgs e)
         {
-            if (CurrentMouseMode == MouseMode.WandTargetSelction)
+            if (CurrentMouseMode == MouseMode.RangedTargetSelction)
             {
                 if (e.Button == MouseButtons.Right)
                 {
@@ -178,10 +178,56 @@ namespace Game
                             }
                         }
                     }
+                    else if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon)
+                    {
+                        var projectile = GetQuiverSlotOfType(inventoryItem.Tile.Meta.ProjectileType);
+                        if (projectile != null && projectile.Tile != null)
+                        {
+                            if (projectile.Tile.Meta.IsConsumable == true)
+                            {
+                                if (UseRangedWeapon(inventoryItem.Tile, projectile.Tile, hoverTile))
+                                {
+                                    if (projectile.Tile == null || (projectile.Tile.Meta.Quantity ?? 0) == 0)
+                                    {
+                                        toolStripQuick.Items.Remove(tag.Button);
+                                    }
+                                    else
+                                    {
+                                        string text = inventoryItem.Tile.Meta.Name;
+                                        if (projectile.Tile.Meta.Quantity > 0)
+                                        {
+                                            text += $"\r\n{projectile.Tile.Meta.Quantity} projectiles remaining.";
+                                        }
+                                        tag.Button.ToolTipText = text;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Constants.Alert("you have no projectiles equipped for this item.");
+                        }
+                    }
 
                     UpdatePlayerStatLabels(_core);
                 }
             }
+        }
+
+        private Equip GetQuiverSlotOfType(ProjectileType projectileType)
+        {
+            var q1 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile1);
+            if (q1.Tile != null && q1.Tile.Meta.ProjectileType == projectileType) return q1;
+            var q2 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile2);
+            if (q2.Tile != null && q2.Tile.Meta.ProjectileType == projectileType) return q2;
+            var q3 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile3);
+            if (q3.Tile != null && q3.Tile.Meta.ProjectileType == projectileType) return q3;
+            var q4 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile4);
+            if (q4.Tile != null && q4.Tile.Meta.ProjectileType == projectileType) return q4;
+            var q5 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile5);
+            if (q5.Tile != null && q5.Tile.Meta.ProjectileType == projectileType) return q5;
+
+            return null;
         }
 
         private void Drawingsurface_MouseMove(object sender, MouseEventArgs e)
@@ -546,74 +592,25 @@ namespace Game
             var freeHand = _core.State.Character.GetEquipSlot(EquipSlot.FreeHand);
             if (freeHand.Tile != null)
             {
-                var info = new QuickItemButtonInfo()
-                {
-                    UID = (Guid)freeHand.Tile.Meta.UID,
-                    Tile = freeHand.Tile
-                };
+                var info = UpsertQuickSlotItem(freeHand.Tile, existingButtons);
+                availableButtons.Add(info);
+            }
 
-                if (existingButtons.Where(o => o.UID == (Guid)freeHand.Tile.Meta.UID).Any())
-                {
-                    info.Button = existingButtons.Where(o => o.UID == (Guid)freeHand.Tile.Meta.UID).First().Button;
-                }
-                else
-                {
-                    string text = freeHand.Tile.Meta.Name;
-                    if (freeHand.Tile.Meta.Charges > 0)
-                    {
-                        text += $"\r\n{freeHand.Tile.Meta.Charges} charges remaining.";
-                    }
-
-                    var button = new ToolStripButton();
-                    button.ImageKey = GetImageKey(freeHand.Tile.TilePath);
-                    button.Tag = info;
-                    button.ToolTipText = text;
-                    button.Click += Button_Click;
-
-                    info.Button = button;
-
-                    toolStripQuick.Items.Add(button);
-                }
-
+            var weaponHand = _core.State.Character.GetEquipSlot(EquipSlot.Weapon);
+            if (weaponHand.Tile != null && weaponHand.Tile.Meta.SubType == ActorSubType.RangedWeapon)
+            {
+                var info = UpsertQuickSlotItem(weaponHand.Tile, existingButtons);
                 availableButtons.Add(info);
             }
 
             var belt = _core.State.Character.GetEquipSlot(EquipSlot.Belt);
             if (belt.Tile != null)
             {
-                var beltItems = _core.State.Items.Where(o => o.ContainerId == belt.Tile.Meta.UID).ToList();
+                var items = _core.State.Items.Where(o => o.ContainerId == belt.Tile.Meta.UID).ToList();
 
-                foreach (var beltItem in beltItems)
+                foreach (var item in items)
                 {
-                    var info = new QuickItemButtonInfo()
-                    {
-                        UID = (Guid)beltItem.Tile.Meta.UID,
-                        Tile = beltItem.Tile
-                    };
-
-                    if (existingButtons.Where(o => o.UID == (Guid)beltItem.Tile.Meta.UID).Any())
-                    {
-                        info.Button = existingButtons.Where(o => o.UID == (Guid)beltItem.Tile.Meta.UID).First().Button;
-                    }
-                    else
-                    {
-                        string text = beltItem.Tile.Meta.Name;
-                        if (beltItem.Tile.Meta.Charges > 0)
-                        {
-                            text += $"\r\n{beltItem.Tile.Meta.Charges} charges remaining.";
-                        }
-
-                        var button = new ToolStripButton();
-                        button.ImageKey = GetImageKey(beltItem.Tile.TilePath);
-                        button.Tag = info;
-                        button.ToolTipText = text;
-                                            button.Click += Button_Click;
-
-                        info.Button = button;
-
-                        toolStripQuick.Items.Add(button);
-                    }
-
+                    var info = UpsertQuickSlotItem(item.Tile, existingButtons);
                     availableButtons.Add(info);
                 }
             }
@@ -624,6 +621,40 @@ namespace Game
             {
                 toolStripQuick.Items.Remove(existingButtons.Where(o => o.UID == removedItemsUid).First().Button);
             }
+        }
+
+        private QuickItemButtonInfo UpsertQuickSlotItem(TileIdentifier tile, List<QuickItemButtonInfo> existingButtons)
+        {
+            var info = new QuickItemButtonInfo()
+            {
+                UID = (Guid)tile.Meta.UID,
+                Tile = tile
+            };
+
+            if (existingButtons.Where(o => o.UID == (Guid)tile.Meta.UID).Any())
+            {
+                info.Button = existingButtons.Where(o => o.UID == (Guid)tile.Meta.UID).First().Button;
+            }
+            else
+            {
+                string text = tile.Meta.Name;
+                if (tile.Meta.Charges > 0)
+                {
+                    text += $"\r\n{tile.Meta.Charges} charges remaining.";
+                }
+
+                var button = new ToolStripButton();
+                button.ImageKey = GetImageKey(tile.TilePath);
+                button.Tag = info;
+                button.ToolTipText = text;
+                button.Click += Button_Click;
+
+                info.Button = button;
+
+                toolStripQuick.Items.Add(button);
+            }
+
+            return info;
         }
 
         private void Button_Click(object sender, EventArgs e)
@@ -642,11 +673,12 @@ namespace Game
                     return;
                 }
 
-                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand)
+                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand
+                    || inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon)
                 {
                     splitContainerHoriz.Cursor = Cursors.Cross;
                     _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.Name}... (right-click to cancel)");
-                    CurrentMouseMode = MouseMode.WandTargetSelction;
+                    CurrentMouseMode = MouseMode.RangedTargetSelction;
                     PendingQuickItemMouseOperation = tag;
                 }
                 else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll
@@ -677,13 +709,29 @@ namespace Game
             UpdatePlayerStatLabels(_core);
         }
 
-        private bool UseWand(TileIdentifier item, ActorBase target)
+        private bool UseWand(TileIdentifier wand, ActorBase target)
         {
-            var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == item.Meta.UID).First();
+            var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == wand.Meta.UID).First();
 
             if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
             {
-                return _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target);
+                var result = _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target);
+                _core.State.Character.PushFreshInventoryItemsToEquipSlots();
+                return result;
+            }
+
+            return false;
+        }
+
+        private bool UseRangedWeapon(TileIdentifier rangedWeapon, TileIdentifier projectile, ActorBase target)
+        {
+            var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == rangedWeapon.Meta.UID).First();
+
+            if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
+            {
+                var result =  _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target, projectile.Meta.UID);
+                _core.State.Character.PushFreshInventoryItemsToEquipSlots();
+                return result;
             }
 
             return false;

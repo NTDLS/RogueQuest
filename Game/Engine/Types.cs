@@ -33,6 +33,7 @@ namespace Game.Engine
         {
             public ActorBase RangedTarget { get; set; }
             public CustodyItem RangedItem { get; set; }
+            public CustodyItem RangedProjectile { get; set; }
             public TickInputType InputType { get; set; }
             public double Degrees { get; set; }
             public double Throttle { get; set; }

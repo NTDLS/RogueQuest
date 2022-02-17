@@ -67,6 +67,7 @@ namespace Library.Engine
         //Stacking because things like money only really matter in multiples.
         public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
         public ItemEffect Effect { get; set; }
+        public ProjectileType ProjectileType { get; set; }
         public string EffectFormula { get; set; }
         public bool? IsConsumable { get; set; }
         /// <summary>
@@ -156,6 +157,7 @@ namespace Library.Engine
             this.Tag = with.Tag ?? this.Tag;
             this.CanWalkOn = with.CanWalkOn ?? this.CanWalkOn;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
+            this.ProjectileType = with.ProjectileType;
             this.Effect = with.Effect;
             this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
             this.IsConsumable = with.IsConsumable ?? this.IsConsumable;

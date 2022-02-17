@@ -1,0 +1,14 @@
+{
+  "Name":"Wooden Arrow",
+  "SubType": "Projectile",
+  "ProjectileType":"Arrow",
+  "Value": "2",
+  "DamageAdditional":"0",
+  "HitAnimationTilePath":"Animations\\Hits\\Smoke (1)",
+  "Weight":"1",
+  "Bulk":"2",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "IsConsumable":"True",
+  "Level":"1"
+}

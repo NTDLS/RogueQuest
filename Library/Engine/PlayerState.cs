@@ -276,7 +276,7 @@ namespace Library.Engine
             AvailableMana = Mana;
         }
 
-        public Equip FindEquipSlot(Guid ?itemUid)
+        public Equip FindEquipSlotByItemId(Guid ?itemUid)
         {
             if (itemUid == null)
             {
@@ -296,6 +296,20 @@ namespace Library.Engine
             }
 
             return equip;
+        }
+
+        public void PushFreshInventoryItemsToEquipSlots()
+        {
+            foreach (var suit in Enum.GetValues<EquipSlot>())
+            {
+                var slot = _core.State.Character.GetEquipSlot(suit);
+
+                if (slot.Tile != null && slot.Tile.Meta != null)
+                {
+                    var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == slot.Tile.Meta.UID).First();
+                    slot.Tile = inventoryItem.Tile;
+                }
+            }
         }
     }
 }

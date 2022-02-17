@@ -88,6 +88,11 @@ namespace Game
             InitEquipSlot(listViewFreeHand, ActorSubType.Unspecified, EquipSlot.FreeHand);
             InitEquipSlot(listViewGauntlets, ActorSubType.Gauntlets, EquipSlot.Gauntlets);
             InitEquipSlot(listViewShield, ActorSubType.Shield, EquipSlot.Shield);
+            InitEquipSlot(listViewQuiver1, ActorSubType.Projectile, EquipSlot.Projectile1);
+            InitEquipSlot(listViewQuiver2, ActorSubType.Projectile, EquipSlot.Projectile2);
+            InitEquipSlot(listViewQuiver3, ActorSubType.Projectile, EquipSlot.Projectile3);
+            InitEquipSlot(listViewQuiver4, ActorSubType.Projectile, EquipSlot.Projectile4);
+            InitEquipSlot(listViewQuiver5, ActorSubType.Projectile, EquipSlot.Projectile5);
 
             //If we are wearing a pack, go ahead and show its contents.
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
