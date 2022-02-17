@@ -1,6 +1,6 @@
 {
   "Name":"Belial",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "3000",
   "DamageDice":"3",
   "DamageDiceFaces":"6",

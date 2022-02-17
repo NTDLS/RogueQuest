@@ -1,6 +1,6 @@
 {
   "Name":"Apollyon",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "3200",
   "DamageDice":"4",
   "DamageDiceFaces":"5",

@@ -1,6 +1,6 @@
 {
   "Name":"Long Sword +1",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "200",
   "DamageDice":"1",
   "DamageDiceFaces":"7",

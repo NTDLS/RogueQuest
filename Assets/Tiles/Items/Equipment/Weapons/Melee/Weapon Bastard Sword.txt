@@ -1,6 +1,6 @@
 {
   "Name":"Bastard Sword",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "60",
   "DamageDice":"2",
   "DamageDiceFaces":"6",

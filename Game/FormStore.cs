@@ -75,7 +75,7 @@ namespace Game
 
             InitEquipSlot(listViewArmor, ActorSubType.Armor, EquipSlot.Armor);
             InitEquipSlot(listViewBracers, ActorSubType.Bracers, EquipSlot.Bracers);
-            InitEquipSlot(listViewWeapon, new ActorSubType[] { ActorSubType.Weapon, ActorSubType.RangedWeapon }, EquipSlot.Weapon);
+            InitEquipSlot(listViewWeapon, new ActorSubType[] { ActorSubType.MeleeWeapon, ActorSubType.RangedWeapon }, EquipSlot.Weapon);
             InitEquipSlot(listViewPack, ActorSubType.Pack, EquipSlot.Pack);
             InitEquipSlot(listViewBelt, ActorSubType.Belt, EquipSlot.Belt);
             InitEquipSlot(listViewRightRing, ActorSubType.Ring, EquipSlot.RightRing);
@@ -736,7 +736,7 @@ namespace Game
                 if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
+                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
@@ -964,7 +964,7 @@ namespace Game
                 if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
+                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)((item.Tile.Meta.Quantity ?? 0) * item.Tile.Meta.Value)):N0} gold";
@@ -998,7 +998,7 @@ namespace Game
                 if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
-                if (item.Tile.Meta.SubType == ActorSubType.Weapon)
+                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
                     text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
@@ -1049,7 +1049,8 @@ namespace Game
 
             if (_storeTileMeta.SubType == ActorSubType.WeaponSmithStore)
             {
-                subtypes.Add(ActorSubType.Weapon);
+                subtypes.Add(ActorSubType.MeleeWeapon);
+                subtypes.Add(ActorSubType.RangedWeapon);
             }
             else if (_storeTileMeta.SubType == ActorSubType.ArmorSmithStore)
             {

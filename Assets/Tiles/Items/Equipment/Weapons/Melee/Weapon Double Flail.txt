@@ -1,6 +1,6 @@
 {
   "Name":"Double Flail",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "40",
   "DamageDice":"2",
   "DamageDiceFaces":"5",

@@ -57,7 +57,7 @@
         Pack,
         Belt,
         Ring,
-        Weapon,
+        MeleeWeapon,
         RangedWeapon,
         Bracers,
         Armor,

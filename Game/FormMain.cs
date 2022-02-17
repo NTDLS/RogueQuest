@@ -180,7 +180,7 @@ namespace Game
                     }
                     else if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon)
                     {
-                        var projectile = GetQuiverSlotOfType(inventoryItem.Tile.Meta.ProjectileType);
+                        var projectile = _core.State.Character.GetQuiverSlotOfType(inventoryItem.Tile.Meta.ProjectileType);
                         if (projectile != null && projectile.Tile != null)
                         {
                             if (projectile.Tile.Meta.IsConsumable == true)
@@ -205,29 +205,13 @@ namespace Game
                         }
                         else
                         {
-                            Constants.Alert("you have no projectiles equipped for this item.");
+                            Constants.Alert("You have no projectiles equipped for this item. Add them to the quiver.");
                         }
                     }
 
                     UpdatePlayerStatLabels(_core);
                 }
             }
-        }
-
-        private Equip GetQuiverSlotOfType(ProjectileType projectileType)
-        {
-            var q1 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile1);
-            if (q1.Tile != null && q1.Tile.Meta.ProjectileType == projectileType) return q1;
-            var q2 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile2);
-            if (q2.Tile != null && q2.Tile.Meta.ProjectileType == projectileType) return q2;
-            var q3 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile3);
-            if (q3.Tile != null && q3.Tile.Meta.ProjectileType == projectileType) return q3;
-            var q4 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile4);
-            if (q4.Tile != null && q4.Tile.Meta.ProjectileType == projectileType) return q4;
-            var q5 = _core.State.Character.GetEquipSlot(EquipSlot.Projectile5);
-            if (q5.Tile != null && q5.Tile.Meta.ProjectileType == projectileType) return q5;
-
-            return null;
         }
 
         private void Drawingsurface_MouseMove(object sender, MouseEventArgs e)
@@ -745,7 +729,9 @@ namespace Game
 
                 if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
                 {
-                    return _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
+                    var result = _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
+                    _core.State.Character.PushFreshInventoryItemsToEquipSlots();
+                    return result;
                 }
             }
 

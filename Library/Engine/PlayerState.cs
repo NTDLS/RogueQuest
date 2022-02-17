@@ -276,7 +276,7 @@ namespace Library.Engine
             AvailableMana = Mana;
         }
 
-        public Equip FindEquipSlotByItemId(Guid ?itemUid)
+        public Equip FindEquipSlotByItemId(Guid? itemUid)
         {
             if (itemUid == null)
             {
@@ -298,16 +298,33 @@ namespace Library.Engine
             return equip;
         }
 
+        public Equip GetQuiverSlotOfType(ProjectileType projectileType)
+        {
+            var q1 = GetEquipSlot(EquipSlot.Projectile1);
+            if (q1.Tile != null && q1.Tile.Meta.ProjectileType == projectileType) return q1;
+            var q2 = GetEquipSlot(EquipSlot.Projectile2);
+            if (q2.Tile != null && q2.Tile.Meta.ProjectileType == projectileType) return q2;
+            var q3 = GetEquipSlot(EquipSlot.Projectile3);
+            if (q3.Tile != null && q3.Tile.Meta.ProjectileType == projectileType) return q3;
+            var q4 = GetEquipSlot(EquipSlot.Projectile4);
+            if (q4.Tile != null && q4.Tile.Meta.ProjectileType == projectileType) return q4;
+            var q5 = GetEquipSlot(EquipSlot.Projectile5);
+            if (q5.Tile != null && q5.Tile.Meta.ProjectileType == projectileType) return q5;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Updates the items in equipment slots with the items from inventory.
+        /// </summary>
         public void PushFreshInventoryItemsToEquipSlots()
         {
             foreach (var suit in Enum.GetValues<EquipSlot>())
             {
-                var slot = _core.State.Character.GetEquipSlot(suit);
-
-                if (slot.Tile != null && slot.Tile.Meta != null)
+                var slot = GetEquipSlot(suit);
+                if (slot != null && slot.Tile != null)
                 {
-                    var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == slot.Tile.Meta.UID).First();
-                    slot.Tile = inventoryItem.Tile;
+                    slot.Tile = _core.State.Items.Where(o => o.Tile.Meta.UID == slot.Tile.Meta.UID).FirstOrDefault()?.Tile;
                 }
             }
         }

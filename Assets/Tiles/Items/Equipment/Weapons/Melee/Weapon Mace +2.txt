@@ -1,6 +1,6 @@
 {
   "Name":"Mace +2",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "100",
   "DamageDice":"1",
   "DamageDiceFaces":"5",

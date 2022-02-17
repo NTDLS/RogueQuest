@@ -928,7 +928,7 @@ namespace ScenarioEdit
                 {
                     string text = meta.Name;
 
-                    if (meta.SubType == ActorSubType.Weapon)
+                    if (meta.SubType == ActorSubType.MeleeWeapon || meta.SubType == ActorSubType.RangedWeapon)
                     {
                         text += "\r\n" + $"Damage: {meta.DamageDice:N0}d{meta.DamageDiceFaces:N0}";
                         if (meta.DamageAdditional > 0)
@@ -1993,7 +1993,9 @@ namespace ScenarioEdit
                     listViewProperties.Items.Add("Armor Class").SubItems.Add(selectedTile.Meta?.AC.ToString());
                 }
 
-                if (selectedTile.Meta.SubType == ActorSubType.Wand || selectedTile.Meta.SubType == ActorSubType.Weapon)
+                if (selectedTile.Meta.SubType == ActorSubType.Wand
+                    || selectedTile.Meta.SubType == ActorSubType.MeleeWeapon
+                    || selectedTile.Meta.SubType == ActorSubType.RangedWeapon)
                 {
                     listViewProperties.Items.Add("Damage Dice").SubItems.Add(selectedTile.Meta?.DamageDice.ToString());
                     listViewProperties.Items.Add("Damage Dice Faces").SubItems.Add(selectedTile.Meta?.DamageDiceFaces.ToString());

@@ -1,6 +1,6 @@
 {
   "Name":"Broken Sword",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "0",
   "DamageDice":"0",
   "DamageDiceFaces":"0",

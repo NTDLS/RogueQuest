@@ -1,6 +1,6 @@
 {
   "Name":"Lochaber",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "80",
   "DamageDice":"1",
   "DamageDiceFaces":"10",

@@ -1,6 +1,6 @@
 {
   "Name":"Abaddon",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "4500",
   "DamageDice":"2",
   "DamageDiceFaces":"9",

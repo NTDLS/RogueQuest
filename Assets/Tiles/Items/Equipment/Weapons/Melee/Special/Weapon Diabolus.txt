@@ -1,6 +1,6 @@
 {
   "Name":"Diabolus",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "3600",
   "DamageDice":"3",
   "DamageDiceFaces":"10",

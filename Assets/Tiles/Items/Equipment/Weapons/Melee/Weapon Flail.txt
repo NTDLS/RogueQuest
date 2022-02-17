@@ -1,6 +1,6 @@
 {
   "Name":"Flail",
-  "SubType": "Weapon",
+  "SubType": "MeleeWeapon",
   "Value": "10",
   "DamageDice":"1",
   "DamageDiceFaces":"5",
