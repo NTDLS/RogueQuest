@@ -137,7 +137,7 @@ namespace Game.Engine
             Core.State.Items.RemoveAll(o => itemsToDelete.Contains((Guid)o.Tile?.Meta?.UID));
         }
 
-        public bool UseConsumableItem(Guid itemUid, ActorBase target, Guid? rangedProjectile = null)
+        public bool UseConsumableItem(Guid itemUid, ActorBase target/*, Guid? rangedProjectile = null*/)
         {
             var item = Core.State.Items.Where(o => o.Tile.Meta.UID == itemUid).First();
             if (item == null || item.Tile.Meta.UID == null)
@@ -145,7 +145,7 @@ namespace Game.Engine
                 return false;
             }
 
-            var projectile = Core.State.Items.Where(o => o.Tile.Meta.UID == rangedProjectile).FirstOrDefault();
+            //var projectile = Core.State.Items.Where(o => o.Tile.Meta.UID == rangedProjectile).FirstOrDefault();
 
             if (item.Tile.Meta.SubType == ActorSubType.Wand)
             {
@@ -164,7 +164,7 @@ namespace Game.Engine
                 {
                     InputType = Types.TickInputType.Ranged,
                     RangedItem = item,
-                    RangedProjectile = projectile,
+                    //RangedProjectile = projectile,
                     RangedTarget = target
                 };
 
@@ -416,32 +416,6 @@ namespace Game.Engine
                     }
                 }
             }
-            else if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon && projectile != null)
-            {
-                if (projectile.Tile.Meta.Quantity > 0)
-                {
-                    projectile.Tile.Meta.Quantity--;
-
-                    if ((projectile.Tile.Meta.Quantity ?? 0) == 0)
-                    {
-                        Core.State.Items.Remove(projectile);
-                        var slotToVacate = Core.State.Character.FindEquipSlotByItemId(projectile.Tile.Meta.UID);
-                        if (slotToVacate != null)
-                        {
-                            slotToVacate.Tile = null;
-                        }
-                    }
-                }
-                else
-                {
-                    Core.State.Items.Remove(projectile);
-                    var slotToVacate = Core.State.Character.FindEquipSlotByItemId(projectile.Tile.Meta.UID);
-                    if (slotToVacate != null)
-                    {
-                        slotToVacate.Tile = null;
-                    }
-                }
-            }
 
             return true;
         }
@@ -669,8 +643,6 @@ namespace Game.Engine
                 Input = Input
             });
 
-            //GameLogic(intersections, Input);
-
             return appliedOffset;
         }
 
@@ -769,8 +741,13 @@ namespace Game.Engine
         /// <param name="intersections"></param>
         void GameLogicThread(object param)
         {
-            var p = (GameLogicParam)param;
+            Core.State.IsThreadActive = true;
+            GameLogicThreadEx((GameLogicParam)param);
+            Core.State.IsThreadActive = false;
+        }
 
+        void GameLogicThreadEx(GameLogicParam p)
+        {
             List<ActorBase> intersections = p.Intersections;
             TickInput Input = p.Input;
 
@@ -836,7 +813,12 @@ namespace Game.Engine
             TileIdentifier projectile = null;
             ActorBase actorToAttack = null;
 
-            if (Input.RangedTarget == null && Input.RangedItem == null) //Melee attack.
+            if (Input.RangedTarget != null && Input.RangedItem != null) //Ranged attack.
+            {
+                weapon = Input.RangedItem.Tile.Meta;
+                actorToAttack = Input.RangedTarget;
+            }
+            else //Melee attack.
             {
                 //Player attack other actor.
                 var actorsToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).ToList();
@@ -849,22 +831,45 @@ namespace Game.Engine
                     }
                 }
             }
-            else //Ranged attack.
-            {
-                weapon = Input.RangedItem.Tile.Meta;
-                projectile = Input.RangedProjectile?.Tile;
-                actorToAttack = Input.RangedTarget;
 
-                if (projectile != null)
+            if (actorToAttack != null)
+            {
+                if (weapon.ProjectileType != ProjectileType.Unspecified) //Melee attack with ranged weapon.
                 {
-                    AnimateTo(projectile.TilePath, Core.Player, actorToAttack);
+                    projectile = Core.State.Character.GetInventoryItemFromQuiverSlotOfType(weapon.ProjectileType).Tile;
                 }
-                else
+            }
+
+            if (projectile != null)
+            {
+                AnimateTo(projectile.TilePath, Core.Player, actorToAttack);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(weapon.ProjectileTilePath) == false)
                 {
-                    if (string.IsNullOrEmpty(weapon.ProjectileTilePath) == false)
+                    AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
+                }
+            }
+
+            if (projectile != null)
+            {
+                if (projectile.Meta.IsConsumable == true)
+                {
+                    projectile.Meta.Quantity--;
+
+                    if ((projectile.Meta.Quantity ?? 0) == 0)
                     {
-                        AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
+                        Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == projectile.Meta.UID);
+
+                        var slotToVacate = Core.State.Character.FindEquipSlotByItemId(projectile.Meta.UID);
+                        if (slotToVacate != null)
+                        {
+                            slotToVacate.Tile = null;
+                        }
                     }
+
+                    Core.State.Character.PushFreshInventoryItemsToEquipSlots();
                 }
             }
 
@@ -921,7 +926,7 @@ namespace Game.Engine
                     {
                         if (string.IsNullOrEmpty(weapon.HitAnimationTilePath) == false)
                         {
-                            AnimateAt(weapon.HitAnimationTilePath,  actorToAttack);
+                            AnimateAt(weapon.HitAnimationTilePath, actorToAttack);
                         }
                     }
                 }
@@ -934,7 +939,7 @@ namespace Game.Engine
                     Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
                 }
             }
-           
+
             if (Core.State.Character.Experience > Core.State.Character.NextLevelExperience)
             {
                 Core.State.Character.LevelUp();

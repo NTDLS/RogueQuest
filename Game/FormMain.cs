@@ -128,6 +128,11 @@ namespace Game
 
         private void Drawingsurface_MouseClick(object sender, MouseEventArgs e)
         {
+            if (_core.State.IsThreadActive)
+            {
+                return;
+            }
+
             if (CurrentMouseMode == MouseMode.RangedTargetSelction)
             {
                 if (e.Button == MouseButtons.Right)
@@ -160,22 +165,7 @@ namespace Game
                     {
                         if (inventoryItem.Tile.Meta.IsConsumable == true)
                         {
-                            if (UseWand(inventoryItem.Tile, hoverTile))
-                            {
-                                if ((inventoryItem.Tile.Meta.Charges ?? 0) == 0)
-                                {
-                                    toolStripQuick.Items.Remove(tag.Button);
-                                }
-                                else
-                                {
-                                    string text = inventoryItem.Tile.Meta.Name;
-                                    if (inventoryItem.Tile.Meta.Charges > 0)
-                                    {
-                                        text += $"\r\n{inventoryItem.Tile.Meta.Charges} charges remaining.";
-                                    }
-                                    tag.Button.ToolTipText = text;
-                                }
-                            }
+                            UseWand(inventoryItem.Tile, hoverTile);
                         }
                     }
                     else if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon)
@@ -185,22 +175,7 @@ namespace Game
                         {
                             if (projectile.Tile.Meta.IsConsumable == true)
                             {
-                                if (UseRangedWeapon(inventoryItem.Tile, projectile.Tile, hoverTile))
-                                {
-                                    if (projectile.Tile == null || (projectile.Tile.Meta.Quantity ?? 0) == 0)
-                                    {
-                                        toolStripQuick.Items.Remove(tag.Button);
-                                    }
-                                    else
-                                    {
-                                        string text = inventoryItem.Tile.Meta.Name;
-                                        if (projectile.Tile.Meta.Quantity > 0)
-                                        {
-                                            text += $"\r\n{projectile.Tile.Meta.Quantity} projectiles remaining.";
-                                        }
-                                        tag.Button.ToolTipText = text;
-                                    }
-                                }
+                                UseRangedWeapon(inventoryItem.Tile, hoverTile);
                             }
                         }
                         else
@@ -599,7 +574,7 @@ namespace Game
                 }
             }
 
-            var removedItemsUids = existingButtons.Select(o=>o.UID).Except(availableButtons.Select(o=>o.UID));
+            var removedItemsUids = existingButtons.Select(o => o.UID).Except(availableButtons.Select(o => o.UID));
 
             foreach (var removedItemsUid in removedItemsUids)
             {
@@ -618,6 +593,30 @@ namespace Game
             if (existingButtons.Where(o => o.UID == (Guid)tile.Meta.UID).Any())
             {
                 info.Button = existingButtons.Where(o => o.UID == (Guid)tile.Meta.UID).First().Button;
+
+                string text = tile.Meta.Name;
+                if (tile.Meta.Charges > 0)
+                {
+                    text += $"\r\n{tile.Meta.Charges} charges remaining.";
+                }
+                if (tile.Meta.Quantity > 0)
+                {
+                    text += $"\r\n{tile.Meta.Quantity} remaining.";
+                }
+
+                if (tile.Meta.ProjectileType != ProjectileType.Unspecified)
+                {
+                    var projectile = _core.State.Character.GetQuiverSlotOfType(tile.Meta.ProjectileType);
+                    if (projectile != null && projectile.Tile != null)
+                    {
+                        if (projectile.Tile.Meta.Quantity > 0)
+                        {
+                            text += $"\r\n{projectile.Tile.Meta.Quantity} remaining.";
+                        }
+                    }
+                }
+
+                info.Button.ToolTipText = text;
             }
             else
             {
@@ -625,6 +624,22 @@ namespace Game
                 if (tile.Meta.Charges > 0)
                 {
                     text += $"\r\n{tile.Meta.Charges} charges remaining.";
+                }
+                if (tile.Meta.Quantity > 0)
+                {
+                    text += $"\r\n{tile.Meta.Quantity} remaining.";
+                }
+
+                if (tile.Meta.ProjectileType != ProjectileType.Unspecified)
+                {
+                    var projectile = _core.State.Character.GetQuiverSlotOfType(tile.Meta.ProjectileType);
+                    if (projectile != null && projectile.Tile != null)
+                    {
+                        if (projectile.Tile.Meta.Quantity > 0)
+                        {
+                            text += $"\r\n{projectile.Tile.Meta.Quantity} remaining.";
+                        }
+                    }
                 }
 
                 var button = new ToolStripButton();
@@ -707,13 +722,13 @@ namespace Game
             return false;
         }
 
-        private bool UseRangedWeapon(TileIdentifier rangedWeapon, TileIdentifier projectile, ActorBase target)
+        private bool UseRangedWeapon(TileIdentifier rangedWeapon, ActorBase target)
         {
             var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == rangedWeapon.Meta.UID).First();
 
             if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
             {
-                var result =  _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target, projectile.Meta.UID);
+                var result = _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target/*, projectile.Meta.UID*/);
                 _core.State.Character.PushFreshInventoryItemsToEquipSlots();
                 return result;
             }
@@ -814,6 +829,11 @@ namespace Game
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
+            if (_core.State.IsThreadActive)
+            {
+                return;
+            }
+
             if (_core.Player == null || _core.Player.Visible == false)
             {
                 return; //Player is dead.

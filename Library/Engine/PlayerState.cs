@@ -314,6 +314,16 @@ namespace Library.Engine
             return null;
         }
 
+        public CustodyItem GetInventoryItemFromQuiverSlotOfType(ProjectileType projectileType)
+        {
+            var quiver = GetQuiverSlotOfType(projectileType);
+            if (quiver != null && quiver.Tile != null)
+            {
+                return _core.State.Items.Where(o => o.Tile.Meta.UID == quiver.Tile.Meta.UID).First();
+            }
+            return null;
+        }
+
         /// <summary>
         /// Updates the items in equipment slots with the items from inventory.
         /// </summary>
