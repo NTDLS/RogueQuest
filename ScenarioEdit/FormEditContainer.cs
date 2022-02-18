@@ -54,11 +54,22 @@ namespace ScenarioEdit
             this.AcceptButton = buttonSave;
             this.CancelButton = buttonCancel;
 
-            var objs = Core.State.Items.Where(o=> o.ContainerId == ContainerId);
+            var objs = Core.State.Items.Where(o => o.ContainerId == ContainerId);
 
             foreach (var obj in objs)
             {
-                AddItemToContainer(obj.Tile.TilePath, obj.Tile.Meta.Quantity);
+                if (obj.Tile.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
+                {
+                    AddItemToContainer(obj.Tile.TilePath, obj.Tile.Meta.Charges);
+                }
+                else if (obj.Tile.Meta.CanStack == true)
+                {
+                    AddItemToContainer(obj.Tile.TilePath, obj.Tile.Meta.Quantity);
+                }
+                else
+                {
+                    AddItemToContainer(obj.Tile.TilePath);
+                }
             }
         }
 
@@ -95,11 +106,28 @@ namespace ScenarioEdit
 
             var selectedItem = listViewContainer.SelectedItems[0];
 
-            using (var form = new FormEditQuantity("Quantity", selectedItem.SubItems[QTY_COLUMN].Text))
+            var item = selectedItem.Tag as TileIdentifier;
+            if (item.Meta.CanStack == true || item.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
             {
-                if (form.ShowDialog() == DialogResult.OK)
+                if (item.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
                 {
-                    selectedItem.SubItems[QTY_COLUMN].Text = form.PropertyValue;
+                    using (var form = new FormEditQuantity("Charges", selectedItem.SubItems[QTY_COLUMN].Text))
+                    {
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            selectedItem.SubItems[QTY_COLUMN].Text = form.PropertyValue;
+                        }
+                    }
+                }
+                else
+                {
+                    using (var form = new FormEditQuantity("Quantity", selectedItem.SubItems[QTY_COLUMN].Text))
+                    {
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            selectedItem.SubItems[QTY_COLUMN].Text = form.PropertyValue;
+                        }
+                    }
                 }
             }
         }
@@ -119,7 +147,7 @@ namespace ScenarioEdit
             }
         }
 
-        private void AddItemToContainer(string tilePath, int ?quantity)
+        private void AddItemToContainer(string tilePath, int ?quantity = null)
         {
             var metaData = TileMetadata.GetFreshMetadata(tilePath);
 
@@ -128,8 +156,12 @@ namespace ScenarioEdit
             {
                 item.SubItems.Add(quantity.ToString());
             }
+            else
+            {
+                item.SubItems.Add("-");
+            }
             item.ImageKey = tilePath;
-            item.Tag = tilePath;
+            item.Tag = new TileIdentifier(tilePath, metaData);
             listViewContainer.Items.Add(item);
         }
 
@@ -228,9 +260,25 @@ namespace ScenarioEdit
                     ContainerId = ContainerId
                 };
 
-                var meta = TileMetadata.GetFreshMetadata(obj.ImageKey);
-                meta.Quantity = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
-                newItem.Tile = new TileIdentifier(obj.ImageKey, meta);
+                var tile = obj.Tag as TileIdentifier;
+
+                if (tile.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
+                {
+                    tile.Meta.Charges = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
+                }
+                else
+                {
+                    if (obj.SubItems[QTY_COLUMN].Text == "-")
+                    {
+                        tile.Meta.Quantity = null;
+                    }
+                    else
+                    {
+                        tile.Meta.Quantity = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
+                    }
+                }
+
+                newItem.Tile = tile;
 
                 Core.State.Items.Add(newItem);
             }

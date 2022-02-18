@@ -188,6 +188,10 @@ namespace Game
                         {
                             text += $" ({itemUnderfoot.Meta.Quantity})";
                         }
+                        else if(itemUnderfoot.Meta.CanStack == false && itemUnderfoot.Meta.Charges > 0)
+                        {
+                            text += $" ({itemUnderfoot.Meta.Charges})";
+                        }
 
                         listViewItem.Text = text;
                     }
@@ -281,6 +285,10 @@ namespace Game
                             if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
                             {
                                 text += $" ({item.Tile.Meta.Quantity})";
+                            }
+                            else if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
+                            {
+                                text += $" ({item.Tile.Meta.Charges})";
                             }
                             selectedItem.Text = text;
                         }
@@ -400,6 +408,10 @@ namespace Game
                         {
                             text += $" ({existingInventoryItem.Tile.Meta.Quantity})";
                         }
+                        else if (existingInventoryItem.Tile.Meta.CanStack == false && existingInventoryItem.Tile.Meta.Charges > 0)
+                        {
+                            text += $" ({existingInventoryItem.Tile.Meta.Charges})";
+                        }
 
                         listViewItem.Text = text;
                     }
@@ -489,6 +501,10 @@ namespace Game
                             if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
                             {
                                 text += $" ({item.Tile.Meta.Quantity})";
+                            }
+                            else if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
+                            {
+                                text += $" ({item.Tile.Meta.Charges})";
                             }
                             selectedItem.Text = text;
                         }
@@ -602,6 +618,10 @@ namespace Game
                         {
                             text += $" ({existingInventoryItem.Tile.Meta.Quantity})";
                         }
+                        else if (existingInventoryItem.Tile.Meta.CanStack == false && existingInventoryItem.Tile.Meta.Charges > 0)
+                        {
+                            text += $" ({existingInventoryItem.Tile.Meta.Charges})";
+                        }
 
                         listViewItem.Text = text;
                     }
@@ -700,6 +720,10 @@ namespace Game
                 {
                     text += $" ({equipSlot.Tile.Meta.Quantity})";
                 }
+                else if (equipSlot.Tile.Meta.CanStack == false && equipSlot.Tile.Meta.Charges > 0)
+                {
+                    text += $" ({equipSlot.Tile.Meta.Charges})";
+                }
 
                 item.Text = text;
                 item.ImageKey = GetImageKey(equipSlot.Tile.TilePath);
@@ -717,6 +741,12 @@ namespace Game
                 var item = lv.Items[0].Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
+
+                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                    text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
+                if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
+                    text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
+
                 if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
                 if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
@@ -939,6 +969,12 @@ namespace Game
                 var item = selection.Tag as EquipTag;
 
                 string text = item.Tile.Meta.Name;
+
+                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                    text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
+                if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
+                    text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
+
                 if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
                 if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
@@ -1022,6 +1058,10 @@ namespace Game
             if (meta.CanStack == true && meta.Quantity > 0)
             {
                 text += $" ({meta.Quantity})";
+            }
+            else if (meta.CanStack == false && meta.Charges > 0)
+            {
+                text += $" ({meta.Charges})";
             }
 
             var equipTag = new EquipTag()

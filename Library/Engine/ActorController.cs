@@ -12,12 +12,11 @@ namespace Library.Engine
     {
         public EngineCoreBase Core { get; set; }
         public List<ActorBase> Tiles { get; private set; }
-        public Assembly GameAssembly  { get; private set; } = null;
+        public Assembly GameAssembly { get; private set; } = null;
 
         public ActorController(EngineCoreBase core)
         {
             Core = core;
-
 
             lock (Core.CollectionSemaphore)
             {
@@ -33,7 +32,6 @@ namespace Library.Engine
                     GameAssembly = Assembly.Load("Game");
                 }
             }
-
         }
 
         public void Render(Graphics dc)
@@ -63,15 +61,16 @@ namespace Library.Engine
                     .Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
+                if (GameAssembly != null)
+                {
+                    //Remove hidden tiel rendering when in game.
+                    renderTiles.RemoveAll(o => o.Meta.ActorClass == Types.ActorClassName.ActorLevelWarpHidden);
+                }
+
                 var player = renderTiles.Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorPlayer).FirstOrDefault();
 
                 foreach (var obj in renderTiles)
                 {
-                    /*
-                    if (obj.TilePath.Contains("Animation"))
-                    {
-                    }
-                    */
                     RectangleF window = new RectangleF(
                         (int)Core.Display.BackgroundOffset.X,
                         (int)Core.Display.BackgroundOffset.Y,
