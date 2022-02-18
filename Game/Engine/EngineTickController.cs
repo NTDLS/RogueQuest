@@ -157,6 +157,7 @@ namespace Game.Engine
                 };
 
                 Advance(input);
+                WaitOnIdleEngine();
             }
             else if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
             {
@@ -169,6 +170,7 @@ namespace Game.Engine
                 };
 
                 Advance(input);
+                WaitOnIdleEngine();
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Potion)
             {
@@ -555,12 +557,14 @@ namespace Game.Engine
             {
                 Core.LogLine($"Feeling no need to rest you press on.", Color.DarkGreen);
                 Advance(input);
+                WaitOnIdleEngine();
                 return;
             }
 
             while (Core.State.Character.AvailableHitpoints < Core.State.Character.Hitpoints)
             {
                 Advance(input);
+                WaitOnIdleEngine();
 
                 var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 150)
                     .Where(o => o.Meta.CanTakeDamage == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing);
@@ -652,6 +656,13 @@ namespace Game.Engine
             public List<ActorBase> Intersections { get; set; }
         }
 
+        public void WaitOnIdleEngine()
+        {
+            while (Core.State.IsThreadActive == true)
+            {
+                System.Threading.Thread.Sleep(1);
+            }
+        }
 
         private HitType CalculateHitType(int agressorDexterity, int victimAC)
         {
@@ -821,7 +832,7 @@ namespace Game.Engine
             else //Melee attack.
             {
                 //If this is a ranged weapon but we are in a melee situation, then check the free hand for a melee weapon and use it instead.
-                if (weapon.ProjectileType != ProjectileType.Unspecified)
+                if (weapon != null && weapon.ProjectileType != ProjectileType.Unspecified)
                 {
                     var freehandWeapon = Core.State.Character.GetEquipSlot(EquipSlot.FreeHand)?.Tile?.Meta;
 
@@ -864,7 +875,7 @@ namespace Game.Engine
                 AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
             }
 
-            string weaponDescription = weapon.Name;
+            string weaponDescription = weapon?.Name;
 
             if (projectile != null)
             {
