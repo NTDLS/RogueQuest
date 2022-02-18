@@ -1,7 +1,7 @@
 {
   "Name":"Small Wooden Sheild",
   "SubType": "Shield",
-  "Value": "10",
+  "Value": "20",
   "Weight":"10",
   "Bulk":"9",
   "AC":"1",

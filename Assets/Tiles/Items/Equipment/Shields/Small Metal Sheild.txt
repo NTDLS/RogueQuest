@@ -1,7 +1,7 @@
 {
   "Name":"Small Metal Sheild",
   "SubType": "Shield",
-  "Value": "20",
+  "Value": "50",
   "Weight":"20",
   "Bulk":"9",
   "AC":"2",

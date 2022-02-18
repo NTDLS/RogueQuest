@@ -820,6 +820,17 @@ namespace Game.Engine
             }
             else //Melee attack.
             {
+                //If this is a ranged weapon but we are in a melee situation, then check the free hand for a melee weapon and use it instead.
+                if (weapon.ProjectileType != ProjectileType.Unspecified)
+                {
+                    var freehandWeapon = Core.State.Character.GetEquipSlot(EquipSlot.FreeHand)?.Tile?.Meta;
+
+                    if (freehandWeapon != null && freehandWeapon.ProjectileType == ProjectileType.Unspecified) //This Is this a melee weapon?
+                    {
+                        weapon = freehandWeapon;
+                    }
+                }
+
                 //Player attack other actor.
                 var actorsToAttack = intersections.Where(o => o.Meta.CanTakeDamage == true).ToList();
                 foreach (var otherActor in actorsToAttack)
@@ -853,11 +864,15 @@ namespace Game.Engine
                 AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
             }
 
+            string weaponDescription = weapon.Name;
+
             if (projectile != null)
             {
                 if (projectile.Meta.IsConsumable == true)
                 {
                     projectile.Meta.Quantity--;
+
+                    weaponDescription += $" ({projectile.Meta.Name})";
 
                     if ((projectile.Meta.Quantity ?? 0) == 0)
                     {
@@ -878,8 +893,27 @@ namespace Game.Engine
             {
                 //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
                 //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
-                int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null && o.Slot.ToString().StartsWith("Projectile") == false)
+
+                EquipSlot[] additionalDamageSearchSlots = new EquipSlot[]
+                    {
+                        EquipSlot.Pack,
+                        EquipSlot.Belt,
+                        EquipSlot.RightRing,
+                        EquipSlot.Bracers,
+                        EquipSlot.Armor,
+                        EquipSlot.Boots,
+                        EquipSlot.Necklace,
+                        EquipSlot.Garment,
+                        EquipSlot.Helment,
+                        EquipSlot.Shield,
+                        EquipSlot.Gauntlets,
+                        EquipSlot.LeftRing,
+                    };
+
+                int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null && additionalDamageSearchSlots.Contains(o.Slot))
                     .Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
+
+                additionalDamage += (weapon.DamageAdditional ?? 0);
 
                 var hitType = CalculateHitType(Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC);
                 if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
@@ -900,11 +934,11 @@ namespace Game.Engine
 
                     if (hitType == HitType.CriticalHit)
                     {
-                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {playerHitsFor}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
                     }
                     else
                     {
-                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} for {playerHitsFor}hp and hits.", Color.DarkGreen);
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {playerHitsFor}hp and hits.", Color.DarkGreen);
                     }
 
                     if (actorToAttack.ApplyDamage(playerHitsFor))

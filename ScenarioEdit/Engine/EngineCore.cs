@@ -1,12 +1,5 @@
-﻿using Assets;
-using Library.Engine;
-using Library.Types;
-using System;
-using System.Collections.Generic;
+﻿using Library.Engine;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace ScenarioEdit.Engine
@@ -21,7 +14,7 @@ namespace ScenarioEdit.Engine
         public void LoadLevlesAndPopCurrent(string fileName)
         {
             Levels.Load(fileName);
-            PopCurrentLevel();        
+            PopCurrentLevel();
         }
 
         public void PushLevelAndSave(string fileName)

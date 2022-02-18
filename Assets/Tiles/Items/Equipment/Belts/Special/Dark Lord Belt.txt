@@ -1,11 +1,11 @@
 {
-  "Name":"3 Slot Belt",
+  "Name":"Dark Lord Belt",
   "SubType":"Belt",
   "Weight":"5",
   "Bulk":"10",
-  "Value":"200",
-  "ItemCapacity":"3",
+  "Value":"1600",
+  "ItemCapacity":"7",
   "BulkCapacity":"7000",
   "WeightCapacity":"3000",
-  "Level":"3"
+  "Level":"12"
 }

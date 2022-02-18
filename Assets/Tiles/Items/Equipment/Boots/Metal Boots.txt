@@ -1,8 +1,8 @@
 {
   "Name":"Metal Boots",
   "SubType": "Boots",
-  "Value": "10",
-  "Weight":"15",
+  "Value": "40",
+  "Weight":"25",
   "Bulk":"40",
   "AC":"2",
   "Level":"1"

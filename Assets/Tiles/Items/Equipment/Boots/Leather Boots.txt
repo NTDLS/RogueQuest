@@ -4,5 +4,6 @@
   "Value": "5",
   "Weight":"15",
   "Bulk":"40",
+  "AC":"1",
   "Level":"1"
 }

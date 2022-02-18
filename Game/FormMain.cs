@@ -549,7 +549,11 @@ namespace Game
             }
 
             var freeHand = _core.State.Character.GetEquipSlot(EquipSlot.FreeHand);
-            if (freeHand.Tile != null)
+            if (freeHand.Tile != null &&
+                (freeHand.Tile.Meta.SubType == ActorSubType.RangedWeapon
+                || freeHand.Tile.Meta.SubType == ActorSubType.Potion
+                || freeHand.Tile.Meta.SubType == ActorSubType.Scroll
+                || freeHand.Tile.Meta.SubType == ActorSubType.Wand))
             {
                 var info = UpsertQuickSlotItem(freeHand.Tile, existingButtons);
                 availableButtons.Add(info);
@@ -563,7 +567,11 @@ namespace Game
             }
 
             var belt = _core.State.Character.GetEquipSlot(EquipSlot.Belt);
-            if (belt.Tile != null)
+            if (belt.Tile != null &&
+                (freeHand.Tile.Meta.SubType == ActorSubType.RangedWeapon
+                || freeHand.Tile.Meta.SubType == ActorSubType.Potion
+                || freeHand.Tile.Meta.SubType == ActorSubType.Scroll
+                || freeHand.Tile.Meta.SubType == ActorSubType.Wand))
             {
                 var items = _core.State.Items.Where(o => o.ContainerId == belt.Tile.Meta.UID).ToList();
 

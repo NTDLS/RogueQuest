@@ -1,9 +1,9 @@
 {
   "Name":"Chain Mail Bar Armor",
   "SubType": "Armor",
-  "Value": "25",
-  "AC":"15",
-  "Weight":"50",
+  "Value": "200",
+  "AC":"18",
+  "Weight":"55",
   "Bulk":"240",
   "Level":"1"
 }

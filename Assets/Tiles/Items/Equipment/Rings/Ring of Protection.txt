@@ -3,7 +3,7 @@
   "SubType": "Ring",
   "Value": "10",
   "AC":"1",
-  "Weight":"5",
-  "Bulk":"5",
+  "Weight":"1",
+  "Bulk":"1",
   "Level":"1"
 }
