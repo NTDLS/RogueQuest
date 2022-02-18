@@ -16,6 +16,7 @@ namespace Library.Engine
         {
             _core = core;
             Character.SetCore(core);
+            IsThreadActive = false;
         }
 
         public ActorStates ActorStates { get; set; } = new ActorStates();

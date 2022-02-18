@@ -362,7 +362,7 @@ namespace Library.Engine
                 tile.TilePath = randomTile.TilePath;
                 tile.Velocity.Angle.Degrees = tile.Velocity.Angle.Degrees;
                 tile.DrawOrder = spawner.DrawOrder;
-                tile.Meta = randomTile.Meta;
+                tile.Meta = TileMetadata.GetFreshMetadata(randomTile.TilePath);
 
                 var ownedItems = Core.State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
                 foreach (var ownedItem in ownedItems)

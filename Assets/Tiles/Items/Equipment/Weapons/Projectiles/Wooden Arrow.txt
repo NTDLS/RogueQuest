@@ -3,6 +3,8 @@
   "SubType": "Projectile",
   "ProjectileType":"Arrow",
   "Value": "1",
+  "DamageDice":"1",
+  "DamageDiceFaces":"4",
   "DamageAdditional":"0",
   "Weight":"1",
   "Bulk":"2",

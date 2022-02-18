@@ -834,9 +834,13 @@ namespace Game.Engine
 
             if (actorToAttack != null)
             {
-                if (weapon.ProjectileType != ProjectileType.Unspecified) //Melee attack with ranged weapon.
+                if (weapon != null && weapon.ProjectileType != ProjectileType.Unspecified) //Melee attack with ranged weapon.
                 {
-                    projectile = Core.State.Character.GetInventoryItemFromQuiverSlotOfType(weapon.ProjectileType).Tile;
+                    projectile = Core.State.Character.GetInventoryItemFromQuiverSlotOfType(weapon.ProjectileType)?.Tile;
+                    if (projectile == null)
+                    {
+                        Core.LogLine($"You are out of projectiles for the eqipeed ranged weapon!!!", Color.DarkRed);
+                    }
                 }
             }
 
@@ -844,12 +848,9 @@ namespace Game.Engine
             {
                 AnimateTo(projectile.TilePath, Core.Player, actorToAttack);
             }
-            else
+            else if (weapon != null && string.IsNullOrEmpty(weapon.ProjectileTilePath) == false)
             {
-                if (string.IsNullOrEmpty(weapon.ProjectileTilePath) == false)
-                {
-                    AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
-                }
+                AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
             }
 
             if (projectile != null)
@@ -873,17 +874,29 @@ namespace Game.Engine
                 }
             }
 
-            if (actorToAttack != null)
+            if (actorToAttack != null && weapon != null)
             {
                 //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
                 //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
-                int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
+                int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null && o.Slot.ToString().StartsWith("Projectile") == false)
+                    .Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
 
                 var hitType = CalculateHitType(Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC);
                 if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
                 {
-                    int playerHitsFor = CalculateDealtDamage(hitType, Core.State.Character.Strength,
-                        additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
+                    int playerHitsFor = 0;
+
+                    if (weapon?.DamageDice > 0)
+                    {
+                        playerHitsFor = CalculateDealtDamage(hitType, Core.State.Character.Strength,
+                            additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
+                    }
+
+                    if (projectile != null && projectile.Meta?.DamageDice > 0)
+                    {
+                        playerHitsFor += CalculateDealtDamage(hitType, Core.State.Character.Strength,
+                            additionalDamage, projectile.Meta?.DamageDice ?? 0, projectile.Meta?.DamageDiceFaces ?? 0);
+                    }
 
                     if (hitType == HitType.CriticalHit)
                     {
