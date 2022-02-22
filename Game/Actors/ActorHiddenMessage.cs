@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Game.Actors
 {
-    public class ActorLevelWarp : ActorBase
+    public class ActorHiddenMessage : ActorBase
     {
-        public ActorLevelWarp(EngineCore core)
+        public ActorHiddenMessage(EngineCore core)
             : base(core)
         {
             DoNotDraw = true;

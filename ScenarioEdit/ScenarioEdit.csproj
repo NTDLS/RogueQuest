@@ -27,6 +27,12 @@
     <Compile Update="FormSelectLevelTile.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormTilePropertiesBoolean.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormTilePropertiesMultiLine.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormWelcome.cs">
       <SubType>Form</SubType>
     </Compile>

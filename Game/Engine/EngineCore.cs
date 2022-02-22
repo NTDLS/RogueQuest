@@ -124,8 +124,8 @@ namespace Game.Engine
             this.Player = Actors.OfType<ActorPlayer>().FirstOrDefault();
             this.Player.DrawOrder = Actors.Tiles.Max(o => o.DrawOrder) + 1;
             this.Player.Meta = GetPlayerMeta();
-            this.Display.BackgroundOffset.Y = Player.Y / 2;
-            this.Display.BackgroundOffset.X = Player.X / 2;
+            this.Display.BackgroundOffset.Y = this.Player.Y - (this.Display.DrawingSurface.Height / 2.0);
+            this.Display.BackgroundOffset.X = this.Player.X - (this.Display.DrawingSurface.Width / 2.0);
 
             var purseTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Purse).First().Clone(true);
 
@@ -193,8 +193,8 @@ namespace Game.Engine
                 this.Player.Meta = GetPlayerMeta();
             }
 
-            this.Display.BackgroundOffset.Y = Player.Y / 2;
-            this.Display.BackgroundOffset.X = Player.X / 2;
+            this.Display.BackgroundOffset.Y = this.Player.Y - (this.Display.DrawingSurface.Height / 2.0);
+            this.Display.BackgroundOffset.X = this.Player.X - (this.Display.DrawingSurface.Width / 2.0);
 
             LogLine("Game loaded.");
         }

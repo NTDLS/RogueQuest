@@ -1,0 +1,5 @@
+{
+  "Name":"Blockade Hidden 32",
+  "ActorClass": "ActorBlockadeHidden",
+  "CanWalkOn": "False"
+}

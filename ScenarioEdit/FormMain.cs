@@ -1712,198 +1712,206 @@ namespace ScenarioEdit
                     }
                     else
                     {
-                        using (var dialog = new FormTileProperties(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
+                        if (selectedRow.Text == "Dialog")
                         {
-                            if (dialog.ShowDialog() == DialogResult.OK)
+                            using (var dialog = new FormTilePropertiesMultiLine(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
                             {
-                                if (selectedRow.Text == "Location")
+                                if (selectedRow.Text == "Dialog" && selectedItems.Count == 1)
                                 {
-                                    var coords = dialog.PropertyValue.Split(",");
-                                    if (coords.Length == 2)
+                                    if (dialog.ShowDialog() == DialogResult.OK)
                                     {
-                                        var x = double.Parse(coords[0]);
-                                        var y = double.Parse(coords[1]);
-
-                                        foreach (var tile in selectedItems)
+                                        selectedTile.Meta.Dialog = dialog.PropertyValue;
+                                        if (selectedTile.Meta.OnlyDialogOnce == null)
                                         {
-                                            tile.X = x;
-                                            tile.Y = y;
+                                            selectedTile.Meta.OnlyDialogOnce = true;
                                         }
                                     }
                                 }
-                                else if (selectedRow.Text == "Can Take Damage")
-                                {
-                                    bool result = false;
+                            }
+                        }
+                        else if (selectedRow.Text == "Can Take Damage"
+                            || selectedRow.Text == "Can Walk On"
+                            || selectedRow.Text == "Only Dialog Once")
+                        {
+                            if (bool.TryParse(selectedRow.SubItems[1].Text.ToString(), out bool inputValue) == false)
+                            {
+                                return;
+                            }
 
-                                    if (bool.TryParse(dialog.PropertyValue, out result) == false)
+                            using (var dialog = new FormTilePropertiesBoolean(selectedRow.Text, inputValue))
+                            {
+                                if (dialog.ShowDialog() == DialogResult.OK)
+                                {
+
+                                    if (selectedRow.Text == "Can Take Damage")
                                     {
-                                        result = int.Parse(dialog.PropertyValue) != 0;
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.CanTakeDamage = dialog.PropertyValue;
+                                        }
                                     }
+                                    else if (selectedRow.Text == "Can Walk On")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.CanWalkOn = dialog.PropertyValue;
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Only Dialog Once")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.OnlyDialogOnce = dialog.PropertyValue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            using (var dialog = new FormTileProperties(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
+                            {
+                                if (dialog.ShowDialog() == DialogResult.OK)
+                                {
+                                    if (selectedRow.Text == "Location")
+                                    {
+                                        var coords = dialog.PropertyValue.Split(",");
+                                        if (coords.Length == 2)
+                                        {
+                                            var x = double.Parse(coords[0]);
+                                            var y = double.Parse(coords[1]);
+
+                                            foreach (var tile in selectedItems)
+                                            {
+                                                tile.X = x;
+                                                tile.Y = y;
+                                            }
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Name" && selectedItems.Count == 1)
+                                    {
+                                        selectedTile.Meta.Name = dialog.PropertyValue;
+                                    }
+                                    else if (selectedRow.Text == "Min level")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.MinLevel = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Max level")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.MaxLevel = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    //else if (selectedRow.Text == "Spawn Type")
+                                    //{
+                                    //    tile.Meta.SpawnType = dialog.PropertyValue;
+                                    //}
+                                    //else if (selectedRow.Text == "Spawn Sub-Type")
+                                    //{
+                                    //    tile.Meta.SpawnSubType = dialog.PropertyValue;
+                                    //}
+                                    else if (selectedRow.Text == "Tag")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Tag = dialog.PropertyValue;
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Hit Points")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Experience")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Experience = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Quantity")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Quantity = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Angle")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Velocity.Angle.Degrees = double.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "z-Order")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.DrawOrder = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Armor Class")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.AC = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Damage Dice")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.DamageDice = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Damage Dice Faces")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.DamageDiceFaces = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Damage Additional")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.DamageAdditional = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Bulk")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Bulk = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Bulk Capacity")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.BulkCapacity = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Weight Capacity")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.WeightCapacity = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+
+                                    PopulateSelectedItemProperties();
 
                                     foreach (var tile in selectedItems)
                                     {
-                                        tile.Meta.CanTakeDamage = result;
+                                        tile.Invalidate();
                                     }
-                                }
-                                else if (selectedRow.Text == "Can Walk On")
-                                {
-                                    bool result = false;
-
-                                    if (bool.TryParse(dialog.PropertyValue, out result) == false)
-                                    {
-                                        result = int.Parse(dialog.PropertyValue) != 0;
-                                    }
-
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.CanWalkOn = result;
-                                    }
-                                }
-                                else if (selectedRow.Text == "Name" && selectedItems.Count == 1)
-                                {
-                                    selectedTile.Meta.Name = dialog.PropertyValue;
-                                }
-                                else if (selectedRow.Text == "Min level")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.MinLevel = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Max level")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.MaxLevel = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                //else if (selectedRow.Text == "Spawn Type")
-                                //{
-                                //    tile.Meta.SpawnType = dialog.PropertyValue;
-                                //}
-                                //else if (selectedRow.Text == "Spawn Sub-Type")
-                                //{
-                                //    tile.Meta.SpawnSubType = dialog.PropertyValue;
-                                //}
-                                else if (selectedRow.Text == "Tag")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.Tag = dialog.PropertyValue;
-                                    }
-                                }
-                                else if (selectedRow.Text == "Hit Points")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Experience")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.Experience = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Quantity")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.Quantity = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Angle")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Velocity.Angle.Degrees = double.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "z-Order")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.DrawOrder = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Only Dialog Once")
-                                {
-                                    bool result = false;
-
-                                    if (bool.TryParse(dialog.PropertyValue, out result) == false)
-                                    {
-                                        result = int.Parse(dialog.PropertyValue) != 0;
-                                    }
-
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.OnlyDialogOnce = result;
-                                    }
-                                }
-                                else if (selectedRow.Text == "Dialog" && selectedItems.Count == 1)
-                                {
-                                    selectedTile.Meta.Dialog = dialog.PropertyValue;
-                                    if (selectedTile.Meta.OnlyDialogOnce == null)
-                                    {
-                                        selectedTile.Meta.OnlyDialogOnce = true;
-                                    }
-                                }
-                                else if (selectedRow.Text == "Armor Class")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.AC = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Damage Dice")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.DamageDice = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Damage Dice Faces")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.DamageDiceFaces = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Damage Additional")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.DamageAdditional = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Bulk")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.Bulk = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Bulk Capacity")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.BulkCapacity = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-                                else if (selectedRow.Text == "Weight Capacity")
-                                {
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Meta.WeightCapacity = int.Parse(dialog.PropertyValue);
-                                    }
-                                }
-
-                                PopulateSelectedItemProperties();
-
-                                foreach (var tile in selectedItems)
-                                {
-                                    tile.Invalidate();
                                 }
                             }
                         }
@@ -1951,6 +1959,11 @@ namespace ScenarioEdit
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorFriendyBeing
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorHostileBeing
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorItem
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorBlockaid
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorBlockadeHidden
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorHiddenMessage
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorBuilding)
                 {
                     listViewProperties.Items.Add("Dialog").SubItems.Add(selectedTile.Meta.Dialog);

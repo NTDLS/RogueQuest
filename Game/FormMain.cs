@@ -71,7 +71,7 @@ namespace Game
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             this.UpdateStyles();
-            this.Shown += FormMain_Shown1;
+            this.Shown += FormMain_Shown;
 
             splitContainerHoriz.Cursor = Cursors.Default;
             splitContainerVert.Cursor = Cursors.Default;
@@ -406,10 +406,12 @@ namespace Game
         }
 
         private bool _firstShown = true;
-        private void FormMain_Shown1(object sender, EventArgs e)
+        private void FormMain_Shown(object sender, EventArgs e)
         {
             if (_firstShown == true)
             {
+                _core.Start();
+
                 if (string.IsNullOrWhiteSpace(_levelPathPassedToGame) == false)
                 {
                     _core.Load(_levelPathPassedToGame);
@@ -451,8 +453,8 @@ namespace Game
 
                     spawnPoint.Visible = false; //Keep the spawn point here so we can place the player over it if we ever come back to this level.
 
-                    _core.Display.BackgroundOffset.Y = _core.Player.Y / 2;
-                    _core.Display.BackgroundOffset.X = _core.Player.X / 2;
+                    _core.Display.BackgroundOffset.Y = _core.Player.Y - (_core.Display.DrawingSurface.Height / 2.0);
+                    _core.Display.BackgroundOffset.X = _core.Player.X - (_core.Display.DrawingSurface.Width / 2.0);
 
                     UpdatePlayerStatLabels(_core);
 
@@ -471,6 +473,7 @@ namespace Game
                     {
                         _currentMapFilename = form.SelectedFileName;
                         _core.LoadGame(_currentMapFilename);
+
                         UpdatePlayerStatLabels(_core);
                         _hasBeenModified = false;
                     }
@@ -828,11 +831,6 @@ namespace Game
             }
 
             _core.Stop();
-        }
-
-        private void FormMain_Shown(object sender, EventArgs e)
-        {
-            _core.Start();
         }
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)

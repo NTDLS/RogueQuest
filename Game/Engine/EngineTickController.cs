@@ -735,10 +735,10 @@ namespace Game.Engine
 
         public void HandleDialogInput()
         {
-            //Dant want the player to accidently skip the dialog.
+            //Dont want the player to accidently skip the dialog.
             if ((DateTime.Now - Dialogs.DialogOpenTime).TotalSeconds > 1)
             {
-                Core.Actors.Tiles.RemoveAll(o => o.Meta?.ActorClass == Library.Engine.Types.ActorClassName.ActorDialog);
+                Core.Actors.Tiles.RemoveAll(o => o.Meta?.ActorClass == ActorClassName.ActorDialog);
                 Core.PurgeAllDeletedTiles();
                 Core.Display.DrawingSurface.Invalidate();
                 Core.State.IsDialogActive = false;
@@ -762,19 +762,10 @@ namespace Game.Engine
             List<ActorBase> intersections = p.Intersections;
             TickInput Input = p.Input;
 
-            var somethingToSay = intersections.Where(o => string.IsNullOrEmpty(o.Meta.Dialog) == false).FirstOrDefault();
-            if (somethingToSay != null)
-            {
-                Dialogs.DrawDialog(Core, somethingToSay.Meta.Dialog);
-
-                if (somethingToSay.Meta.OnlyDialogOnce == true)
-                {
-                    somethingToSay.Meta.Dialog = "";
-                }
-            }
+            bool warpped = false;
 
             if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
-            || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).Any())
+                || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).Any())
             {
                 var warp = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
                     || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).First();
@@ -786,6 +777,23 @@ namespace Game.Engine
                 }
 
                 Core.PurgeAllDeletedTiles();
+
+                warpped = true; //We want to return if we are warping, but we also want to show any dialogs first.
+            }
+
+            var somethingToSay = intersections.Where(o => string.IsNullOrEmpty(o.Meta.Dialog) == false).FirstOrDefault();
+            if (somethingToSay != null)
+            {
+                Dialogs.DrawDialog(Core, somethingToSay.Meta.Dialog);
+
+                if (somethingToSay.Meta.OnlyDialogOnce == true)
+                {
+                    somethingToSay.Meta.Dialog = "";
+                }
+            }
+
+            if (warpped)
+            {
                 return;
             }
 
@@ -814,11 +822,19 @@ namespace Game.Engine
 
                 if (distance < actor.MaxFollowDistance)
                 {
-                    Point<double> appliedOtherOffset = new Point<double>();
+                    var appliedOtherOffset = new Point<double>();
                     obj.Velocity.Angle.Degrees = actor.AngleTo(Core.Player);
                     MoveActor(actor, out appliedOtherOffset);
                 }
             }
+
+            /*
+             * This proc can be called with an explicit projectile meaning that we are using a ranged weapon as a ranged weapon.
+             * We can also attack at close range with a ranged weapon by running into a hostile. In this case we will need to
+             * automatically select a projectile and use it. If we have no projectiles, then we do no damage.
+             * 
+             * Alternatively, if we have a melee weapon in our free-hand, we will use it when attacking at close range.
+             */
 
             var weapon = Core.State.Character.GetEquipSlot(EquipSlot.Weapon)?.Tile?.Meta;
             TileIdentifier projectile = null;
@@ -861,7 +877,7 @@ namespace Game.Engine
                     projectile = Core.State.Character.GetInventoryItemFromQuiverSlotOfType(weapon.ProjectileType)?.Tile;
                     if (projectile == null)
                     {
-                        Core.LogLine($"You are out of projectiles for the eqipeed ranged weapon!!!", Color.DarkRed);
+                        Core.LogLine($"You are out of projectiles for the equipped ranged weapon!!!", Color.DarkRed);
                     }
                 }
             }
@@ -903,8 +919,6 @@ namespace Game.Engine
             if (actorToAttack != null && weapon != null)
             {
                 //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
-                //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
-
                 EquipSlot[] additionalDamageSearchSlots = new EquipSlot[]
                     {
                         EquipSlot.Pack,
@@ -924,6 +938,7 @@ namespace Game.Engine
                 int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null && additionalDamageSearchSlots.Contains(o.Slot))
                     .Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
 
+                //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
                 additionalDamage += (weapon.DamageAdditional ?? 0);
 
                 var hitType = CalculateHitType(Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC);
@@ -1256,7 +1271,9 @@ namespace Game.Engine
 
             //Only get the top terrain block, we dont want to dig to the ocean.
             var topTerrainBlock = Core.Actors.Intersections(actor)
-                .Where(o => o.Meta.ActorClass == ActorClassName.ActorTerrain)
+                .Where(o => o.Meta.ActorClass == ActorClassName.ActorTerrain
+                    || o.Meta.ActorClass == ActorClassName.ActorBlockaid
+                    || o.Meta.ActorClass == ActorClassName.ActorBlockadeHidden)
                 .OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
             if (topTerrainBlock == null)

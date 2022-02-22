@@ -34,14 +34,28 @@ namespace Library.Engine
             }
         }
 
+        public IEnumerable<ActorBase> OnScreenTiles()
+        {
+            RectangleF window = new RectangleF(
+                (int)Core.Display.BackgroundOffset.X,
+                (int)Core.Display.BackgroundOffset.Y,
+                Core.Display.DrawingSurface.Width,
+                Core.Display.DrawingSurface.Height);
+
+            return Tiles.Where(o => o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
+        }
+
         public void Render(Graphics dc)
         {
             lock (Core.CollectionSemaphore)
             {
+                var onScreenTiles = OnScreenTiles();
+
                 List<ActorBase> renderTiles = new List<ActorBase>();
 
-                renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
-                    .Where(o => o.Meta.ActorClass != Types.ActorClassName.ActorFriendyBeing
+                //Add first layer of tiles.
+                renderTiles.AddRange(onScreenTiles.Where(o => o.Visible == true && o.DoNotDraw == false
+                        && o.Meta.ActorClass != Types.ActorClassName.ActorFriendyBeing
                         && o.Meta.ActorClass != Types.ActorClassName.ActorHostileBeing
                         && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
                         && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
@@ -49,34 +63,26 @@ namespace Library.Engine
                         && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
-                renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
-                    .Where(o => (o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
+                //Add top layer of tiles.
+                renderTiles.AddRange(onScreenTiles.Where(o => o.Visible == true && o.DoNotDraw == false
+                        && (o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
                         || o.Meta.ActorClass == Types.ActorClassName.ActorHostileBeing
                         || o.Meta.ActorClass == Types.ActorClassName.ActorAnimation
                         || o.Meta.ActorClass == Types.ActorClassName.ActorPlayer)
                         && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
-                renderTiles.AddRange(Tiles.Where(o => o.Visible == true)
-                    .Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
+                //Add dialogs.
+                renderTiles.AddRange(onScreenTiles.Where(o => o.Visible == true && o.DoNotDraw == false
+                    && o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
-                if (GameAssembly != null)
-                {
-                    //Remove hidden tiel rendering when in game.
-                    renderTiles.RemoveAll(o => o.Meta.ActorClass == Types.ActorClassName.ActorLevelWarpHidden);
-                }
+                //renderTiles.RemoveAll(o => (o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false) == false);
 
                 var player = renderTiles.Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorPlayer).FirstOrDefault();
 
                 foreach (var obj in renderTiles)
                 {
-                    RectangleF window = new RectangleF(
-                        (int)Core.Display.BackgroundOffset.X,
-                        (int)Core.Display.BackgroundOffset.Y,
-                        Core.Display.DrawingSurface.Width,
-                        Core.Display.DrawingSurface.Height);
-
                     if (Core.BlindPlay == true && player != null && obj.DistanceTo(player) < Core.BlindPlayDistance)
                     {
                         if (obj.Meta.HasBeenViewed == false)
@@ -86,13 +92,9 @@ namespace Library.Engine
                         obj.Meta.HasBeenViewed = true;
                     }
 
-                    if (obj.AlwaysRender || window.IntersectsWith(obj.Bounds) || obj.DrawRealitiveToBackgroundOffset == false)
+                    if (Core.BlindPlay == false || obj.Meta.HasBeenViewed == true || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                     {
-                        if (Core.BlindPlay == false || obj.Meta.HasBeenViewed == true
-                            || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog)
-                        {
-                            Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);
-                        }
+                        Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);
                     }
                 }
             }
