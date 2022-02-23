@@ -131,7 +131,7 @@ namespace Game
                 return;
             }
 
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            var inventoryItem = Core.State.GetOrCreateInventoryItem(draggedItemTag.Tile);
 
             if (inventoryItem.Tile.Meta.SubType == ActorSubType.Money)
             {
@@ -305,7 +305,7 @@ namespace Game
             }
 
             //Find the item in the players inventory and change its container id to that of the selected open pack.
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            var inventoryItem = Core.State.GetOrCreateInventoryItem(draggedItemTag.Tile);
             int maxBulk = (int)_currentlySelectedPack.Meta.BulkCapacity;
             int maxWeight = (int)_currentlySelectedPack.Meta.WeightCapacity;
             int? maxItems = _currentlySelectedPack.Meta.ItemCapacity;
@@ -513,7 +513,7 @@ namespace Game
             }
 
             //Find the item in the players inventory and change its container id to that of the selected open pack.
-            var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).First();
+            var inventoryItem = Core.State.GetOrCreateInventoryItem(draggedItemTag.Tile);
             int maxBulk = (int)playersPack.Tile.Meta.BulkCapacity;
             int maxWeight = (int)playersPack.Tile.Meta.WeightCapacity;
             int? maxItems = playersPack.Tile.Meta.ItemCapacity;
@@ -902,7 +902,7 @@ namespace Game
                 }
 
                 //If the item is in a container, find the item and set its container to NULL.
-                var inventoryItem = Core.State.Items.Where(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID).FirstOrDefault();
+                var inventoryItem = Core.State.GetOrCreateInventoryItem(draggedItemTag.Tile);
                 if (inventoryItem != null)
                 {
                     inventoryItem.ContainerId = null; //find the item in inventory and set its container id to null.
@@ -1081,6 +1081,7 @@ namespace Game
             {
                 subtypes.Add(ActorSubType.MeleeWeapon);
                 subtypes.Add(ActorSubType.RangedWeapon);
+                subtypes.Add(ActorSubType.Projectile);
             }
             else if (_storeTileMeta.SubType == ActorSubType.ArmorSmithStore)
             {

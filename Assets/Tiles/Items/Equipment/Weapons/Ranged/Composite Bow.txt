@@ -2,7 +2,7 @@
   "Name":"Composite Bow",
   "SubType": "RangedWeapon",
   "ProjectileType":"Arrow",
-  "Value": "40",
+  "Value": "200",
   "DamageDice":"0",
   "DamageDiceFaces":"0",
   "DamageAdditional":"1",
@@ -10,5 +10,5 @@
   "Bulk":"10",
   "CanStack":"False",
   "CanWalkOn":"True",
-  "Level":"1"
+  "Level":"2"
 }

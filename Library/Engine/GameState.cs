@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Library.Engine
 {
@@ -32,5 +33,20 @@ namespace Library.Engine
         public bool IsThreadActive { get; set; }
         public int TimePassed { get; set; } = 0;
         public List<PersistentStore> Stores { get; set; } = new List<PersistentStore>();
+
+        public CustodyItem GetOrCreateInventoryItem(TileIdentifier tile)
+        {
+            var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tile.Meta.UID).FirstOrDefault();
+            if (inventoryItem == null)
+            {
+                inventoryItem = new CustodyItem()
+                {
+                    Tile = tile.Clone()
+                };
+
+                _core.State.Items.Add(inventoryItem);
+            }
+            return inventoryItem;
+        }
     }
 }

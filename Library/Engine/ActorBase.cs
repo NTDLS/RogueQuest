@@ -187,6 +187,49 @@ namespace Library.Engine
             }
         }
 
+        public Point<int> RadarDotSize { get; set; } = new Point<int>(4, 4);
+        private SolidBrush _radarDotBrush = new SolidBrush(Color.FromArgb(255, 255, 0, 0));
+
+
+        public Bitmap ResizeBitmap(Bitmap bmp, int width, int height)
+        {
+            Bitmap result = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                g.DrawImage(bmp, 0, 0, width, height);
+            }
+
+            return result;
+        }
+
+        public void RenderRadar(Graphics dc, Point<double> scale, Point<double> offset)
+        {
+
+            Bitmap bitmap = new Bitmap(_image);
+
+            int scaleSzX = (int)(((double)bitmap.Width) * scale.X);
+            int scaleSzY = (int)(((double)bitmap.Height) * scale.Y);
+
+
+            var rect = new Rectangle((int)(((double)ScreenBounds.X) * scale.X), (int)(((double)ScreenBounds.Y) * scale.Y), scaleSzX, scaleSzY);
+
+            ResizeBitmap(bitmap, scaleSzX, scaleSzY);
+
+
+            dc.DrawImage(bitmap, rect);
+
+            /*
+
+            if (Visible && _image != null && !DoNotDraw)
+            {
+                double x = (int)((this.X * scale.X) + offset.X - ((double)RadarDotSize.X / 2.0));
+                double y = (int)((this.Y * scale.Y) + offset.Y - ((double)RadarDotSize.Y / 2.0));
+
+                dc.FillEllipse(_radarDotBrush, (int)x, (int)y, RadarDotSize.X, RadarDotSize.Y);
+            }
+            */
+        }
+
         private void DrawImageRealative(Graphics dc, Image rawImage, double? angleInDegrees = null)
         {
             double angle = (double)(angleInDegrees == null ? Velocity.Angle.Degrees : angleInDegrees);

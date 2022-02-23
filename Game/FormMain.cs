@@ -539,15 +539,15 @@ namespace Game
                 toolStripQuick.ImageList = _imageList;
             }
 
-            List<QuickItemButtonInfo> existingButtons = new List<QuickItemButtonInfo>();
+            var existingButtons = new List<QuickItemButtonInfo>();
             //A list of what items would have been added. We use to remove items that are no longer available.
-            List<QuickItemButtonInfo> availableButtons = new List<QuickItemButtonInfo>();
+            var availableButtons = new List<QuickItemButtonInfo>();
 
             foreach (var item in toolStripQuick.Items)
             {
-                if (item is ToolStripButton && ((ToolStripButton)item).Tag is QuickItemButtonInfo)
+                if (item is ToolStripButton button && button.Tag is QuickItemButtonInfo)
                 {
-                    existingButtons.Add((QuickItemButtonInfo)((ToolStripButton)item).Tag);
+                    existingButtons.Add((QuickItemButtonInfo)button.Tag);
                 }
             }
 

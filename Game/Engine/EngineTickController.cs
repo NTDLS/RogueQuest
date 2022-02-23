@@ -630,11 +630,10 @@ namespace Game.Engine
 
             Core.State.TimePassed++;
 
-            if (intersections.Count == 1
-                && intersections.First().Meta.ActorClass == ActorClassName.ActorStore
-                && intersections.First().Meta.SubType != ActorSubType.RuinsStore)
+            var storeTile = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorStore && o.Meta.SubType != ActorSubType.RuinsStore).FirstOrDefault();
+            if (storeTile != null)
             {
-                using (var form = new FormStore(Core, intersections.First().Meta))
+                using (var form = new FormStore(Core, storeTile.Meta))
                 {
                     form.ShowDialog();
                 }

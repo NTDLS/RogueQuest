@@ -45,10 +45,45 @@ namespace Library.Engine
             return Tiles.Where(o => o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
         }
 
-        public void Render(Graphics dc)
+        Graphics _radarDC;
+        Bitmap _radarBitmap;
+        int _radarWidth = 200;
+        int _radarHeight = 200;
+        Point<double> _radarScale;
+        Point<double> _radarOffset;
+        int _radarDistance = 4;
+
+        public void Render(Graphics screenDc)
         {
             lock (Core.CollectionSemaphore)
             {
+                /*
+                if (_radarBitmap == null && Core.Display.VisibleBounds.Width > 0 && Core.Display.VisibleBounds.Height > 0)
+                {
+                    double radarVisionWidth = Core.Display.VisibleBounds.Width * _radarDistance;
+                    double radarVisionHeight = Core.Display.VisibleBounds.Height * _radarDistance;
+
+                    _radarBitmap = new Bitmap((int)_radarWidth, (int)_radarHeight);
+
+                    _radarScale = new Point<double>((double)_radarBitmap.Width / radarVisionWidth, (double)_radarBitmap.Height / radarVisionHeight);
+                    _radarOffset = new Point<double>(_radarWidth / 2.0, _radarHeight / 2.0);
+
+                    _radarDC = Graphics.FromImage(_radarBitmap);
+                    _radarDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    _radarDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                    _radarDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                    _radarDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    _radarDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                    Rectangle rect = new Rectangle(0, 0, _radarBitmap.Width, _radarBitmap.Height);
+                }
+
+                if (_radarBitmap != null)
+                {
+                    _radarDC.Clear(Color.Black);
+                }
+                */
+
                 var onScreenTiles = OnScreenTiles();
 
                 List<ActorBase> renderTiles = new List<ActorBase>();
@@ -77,8 +112,6 @@ namespace Library.Engine
                     && o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                     .OrderBy(o => o.DrawOrder ?? 0).ToList());
 
-                //renderTiles.RemoveAll(o => (o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false) == false);
-
                 var player = renderTiles.Where(o => o.Meta.ActorClass == Types.ActorClassName.ActorPlayer).FirstOrDefault();
 
                 foreach (var obj in renderTiles)
@@ -92,11 +125,61 @@ namespace Library.Engine
                         obj.Meta.HasBeenViewed = true;
                     }
 
+
                     if (Core.BlindPlay == false || obj.Meta.HasBeenViewed == true || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog)
                     {
-                        Utility.Types.DynamicCast(obj, obj.GetType()).Render(dc);
+                        Utility.Types.DynamicCast(obj, obj.GetType()).Render(screenDc);
                     }
                 }
+
+                /*
+                if (_radarBitmap != null)
+                {
+                    RectangleF radarVision = new RectangleF(
+                        (int)Core.Display.BackgroundOffset.X / _radarDistance,
+                        (int)Core.Display.BackgroundOffset.Y / _radarDistance,
+                        Core.Display.DrawingSurface.Width * _radarDistance,
+                        Core.Display.DrawingSurface.Height * _radarDistance);
+
+
+                    var radarTiles = Tiles.Where(o => o.AlwaysRender || radarVision.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
+
+                    List<ActorBase> radarRenderTiles = new List<ActorBase>();
+
+                    //Add first layer of tiles.
+                    radarRenderTiles.AddRange(radarTiles.Where(o => o.Visible == true && o.DoNotDraw == false
+                            && o.Meta.ActorClass != Types.ActorClassName.ActorFriendyBeing
+                            && o.Meta.ActorClass != Types.ActorClassName.ActorHostileBeing
+                            && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
+                            && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
+                            && o.Meta.ActorClass != Types.ActorClassName.ActorAnimation
+                            && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
+                        .OrderBy(o => o.DrawOrder ?? 0).ToList());
+
+                    //Add top layer of tiles.
+                    radarRenderTiles.AddRange(radarTiles.Where(o => o.Visible == true && o.DoNotDraw == false
+                            && (o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
+                            || o.Meta.ActorClass == Types.ActorClassName.ActorHostileBeing
+                            || o.Meta.ActorClass == Types.ActorClassName.ActorAnimation
+                            || o.Meta.ActorClass == Types.ActorClassName.ActorPlayer)
+                            && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
+                        .OrderBy(o => o.DrawOrder ?? 0).ToList());
+
+                    //Add dialogs.
+                    radarRenderTiles.AddRange(radarTiles.Where(o => o.Visible == true && o.DoNotDraw == false
+                        && o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
+                        .OrderBy(o => o.DrawOrder ?? 0).ToList());
+
+                    foreach (var obj in radarRenderTiles)
+                    {
+                        Utility.Types.DynamicCast(obj, obj.GetType()).RenderRadar(_radarDC, _radarScale, _radarOffset);
+                    }
+
+                    Rectangle rect = new Rectangle(0, 0, _radarBitmap.Width, _radarBitmap.Height);
+
+                    screenDc.DrawImage(_radarBitmap, rect);
+                }
+                */
             }
         }
 
