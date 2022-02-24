@@ -2,6 +2,7 @@
   "Name":"Potion of Health",
   "SubType": "Potion",
   "Value": "20",
+  "TargetType":"Self",
   "Effect": "Heal",
   "EffectFormula": "10",
   "IsConsumable":"True",

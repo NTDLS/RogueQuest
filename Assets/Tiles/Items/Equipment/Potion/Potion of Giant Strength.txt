@@ -2,6 +2,7 @@
   "Name":"Potion of Giant Strength",
   "SubType": "Potion",
   "Value": "100",
+  "TargetType":"Self",
   "Effect": "IncreaseStrength",
   "EffectFormula": "15",
   "IsConsumable":"True",

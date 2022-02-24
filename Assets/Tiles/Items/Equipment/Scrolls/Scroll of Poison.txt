@@ -1,14 +1,13 @@
 {
-  "Name":"Poison",
-  "SubType": "Potion",
+  "Name":"Scroll of Poison",
+  "SubType": "Scroll",
   "Value": "1",
   "TargetType":"Self",
   "Effect": "Poison",
   "IsConsumable":"True",
-  "ExpireTime": "10",
-  "Weight":"10",
-  "Bulk":"9",
+  "Weight":"1",
+  "Bulk":"2",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"1",
+  "Level":"1"
 }

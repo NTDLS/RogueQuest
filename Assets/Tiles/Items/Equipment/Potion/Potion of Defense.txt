@@ -2,6 +2,7 @@
   "Name":"Potion of Defense",
   "SubType": "Potion",
   "Value": "100",
+  "TargetType":"Self",
   "Effect": "IncreaseArmorClass",
   "EffectFormula": "5",
   "IsConsumable":"True",

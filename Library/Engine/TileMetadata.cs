@@ -52,6 +52,7 @@ namespace Library.Engine
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; } //Remember that items with charges are NOT stackable.
         public bool? CanWalkOn { get; set; }
+        public int? SplashDamageRange { get; set; }
         /// <summary>
         /// There can only be one.
         /// </summary>
@@ -68,6 +69,7 @@ namespace Library.Engine
         public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
         public ItemEffect Effect { get; set; }
         public ProjectileType ProjectileType { get; set; }
+        public TargetType TargetType { get; set; }
         public string EffectFormula { get; set; }
         public bool? IsConsumable { get; set; }
         /// <summary>
@@ -158,6 +160,7 @@ namespace Library.Engine
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
             this.ProjectileType = with.ProjectileType;
             this.Effect = with.Effect;
+            this.TargetType = with.TargetType;
             this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
             this.IsConsumable = with.IsConsumable ?? this.IsConsumable;
             this.Charges = with.Charges ?? this.Charges;
@@ -170,6 +173,7 @@ namespace Library.Engine
             this.Name = with.Name ?? this.Name;
             this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
             this.HitAnimationTilePath = with.HitAnimationTilePath ?? this.HitAnimationTilePath;
+            this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
             this.IsUnique = with.IsUnique ?? this.IsUnique;
             this.Dialog = with.Dialog ?? this.Dialog;
             this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;

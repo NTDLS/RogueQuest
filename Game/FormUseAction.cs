@@ -36,7 +36,7 @@ namespace Game
                 labelItem.Text += $" ({tile.Meta.Quantity})";
             }
 
-            buttonUse.Enabled = (tile.Meta.IsConsumable ?? false) && tile.Meta.SubType != Library.Engine.Types.ActorSubType.Wand;
+            buttonUse.Enabled = (tile.Meta.IsConsumable ?? false) && tile.Meta.TargetType == Library.Engine.Types.TargetType.Self;
             buttonSplit.Enabled = (tile.Meta.CanStack ?? false) && tile.Meta.Quantity > 1;
 
             if (buttonUse.Enabled)

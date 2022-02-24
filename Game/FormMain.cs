@@ -124,6 +124,23 @@ namespace Game
             toolStripButtonGet.Click += ToolStripButtonGet_Click;
             toolStripButtonRest.Click += ToolStripButtonRest_Click;
             toolStripButtonSave.Click += ToolStripButtonSave_Click;
+
+
+            var timer = new Timer()
+            {
+                 Interval = 1000
+            };
+
+            timer.Tick += Timer_Tick;
+            timer.Start();
+
+
+
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            UpdatePlayerStatLabels(_core);
         }
 
         private void Drawingsurface_MouseClick(object sender, MouseEventArgs e)
@@ -149,9 +166,20 @@ namespace Game
                     double x = e.X + _core.Display.BackgroundOffset.X;
                     double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-                    var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
-                        .Where(o => o.Visible == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing)
-                        .OrderBy(o => o.DrawOrder).LastOrDefault();
+                    ActorBase hoverTile = null;
+
+                    if (inventoryItem.Tile.Meta.TargetType == TargetType.HostileBeing)
+                    {
+                        hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
+                            .Where(o => o.Visible == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing)
+                            .OrderBy(o => o.DrawOrder).LastOrDefault();
+                    }
+                    else if (inventoryItem.Tile.Meta.TargetType == TargetType.Terrain)
+                    {
+                        hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
+                            .Where(o => o.Visible == true && o.Meta.ActorClass == ActorClassName.ActorTerrain)
+                            .OrderBy(o => o.DrawOrder).LastOrDefault();
+                    }
                     if (hoverTile == null)
                     {
                         return;
@@ -161,11 +189,11 @@ namespace Game
                     CurrentMouseMode = MouseMode.None;
                     splitContainerHoriz.Cursor = Cursors.Default;
 
-                    if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand)
+                    if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand || inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll)
                     {
                         if (inventoryItem.Tile.Meta.IsConsumable == true)
                         {
-                            UseWand(inventoryItem.Tile, hoverTile);
+                            UseWandOrScroll(inventoryItem.Tile, hoverTile);
                         }
                     }
                     else if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon)
@@ -683,20 +711,21 @@ namespace Game
                     return;
                 }
 
-                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand
-                    || inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon)
+                if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon
+                    || (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand && inventoryItem.Tile.Meta.TargetType != TargetType.Self)
+                    || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType != TargetType.Self))
                 {
                     splitContainerHoriz.Cursor = Cursors.Cross;
                     _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.Name}... (right-click to cancel)");
                     CurrentMouseMode = MouseMode.RangedTargetSelction;
                     PendingQuickItemMouseOperation = tag;
                 }
-                else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll
-                             || inventoryItem.Tile.Meta.SubType == ActorSubType.Potion)
+                else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Potion
+                    || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType == TargetType.Self))
                 {
                     if (inventoryItem.Tile.Meta.IsConsumable == true)
                     {
-                        if (UsePotion(inventoryItem.Tile))
+                        if (UseSelfPotionOrScroll(inventoryItem.Tile))
                         {
                             if ((inventoryItem.Tile.Meta.Quantity ?? 0) == 0)
                             {
@@ -719,7 +748,7 @@ namespace Game
             UpdatePlayerStatLabels(_core);
         }
 
-        private bool UseWand(TileIdentifier wand, ActorBase target)
+        private bool UseWandOrScroll(TileIdentifier wand, ActorBase target)
         {
             var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == wand.Meta.UID).First();
 
@@ -747,7 +776,7 @@ namespace Game
             return false;
         }
 
-        private bool UsePotion(TileIdentifier item)
+        private bool UseSelfPotionOrScroll(TileIdentifier item)
         {
             if (MessageBox.Show($"Use {item.Meta.Name}?", $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {

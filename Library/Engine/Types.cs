@@ -83,6 +83,14 @@
         RuinsStore
     }
 
+    public enum TargetType
+    {
+        Unspecified,
+        Self, //Healing, etc.
+        HostileBeing, //Attacking, etc.
+        Terrain //Summon being, etc.
+    }
+
     public enum ProjectileType
     {
         Unspecified,
@@ -96,12 +104,14 @@
         Heal,
         Poison,
         CurePoison,
+        SummonMonster,
         IncreaseStrength,
         IncreaseDexterity,
         IncreaseConstitution,
         IncreaseArmorClass,
         IncreaseIntelligence,
-        MagicArrow
+        MagicArrow,
+        CastFireball
     }
 
     public enum StateOfBeing

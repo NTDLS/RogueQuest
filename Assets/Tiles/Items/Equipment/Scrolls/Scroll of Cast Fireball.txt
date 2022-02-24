@@ -1,0 +1,19 @@
+{
+  "Name":"Scroll of Cast Fireball",
+  "SubType": "Scroll",
+  "TargetType":"HostileBeing",
+  "Effect": "CastFireball",
+  "Value": "200",
+  "DamageDice":"2",
+  "DamageDiceFaces":"6",
+  "DamageAdditional":"0",
+  "SplashDamageRange":"60",
+  "IsConsumable":"True",
+  "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Scroll of Cast Fireball Projectile",
+  "HitAnimationTilePath":"Animations\\Hits\\Explosion1_256_256",
+  "Weight":"1",
+  "Bulk":"2",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"3"
+}

@@ -1,5 +1,6 @@
 ﻿using Assets;
 using Game.Actors;
+using Game.Classes;
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using static Game.Engine.Types;
 
 namespace Game.Engine
@@ -20,6 +22,30 @@ namespace Game.Engine
         public EngineTickController(EngineCore core)
         {
             Core = core;
+        }
+
+        private Assembly _gameAssembly = null;
+
+        public Assembly GameAssembly
+        {
+            get
+            {
+
+                if (_gameAssembly == null)
+                {
+                    AppDomain currentDomain = AppDomain.CurrentDomain;
+                    var assemblies = currentDomain.GetAssemblies();
+                    foreach (var assembly in assemblies)
+                    {
+                        if (assembly.FullName.StartsWith("Game,"))
+                        {
+                            _gameAssembly = Assembly.Load("Game");
+                        }
+                    }
+                }
+
+                return _gameAssembly;
+            }
         }
 
         private void PickupPack(ActorItem packOnGround)
@@ -157,6 +183,291 @@ namespace Game.Engine
                 };
 
                 Advance(input);
+                WaitOnIdleEngine();
+            }
+            else if (item.Tile.Meta.SubType == ActorSubType.Scroll)
+            {
+                if (item.Tile.Meta.TargetType == TargetType.HostileBeing)
+                {
+                    var input = new Types.TickInput()
+                    {
+                        InputType = Types.TickInputType.Ranged,
+                        RangedItem = item,
+                        RangedTarget = target
+                    };
+
+                    Advance(input);
+                }
+                else if (item.Tile.Meta.TargetType == TargetType.Terrain)
+                {
+                    #region SummonMonster
+                    if (item.Tile.Meta.Effect == ItemEffect.SummonMonster)
+                    {
+                        var randos = Core.Materials.Where(o => o.Meta.ActorClass ==  ActorClassName.ActorHostileBeing
+                            && o.Meta.Level >= 1 && o.Meta.Level <= Core.State.Character.Level).ToList();
+
+                        if (randos.Count > 0)
+                        {
+                            object[] param = { Core };
+                            int rand = MathUtility.RandomNumber(0, randos.Count);
+                            var randomTile = randos[rand];
+                            var tileType = GameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
+                            var tile = (ActorBase)Activator.CreateInstance(tileType, param);
+
+                            if (randomTile != null)
+                            {
+                                tile.SetImage(Assets.Constants.GetAssetPath($"{randomTile.TilePath}.png"));
+                                tile.X = target.X;
+                                tile.Y = target.Y;
+                                tile.TilePath = randomTile.TilePath;
+                                tile.Velocity.Angle.Degrees = tile.Velocity.Angle.Degrees;
+                                tile.DrawOrder = target.DrawOrder + 100;
+                                tile.Meta = TileMetadata.GetFreshMetadata(randomTile.TilePath);
+
+                                /* //Maybe add some random drops?
+                                var ownedItems = Core.State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
+                                foreach (var ownedItem in ownedItems)
+                                {
+                                    ownedItem.ContainerId = tile.Meta.UID;
+                                }
+                                */
+
+                                Core.Actors.Add(tile);
+
+                                Core.LogLine($"You carelessly summon a level {tile.Meta.Level} {tile.Meta.Name}!", Color.DarkRed);
+                            }
+                        }
+                    }
+                    #endregion
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    Advance(new Types.TickInput() { InputType = Types.TickInputType.Rest });
+                }
+                else if (item.Tile.Meta.TargetType == TargetType.Self)
+                {
+                    #region Heal.
+                    if (item.Tile.Meta.Effect == ItemEffect.Heal)
+                    {
+                        int totalHealing = 0;
+
+                        var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                        foreach (var formula in formulas)
+                        {
+                            if (formula[0] == '%') //Raise the hitpoints by a percentage.
+                            {
+                                var pct = int.Parse(formula.Substring(1)) / 100.0;
+                                int hpToAdd = (int)((double)Core.State.Character.Hitpoints * pct);
+                                totalHealing += hpToAdd;
+                                Core.State.Character.AvailableHitpoints += hpToAdd;
+                            }
+                            else //Raise the hitpoints by a fixed ammount.
+                            {
+                                var hpToAdd = int.Parse(formula);
+                                totalHealing += hpToAdd;
+                                Core.State.Character.AvailableHitpoints += hpToAdd;
+                            }
+                        }
+
+                        if (Core.State.Character.AvailableHitpoints > Core.State.Character.Hitpoints)
+                        {
+                            Core.State.Character.AvailableHitpoints = Core.State.Character.Hitpoints;
+                        }
+
+                        Core.LogLine($"Healed {totalHealing} hitpoints.");
+                    }
+                    #endregion
+                    #region IncreaseDexterity
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseDexterity)
+                    {
+                        int totalAdded = 0;
+
+                        var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                        foreach (var formula in formulas)
+                        {
+                            int toAdd = 0;
+
+                            if (formula[0] == '%') //Raise the attribute by a percentage.
+                            {
+                                var pct = int.Parse(formula.Substring(1)) / 100.0;
+                                toAdd = (int)((double)Core.State.Character.Dexterity * pct);
+                            }
+                            else //Raise the hitpoints by a fixed ammount.
+                            {
+                                toAdd = int.Parse(formula);
+                            }
+
+                            Core.State.Character.AugmentedDexterity += toAdd;
+                            totalAdded += toAdd;
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseDexterity);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Dexterity increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region IncreaseConstitution
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseConstitution)
+                    {
+                        int totalAdded = 0;
+
+                        var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                        foreach (var formula in formulas)
+                        {
+                            int toAdd = 0;
+
+                            if (formula[0] == '%') //Raise the attribute by a percentage.
+                            {
+                                var pct = int.Parse(formula.Substring(1)) / 100.0;
+                                toAdd = (int)((double)Core.State.Character.Hitpoints * pct);
+                            }
+                            else //Raise the hitpoints by a fixed ammount.
+                            {
+                                toAdd = int.Parse(formula);
+                            }
+
+                            Core.State.Character.AugmentedConstitution += toAdd;
+                            totalAdded += toAdd;
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseConstitution);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Constitution increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region IncreaseArmorClass
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseArmorClass)
+                    {
+                        int totalAdded = 0;
+
+                        var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                        foreach (var formula in formulas)
+                        {
+                            int toAdd = 0;
+
+                            if (formula[0] == '%') //Raise the attribute by a percentage.
+                            {
+                                var pct = int.Parse(formula.Substring(1)) / 100.0;
+                                toAdd = (int)((double)Core.State.Character.AugmentedAC * pct);
+                            }
+                            else //Raise the hitpoints by a fixed ammount.
+                            {
+                                toAdd = int.Parse(formula);
+                            }
+
+                            Core.State.Character.AugmentedAC += toAdd;
+                            totalAdded += toAdd;
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseArmorClass);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"AC increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region IncreaseIntelligence
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseIntelligence)
+                    {
+                        int totalAdded = 0;
+
+                        var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                        foreach (var formula in formulas)
+                        {
+                            int toAdd = 0;
+
+                            if (formula[0] == '%') //Raise the attribute by a percentage.
+                            {
+                                var pct = int.Parse(formula.Substring(1)) / 100.0;
+                                toAdd = (int)((double)Core.State.Character.Intelligence * pct);
+                            }
+                            else //Raise the hitpoints by a fixed ammount.
+                            {
+                                toAdd = int.Parse(formula);
+                            }
+
+                            Core.State.Character.AugmentedIntelligence += toAdd;
+                            totalAdded += toAdd;
+                        }
+
+                        var stateInt = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIntelligence);
+                        stateInt.ModificationAmount = totalAdded;
+                        stateInt.ExpireTime = item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Intelligence increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region IncreaseStrength
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseStrength)
+                    {
+                        int totalAdded = 0;
+
+                        var formulas = item.Tile.Meta.EffectFormula.Split(',');
+                        foreach (var formula in formulas)
+                        {
+                            int toAdd = 0;
+
+                            if (formula[0] == '%') //Raise the attribute by a percentage.
+                            {
+                                var pct = int.Parse(formula.Substring(1)) / 100.0;
+                                toAdd = (int)((double)Core.State.Character.Strength * pct);
+                            }
+                            else //Raise the hitpoints by a fixed ammount.
+                            {
+                                toAdd = int.Parse(formula);
+                            }
+
+                            Core.State.Character.AugmentedStrength += toAdd;
+                            totalAdded += toAdd;
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseStrength);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Strength increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region Poison
+                    else if (item.Tile.Meta.Effect == ItemEffect.Poison)
+                    {
+                        int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
+                        if (damage == 0) damage = 1;
+                        Core.State.Character.AvailableHitpoints -= damage;
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+                        Core.LogLine($"You have been poisoned! {damage} damage!", Color.DarkRed);
+                    }
+                    #endregion
+                    #region CurePoison
+                    else if (item.Tile.Meta.Effect == ItemEffect.CurePoison)
+                    {
+                        if (Core.State.ActorStates.HasState(Core.State.Character.UID, StateOfBeing.Poisoned))
+                        {
+                            Core.LogLine($"Your body has been purged of all poisons!", Color.DarkGreen);
+                            Core.State.ActorStates.RemoveState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                        }
+                        else
+                        {
+                            Core.LogLine($"Your needlesly burn a lifesaving scroll...");
+                        }
+                    }
+                    #endregion
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    Advance(new Types.TickInput() { InputType = Types.TickInputType.Rest });
+                }
+
                 WaitOnIdleEngine();
             }
             else if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
@@ -390,6 +701,9 @@ namespace Game.Engine
                 {
                     throw new NotImplementedException();
                 }
+
+                var input = new Types.TickInput() { InputType = Types.TickInputType.Rest };
+                Advance(input);
             }
 
             if (item.Tile.Meta.Charges > 0) //Remember that items with charges are NOT stackable.
@@ -850,7 +1164,7 @@ namespace Game.Engine
             TileIdentifier projectile = null;
             ActorBase actorToAttack = null;
 
-            if (Input.RangedTarget != null && Input.RangedItem != null) //Ranged attack.
+            if (Input.RangedTarget != null && Input.RangedItem != null && Input.RangedTarget.Meta.ActorClass == ActorClassName.ActorHostileBeing) //Ranged attack.
             {
                 weapon = Input.RangedItem.Tile.Meta;
                 actorToAttack = Input.RangedTarget;
@@ -968,33 +1282,34 @@ namespace Game.Engine
                             additionalDamage, projectile.Meta?.DamageDice ?? 0, projectile.Meta?.DamageDiceFaces ?? 0);
                     }
 
-                    if (hitType == HitType.CriticalHit)
+                    var actorsTakingDamage = new List<ActorToDamage>
                     {
-                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {playerHitsFor}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
-                    }
-                    else
-                    {
-                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {playerHitsFor}hp and hits.", Color.DarkGreen);
-                    }
-
-                    if (actorToAttack.ApplyDamage(playerHitsFor))
-                    {
-                        int experience = 0;
-
-                        if (actorToAttack.Meta != null && actorToAttack.Meta.Experience != null)
+                        new ActorToDamage()
                         {
-                            experience = (int)actorToAttack.Meta.Experience;
+                            Actor = actorToAttack,
+                            IsPrimaryTarget = true
                         }
+                    };
 
-                        Core.LogLine($"{Core.State.Character.Name} kills {actorToAttack.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
+                    if (weapon?.SplashDamageRange > 0)
+                    {
+                        var splashActors = Core.Actors.Intersections(actorToAttack, (int)weapon?.SplashDamageRange)
+                            .Where(o => o.Meta.CanTakeDamage == true);
 
-                        if (actorToAttack.Meta.IsContainer == true)
+                        foreach (var splashActor in splashActors)
                         {
-                            //If the enemy has loot, they drop it when they die.
-                            EmptyContainerToGround(actorToAttack.Meta.UID, actorToAttack);
+                            double distanceFromPrimary = splashActor.DistanceTo(actorToAttack);
+                            if (distanceFromPrimary < (int)weapon?.SplashDamageRange)
+                            {
+                                actorsTakingDamage.Add(new ActorToDamage()
+                                {
+                                    Actor = splashActor,
+                                    DistanceFromPrimary = distanceFromPrimary,
+                                    IsPrimaryTarget = false,
+                                    IsSplashDamage = true
+                                });
+                            }
                         }
-
-                        Core.State.Character.Experience += experience;
                     }
 
                     //Hit animation:
@@ -1010,6 +1325,45 @@ namespace Game.Engine
                         if (string.IsNullOrEmpty(weapon.HitAnimationTilePath) == false)
                         {
                             AnimateAt(weapon.HitAnimationTilePath, actorToAttack);
+                        }
+                    }
+
+                    foreach (var actorTakingDamage in actorsTakingDamage)
+                    {
+                        int damageToApply = playerHitsFor;
+
+                        if (actorTakingDamage.IsSplashDamage)
+                        {
+                            damageToApply = (int) (damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)weapon?.SplashDamageRange));
+                        }
+
+                        if (hitType == HitType.CriticalHit)
+                        {
+                            Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
+                        }
+                        else
+                        {
+                            Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp and hits.", Color.DarkGreen);
+                        }
+
+                        if (actorTakingDamage.Actor.ApplyDamage(playerHitsFor))
+                        {
+                            int experience = 0;
+
+                            if (actorTakingDamage.Actor.Meta != null && actorTakingDamage.Actor.Meta.Experience != null)
+                            {
+                                experience = (int)actorTakingDamage.Actor.Meta.Experience;
+                            }
+
+                            Core.LogLine($"{Core.State.Character.Name} kills {actorTakingDamage.Actor.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
+
+                            if (actorTakingDamage.Actor.Meta.IsContainer == true)
+                            {
+                                //If the enemy has loot, they drop it when they die.
+                                EmptyContainerToGround(actorTakingDamage.Actor.Meta.UID, actorTakingDamage.Actor);
+                            }
+
+                            Core.State.Character.Experience += experience;
                         }
                     }
                 }
@@ -1162,7 +1516,27 @@ namespace Game.Engine
 
         private void AnimateAt(string imagePath, ActorBase at)
         {
-            var item = Core.Actors.AddNewAnimation<ActorAnimation>(at.X, at.Y, imagePath, new Size(66, 66));
+            var nameParts = imagePath.Split('_');
+
+            if (nameParts.Length != 3)
+            {
+                throw new Exception("Animation image name should be in the form Name_Width_Height.png.");
+            }
+
+            int width;
+            int height;
+
+            try
+            {
+                width = int.Parse(nameParts[1]);
+                height = int.Parse(nameParts[2]);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"Animation image name should be in the form Name_Width_Height.png: {ex.Message}");
+            }
+
+            var item = Core.Actors.AddNewAnimation<ActorAnimation>(at.X, at.Y, imagePath, new Size(width, height));
 
             while (item.ReadyForDeletion == false)
             {

@@ -1,13 +1,13 @@
 {
-  "Name":"Potion of Cure Critical Wounds",
-  "SubType": "Potion",
+  "Name":"Scroll of Greater Health",
+  "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
   "Effect": "Heal",
   "EffectFormula": "%90,25",
   "IsConsumable":"True",
-  "Weight":"10",
-  "Bulk":"9",
+  "Weight":"1",
+  "Bulk":"2",
   "CanStack":"True",
   "CanWalkOn":"True",
   "Level":"2"

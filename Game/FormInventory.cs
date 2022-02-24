@@ -200,7 +200,7 @@ namespace Game
                         {
                             text += $" ({itemUnderfoot.Meta.Quantity})";
                         }
-                        else if(itemUnderfoot.Meta.CanStack == false && itemUnderfoot.Meta.Charges > 0)
+                        else if (itemUnderfoot.Meta.CanStack == false && itemUnderfoot.Meta.Charges > 0)
                         {
                             text += $" ({itemUnderfoot.Meta.Charges})";
                         }
@@ -1196,8 +1196,7 @@ namespace Game
             return null;
         }
 
-
         #endregion
-
     }
+}
 

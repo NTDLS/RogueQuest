@@ -1,6 +1,7 @@
 {
   "Name":"Wand of Magic Arrow",
   "SubType": "Wand",
+  "TargetType":"HostileBeing",
   "Value": "40",
   "DamageDice":"1",
   "DamageDiceFaces":"5",
@@ -8,7 +9,7 @@
   "IsConsumable":"True",
   "Charges":"10",
   "ProjectileTilePath":"Tiles\\Items\\Equipment\\Wands\\@Wand of Magic Arrow Projectile",
-  "HitAnimationTilePath":"Animations\\Hits\\Smoke (1)",
+  "HitAnimationTilePath":"Animations\\Hits\\Smoke1_66_66",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"False",
