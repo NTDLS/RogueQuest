@@ -1196,9 +1196,9 @@ namespace Game.Engine
 
             if (actorToAttack != null)
             {
-                if (weapon != null && weapon.ProjectileType != ProjectileType.Unspecified) //Melee attack with ranged weapon.
+                if (weapon != null && weapon.ProjectileType != null && weapon.ProjectileType != ProjectileType.Unspecified) //Melee attack with ranged weapon.
                 {
-                    projectile = Core.State.Character.GetInventoryItemFromQuiverSlotOfType(weapon.ProjectileType)?.Tile;
+                    projectile = Core.State.Character.GetInventoryItemFromQuiverSlotOfType((ProjectileType)weapon.ProjectileType)?.Tile;
                     if (projectile == null)
                     {
                         Core.LogLine($"You are out of projectiles for the equipped ranged weapon!!!", Color.DarkRed);

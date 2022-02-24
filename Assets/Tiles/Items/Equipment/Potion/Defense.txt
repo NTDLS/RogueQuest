@@ -1,14 +1,15 @@
 {
-  "Name":"Potion of Cure Critical Wounds",
+  "Name":"Defense",
   "SubType": "Potion",
-  "Value": "100",
+  "Value": "20",
   "TargetType":"Self",
-  "Effect": "Heal",
-  "EffectFormula": "%90,25",
+  "Effect": "IncreaseArmorClass",
+  "EffectFormula": "5",
   "IsConsumable":"True",
+  "ExpireTime": "60",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2"
+  "Level":"1"
 }

@@ -1,5 +1,5 @@
 {
-  "Name":"Scroll of Magic Arrow",
+  "Name":"Magic Arrow",
   "SubType": "Scroll",
   "TargetType":"HostileBeing",
   "Effect": "MagicArrow",

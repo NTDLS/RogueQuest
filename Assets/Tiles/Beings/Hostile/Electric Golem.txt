@@ -1,0 +1,12 @@
+{
+  "Name":"Demon Fighter (Major)",
+  "HitPoints": "35",
+  "Experience": "30",
+  "DamageType":"Electric",
+  "AC":"2",
+  "Dexterity":"4",
+  "Strength":"10",
+  "DamageDice":"1",
+  "DamageDiceFaces":"7",
+  "Level":"2"
+}

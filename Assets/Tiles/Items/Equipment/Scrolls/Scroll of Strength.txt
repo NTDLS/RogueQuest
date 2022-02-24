@@ -1,5 +1,5 @@
 {
-  "Name":"Scroll of Strength",
+  "Name":"Strength",
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",

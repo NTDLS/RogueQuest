@@ -1,9 +1,9 @@
 {
-  "Name":"Potion of Life",
+  "Name":"Strength",
   "SubType": "Potion",
-  "Value": "100",
+  "Value": "20",
   "TargetType":"Self",
-  "Effect": "IncreaseConstitution",
+  "Effect": "IncreaseStrength",
   "EffectFormula": "5",
   "IsConsumable":"True",
   "ExpireTime": "60",
@@ -11,5 +11,5 @@
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2"
+  "Level":"1"
 }

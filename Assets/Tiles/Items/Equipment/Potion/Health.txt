@@ -1,15 +1,14 @@
 {
-  "Name":"Potion of Giant Strength",
+  "Name":"Health",
   "SubType": "Potion",
-  "Value": "100",
+  "Value": "20",
   "TargetType":"Self",
-  "Effect": "IncreaseStrength",
-  "EffectFormula": "15",
+  "Effect": "Heal",
+  "EffectFormula": "10",
   "IsConsumable":"True",
-  "ExpireTime": "60",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"3"
+  "Level":"1"
 }

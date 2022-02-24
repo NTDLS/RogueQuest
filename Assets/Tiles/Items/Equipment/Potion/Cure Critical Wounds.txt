@@ -1,14 +1,14 @@
 {
-  "Name":"Potion of Health",
+  "Name":"Cure Critical Wounds",
   "SubType": "Potion",
-  "Value": "20",
+  "Value": "100",
   "TargetType":"Self",
   "Effect": "Heal",
-  "EffectFormula": "10",
+  "EffectFormula": "%90,25",
   "IsConsumable":"True",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"1"
+  "Level":"2"
 }

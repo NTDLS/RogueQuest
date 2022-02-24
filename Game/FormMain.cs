@@ -125,7 +125,6 @@ namespace Game
             toolStripButtonRest.Click += ToolStripButtonRest_Click;
             toolStripButtonSave.Click += ToolStripButtonSave_Click;
 
-
             var timer = new Timer()
             {
                  Interval = 1000
@@ -133,9 +132,6 @@ namespace Game
 
             timer.Tick += Timer_Tick;
             timer.Start();
-
-
-
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -196,9 +192,9 @@ namespace Game
                             UseWandOrScroll(inventoryItem.Tile, hoverTile);
                         }
                     }
-                    else if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon)
+                    else if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon && inventoryItem.Tile.Meta.ProjectileType != null)
                     {
-                        var projectile = _core.State.Character.GetQuiverSlotOfType(inventoryItem.Tile.Meta.ProjectileType);
+                        var projectile = _core.State.Character.GetQuiverSlotOfType((ProjectileType)inventoryItem.Tile.Meta.ProjectileType);
                         if (projectile != null && projectile.Tile != null)
                         {
                             if (projectile.Tile.Meta.IsConsumable == true)
@@ -643,9 +639,9 @@ namespace Game
                     text += $"\r\n{tile.Meta.Quantity} remaining.";
                 }
 
-                if (tile.Meta.ProjectileType != ProjectileType.Unspecified)
+                if (tile.Meta.ProjectileType != null && tile.Meta.ProjectileType != ProjectileType.Unspecified)
                 {
-                    var projectile = _core.State.Character.GetQuiverSlotOfType(tile.Meta.ProjectileType);
+                    var projectile = _core.State.Character.GetQuiverSlotOfType((ProjectileType)tile.Meta.ProjectileType);
                     if (projectile != null && projectile.Tile != null)
                     {
                         if (projectile.Tile.Meta.Quantity > 0)
@@ -669,9 +665,9 @@ namespace Game
                     text += $"\r\n{tile.Meta.Quantity} remaining.";
                 }
 
-                if (tile.Meta.ProjectileType != ProjectileType.Unspecified)
+                if (tile.Meta.ProjectileType != null && tile.Meta.ProjectileType != ProjectileType.Unspecified)
                 {
-                    var projectile = _core.State.Character.GetQuiverSlotOfType(tile.Meta.ProjectileType);
+                    var projectile = _core.State.Character.GetQuiverSlotOfType((ProjectileType)tile.Meta.ProjectileType);
                     if (projectile != null && projectile.Tile != null)
                     {
                         if (projectile.Tile.Meta.Quantity > 0)

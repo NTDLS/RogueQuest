@@ -2,6 +2,7 @@
   "Name":"Flaming Arrow",
   "SubType": "Projectile",
   "ProjectileType":"Arrow",
+  "DamageType":"Fire",
   "Value": "10",
   "DamageDice":"2",
   "DamageDiceFaces":"6",

@@ -1,5 +1,5 @@
 {
-  "Name":"Potion of Intelligence",
+  "Name":"Intelligence",
   "SubType": "Potion",
   "Value": "20",
   "TargetType":"Self",
@@ -11,5 +11,5 @@
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"3"
+  "Level":"1"
 }

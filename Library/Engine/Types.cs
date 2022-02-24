@@ -98,6 +98,14 @@
         Bolt
     }
 
+    public enum DamageType
+    {
+        Unspecified,
+        Ice,
+        Fire,
+        Electric
+    }
+
     public enum ItemEffect
     {
         Unspecified,
@@ -110,6 +118,12 @@
         IncreaseConstitution,
         IncreaseArmorClass,
         IncreaseIntelligence,
+        IncreaseColdResistance,
+        IncreaseLightningResistance,
+        IncreaseFireResistance,
+        DecreaseColdResistance,
+        DecreaseLightningResistance,
+        DecreaseFireResistance,
         MagicArrow,
         CastFireball
     }
@@ -124,7 +138,14 @@
         IncreaseDexterity,
         IncreaseConstitution,
         IncreaseArmorClass,
-        IncreaseIntelligence //Also increases mana.
+        IncreaseIntelligence, //Also increases mana.
+
+        IncreaseColdResistance,
+        IncreaseLightningResistance,
+        IncreaseFireResistance,
+        DecreaseColdResistance, //This is a bad thing.
+        DecreaseLightningResistance, //This is a bad thing.
+        DecreaseFireResistance, //This is a bad thing.
     }
 
     public enum RotationMode

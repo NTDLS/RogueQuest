@@ -1,5 +1,5 @@
 {
-  "Name":"Scroll of Greater Health",
+  "Name":"Greater Health",
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",

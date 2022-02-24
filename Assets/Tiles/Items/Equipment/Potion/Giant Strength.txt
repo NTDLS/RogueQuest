@@ -1,15 +1,15 @@
 {
-  "Name":"Potion of Strength",
+  "Name":"Giant Strength",
   "SubType": "Potion",
-  "Value": "100",
+  "Value": "250",
   "TargetType":"Self",
   "Effect": "IncreaseStrength",
-  "EffectFormula": "5",
+  "EffectFormula": "15",
   "IsConsumable":"True",
   "ExpireTime": "60",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"1"
+  "Level":"3"
 }

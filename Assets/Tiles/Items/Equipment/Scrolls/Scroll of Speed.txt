@@ -1,5 +1,5 @@
 {
-  "Name":"Scroll of Speed",
+  "Name":"Speed",
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
@@ -11,5 +11,5 @@
   "Bulk":"2",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2"
+  "Level":"1"
 }

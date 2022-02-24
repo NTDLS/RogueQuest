@@ -1842,6 +1842,13 @@ namespace ScenarioEdit
                                             tile.Meta.Quantity = int.Parse(dialog.PropertyValue);
                                         }
                                     }
+                                    else if (selectedRow.Text == "Charges")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Charges = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
                                     else if (selectedRow.Text == "Angle")
                                     {
                                         foreach (var tile in selectedItems)
@@ -2034,6 +2041,10 @@ namespace ScenarioEdit
                 if (selectedTile.Meta?.CanStack == true)
                 {
                     listViewProperties.Items.Add("Quantity").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
+                }
+                if (selectedTile.Meta?.Charges > 0)
+                {
+                    listViewProperties.Items.Add("Charges").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
                 }
 
                 listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);

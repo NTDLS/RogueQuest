@@ -1,5 +1,5 @@
 {
-  "Name":"Scroll of Intelligence",
+  "Name":"Intelligence",
   "SubType": "Scroll",
   "Value": "20",
   "TargetType":"Self",
@@ -11,5 +11,5 @@
   "Bulk":"2",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"3"
+  "Level":"1"
 }

@@ -1,5 +1,5 @@
 {
-  "Name":"Scroll of Defense",
+  "Name":"Defense",
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",

@@ -1,5 +1,5 @@
 {
-  "Name":"Scroll of Poison",
+  "Name":"Poison",
   "SubType": "Scroll",
   "Value": "1",
   "TargetType":"Self",

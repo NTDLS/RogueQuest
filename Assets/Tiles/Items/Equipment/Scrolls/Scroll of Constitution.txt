@@ -1,15 +1,15 @@
 {
-  "Name":"Oil of Speed",
-  "SubType": "Potion",
+  "Name":"Constitution",
+  "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
-  "Effect": "IncreaseDexterity",
+  "Effect": "IncreaseConstitution",
   "EffectFormula": "5",
   "IsConsumable":"True",
   "ExpireTime": "60",
-  "Weight":"10",
-  "Bulk":"9",
+  "Weight":"1",
+  "Bulk":"2",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2"
+  "Level":"1"
 }

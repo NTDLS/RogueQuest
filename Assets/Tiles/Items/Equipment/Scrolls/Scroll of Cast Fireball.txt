@@ -1,8 +1,9 @@
 {
-  "Name":"Scroll of Cast Fireball",
+  "Name":"Cast Fireball",
   "SubType": "Scroll",
   "TargetType":"HostileBeing",
   "Effect": "CastFireball",
+  "DamageType":"Fire",
   "Value": "200",
   "DamageDice":"2",
   "DamageDiceFaces":"6",

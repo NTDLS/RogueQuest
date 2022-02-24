@@ -2,6 +2,8 @@
   "Name":"Demon Fighter (Major)",
   "HitPoints": "600",
   "Experience": "100",
+  "DamageType":"Fire",
+  "WeaknessType":"Fire",
   "AC":"25",
   "Dexterity":"30",
   "Strength":"30",
