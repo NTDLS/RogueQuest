@@ -39,6 +39,7 @@ namespace Game
 
             listViewSelectedContainer.SmallImageList = _imageList;
             listViewSelectedContainer.LargeImageList = _imageList;
+            listViewSelectedContainer.View = View.List;
             listViewSelectedContainer.ItemDrag += ListViewSelectedContainer_ItemDrag;
             listViewSelectedContainer.DragEnter += ListViewSelectedContainer_DragEnter;
             listViewSelectedContainer.DragDrop += ListViewSelectedContainer_DragDrop;
@@ -49,6 +50,7 @@ namespace Game
 
             listViewGround.SmallImageList = _imageList;
             listViewGround.LargeImageList = _imageList;
+            listViewGround.View = View.List;
             listViewGround.ItemDrag += ListViewGround_ItemDrag;
             listViewGround.DragEnter += ListViewGround_DragEnter;
             listViewGround.DragDrop += ListViewGround_DragDrop;
@@ -59,6 +61,7 @@ namespace Game
 
             listViewPlayerPack.SmallImageList = _imageList;
             listViewPlayerPack.LargeImageList = _imageList;
+            listViewPlayerPack.View = View.List;
             listViewPlayerPack.ItemDrag += ListViewPlayerPack_ItemDrag;
             listViewPlayerPack.DragEnter += ListViewPlayerPack_DragEnter;
             listViewPlayerPack.DragDrop += ListViewPlayerPack_DragDrop;
@@ -98,23 +101,32 @@ namespace Game
             PopulateContainerFromGround(listViewGround);
         }
 
-        private bool UseItem(TileIdentifier item)
+        private bool UseItem(TileIdentifier item, bool promptForUse)
         {
-            string text = $"Use {item.Meta.Name}?";
-
-            if (item.Meta.Charges > 0)
+            if (promptForUse)
             {
-                text += $"\r\n{item.Meta.Charges} charges remaining.";
+                string text = $"Use {item.Meta.Name}?";
+
+                if (item.Meta.Charges > 0)
+                {
+                    text += $"\r\n{item.Meta.Charges} charges remaining.";
+                }
+
+                if (item.Meta.Quantity > 0)
+                {
+                    text += $"\r\n{item.Meta.Quantity} remaining.";
+                }
+
+                if (MessageBox.Show(text, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                {
+                    return false;
+                }
             }
 
-            if (MessageBox.Show(text, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            var inventoryItem = Core.State.GetOrCreateInventoryItem(item);
+            if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
             {
-                var inventoryItem = Core.State.GetOrCreateInventoryItem(item);
-
-                if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
-                {
-                    return Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
-                }
+                return Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
             }
 
             return false;
@@ -261,6 +273,7 @@ namespace Game
 
             var selectedItem = listViewSelectedContainer.SelectedItems[0];
             var item = selectedItem.Tag as EquipTag;
+
             if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
@@ -268,31 +281,64 @@ namespace Game
             {
                 OpenPack(item);
             }
-            else if (item.Tile.Meta.SubType == ActorSubType.Scroll
-                         || item.Tile.Meta.SubType == ActorSubType.Potion)
+            else if (item.Tile.Meta.IsConsumable == true || item.Tile.Meta.CanStack == true)
             {
-                if (item.Tile.Meta.IsConsumable == true)
+                using (var useAction = new FormUseAction(item.Tile))
                 {
-                    if (UseItem(item.Tile))
+                    bool promptBeforeUse = true;
+
+                    if (useAction.AvailableActions.Count > 1)
                     {
-                        if ((item.Tile.Meta.Quantity ?? 0) == 0)
+                        useAction.ShowDialog();
+                        promptBeforeUse = false;
+                    }
+
+                    if (useAction.UseActionResult == FormUseAction.UseAction.Use
+                        || (useAction.AvailableActions.Count == 1 && useAction.AvailableActions.First() == FormUseAction.UseAction.Use))
+                    {
+                        if (UseItem(item.Tile, promptBeforeUse))
                         {
-                            listViewPlayerPack.Items.Remove(selectedItem);
-                        }
-                        else
-                        {
-                            string text = item.Tile.Meta.Name;
-                            if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                            if ((item.Tile.Meta.Quantity ?? 0) == 0)
                             {
-                                text += $" ({item.Tile.Meta.Quantity})";
+                                listViewSelectedContainer.Items.Remove(selectedItem);
                             }
-                            else if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
+                            else
                             {
-                                text += $" ({item.Tile.Meta.Charges})";
+                                string text = item.Tile.Meta.Name;
+                                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                                {
+                                    text += $" ({item.Tile.Meta.Quantity})";
+                                }
+                                else if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
+                                {
+                                    text += $" ({item.Tile.Meta.Charges})";
+                                }
+                                selectedItem.Text = text;
                             }
-                            selectedItem.Text = text;
                         }
                     }
+                    else if (useAction.UseActionResult == FormUseAction.UseAction.Split
+                        || (useAction.AvailableActions.Count == 1 && useAction.AvailableActions.First() == FormUseAction.UseAction.Split))
+                    {
+                        using (var splitForm = new FormSplitQuantity(item.Tile))
+                        {
+                            if (splitForm.ShowDialog() == DialogResult.OK)
+                            {
+                                var newTile = item.Tile.DeriveCopy();
+
+                                if (item.Tile.Meta.Quantity > 0)
+                                {
+                                    newTile.Meta.Quantity = splitForm.SplitQuantity;
+                                    item.Tile.Meta.Quantity = ((int)(item.Tile.Meta.Quantity ?? 0)) - splitForm.SplitQuantity;
+                                }
+
+                                var newInventoryItem = Core.State.GetOrCreateInventoryItem(newTile);
+                                newInventoryItem.ContainerId = _currentlySelectedPack.Meta.UID;
+                            }
+                        }
+                    }
+
+                    PopulateContainerFromPack(listViewSelectedContainer, _currentlySelectedPack);
                 }
             }
         }
@@ -484,32 +530,71 @@ namespace Game
             {
                 OpenPack(item);
             }
-            else if (item.Tile.Meta.SubType == ActorSubType.Scroll
-                         || item.Tile.Meta.SubType == ActorSubType.Potion)
+            else if (item.Tile.Meta.IsConsumable == true || item.Tile.Meta.CanStack == true)
             {
-                if (item.Tile.Meta.IsConsumable == true)
+                var playersPack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+                if (playersPack == null)
                 {
-                    if (UseItem(item.Tile))
+                    return;
+                }
+
+                using (var useAction = new FormUseAction(item.Tile))
+                {
+                    bool promptBeforeUse = true;
+
+                    if (useAction.AvailableActions.Count > 1)
                     {
-                        if ((item.Tile.Meta.Quantity ?? 0) == 0)
+                        useAction.ShowDialog();
+                        promptBeforeUse = false;
+                    }
+
+                    if (useAction.UseActionResult == FormUseAction.UseAction.Use
+                        || (useAction.AvailableActions.Count == 1 && useAction.AvailableActions.First() == FormUseAction.UseAction.Use))
+                    {
+                        if (UseItem(item.Tile, promptBeforeUse))
                         {
-                            listViewPlayerPack.Items.Remove(selectedItem);
+                            if ((item.Tile.Meta.Quantity ?? 0) == 0)
+                            {
+                                listViewPlayerPack.Items.Remove(selectedItem);
+                            }
+                            else
+                            {
+                                string text = item.Tile.Meta.Name;
+                                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                                {
+                                    text += $" ({item.Tile.Meta.Quantity})";
+                                }
+                                else if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
+                                {
+                                    text += $" ({item.Tile.Meta.Charges})";
+                                }
+                                selectedItem.Text = text;
+                            }
                         }
-                        else
+                    }
+                    else if (useAction.UseActionResult == FormUseAction.UseAction.Split
+                        || (useAction.AvailableActions.Count == 1 && useAction.AvailableActions.First() == FormUseAction.UseAction.Split))
+                    {
+                        using (var splitForm = new FormSplitQuantity(item.Tile))
                         {
-                            string text = item.Tile.Meta.Name;
-                            if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
+                            if (splitForm.ShowDialog() == DialogResult.OK)
                             {
-                                text += $" ({item.Tile.Meta.Quantity})";
+                                var newTile = item.Tile.DeriveCopy();
+
+                                if (item.Tile.Meta.Quantity > 0)
+                                {
+                                    newTile.Meta.Quantity = splitForm.SplitQuantity;
+                                    item.Tile.Meta.Quantity = ((int)(item.Tile.Meta.Quantity ?? 0)) - splitForm.SplitQuantity;
+                                }
+
+                                var newInventoryItem = Core.State.GetOrCreateInventoryItem(newTile);
+                                newInventoryItem.ContainerId = playersPack.Tile.Meta.UID;
                             }
-                            else if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
-                            {
-                                text += $" ({item.Tile.Meta.Charges})";
-                            }
-                            selectedItem.Text = text;
                         }
                     }
                 }
+
+                PopulateContainerFromPack(listViewPlayerPack, playersPack.Tile);
             }
         }
 
@@ -806,7 +891,7 @@ namespace Game
                 {
                     if (item.Tile.Meta.IsConsumable == true)
                     {
-                        if (UseItem(item.Tile))
+                        if (UseItem(item.Tile, true))
                         {
                             if ((item.Tile.Meta.Quantity ?? 0) == 0)
                             {
@@ -1034,6 +1119,9 @@ namespace Game
             {
                 AddItemToListView(listView, item.TilePath, item.Meta);
             }
+
+            listView.Sorting = SortOrder.Ascending;
+            listView.Sort();
         }
 
         void PopulateContainerFromPack(ListView listView, TileIdentifier containerTile)
@@ -1049,6 +1137,9 @@ namespace Game
             {
                 AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
             }
+
+            listView.Sorting = SortOrder.Ascending;
+            listView.Sort();
         }
 
         private void AddItemToListView(ListView listView, string tilePath, TileMetadata meta)
@@ -1109,4 +1200,4 @@ namespace Game
         #endregion
 
     }
-}
+

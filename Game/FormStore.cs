@@ -41,6 +41,7 @@ namespace Game
 
             listViewSelectedContainer.SmallImageList = _imageList;
             listViewSelectedContainer.LargeImageList = _imageList;
+            listViewSelectedContainer.View = View.List;
             listViewSelectedContainer.ItemDrag += ListViewSelectedContainer_ItemDrag;
             listViewSelectedContainer.DragEnter += ListViewSelectedContainer_DragEnter;
             listViewSelectedContainer.DragDrop += ListViewSelectedContainer_DragDrop;
@@ -51,6 +52,7 @@ namespace Game
 
             listViewStore.SmallImageList = _imageList;
             listViewStore.LargeImageList = _imageList;
+            listViewStore.View = View.List;
             listViewStore.ItemDrag += ListViewStore_ItemDrag;
             listViewStore.DragEnter += ListViewStore_DragEnter;
             listViewStore.DragDrop += ListViewStore_DragDrop;
@@ -61,6 +63,7 @@ namespace Game
 
             listViewPlayerPack.SmallImageList = _imageList;
             listViewPlayerPack.LargeImageList = _imageList;
+            listViewPlayerPack.View = View.List;
             listViewPlayerPack.ItemDrag += ListViewPlayerPack_ItemDrag;
             listViewPlayerPack.DragEnter += ListViewPlayerPack_DragEnter;
             listViewPlayerPack.DragDrop += ListViewPlayerPack_DragDrop;
@@ -277,6 +280,27 @@ namespace Game
             {
                 OpenPack(item);
             }
+            else if (item.Tile.Meta.CanStack == true)
+            {
+                using (var splitForm = new FormSplitQuantity(item.Tile))
+                {
+                    if (splitForm.ShowDialog() == DialogResult.OK)
+                    {
+                        var newTile = item.Tile.DeriveCopy();
+
+                        if (item.Tile.Meta.Quantity > 0)
+                        {
+                            newTile.Meta.Quantity = splitForm.SplitQuantity;
+                            item.Tile.Meta.Quantity = ((int)(item.Tile.Meta.Quantity ?? 0)) - splitForm.SplitQuantity;
+                        }
+
+                        var newInventoryItem = Core.State.GetOrCreateInventoryItem(newTile);
+                        newInventoryItem.ContainerId = _currentlySelectedPack.Meta.UID;
+                    }
+                }
+
+                PopulateContainerFromPack(listViewSelectedContainer, _currentlySelectedPack);
+            }
         }
 
         private void ListViewSelectedContainer_DragDrop(object sender, DragEventArgs e)
@@ -490,6 +514,38 @@ namespace Game
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 OpenPack(item);
+            }
+            else if (item.Tile.Meta.CanStack == true)
+            {
+                var playersPack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
+                if (playersPack == null)
+                {
+                    return;
+                }
+
+                using (var splitForm = new FormSplitQuantity(item.Tile))
+                {
+                    if (splitForm.ShowDialog() == DialogResult.OK)
+                    {
+                        var newTile = item.Tile.DeriveCopy();
+
+                        if (item.Tile.Meta.Quantity > 0)
+                        {
+                            newTile.Meta.Quantity = splitForm.SplitQuantity;
+                            item.Tile.Meta.Quantity = ((int)(item.Tile.Meta.Quantity ?? 0)) - splitForm.SplitQuantity;
+                        }
+                        else if (item.Tile.Meta.Charges > 0)
+                        {
+                            newTile.Meta.Charges = splitForm.SplitQuantity;
+                            item.Tile.Meta.Charges = ((int)(item.Tile.Meta.Charges ?? 0)) - splitForm.SplitQuantity;
+                        }
+
+                        var newInventoryItem = Core.State.GetOrCreateInventoryItem(newTile);
+                        newInventoryItem.ContainerId = playersPack.Tile.Meta.UID;
+                    }
+                }
+
+                PopulateContainerFromPack(listViewPlayerPack, playersPack.Tile);
             }
         }
 
@@ -1150,6 +1206,9 @@ namespace Game
                 AddItemToListView(listView, tile.TilePath, tile.Meta);
             }
 
+            listView.Sorting = SortOrder.Ascending;
+            listView.Sort();
+
             return persistentStore;
         }
 
@@ -1198,6 +1257,9 @@ namespace Game
             {
                 AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
             }
+
+            listView.Sorting = SortOrder.Ascending;
+            listView.Sort();
         }
 
         private void AddItemToListView(ListView listView, string tilePath, TileMetadata meta)

@@ -1905,15 +1905,15 @@ namespace ScenarioEdit
                                             tile.Meta.WeightCapacity = int.Parse(dialog.PropertyValue);
                                         }
                                     }
-
-                                    PopulateSelectedItemProperties();
-
-                                    foreach (var tile in selectedItems)
-                                    {
-                                        tile.Invalidate();
-                                    }
                                 }
                             }
+                        }
+
+                        PopulateSelectedItemProperties();
+
+                        foreach (var tile in selectedItems)
+                        {
+                            tile.Invalidate();
                         }
                     }
                 }
@@ -1964,6 +1964,7 @@ namespace ScenarioEdit
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorBlockaid
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorBlockadeHidden
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorHiddenMessage
+                    || selectedTile.Meta.ActorClass == ActorClassName.ActorStore
                     || selectedTile.Meta.ActorClass == ActorClassName.ActorBuilding)
                 {
                     listViewProperties.Items.Add("Dialog").SubItems.Add(selectedTile.Meta.Dialog);

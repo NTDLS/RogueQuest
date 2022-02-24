@@ -135,7 +135,6 @@ namespace Library.Engine
         // This is what the object will say to the player when approached.
         public string Dialog { get { return _Dialog == string.Empty ? null : _Dialog; } set { _Dialog = value; } }
 
-
         public string DndDamageText
         {
             get
@@ -163,6 +162,8 @@ namespace Library.Engine
             this.IsConsumable = with.IsConsumable ?? this.IsConsumable;
             this.Charges = with.Charges ?? this.Charges;
             this.ExpireTime = with.ExpireTime ?? this.ExpireTime;
+            this.Quantity = with.Quantity ?? this.Quantity;
+            this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
             this.HitPoints = with.HitPoints ?? this.HitPoints;
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;

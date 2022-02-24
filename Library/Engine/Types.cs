@@ -69,10 +69,10 @@
         Shield,
         Gauntlets,
         Boots,
-        Potion,
-        Scroll,
+        Potion, //Potions always affect the consumer.
+        Scroll, //Scrolls can affect either the consumer or a ranged target.
+        Wand, //Wands always affect a ranged target.
         Projectile,
-        Wand,
         Money,
         Chest,
         Purse,

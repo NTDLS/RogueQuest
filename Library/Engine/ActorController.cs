@@ -45,6 +45,7 @@ namespace Library.Engine
             return Tiles.Where(o => o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
         }
 
+        /*
         Graphics _radarDC;
         Bitmap _radarBitmap;
         int _radarWidth = 200;
@@ -52,6 +53,7 @@ namespace Library.Engine
         Point<double> _radarScale;
         Point<double> _radarOffset;
         int _radarDistance = 4;
+        */
 
         public void Render(Graphics screenDc)
         {

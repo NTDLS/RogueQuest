@@ -392,23 +392,11 @@ namespace Game.Engine
                 }
             }
 
-            if (item.Tile.Meta.SubType == ActorSubType.Wand)
+            if (item.Tile.Meta.Charges > 0) //Remember that items with charges are NOT stackable.
             {
-                if (item.Tile.Meta.Charges > 0) //Remember that items with charges are NOT stackable.
-                {
-                    item.Tile.Meta.Charges--;
+                item.Tile.Meta.Charges--;
 
-                    if ((item.Tile.Meta.Charges ?? 0) == 0)
-                    {
-                        Core.State.Items.Remove(item);
-                        var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
-                        if (slotToVacate != null)
-                        {
-                            slotToVacate.Tile = null;
-                        }
-                    }
-                }
-                else
+                if ((item.Tile.Meta.Charges ?? 0) == 0)
                 {
                     Core.State.Items.Remove(item);
                     var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
@@ -416,6 +404,29 @@ namespace Game.Engine
                     {
                         slotToVacate.Tile = null;
                     }
+                }
+            }
+            else if (item.Tile.Meta.Quantity > 0) //Remember that items with charges are NOT stackable.
+            {
+                item.Tile.Meta.Quantity--;
+
+                if ((item.Tile.Meta.Quantity ?? 0) == 0)
+                {
+                    Core.State.Items.Remove(item);
+                    var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
+                    if (slotToVacate != null)
+                    {
+                        slotToVacate.Tile = null;
+                    }
+                }
+            }
+            else
+            {
+                Core.State.Items.Remove(item);
+                var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
+                if (slotToVacate != null)
+                {
+                    slotToVacate.Tile = null;
                 }
             }
 
