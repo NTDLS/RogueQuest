@@ -1,0 +1,13 @@
+{
+  "Name":"Giant Fire Ant",
+  "HitPoints": "10",
+  "Experience": "5",
+  "DamageType":"Fire",
+  "WeaknessType":"Ice",
+  "AC":"3",
+  "Dexterity":"7",
+  "Strength":"6",
+  "DamageDice":"1",
+  "DamageDiceFaces":"4",
+  "Level":"1"
+}

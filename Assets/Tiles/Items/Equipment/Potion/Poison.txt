@@ -5,6 +5,7 @@
   "TargetType":"Self",
   "Effect": "Poison",
   "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/SkullSmoke1_192_256",
   "ExpireTime": "10",
   "Weight":"10",
   "Bulk":"9",

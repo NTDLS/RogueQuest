@@ -18,6 +18,7 @@ namespace Game.Engine
         {
             Movement,
             Rest,
+            Wait,
             Get,
             Ranged,
             DialogInput

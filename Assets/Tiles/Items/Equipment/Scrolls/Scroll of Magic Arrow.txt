@@ -9,7 +9,7 @@
   "DamageAdditional":"0",
   "IsConsumable":"True",
   "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Scroll of Magic Arrow Projectile",
-  "HitAnimationTilePath":"Animations\\Hits\\Smoke1_66_66",
+  "UsageAnimationTilePath":"Animations\\Hits\\Smoke1_66_66",
   "Weight":"1",
   "Bulk":"2",
   "CanStack":"True",

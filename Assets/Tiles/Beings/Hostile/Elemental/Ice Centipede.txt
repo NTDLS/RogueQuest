@@ -1,0 +1,13 @@
+{
+  "Name":"Ice Centipede",
+  "HitPoints": "25",
+  "Experience": "25",
+  "DamageType":"Ice",
+  "WeaknessType":"Fire",
+  "AC":"5",
+  "Dexterity":"10",
+  "Strength":"10",
+  "DamageDice":"1",
+  "DamageDiceFaces":"5",
+  "Level":"2"
+}

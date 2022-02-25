@@ -6,6 +6,7 @@
   "Effect": "IncreaseArmorClass",
   "EffectFormula": "5",
   "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
   "ExpireTime": "60",
   "Weight":"10",
   "Bulk":"9",

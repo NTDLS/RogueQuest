@@ -2044,7 +2044,7 @@ namespace ScenarioEdit
                 }
                 if (selectedTile.Meta?.Charges > 0)
                 {
-                    listViewProperties.Items.Add("Charges").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
+                    listViewProperties.Items.Add("Charges").SubItems.Add(selectedTile.Meta?.Charges.ToString());
                 }
 
                 listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);

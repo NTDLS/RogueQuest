@@ -103,6 +103,7 @@
         Unspecified,
         Ice,
         Fire,
+        Earth,
         Electric
     }
 

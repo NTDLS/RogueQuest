@@ -9,7 +9,7 @@
   "IsConsumable":"True",
   "Charges":"10",
   "ProjectileTilePath":"Tiles\\Items\\Equipment\\Wands\\@Wand of Magic Arrow Projectile",
-  "HitAnimationTilePath":"Animations\\Hits\\Smoke1_66_66",
+  "UsageAnimationTilePath":"Animations\\Hits\\Smoke1_66_66",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"False",

@@ -141,7 +141,7 @@ namespace Game
 
         private void Drawingsurface_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_core.State.IsThreadActive)
+            if (_core.State.ActiveThreadCount > 0)
             {
                 return;
             }
@@ -860,7 +860,7 @@ namespace Game
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_core.State.IsThreadActive)
+            if (_core.State.ActiveThreadCount > 0)
             {
                 return;
             }

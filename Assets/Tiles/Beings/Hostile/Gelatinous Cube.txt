@@ -1,11 +1,11 @@
 {
   "Name":"Gelatinous Cube",
-  "HitPoints": "250",
-  "Experience": "25",
+  "HitPoints": "30",
+  "Experience": "30",
   "AC":"1",
   "Dexterity":"8",
   "Strength":"10",
   "DamageDice":"1",
   "DamageDiceFaces":"8",
-  "Level":"3"
+  "Level":"2"
 }

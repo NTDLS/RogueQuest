@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
 using static Game.Engine.Types;
 
 namespace Game.Engine
@@ -17,6 +19,7 @@ namespace Game.Engine
     public class EngineTickController
     {
         private int _avatarAnimationFrame = 1;
+        public delegate void GameThreadCallback(object param);
 
         public EngineCore Core { get; private set; }
         public EngineTickController(EngineCore core)
@@ -196,7 +199,10 @@ namespace Game.Engine
                         RangedTarget = target
                     };
 
+                    int startTime = Core.State.TimePassed;
+
                     Advance(input);
+                    PassTime(startTime, 1000);
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Terrain)
                 {
@@ -244,7 +250,15 @@ namespace Game.Engine
                         throw new NotImplementedException();
                     }
 
-                    Advance(new Types.TickInput() { InputType = Types.TickInputType.Rest });
+                    if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
+                    {
+                        void passTime(object param) => PassTime((int)param);
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, 1000);
+                    }
+                    else
+                    {
+                        PassTime(1000);
+                    }
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Self)
                 {
@@ -465,7 +479,15 @@ namespace Game.Engine
                         throw new NotImplementedException();
                     }
 
-                    Advance(new Types.TickInput() { InputType = Types.TickInputType.Rest });
+                    if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
+                    {
+                        void passTime(object param) => PassTime((int)param);
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, 1000);
+                    }
+                    else
+                    {
+                        PassTime(1000);
+                    }
                 }
 
                 WaitOnIdleEngine();
@@ -702,8 +724,15 @@ namespace Game.Engine
                     throw new NotImplementedException();
                 }
 
-                var input = new Types.TickInput() { InputType = Types.TickInputType.Rest };
-                Advance(input);
+                if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
+                {
+                    void passTime(object param) => PassTime((int)param);
+                    AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, 1000);
+                }
+                else
+                {
+                    PassTime(1000);
+                }
             }
 
             if (item.Tile.Meta.Charges > 0) //Remember that items with charges are NOT stackable.
@@ -907,7 +936,46 @@ namespace Game.Engine
             Core.LogLine($"You awake feeling refreshed.", Color.DarkGreen);
         }
 
-        public Point<double> Advance(TickInput Input)
+        public void PassTime(int startTime, int timeToPass)
+        {
+            int startGameTime = startTime;
+
+            var input = new Types.TickInput() { InputType = Types.TickInputType.Wait };
+
+            while (Core.State.TimePassed - startGameTime < timeToPass)
+            {
+                if (Core.State.ActiveThreadCount == 0)
+                {
+                    Advance(input);
+                }
+                else
+                {
+                    Application.DoEvents(); //The UI thread is a bitch.
+                }
+            }
+        }
+
+
+        public void PassTime(int timeToPass)
+        {
+            int startGameTime = Core.State.TimePassed;
+
+            var input = new Types.TickInput() { InputType = Types.TickInputType.Wait };
+
+            while (Core.State.TimePassed - startGameTime < timeToPass)
+            {
+                if (Core.State.ActiveThreadCount == 0)
+                {
+                    Advance(input);
+                }
+                else
+                {
+                    Application.DoEvents(); //The UI thread is a bitch.
+                }
+            }
+        }
+
+        public Point<double> Advance(TickInput Input, GameThreadCallback callback = null, object callbackParam = null)
         {
             Point<double> appliedOffset = new Point<double>();
 
@@ -964,7 +1032,16 @@ namespace Game.Engine
                 }
             }
 
-            System.Threading.Thread thread = new System.Threading.Thread(GameLogicThread);
+            ParameterizedThreadStart starter = GameLogicThread;
+            starter += (param) =>
+            {
+                if (callback != null)
+                {
+                    callback(callbackParam);
+                }
+            };
+
+            Thread thread = new Thread(starter) { IsBackground = true };
             thread.Start(new GameLogicParam()
             {
                 Intersections = intersections,
@@ -974,17 +1051,11 @@ namespace Game.Engine
             return appliedOffset;
         }
 
-        class GameLogicParam
+        private void WaitOnIdleEngine()
         {
-            public TickInput Input { get; set; }
-            public List<ActorBase> Intersections { get; set; }
-        }
-
-        public void WaitOnIdleEngine()
-        {
-            while (Core.State.IsThreadActive == true)
+            while (Core.State.ActiveThreadCount > 0)
             {
-                System.Threading.Thread.Sleep(1);
+                Thread.Sleep(1);
             }
         }
 
@@ -1074,15 +1145,17 @@ namespace Game.Engine
         /// contains actors that can be damaged, then these  would be the melee attack target for the player.
         /// </summary>
         /// <param name="intersections"></param>
-        void GameLogicThread(object param)
+        private void GameLogicThread(object param)
         {
-            Core.State.IsThreadActive = true;
+            Core.State.AddThreadReference();
+            Thread.CurrentThread.Name = $"GameLogicThread_{Core.State.ActiveThreadCount}";
             GameLogicThreadEx((GameLogicParam)param);
-            Core.State.IsThreadActive = false;
+            Core.State.RemoveThreadReference();
         }
 
-        void GameLogicThreadEx(GameLogicParam p)
+        private void GameLogicThreadEx(GameLogicParam p)
         {
+
             List<ActorBase> intersections = p.Intersections;
             TickInput Input = p.Input;
 
@@ -1315,16 +1388,16 @@ namespace Game.Engine
                     //Hit animation:
                     if (projectile != null)
                     {
-                        if (string.IsNullOrEmpty(projectile.Meta.HitAnimationTilePath) == false)
+                        if (string.IsNullOrEmpty(projectile.Meta.UsageAnimationTilePath) == false)
                         {
-                            AnimateAt(projectile.Meta.HitAnimationTilePath, actorToAttack);
+                            AnimateAt(projectile.Meta.UsageAnimationTilePath, actorToAttack);
                         }
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(weapon.HitAnimationTilePath) == false)
+                        if (string.IsNullOrEmpty(weapon.UsageAnimationTilePath) == false)
                         {
-                            AnimateAt(weapon.HitAnimationTilePath, actorToAttack);
+                            AnimateAt(weapon.UsageAnimationTilePath, actorToAttack);
                         }
                     }
 
@@ -1503,7 +1576,7 @@ namespace Game.Engine
                 item.Y += (item.Velocity.Angle.Y * (item.Velocity.MaxSpeed * item.Velocity.ThrottlePercentage));
 
                 item.Invalidate();
-                System.Threading.Thread.Sleep(5);
+                Thread.Sleep(5);
 
                 if (item.Intersects(to))
                 {
@@ -1538,14 +1611,55 @@ namespace Game.Engine
 
             var item = Core.Actors.AddNewAnimation<ActorAnimation>(at.X, at.Y, imagePath, new Size(width, height));
 
+            item.DrawOrder = 1000;
+
+            int frameDelay = 1600 / item.FrameCount;
+            if (frameDelay > 1000)
+            {
+                frameDelay = 1000;
+            }
+            if (frameDelay < 1)
+            {
+                frameDelay = 1;
+            }
+
             while (item.ReadyForDeletion == false)
             {
                 item.AdvanceImage();
                 item.Invalidate();
-                System.Threading.Thread.Sleep(25);
+                Thread.Sleep(frameDelay);
             }
 
             item.QueueForDelete();
+        }
+
+        private void AnimateAtAsyncThread(object param)
+        {
+            Core.State.AddThreadReference();
+            Thread.CurrentThread.Name = $"AnimateAtAsyncThread_{Core.State.ActiveThreadCount}";
+            var p = (AnimateAtAsyncParam)param;
+            AnimateAt(p.ImagePath, p.At);
+            Core.State.RemoveThreadReference();
+        }
+
+        private void AnimateAtAsync(string imagePath, ActorBase at, GameThreadCallback callback = null, object callbackParam = null)
+        {
+            var param = new AnimateAtAsyncParam()
+            {
+                ImagePath = imagePath,
+                At = at
+            };
+
+            ParameterizedThreadStart starter = AnimateAtAsyncThread;
+            starter += (param) =>
+            {
+                if (callback != null)
+                {
+                    callback(callbackParam);
+                }
+            };
+            Thread thread = new Thread(starter) { IsBackground = true };
+            thread.Start(param);
         }
 
         private void EmptyContainerToGround(Guid? containerId, ActorBase at)
@@ -1594,7 +1708,7 @@ namespace Game.Engine
         /// Moves an actor in the direction of their vector and returns a list of any
         /// encountered collisions as well as passes back distance the actor was moved.
         /// </summary>
-        public List<ActorBase> MoveActor(ActorBase actor, out Point<double> finalAppliedOffset)
+        private List<ActorBase> MoveActor(ActorBase actor, out Point<double> finalAppliedOffset)
         {
             if (actor.Meta.UID != null && Core.State.ActorStates.HasState((Guid)actor.Meta.UID, StateOfBeing.Poisoned))
             {
@@ -1786,7 +1900,7 @@ namespace Game.Engine
 
         #region Misc.
 
-        string PlayerDeathText()
+        private string PlayerDeathText()
         {
             var strs = new string[] {
                 "DEATH! You have been bested!",
@@ -1803,7 +1917,7 @@ namespace Game.Engine
             return strs[MathUtility.RandomNumber(0, strs.Count())];
         }
 
-        string GetCriticalHitText()
+        private string GetCriticalHitText()
         {
             var strs = new string[] {
                 "tearing them open!",
@@ -1821,7 +1935,7 @@ namespace Game.Engine
             return strs[MathUtility.RandomNumber(0, strs.Count())];
         }
 
-        string GetCriticalMissText()
+        private string GetCriticalMissText()
         {
             var strs = new string[] {
                 "but they evade your clumsy blow!",

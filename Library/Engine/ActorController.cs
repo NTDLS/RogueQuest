@@ -118,17 +118,16 @@ namespace Library.Engine
 
                 foreach (var obj in renderTiles)
                 {
-                    if (Core.BlindPlay == true && player != null && obj.DistanceTo(player) < Core.BlindPlayDistance)
+                    if (obj.Meta.HasBeenViewed == false
+                        && Core.BlindPlay == true && player != null && obj.DistanceTo(player) < Core.BlindPlayDistance)
                     {
-                        if (obj.Meta.HasBeenViewed == false)
-                        {
-                            obj.Invalidate();
-                        }
+                        obj.Invalidate();
                         obj.Meta.HasBeenViewed = true;
                     }
 
-
-                    if (Core.BlindPlay == false || obj.Meta.HasBeenViewed == true || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog)
+                    if (Core.BlindPlay == false || obj.Meta.HasBeenViewed == true
+                        || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog
+                        || obj.Meta.ActorClass == Types.ActorClassName.ActorAnimation)
                     {
                         Utility.Types.DynamicCast(obj, obj.GetType()).Render(screenDc);
                     }

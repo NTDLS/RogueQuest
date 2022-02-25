@@ -1,0 +1,13 @@
+{
+  "Name":"Giant Earth Ant",
+  "HitPoints": "10",
+  "Experience": "5",
+  "DamageType":"Earth",
+  "WeaknessType":"Electric",
+  "AC":"3",
+  "Dexterity":"7",
+  "Strength":"10",
+  "DamageDice":"1",
+  "DamageDiceFaces":"4",
+  "Level":"1"
+}

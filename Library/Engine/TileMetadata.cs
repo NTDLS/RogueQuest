@@ -13,7 +13,7 @@ namespace Library.Engine
 
         private Guid? _UID;
         private string _ProjectileTilePath;
-        private string _HitAnimationTilePath;
+        private string _UsageAnimationTilePath;
         private string _Name;
         private string _Tag;
         private int? _Quantity; //Stacking because things like money only really matter in multiples.
@@ -63,7 +63,7 @@ namespace Library.Engine
         // This is only populated for tiles that need it.
         public Guid? UID { get { return _UID == Guid.Empty ? null : _UID; } set { _UID = value; } }
         public string ProjectileTilePath { get { return _ProjectileTilePath == string.Empty ? null : _ProjectileTilePath; } set { _ProjectileTilePath = value; } }
-        public string HitAnimationTilePath { get { return _HitAnimationTilePath == string.Empty ? null : _HitAnimationTilePath; } set { _HitAnimationTilePath = value; } }
+        public string UsageAnimationTilePath { get { return _UsageAnimationTilePath == string.Empty ? null : _UsageAnimationTilePath; } set { _UsageAnimationTilePath = value; } }
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
         public string Tag { get { return _Tag == string.Empty ? null : _Tag; } set { _Tag = value; } }
         //Stacking because things like money only really matter in multiples.
@@ -173,7 +173,7 @@ namespace Library.Engine
             this.ActorClass = with.ActorClass ?? this.ActorClass;
             this.Name = with.Name ?? this.Name;
             this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
-            this.HitAnimationTilePath = with.HitAnimationTilePath ?? this.HitAnimationTilePath;
+            this.UsageAnimationTilePath = with.UsageAnimationTilePath ?? this.UsageAnimationTilePath;
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
             this.WeaknessType = with.WeaknessType ?? this.WeaknessType;
             this.DamageType = with.DamageType ?? this.DamageType;

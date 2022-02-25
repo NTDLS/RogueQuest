@@ -1,7 +1,7 @@
 {
   "Name":"Zombie",
-  "HitPoints": "30",
-  "Experience": "4",
+  "HitPoints": "15",
+  "Experience": "10",
   "AC":"5",
   "Dexterity":"5",
   "Strength":"3",

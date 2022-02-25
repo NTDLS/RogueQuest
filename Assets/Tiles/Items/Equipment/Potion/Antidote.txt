@@ -5,6 +5,7 @@
   "TargetType":"Self",
   "Effect": "CurePoison",
   "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",

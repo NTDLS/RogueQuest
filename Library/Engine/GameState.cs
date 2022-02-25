@@ -17,7 +17,7 @@ namespace Library.Engine
         {
             _core = core;
             Character.SetCore(core);
-            IsThreadActive = false;
+            ActiveThreadCount = 0;
         }
 
         public ActorStates ActorStates { get; set; } = new ActorStates();
@@ -30,9 +30,27 @@ namespace Library.Engine
         public int CurrentLevel { get; set; }
         public int DefaultLevel { get; set; }
         public bool IsDialogActive { get; set; }
-        public bool IsThreadActive { get; set; }
+        public int ActiveThreadCount { get; private set; } = 0;
         public int TimePassed { get; set; } = 0;
         public List<PersistentStore> Stores { get; set; } = new List<PersistentStore>();
+
+
+        public void AddThreadReference()
+        {
+            lock (this)
+            {
+                ActiveThreadCount++;
+            }
+        }
+
+        public void RemoveThreadReference()
+        {
+            lock (this)
+            {
+                ActiveThreadCount--;
+            }
+        }
+
 
         public CustodyItem GetOrCreateInventoryItem(TileIdentifier tile)
         {

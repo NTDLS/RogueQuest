@@ -6,6 +6,7 @@
   "Effect": "Heal",
   "EffectFormula": "10",
   "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
   "Weight":"10",
   "Bulk":"9",
   "CanStack":"True",

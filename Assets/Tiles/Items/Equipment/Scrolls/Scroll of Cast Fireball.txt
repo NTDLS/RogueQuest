@@ -11,7 +11,7 @@
   "SplashDamageRange":"60",
   "IsConsumable":"True",
   "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Scroll of Cast Fireball Projectile",
-  "HitAnimationTilePath":"Animations\\Hits\\Explosion1_256_256",
+  "UsageAnimationTilePath":"Animations\\Hits\\Explosion1_256_256",
   "Weight":"1",
   "Bulk":"2",
   "CanStack":"True",

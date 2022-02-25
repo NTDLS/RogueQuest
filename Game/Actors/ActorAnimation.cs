@@ -25,6 +25,14 @@ namespace Game.Actors
         private string _imageName; //Debugging.
         private PlayMode _playMode;
 
+        public int FrameCount => _frameCount;
+        public int CurrentFrame => _currentFrame;
+        public int CurrentRow => _currentRow;
+        public int CurrentColumn => _currentColumn;
+        public int Rows => _rows;
+        public int Columns => _columns;
+        public int FrameDelayMilliseconds => _frameDelayMilliseconds;
+
         public ActorAnimation(EngineCore core, string imageFrames, Size? frameSize, int frameDelayMilliseconds = 10, PlayMode playMode = null)
             : base(core)
         {
