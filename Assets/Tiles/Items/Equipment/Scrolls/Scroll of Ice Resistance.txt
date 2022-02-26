@@ -1,0 +1,16 @@
+{
+  "Name":"Ice Resistance",
+  "SubType": "Scroll",
+  "Value": "125",
+  "TargetType":"Self",
+  "Effect": "IncreaseIceResistance",
+  "EffectFormula": "1",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "ExpireTime": "60",
+  "Weight":"1",
+  "Bulk":"2",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"1"
+}

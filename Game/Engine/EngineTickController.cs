@@ -20,6 +20,7 @@ namespace Game.Engine
     {
         private int _avatarAnimationFrame = 1;
         public delegate void GameThreadCallback(object param);
+        AutoResetEvent GameLogicThreadStarted = new AutoResetEvent(false);
 
         public EngineCore Core { get; private set; }
         public EngineTickController(EngineCore core)
@@ -33,7 +34,6 @@ namespace Game.Engine
         {
             get
             {
-
                 if (_gameAssembly == null)
                 {
                     AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -252,8 +252,12 @@ namespace Game.Engine
 
                     if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                     {
-                        void passTime(object param) => PassTime((int)param);
-                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, 1000);
+                        void passTime(object param)
+                        {
+                            WaitOnIdleEngine();
+                            PassTime((int)param);
+                        }
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, 5);
                     }
                     else
                     {
@@ -262,8 +266,99 @@ namespace Game.Engine
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Self)
                 {
+                    #region IncreaseIceResistance
+                    if (item.Tile.Meta.Effect == ItemEffect.IncreaseIceResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIceResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Ice resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region IncreaseElectricResistance
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseElectricResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseElectricResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Electric resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region IncreaseFireResistance
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseFireResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseFireResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Fire resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region DecreaseIceResistance
+                    else if (item.Tile.Meta.Effect == ItemEffect.DecreaseIceResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseIceResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Ice resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+
+                    #region DecreaseElectricResistance
+                    else if (item.Tile.Meta.Effect == ItemEffect.DecreaseElectricResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseElectricResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Electric resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region DecreaseFireResistance
+                    else if (item.Tile.Meta.Effect == ItemEffect.DecreaseFireResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseFireResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Fire resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
                     #region Heal.
-                    if (item.Tile.Meta.Effect == ItemEffect.Heal)
+                    else if (item.Tile.Meta.Effect == ItemEffect.Heal)
                     {
                         int totalHealing = 0;
 
@@ -482,7 +577,7 @@ namespace Game.Engine
                     if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                     {
                         void passTime(object param) => PassTime((int)param);
-                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, 1000);
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, 5);
                     }
                     else
                     {
@@ -964,13 +1059,17 @@ namespace Game.Engine
 
             while (Core.State.TimePassed - startGameTime < timeToPass)
             {
-                if (Core.State.ActiveThreadCount == 0)
+                lock (this)
                 {
-                    Advance(input);
-                }
-                else
-                {
-                    Application.DoEvents(); //The UI thread is a bitch.
+                    if (Core.State.ActiveThreadCount == 0)
+                    {
+                        Advance(input);
+                        GameLogicThreadStarted.WaitOne();
+                    }
+                    else
+                    {
+                        Application.DoEvents(); //The UI thread is a bitch.
+                    }
                 }
             }
         }
@@ -1148,6 +1247,7 @@ namespace Game.Engine
         private void GameLogicThread(object param)
         {
             Core.State.AddThreadReference();
+            GameLogicThreadStarted.Set();
             Thread.CurrentThread.Name = $"GameLogicThread_{Core.State.ActiveThreadCount}";
             GameLogicThreadEx((GameLogicParam)param);
             Core.State.RemoveThreadReference();
@@ -1410,6 +1510,9 @@ namespace Game.Engine
                             damageToApply = (int) (damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)weapon?.SplashDamageRange));
                         }
 
+
+                        //xxxxxxxxxxxxxxxxxxxxxxxxxxx
+
                         if (hitType == HitType.CriticalHit)
                         {
                             Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
@@ -1456,6 +1559,18 @@ namespace Game.Engine
                 Core.LogLine($"{Core.State.Character.Name} reached level {Core.State.Character.Level}! Next level at {Core.State.Character.NextLevelExperience:N0}xp.", Color.Green);
             }
 
+            var activeStates = Core.State.ActorStates.States(Core.State.Character.UID);
+
+            var electricResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var fireResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var earthResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var iceResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
+
+            electricResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
+            fireResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
+            earthResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
+            iceResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
+
             var totalPlayerAC = Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);
 
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
@@ -1467,6 +1582,132 @@ namespace Game.Engine
                 {
                     int hostileHitsFor = CalculateDealtDamage(hitType, (int)hostile.Meta.Strength,
                         0, hostile.Meta.DamageDice ?? 0, hostile.Meta?.DamageDiceFaces ?? 0);
+
+                    #region Damage resistance...
+                    if (hostile.Meta.DamageType == DamageType.Fire && fireResistance > 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < fireResistance; i++)
+                        {
+                            resistanceFactor = resistanceFactor / 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp fire damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    else if (hostile.Meta.DamageType == DamageType.Ice && iceResistance > 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < iceResistance; i++)
+                        {
+                            resistanceFactor = resistanceFactor / 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp ice damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    else if (hostile.Meta.DamageType == DamageType.Earth && earthResistance > 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < earthResistance; i++)
+                        {
+                            resistanceFactor = resistanceFactor / 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp earth damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    else if (hostile.Meta.DamageType == DamageType.Electric && electricResistance > 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < electricResistance; i++)
+                        {
+                            resistanceFactor = resistanceFactor / 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp electric damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    #endregion
+
+                    #region Opposite of damage resistance (weakness)...
+                    if (hostile.Meta.DamageType == DamageType.Fire && fireResistance < 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < (fireResistance * -1); i++)
+                        {
+                            resistanceFactor = resistanceFactor * 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp fire damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    else if (hostile.Meta.DamageType == DamageType.Ice && iceResistance < 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < (iceResistance * -1); i++)
+                        {
+                            resistanceFactor = resistanceFactor * 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp ice damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    else if (hostile.Meta.DamageType == DamageType.Earth && earthResistance < 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < (earthResistance * -1); i++)
+                        {
+                            resistanceFactor = resistanceFactor * 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp earth damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    else if (hostile.Meta.DamageType == DamageType.Electric && electricResistance < 0)
+                    {
+                        double resistanceFactor = hostileHitsFor;
+
+                        for (int i = 0; i < (electricResistance * -1); i++)
+                        {
+                            resistanceFactor = resistanceFactor * 2.0;
+                        }
+
+                        int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
+
+                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp electric damage.", Color.DarkGreen);
+
+                        hostileHitsFor = hostileHitsFor - resistedDamage;
+                    }
+                    #endregion
 
                     if (hitType == HitType.CriticalHit)
                     {
@@ -1549,6 +1790,46 @@ namespace Game.Engine
 
                     Core.State.ActorStates.RemoveState(state);
                     Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
+                }
+                else if (state.State == StateOfBeing.IncreaseEarthResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
+                }
+                else if (state.State == StateOfBeing.IncreaseFireResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Fire resistance has worn off, decreased by {state.ModificationAmount}.");
+                }
+                else if (state.State == StateOfBeing.IncreaseIceResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Ice resistance has worn off, decreased by {state.ModificationAmount}.");
+                }
+                else if (state.State == StateOfBeing.IncreaseElectricResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
+                }
+                else if (state.State == StateOfBeing.DecreaseEarthResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
+                }
+                else if (state.State == StateOfBeing.DecreaseFireResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Fire resistance has worn off, increased by {state.ModificationAmount}.");
+                }
+                else if (state.State == StateOfBeing.DecreaseIceResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Ice resistance has worn off, increased by {state.ModificationAmount}.");
+                }
+                else if (state.State == StateOfBeing.DecreaseElectricResistance)
+                {
+                    Core.State.ActorStates.RemoveState(state);
+                    Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
                 }
                 #endregion
                 else

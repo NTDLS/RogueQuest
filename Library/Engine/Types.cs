@@ -119,12 +119,13 @@
         IncreaseConstitution,
         IncreaseArmorClass,
         IncreaseIntelligence,
-        IncreaseColdResistance,
-        IncreaseLightningResistance,
+        IncreaseIceResistance,
+        IncreaseElectricResistance,
         IncreaseFireResistance,
-        DecreaseColdResistance,
-        DecreaseLightningResistance,
+        DecreaseIceResistance,
+        DecreaseElectricResistance,
         DecreaseFireResistance,
+        DecreaseEarthResistance,
         MagicArrow,
         CastFireball
     }
@@ -141,12 +142,14 @@
         IncreaseArmorClass,
         IncreaseIntelligence, //Also increases mana.
 
-        IncreaseColdResistance,
-        IncreaseLightningResistance,
+        IncreaseEarthResistance,
+        IncreaseIceResistance,
+        IncreaseElectricResistance,
         IncreaseFireResistance,
-        DecreaseColdResistance, //This is a bad thing.
-        DecreaseLightningResistance, //This is a bad thing.
+        DecreaseIceResistance, //This is a bad thing.
+        DecreaseElectricResistance, //This is a bad thing.
         DecreaseFireResistance, //This is a bad thing.
+        DecreaseEarthResistance,  //This is a bad thing.
     }
 
     public enum RotationMode

@@ -34,10 +34,12 @@ namespace Library.Engine
         public int TimePassed { get; set; } = 0;
         public List<PersistentStore> Stores { get; set; } = new List<PersistentStore>();
 
+        public object ActiveThreadCountLock { get; private set; } = new object();
+
 
         public void AddThreadReference()
         {
-            lock (this)
+            lock (ActiveThreadCountLock)
             {
                 ActiveThreadCount++;
             }
@@ -45,7 +47,7 @@ namespace Library.Engine
 
         public void RemoveThreadReference()
         {
-            lock (this)
+            lock (ActiveThreadCountLock)
             {
                 ActiveThreadCount--;
             }
