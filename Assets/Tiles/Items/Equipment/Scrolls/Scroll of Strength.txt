@@ -3,6 +3,7 @@
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
+  "CastTime":"2",
   "Effect": "IncreaseStrength",
   "EffectFormula": "5",
   "IsConsumable":"True",

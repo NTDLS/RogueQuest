@@ -3,6 +3,7 @@
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
+  "CastTime":"2",
   "Effect": "IncreaseDexterity",
   "EffectFormula": "5",
   "IsConsumable":"True",

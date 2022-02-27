@@ -5,6 +5,7 @@
   "Effect": "CastFireball",
   "DamageType":"Fire",
   "Value": "200",
+  "CastTime":"2",
   "DamageDice":"2",
   "DamageDiceFaces":"6",
   "DamageAdditional":"0",

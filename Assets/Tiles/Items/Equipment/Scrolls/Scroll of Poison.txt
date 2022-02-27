@@ -2,6 +2,7 @@
   "Name":"Poison",
   "SubType": "Scroll",
   "Value": "1",
+  "CastTime":"5",
   "TargetType":"Self",
   "Effect": "Poison",
   "IsConsumable":"True",

@@ -4,6 +4,7 @@
   "Value": "20",
   "TargetType":"Self",
   "Effect": "Heal",
+  "CastTime":"1",
   "EffectFormula": "30",
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",

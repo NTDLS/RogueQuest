@@ -3,6 +3,7 @@
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
+  "CastTime":"1",
   "Effect": "IncreaseArmorClass",
   "EffectFormula": "5",
   "IsConsumable":"True",

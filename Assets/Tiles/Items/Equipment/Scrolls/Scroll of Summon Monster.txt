@@ -4,6 +4,7 @@
   "TargetType":"Terrain",
   "Effect": "SummonMonster",
   "Value": "5",
+  "CastTime":"3",
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/SkullSmoke2_192_256",
   "Weight":"1",

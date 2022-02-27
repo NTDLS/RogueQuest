@@ -3,6 +3,7 @@
   "SubType": "Scroll",
   "Value": "125",
   "TargetType":"Self",
+  "CastTime":"2",
   "Effect": "IncreaseEarthResistance",
   "EffectFormula": "1",
   "IsConsumable":"True",

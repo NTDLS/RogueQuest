@@ -52,6 +52,7 @@ namespace Library.Engine
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; } //Remember that items with charges are NOT stackable.
         public bool? CanWalkOn { get; set; }
+        public int? CastTime { get; set; } //How long it take a spell to cast.
         public int? SplashDamageRange { get; set; }
         public DamageType? DamageType { get; set; }
         public DamageType? WeaknessType { get; set; }
@@ -158,6 +159,7 @@ namespace Library.Engine
             this.UID = with.UID ?? this.UID;
             this.Tag = with.Tag ?? this.Tag;
             this.CanWalkOn = with.CanWalkOn ?? this.CanWalkOn;
+            this.CastTime = with.CastTime ?? this.CastTime;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
             this.ProjectileType = with.ProjectileType ?? this.ProjectileType;
             this.Effect = with.Effect ?? this.Effect;

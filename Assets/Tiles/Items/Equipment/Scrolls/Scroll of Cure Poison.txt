@@ -2,6 +2,7 @@
   "Name":"Cure Poison",
   "SubType": "Scroll",
   "Value": "40",
+  "CastTime":"4",
   "TargetType":"Self",
   "Effect": "CurePoison",
   "IsConsumable":"True",

@@ -4,6 +4,7 @@
   "Value": "20",
   "TargetType":"Self",
   "Effect": "IncreaseIntelligence",
+  "CastTime":"2",
   "EffectFormula": "5",
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",

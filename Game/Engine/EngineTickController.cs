@@ -202,7 +202,7 @@ namespace Game.Engine
                     int startTime = Core.State.TimePassed;
 
                     Advance(input);
-                    PassTime(startTime, 1000);
+                    PassTime(startTime, item.Tile.Meta.CastTime ?? 1);
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Terrain)
                 {
@@ -257,11 +257,11 @@ namespace Game.Engine
                             WaitOnIdleEngine();
                             PassTime((int)param);
                         }
-                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, 5);
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, item.Tile.Meta.CastTime ?? 1);
                     }
                     else
                     {
-                        PassTime(1000);
+                        PassTime(item.Tile.Meta.CastTime ?? 1);
                     }
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Self)
@@ -607,11 +607,11 @@ namespace Game.Engine
                     if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                     {
                         void passTime(object param) => PassTime((int)param);
-                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, 5);
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, item.Tile.Meta.CastTime ?? 1);
                     }
                     else
                     {
-                        PassTime(1000);
+                        PassTime(item.Tile.Meta.CastTime ?? 1);
                     }
                 }
 
@@ -852,11 +852,11 @@ namespace Game.Engine
                 if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                 {
                     void passTime(object param) => PassTime((int)param);
-                    AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, 1000);
+                    AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, item.Tile.Meta.CastTime ?? 1);
                 }
                 else
                 {
-                    PassTime(1000);
+                    PassTime(item.Tile.Meta.CastTime ?? 1);
                 }
             }
 
@@ -1061,44 +1061,50 @@ namespace Game.Engine
             Core.LogLine($"You awake feeling refreshed.", Color.DarkGreen);
         }
 
-        public void PassTime(int startTime, int timeToPass)
+        public void PassTime(int startTime, int? timeToPass)
         {
-            int startGameTime = startTime;
-
-            var input = new Types.TickInput() { InputType = Types.TickInputType.Wait };
-
-            while (Core.State.TimePassed - startGameTime < timeToPass)
+            if (timeToPass != null && timeToPass > 0)
             {
-                if (Core.State.ActiveThreadCount == 0)
-                {
-                    Advance(input);
-                }
-                else
-                {
-                    Application.DoEvents(); //The UI thread is a bitch.
-                }
-            }
-        }
+                int startGameTime = startTime;
 
+                var input = new Types.TickInput() { InputType = Types.TickInputType.Wait };
 
-        public void PassTime(int timeToPass)
-        {
-            int startGameTime = Core.State.TimePassed;
-
-            var input = new Types.TickInput() { InputType = Types.TickInputType.Wait };
-
-            while (Core.State.TimePassed - startGameTime < timeToPass)
-            {
-                lock (this)
+                while (Core.State.TimePassed - startGameTime < timeToPass)
                 {
                     if (Core.State.ActiveThreadCount == 0)
                     {
                         Advance(input);
-                        GameLogicThreadStarted.WaitOne();
                     }
                     else
                     {
                         Application.DoEvents(); //The UI thread is a bitch.
+                    }
+                }
+            }
+        }
+
+        public void PassTime(int ?timeToPass)
+        {
+            if (timeToPass != null && timeToPass > 0)
+            {
+
+                int startGameTime = Core.State.TimePassed;
+
+                var input = new Types.TickInput() { InputType = Types.TickInputType.Wait };
+
+                while (Core.State.TimePassed - startGameTime < timeToPass)
+                {
+                    lock (this)
+                    {
+                        if (Core.State.ActiveThreadCount == 0)
+                        {
+                            Advance(input);
+                            GameLogicThreadStarted.WaitOne();
+                        }
+                        else
+                        {
+                            Application.DoEvents(); //The UI thread is a bitch.
+                        }
                     }
                 }
             }
