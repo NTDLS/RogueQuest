@@ -2,6 +2,7 @@
   "Name":"Abaddon",
   "SubType": "MeleeWeapon",
   "Value": "4500",
+  "DamageType":"Fire",
   "DamageDice":"2",
   "DamageDiceFaces":"9",
   "DamageAdditional":"4",

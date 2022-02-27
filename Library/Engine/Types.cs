@@ -104,7 +104,8 @@
         Ice,
         Fire,
         Earth,
-        Electric
+        Electric,
+        Poison
     }
 
     public enum ItemEffect
@@ -122,6 +123,7 @@
         IncreaseIceResistance,
         IncreaseElectricResistance,
         IncreaseFireResistance,
+        IncreaseEarthResistance,
         DecreaseIceResistance,
         DecreaseElectricResistance,
         DecreaseFireResistance,

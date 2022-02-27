@@ -2,6 +2,7 @@
   "Name":"Apollyon",
   "SubType": "MeleeWeapon",
   "Value": "3200",
+  "DamageType":"Fire",
   "DamageDice":"4",
   "DamageDiceFaces":"5",
   "DamageAdditional":"2",

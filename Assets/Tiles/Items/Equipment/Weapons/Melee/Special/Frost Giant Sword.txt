@@ -2,6 +2,7 @@
   "Name":"Frost Giant Sword",
   "SubType": "MeleeWeapon",
   "Value": "4000",
+  "DamageType":"Ice",
   "DamageDice":"2",
   "DamageDiceFaces":"10",
   "DamageAdditional":"3",

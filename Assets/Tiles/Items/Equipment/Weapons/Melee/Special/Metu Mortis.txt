@@ -2,6 +2,7 @@
   "Name":"Beast",
   "SubType": "MeleeWeapon",
   "Value": "750",
+  "DamageType":"Electric",
   "DamageDice":"1",
   "DamageDiceFaces":"20",
   "DamageAdditional":"1",

@@ -310,6 +310,21 @@ namespace Game.Engine
 
                         Core.LogLine($"Fire resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
                     }
+
+                    #region IncreaseEarthResistance
+                    else if (item.Tile.Meta.Effect == ItemEffect.IncreaseEarthResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseEarthResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Earth resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
                     #endregion
                     #region DecreaseIceResistance
                     else if (item.Tile.Meta.Effect == ItemEffect.DecreaseIceResistance)
@@ -355,6 +370,21 @@ namespace Game.Engine
                         state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
 
                         Core.LogLine($"Fire resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
+                    }
+                    #endregion
+                    #region DecreaseEarthResistance
+                    else if (item.Tile.Meta.Effect == ItemEffect.DecreaseEarthResistance)
+                    {
+                        if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                        {
+                            throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        }
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseEarthResistance);
+                        state.ModificationAmount = totalAdded;
+                        state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+
+                        Core.LogLine($"Earth resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
                     }
                     #endregion
                     #region Heal.
@@ -1510,8 +1540,24 @@ namespace Game.Engine
                             damageToApply = (int) (damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)weapon?.SplashDamageRange));
                         }
 
+                        if (actorTakingDamage.Actor.Meta.WeaknessType == weapon.DamageType)
+                        {
+                            Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
+                            damageToApply = (damageToApply * 2);
+                        }
 
-                        //xxxxxxxxxxxxxxxxxxxxxxxxxxx
+                        if (weapon.DamageType == DamageType.Poison)
+                        {
+                            if (MathUtility.FlipCoin())
+                            {
+                                if (Core.State.ActorStates.HasState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned) == false)
+                                {
+                                    var state = Core.State.ActorStates.AddState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned);
+                                    state.ExpireTime = 10;
+                                    Core.LogLine($"{actorToAttack.Meta.Name} has been poisoned!", Color.DarkOliveGreen);
+                                }
+                            }
+                        }
 
                         if (hitType == HitType.CriticalHit)
                         {
@@ -1582,6 +1628,19 @@ namespace Game.Engine
                 {
                     int hostileHitsFor = CalculateDealtDamage(hitType, (int)hostile.Meta.Strength,
                         0, hostile.Meta.DamageDice ?? 0, hostile.Meta?.DamageDiceFaces ?? 0);
+
+                    if (hostile.Meta.DamageType == DamageType.Poison)
+                    {
+                        if (Core.State.ActorStates.HasState(Core.State.Character.UID, StateOfBeing.Poisoned) == false)
+                        {
+                            if (MathUtility.FlipCoin())
+                            {
+                                var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                                state.ExpireTime = 10;
+                                Core.LogLine($"You has been poisoned!", Color.DarkRed);
+                            }
+                        }
+                    }
 
                     #region Damage resistance...
                     if (hostile.Meta.DamageType == DamageType.Fire && fireResistance > 0)
@@ -1791,6 +1850,7 @@ namespace Game.Engine
                     Core.State.ActorStates.RemoveState(state);
                     Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
                 }
+                #endregion
                 else if (state.State == StateOfBeing.IncreaseEarthResistance)
                 {
                     Core.State.ActorStates.RemoveState(state);

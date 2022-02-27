@@ -1,7 +1,8 @@
 {
-  "Name":"Diabolus",
+  "Name":"Leviathans Bane",
   "SubType": "MeleeWeapon",
   "Value": "3600",
+  "DamageType":"Ice",
   "DamageDice":"3",
   "DamageDiceFaces":"10",
   "DamageAdditional":"2",
