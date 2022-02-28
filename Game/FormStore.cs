@@ -233,7 +233,7 @@ namespace Game
 
         private void Generic_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            var listView = listViewSelectedContainer as ListView;
+            var listView = sender as ListView;
 
             TileIdentifier pack = _currentlySelectedPack;
 
