@@ -34,7 +34,7 @@ namespace Game.Classes
             return "n/a";
         }
 
-        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile)
+        public static double UnitPrice(EngineCoreBase core, TileIdentifier tile)
         {
             if (tile.Meta.Value == null)
             {
@@ -42,8 +42,18 @@ namespace Game.Classes
             }
 
             double intelligenceDiscount = (core.State.Character.Intelligence / 100.0);
-            double value = ((tile.Meta.Value ?? 0.0) - ((tile.Meta.Value ?? 0.0) * intelligenceDiscount));
-            double qty = (tile.Meta.Charges ?? 0) + (tile.Meta.Quantity ?? 0);
+            return ((tile.Meta.Value ?? 0.0) - ((tile.Meta.Value ?? 0.0) * intelligenceDiscount));
+        }
+
+        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile, int? quantity)
+        {
+            if (tile.Meta.Value == null)
+            {
+                return 0;
+            }
+
+            double value = UnitPrice(core, tile);
+            double qty = (double)(quantity ?? 0);
 
             if (qty > 0)
             {
@@ -56,6 +66,17 @@ namespace Game.Classes
             }
 
             return 1;
+        }
+
+
+        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile)
+        {
+            if (tile.Meta.Value == null)
+            {
+                return 0;
+            }
+
+            return AskingPrice(core, tile, (tile.Meta.Charges ?? 0) + (tile.Meta.Quantity ?? 0));
         }
 
         public static int OfferPrice(EngineCoreBase core, TileIdentifier tile)

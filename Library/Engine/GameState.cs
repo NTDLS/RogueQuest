@@ -53,7 +53,6 @@ namespace Library.Engine
             }
         }
 
-
         public CustodyItem GetOrCreateInventoryItem(TileIdentifier tile)
         {
             var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tile.Meta.UID).FirstOrDefault();
@@ -68,5 +67,13 @@ namespace Library.Engine
             }
             return inventoryItem;
         }
+
+        public CustodyItem GetInventoryItem(TileIdentifier tile)
+        {
+            var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tile.Meta.UID).FirstOrDefault();
+
+            return inventoryItem;
+        }
+
     }
 }

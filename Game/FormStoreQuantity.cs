@@ -6,17 +6,18 @@ namespace Game
 {
     public partial class FormStoreQuantity : Form
     {
+        private EngineCoreBase _core;
         private TileIdentifier _tile;
         public FormStoreQuantity()
         {
             InitializeComponent();
         }
 
-        public int SplitQuantity
+        public int QuantityToBuy
         {
             get
             {
-                if (int.TryParse(textBoxSplitAmount.Text, out int value))
+                if (int.TryParse(textBoxBuyAmount.Text, out int value))
                 {
                     return value;
                 }
@@ -24,10 +25,11 @@ namespace Game
             }
         }
 
-        public FormStoreQuantity(TileIdentifier tile)
+        public FormStoreQuantity(EngineCoreBase core, TileIdentifier tile)
         {
             InitializeComponent();
 
+            _core = core;
             _tile = tile;
 
             labelItem.Text = $"{tile.Meta.Name}";
@@ -41,7 +43,8 @@ namespace Game
                 labelTotal.Text = $"{tile.Meta.Quantity:N0}";
             }
 
-            textBoxSplitAmount.Focus();
+            textBoxBuyAmount.Focus();
+            textBoxBuyAmount.Text = tile.Meta.Quantity.ToString();
         }
 
         private void FormStoreQuantity_Load(object sender, EventArgs e)
@@ -54,9 +57,9 @@ namespace Game
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void buttonOk_Click(object sender, EventArgs e)
+        private void buttonBuy_Click(object sender, EventArgs e)
         {
-            int splitQty = SplitQuantity;
+            int splitQty = QuantityToBuy;
             int totalQty = 0;
 
             if (_tile.Meta.Charges > 0)
@@ -68,7 +71,7 @@ namespace Game
                 totalQty = (int)_tile.Meta.Quantity;
             }
 
-            if (splitQty > 0 && splitQty < totalQty)
+            if (splitQty > 0 && splitQty <= totalQty)
             {
                 this.DialogResult = DialogResult.OK;
             }
