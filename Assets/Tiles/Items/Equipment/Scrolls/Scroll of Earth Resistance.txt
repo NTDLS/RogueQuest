@@ -11,6 +11,7 @@
   "ExpireTime": "60",
   "Weight":"1",
   "Bulk":"2",
+  "Rarity":"65",
   "CanStack":"True",
   "CanWalkOn":"True",
   "Level":"1"

@@ -10,6 +10,7 @@
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
   "Weight":"1",
   "Bulk":"2",
+  "Rarity":"70",
   "CanStack":"True",
   "CanWalkOn":"True",
   "Level":"2"

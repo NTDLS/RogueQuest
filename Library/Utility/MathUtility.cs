@@ -103,7 +103,6 @@ namespace Library.Utility
 
         #region Random.
 
-
         public static bool ChanceIn(int n)
         {
             return (Random.Next(0, n * 10) % n) == n/2;

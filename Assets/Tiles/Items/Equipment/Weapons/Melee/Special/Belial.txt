@@ -8,6 +8,7 @@
   "DamageAdditional":"2",
   "Weight":"100",
   "Bulk":"145",
+  "Rarity":"0",
   "Level":"25",
   "IsUnique": "True"
 }

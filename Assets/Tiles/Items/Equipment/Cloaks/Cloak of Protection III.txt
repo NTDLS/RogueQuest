@@ -1,9 +1,10 @@
 {
-  "Name":"Cloak of Protection +2",
+  "Name":"Cloak of Protection III",
   "SubType": "Garment",
   "Value": "180",
   "AC":"3",
   "Weight":"15",
   "Bulk":"40",
+  "Rarity":"85",
   "Level":"2"
 }

@@ -9,6 +9,7 @@
   "ExpireTime": "10",
   "Weight":"10",
   "Bulk":"9",
+  "Rarity":"40",
   "CanStack":"True",
   "CanWalkOn":"True",
   "Level":"1",

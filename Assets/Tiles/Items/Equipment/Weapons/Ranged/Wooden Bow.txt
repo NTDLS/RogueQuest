@@ -8,6 +8,7 @@
   "DamageAdditional":"0",
   "Weight":"10",
   "Bulk":"9",
+  "Rarity":"100",
   "CanStack":"False",
   "CanWalkOn":"True",
   "Level":"1"

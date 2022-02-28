@@ -15,6 +15,7 @@
   "UsageAnimationTilePath":"Animations\\Hits\\Explosion1_256_256",
   "Weight":"1",
   "Bulk":"2",
+  "Rarity":"40",
   "CanStack":"True",
   "CanWalkOn":"True",
   "Level":"3"

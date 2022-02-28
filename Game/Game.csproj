@@ -13,6 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FormStoreQuantity.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormUseAction.cs">
       <SubType>Form</SubType>
     </Compile>

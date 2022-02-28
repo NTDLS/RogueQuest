@@ -7,5 +7,6 @@
   "DamageAdditional":"0",
   "Weight":"30",
   "Bulk":"100",
+  "Rarity":"70",
   "Level":"3"
 }

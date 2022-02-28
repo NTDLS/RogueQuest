@@ -163,7 +163,7 @@ namespace Game
                 }
             }
 
-            int offerPrice = OfferPrice(draggedItemTag.Tile);
+            int offerPrice = StoreAndInventory.OfferPrice(Core, draggedItemTag.Tile);
 
             var result = MessageBox.Show($"I'll give you {offerPrice:N0} gold for that.\r\nTake the offer?",
                 "Sell the item?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -183,45 +183,10 @@ namespace Game
                 }
             }
 
-            bool wasStacked = false;
+            //We do nto stack items when sold to the store.
 
-            if (inventoryItem.Tile.Meta.CanStack == true)
-            {
-                //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
-                var existingInventoryItem = _persistentStore.Items
-                    .Where(o => o.TilePath == draggedItemTag.Tile.TilePath).FirstOrDefault();
-
-                if (existingInventoryItem != null)
-                {
-                    existingInventoryItem.Meta.Quantity = (existingInventoryItem.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
-                    Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
-
-                    var listViewItem = FindListViewObjectByUid(listViewStore, (Guid)existingInventoryItem.Meta.UID);
-                    if (listViewItem != null)
-                    {
-                        string text = existingInventoryItem.Meta.Name;
-
-                        if (existingInventoryItem.Meta.CanStack == true && existingInventoryItem.Meta.Quantity > 0)
-                        {
-                            text += $" ({existingInventoryItem.Meta.Quantity})";
-                        }
-                        else if (existingInventoryItem.Meta.CanStack == false && existingInventoryItem.Meta.Charges > 0)
-                        {
-                            text += $" ({existingInventoryItem.Meta.Charges})";
-                        }
-
-                        listViewItem.Text = text;
-                    }
-
-                    wasStacked = true;
-                }
-            }
-
-            if (wasStacked == false)
-            {
-                AddItemToListView(listViewStore, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
-                _persistentStore.Items.Add(draggedItemTag.Tile);
-            }
+            AddItemToListView(listViewStore, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+            _persistentStore.Items.Add(draggedItemTag.Tile);
 
             Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
@@ -365,7 +330,10 @@ namespace Game
                 listViewPlayerPack.Items.Clear();
             }
 
-            int askingPrice = AskingPrice(draggedItemTag.Tile);
+
+
+
+            int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
             if (draggedItem.ListView == listViewStore)
             {
                 var result = MessageBox.Show($"Item will cost you {askingPrice:N0} gold.\r\nPay the store?",
@@ -599,7 +567,7 @@ namespace Game
                 }
             }
 
-            int askingPrice = AskingPrice(draggedItemTag.Tile);
+            int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
             if (draggedItem.ListView == listViewStore)
             {
                 var result = MessageBox.Show($"Item will cost you {askingPrice:N0} gold.\r\nPay the store?",
@@ -799,7 +767,9 @@ namespace Game
                 var lv = sender as ListView;
                 var item = lv.Items[0].Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name;
+                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+
+                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 
                 if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
                     text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
@@ -821,7 +791,7 @@ namespace Game
                     _interrogationTip.Show(text, lv, location, 5000);
                 }
 
-                text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
+                text += "\r\n" + $"Offer: {StoreAndInventory.OfferPrice(Core, item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -900,7 +870,7 @@ namespace Game
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
             var clonedItem = draggedItemTag.Tile.Clone(true);
-            int askingPrice = AskingPrice(draggedItemTag.Tile);
+            int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
 
             if (draggedItem.ListView == listViewStore)
             {
@@ -1033,7 +1003,9 @@ namespace Game
 
                 var item = selection.Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name;
+                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+
+                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 
                 if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
                     text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
@@ -1049,7 +1021,7 @@ namespace Game
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)((item.Tile.Meta.Quantity ?? 0) * item.Tile.Meta.Value)):N0} gold";
 
-                text += "\r\n" + $"Offer: {OfferPrice(item.Tile):N0}";
+                text += "\r\n" + $"Offer: {StoreAndInventory.OfferPrice(Core, item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -1073,7 +1045,9 @@ namespace Game
 
                 var item = selection.Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name;
+                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+
+                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 
                 if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
                     text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
@@ -1089,7 +1063,7 @@ namespace Game
                 else if (item.Tile.Meta.SubType == ActorSubType.Money)
                     text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
 
-                text += "\r\n" + $"Asking Price: {AskingPrice(item.Tile):N0}";
+                text += "\r\n" + $"Asking Price: {StoreAndInventory.AskingPrice(Core, item.Tile):N0}";
 
                 if (string.IsNullOrWhiteSpace(text) == false)
                 {
@@ -1190,9 +1164,28 @@ namespace Game
                         && o.Meta.Value > 0
                         && persistentStore.Items.Where(i => i.TilePath == o.TilePath).FirstOrDefault() == null //Don't add duplicate items.
                         && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified)
+                        && (o.Meta.Rarity ?? 0) > 0
+                        && (o.Meta.Rarity == 100 || Library.Utility.MathUtility.ChanceIn(100 - (int)o.Meta.Rarity))
                         && (o.Meta.IsUnique ?? false) == false
                         && o.Meta.Level <= Core.State.Character.Level)
                     .Cast<TileIdentifier>();
+
+
+                foreach (var item in itemsInStore)
+                {
+                    int max = (int)item.Meta.Rarity / 4;
+                    if (max < 5) max = 5;
+                    if (max > 20) max = 20;
+
+                    if (item.Meta.CanStack == true)
+                    {
+                        item.Meta.Quantity = Library.Utility.MathUtility.RandomNumber(4, max);
+                    }
+                    else if (item.Meta.SubType == ActorSubType.Wand)
+                    {
+                        item.Meta.Charges = Library.Utility.MathUtility.RandomNumber(4, max);
+                    }
+                }
 
                 persistentStore.Items.AddRange(itemsInStore);
 
@@ -1210,41 +1203,6 @@ namespace Game
             listView.Sort();
 
             return persistentStore;
-        }
-
-        int AskingPrice(TileIdentifier tile)
-        {
-            if (tile.Meta.Value == null)
-            {
-                return 0;
-            }
-
-            double intelligenceDiscount = (Core.State.Character.Intelligence / 100.0);
-            int value = (int)((tile.Meta.Value ?? 0.0) - (int)(tile.Meta.Value * intelligenceDiscount));
-            if (value > 0)
-            {
-                return value;
-            }
-
-            return 1;
-        }
-
-        int OfferPrice(TileIdentifier tile)
-        {
-            if (tile.Meta.Value == null)
-            {
-                return 0;
-            }
-
-            double intelligenceBonus = (Core.State.Character.Intelligence / 100.0);
-            int halfValue = (int)((tile.Meta.Value ?? 0.0) / 2.0);
-            int value = (int)(halfValue + (halfValue * intelligenceBonus));
-            if (value > 0)
-            {
-                return value;
-            }
-
-            return 1;
         }
 
         void PopulateContainerFromPack(ListView listView, TileIdentifier containerTile)

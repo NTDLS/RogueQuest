@@ -48,6 +48,7 @@ namespace Library.Engine
         /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
         /// </summary>
         public bool HasBeenViewed { get; set; }
+        public int? Rarity { get; set; } //100 being common and 0 being literally impossible (not in stores or dropped randomly).
         public bool? OnlyDialogOnce { get; set; }
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; } //Remember that items with charges are NOT stackable.
@@ -177,6 +178,7 @@ namespace Library.Engine
             this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
             this.UsageAnimationTilePath = with.UsageAnimationTilePath ?? this.UsageAnimationTilePath;
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
+            this.Rarity = with.Rarity ?? this.Rarity;
             this.WeaknessType = with.WeaknessType ?? this.WeaknessType;
             this.DamageType = with.DamageType ?? this.DamageType;
             this.IsUnique = with.IsUnique ?? this.IsUnique;

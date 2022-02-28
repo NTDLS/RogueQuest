@@ -4,6 +4,7 @@
   "Value": "20",
   "Weight":"10",
   "Bulk":"9",
+  "Rarity":"100",
   "AC":"1",
   "CanStack":"False",
   "CanWalkOn":"True",

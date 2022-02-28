@@ -3,6 +3,7 @@
   "SubType":"Belt",
   "Weight":"5",
   "Bulk":"10",
+  "Rarity":"1",
   "Value":"2200",
   "ItemCapacity":"7",
   "BulkCapacity":"7000",

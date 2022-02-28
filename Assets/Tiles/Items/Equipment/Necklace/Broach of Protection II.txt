@@ -1,9 +1,10 @@
 {
-  "Name":"Broach of Protection +1",
+  "Name":"Broach of Protection II",
   "SubType": "Necklace",
   "Value": "20",
   "AC":"2",
   "Weight":"1",
   "Bulk":"1",
+  "Rarity":"80",
   "Level":"1"
 }

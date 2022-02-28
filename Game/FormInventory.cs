@@ -825,7 +825,9 @@ namespace Game
                 var lv = sender as ListView;
                 var item = lv.Items[0].Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name;
+                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+
+                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 
                 if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
                     text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
@@ -1053,7 +1055,9 @@ namespace Game
 
                 var item = selection.Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name;
+                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+
+                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 
                 if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
                     text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";

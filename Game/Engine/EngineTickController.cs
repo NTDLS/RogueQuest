@@ -210,7 +210,7 @@ namespace Game.Engine
                     if (item.Tile.Meta.Effect == ItemEffect.SummonMonster)
                     {
                         var randos = Core.Materials.Where(o => o.Meta.ActorClass ==  ActorClassName.ActorHostileBeing
-                            && o.Meta.Level >= 1 && o.Meta.Level <= Core.State.Character.Level).ToList();
+                            && o.Meta.Level >= 1 && o.Meta.Level <= item.Tile.Meta.Level).ToList();
 
                         if (randos.Count > 0)
                         {
@@ -576,7 +576,7 @@ namespace Game.Engine
                     #region Poison
                     else if (item.Tile.Meta.Effect == ItemEffect.Poison)
                     {
-                        int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
+                        int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.1); //10% of the remaining hit points.
                         if (damage == 0) damage = 1;
                         Core.State.Character.AvailableHitpoints -= damage;
 
@@ -821,7 +821,7 @@ namespace Game.Engine
                 #region Poison
                 else if (item.Tile.Meta.Effect == ItemEffect.Poison)
                 {
-                    int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
+                    int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.1);//10% of the remaining hit points.
                     if (damage == 0) damage = 1;
                     Core.State.Character.AvailableHitpoints -= damage;
 
@@ -1554,7 +1554,7 @@ namespace Game.Engine
 
                         if (weapon.DamageType == DamageType.Poison)
                         {
-                            if (MathUtility.FlipCoin())
+                            if (MathUtility.FlipCoin()) //50% chance
                             {
                                 if (Core.State.ActorStates.HasState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned) == false)
                                 {
@@ -1849,10 +1849,6 @@ namespace Game.Engine
                 #region Poison
                 else if (state.State == StateOfBeing.Poisoned)
                 {
-                    int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
-                    if (damage == 0) damage = 1;
-                    Core.State.Character.AvailableHitpoints -= damage;
-
                     Core.State.ActorStates.RemoveState(state);
                     Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
                 }
@@ -2061,7 +2057,7 @@ namespace Game.Engine
             {
                 if (actor == Core.Player)
                 {
-                    int damage = (int)((double)Core.State.Character.Hitpoints * 0.1);
+                    int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.1); //10% of the remaining hit points.
                     if (damage == 0) damage = 1;
                     Core.State.Character.AvailableHitpoints -= damage;
                     Core.LogLine($"{Core.State.Character.Name} took {damage} poison damage!", Color.DarkRed);
@@ -2077,7 +2073,7 @@ namespace Game.Engine
                 }
                 else
                 {
-                    int damage = (int)((actor.Meta.OriginalHitPoints ?? 0) * 0.1);
+                    int damage = (int)((actor.Meta.HitPoints ?? 0) * 0.1); //10% of the remaining hit points.
                     if (damage == 0) damage = 1;
                     Core.LogLine($"{actor.Meta.Name} took {damage} poison damage!", Color.DarkGreen);
 
