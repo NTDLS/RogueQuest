@@ -79,6 +79,7 @@
         AlchemistStore,
         MageStore,
         ArmorSmithStore,
+        GeneralStore,
         WeaponSmithStore,
         RuinsStore
     }

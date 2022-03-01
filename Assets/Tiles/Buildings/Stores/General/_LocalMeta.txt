@@ -1,0 +1,4 @@
+{
+  "SubType": "GeneralStore",
+  "Name": "General Store"
+}

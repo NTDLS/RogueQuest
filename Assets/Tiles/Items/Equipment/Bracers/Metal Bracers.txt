@@ -1,0 +1,10 @@
+{
+  "Name":"Metal Bracers",
+  "SubType": "Bracers",
+  "Value": "120",
+  "AC":"4",
+  "Weight":"22",
+  "Bulk":"60",
+  "Rarity":"40",
+  "Level":"3"
+}

@@ -950,12 +950,20 @@ namespace Game
             else if (_storeTileMeta.SubType == ActorSubType.ArmorSmithStore)
             {
                 subtypes.Add(ActorSubType.Armor);
+                subtypes.Add(ActorSubType.Helment);
+                subtypes.Add(ActorSubType.Bracers);
+                subtypes.Add(ActorSubType.Gauntlets);
+                subtypes.Add(ActorSubType.Shield);
+            }
+            else if (_storeTileMeta.SubType == ActorSubType.GeneralStore)
+            {
                 subtypes.Add(ActorSubType.Boots);
                 subtypes.Add(ActorSubType.Belt);
                 subtypes.Add(ActorSubType.Garment);
-                subtypes.Add(ActorSubType.Helment);
-                subtypes.Add(ActorSubType.Gauntlets);
-                subtypes.Add(ActorSubType.Shield);
+                subtypes.Add(ActorSubType.Chest);
+                subtypes.Add(ActorSubType.Pack);
+                subtypes.Add(ActorSubType.Necklace);
+                subtypes.Add(ActorSubType.Ring);
             }
             else if (_storeTileMeta.SubType == ActorSubType.AlchemistStore)
             {
@@ -965,8 +973,6 @@ namespace Game
             {
                 subtypes.Add(ActorSubType.Scroll);
                 subtypes.Add(ActorSubType.Wand);
-                subtypes.Add(ActorSubType.Necklace);
-                subtypes.Add(ActorSubType.Ring);
             }
 
             return subtypes;
