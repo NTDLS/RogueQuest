@@ -321,16 +321,29 @@ namespace Game
                 Constants.Alert("You can only store coins in the purse");
                 return;
             }
+            if (pack.Meta.UID == draggedItemTag.Tile.Meta.UID)
+            {
+                //A container cannot contain itsself.
+                Constants.Alert($"A {pack.Meta.Name} cannot contain itself.");
+                return;
+            }
+            if (Core.State.GetInventoryItem(draggedItemTag.Tile)?.ContainerId == (Guid)pack.Meta.UID)
+            {
+                //No need to do anything if we are dragging to the same container.
+                return;
+            }
 
             int maxBulk = (int)pack.Meta.BulkCapacity;
             int maxWeight = (int)pack.Meta.WeightCapacity;
             int? maxItems = pack.Meta.ItemCapacity;
 
-            int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
+            int askingPrice = 0;
             int quantityToMove = (draggedItemTag.Tile.Meta.Quantity ?? 1);
 
             if (draggedItem.ListView == listViewStore)
             {
+                askingPrice = 0; StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
+
                 if (draggedItemTag.Tile.Meta.CanStack == true && draggedItemTag.Tile.Meta.Quantity > 0)
                 {
                     using (var formQty = new FormStoreQuantity(Core, draggedItemTag.Tile))
@@ -360,16 +373,6 @@ namespace Game
                     Constants.Alert("You don't have enough money!");
                     return;
                 }
-
-                Core.State.Character.DeductMoney(askingPrice);
-                if (pack != null && pack.Meta.SubType == ActorSubType.Purse)
-                {
-                    var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
-                    if (purse.Tile != null)
-                    {
-                        PopulateContainerFromPack(destination, purse.Tile);
-                    }
-                }
             }
 
             //Do weight/bulk math.
@@ -381,7 +384,7 @@ namespace Game
             }
 
             var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Sum(o => o.Tile.Meta.Bulk * (o.Tile.Meta.Quantity ?? 1));
-            if((draggedItemTag.Tile.Meta.Bulk * quantityToMove) + currentPackBulk > maxBulk)
+            if ((draggedItemTag.Tile.Meta.Bulk * quantityToMove) + currentPackBulk > maxBulk)
             {
                 Constants.Alert($"{draggedItemTag.Tile.Meta.Name} is too bulky for your {pack.Meta.Name}. Drop something or move to free hand?");
                 return;
@@ -403,16 +406,17 @@ namespace Game
                 listViewPlayerPack.Items.Clear();
             }
 
-            if (pack.Meta.UID == draggedItemTag.Tile.Meta.UID)
+            if (askingPrice > 0)
             {
-                //A container cannot contain itsself.
-                Constants.Alert($"A {pack.Meta.Name} cannot contain itself.");
-                return;
-            }
-            if (Core.State.GetInventoryItem(draggedItemTag.Tile)?.ContainerId == (Guid)pack.Meta.UID)
-            {
-                //No need to do anything if we are dragging to the same container.
-                return;
+                Core.State.Character.DeductMoney(askingPrice);
+                if (pack != null && pack.Meta.SubType == ActorSubType.Purse)
+                {
+                    var purse = Core.State.Character.GetEquipSlot(EquipSlot.Purse);
+                    if (purse.Tile != null)
+                    {
+                        PopulateContainerFromPack(destination, purse.Tile);
+                    }
+                }
             }
 
             bool wasStacked = false;

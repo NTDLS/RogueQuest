@@ -1,4 +1,5 @@
-﻿using Library.Engine;
+﻿using Game.Classes;
+using Library.Engine;
 using System;
 using System.Windows.Forms;
 
@@ -33,23 +34,23 @@ namespace Game
             _tile = tile;
 
             labelItem.Text = $"{tile.Meta.Name}";
-
-            if (tile.Meta.Charges > 0)
-            {
-                labelTotal.Text = $"{tile.Meta.Charges:N0}";
-            }
-            else if (tile.Meta.Quantity > 0)
-            {
-                labelTotal.Text = $"{tile.Meta.Quantity:N0}";
-            }
+            textBoxBuyAmount.Minimum = 1;
+            textBoxBuyAmount.Maximum = (int)tile.Meta.Quantity;
+            textBoxBuyAmount.Text = tile.Meta.Quantity.ToString();
+            labelStoreQuantity.Text = $"{tile.Meta.Quantity:N0}";
 
             textBoxBuyAmount.Focus();
-            textBoxBuyAmount.Text = tile.Meta.Quantity.ToString();
+        }
+
+        private void textBoxBuyAmount_ValueChanged(object sender, EventArgs e)
+        {
+            labelTotalPrice.Text = $"{StoreAndInventory.AskingPrice(_core, _tile, QuantityToBuy):N0}";
         }
 
         private void FormStoreQuantity_Load(object sender, EventArgs e)
         {
             this.CancelButton = buttonCancel;
+            this.AcceptButton = buttonBuy;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)

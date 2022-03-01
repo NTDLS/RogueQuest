@@ -74,6 +74,5 @@ namespace Library.Engine
 
             return inventoryItem;
         }
-
     }
 }
