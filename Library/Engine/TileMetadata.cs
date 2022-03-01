@@ -27,8 +27,8 @@ namespace Library.Engine
         private int? _BulkCapacity;
         private int? _WeightCapacity;
         private int? _ItemCapacity;
-        private int? _Weight;
-        private int? _Bulk;
+        private double? _Weight;
+        private double? _Bulk;
         private int? _Dexterity;
         private int? _Charges;
         private int? _Strength;
@@ -101,9 +101,9 @@ namespace Library.Engine
 
         public int? ItemCapacity { get { return _ItemCapacity == 0 ? null : _ItemCapacity; } set { _ItemCapacity = value; } }
 
-        public int? Weight { get { return _Weight == 0 ? null : _Weight; } set { _Weight = value; } }
+        public double? Weight { get { return _Weight == 0 ? null : _Weight; } set { _Weight = value; } }
 
-        public int? Bulk { get { return _Bulk == 0 ? null : _Bulk; } set { _Bulk = value; } }
+        public double? Bulk { get { return _Bulk == 0 ? null : _Bulk; } set { _Bulk = value; } }
 
         public int? Dexterity { get { return _Dexterity == 0 ? null : _Dexterity; } set { _Dexterity = value; } }
 

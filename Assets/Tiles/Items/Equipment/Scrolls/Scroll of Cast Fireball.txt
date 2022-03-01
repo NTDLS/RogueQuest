@@ -13,7 +13,7 @@
   "IsConsumable":"True",
   "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Scroll of Cast Fireball Projectile",
   "UsageAnimationTilePath":"Animations\\Hits\\Explosion1_256_256",
-  "Weight":"1",
+  "Weight":"0.05",
   "Bulk":"2",
   "Rarity":"40",
   "CanStack":"True",

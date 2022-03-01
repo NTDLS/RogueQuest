@@ -1897,7 +1897,14 @@ namespace ScenarioEdit
                                     {
                                         foreach (var tile in selectedItems)
                                         {
-                                            tile.Meta.Bulk = int.Parse(dialog.PropertyValue);
+                                            tile.Meta.Bulk = double.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Weight")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Weight = double.Parse(dialog.PropertyValue);
                                         }
                                     }
                                     else if (selectedRow.Text == "Bulk Capacity")
@@ -2389,18 +2396,19 @@ namespace ScenarioEdit
             {
                 if (item.Meta.SubType == ActorSubType.MeleeWeapon || item.Meta.SubType == ActorSubType.RangedWeapon)
                 {
-                    if (weapons.PhysicalNumberOfRows == 0) CreateHeader(weapons, "Name,Type,Damage Type,Level,Damage,Weight,Bulk,Value,Rarity");
+                    if (weapons.PhysicalNumberOfRows == 0) CreateHeader(weapons, "Name,Level,Value,Bulk,Weight,Rarity,Type,Damage Type,Damage");
                     IRow body = weapons.CreateRow(weapons.PhysicalNumberOfRows);
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Level ?? 0));
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Value ?? 0));
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Bulk ?? 0));
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Weight ?? 0));
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
                     body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
                     body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
-                    body.CreateCell(cell++).SetCellValue((item.Meta.Level ?? 0));
                     body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
-                    body.CreateCell(cell++).SetCellValue((item.Meta.Weight ?? 0));
-                    body.CreateCell(cell++).SetCellValue((item.Meta.Bulk ?? 0));
-                    body.CreateCell(cell++).SetCellValue((item.Meta.Value ?? 0));
-                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
                 }
 
                 if (item.Meta.ActorClass == ActorClassName.ActorHostileBeing)
@@ -2410,6 +2418,7 @@ namespace ScenarioEdit
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
                     body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+
                     body.CreateCell(cell++).SetCellValue(item.Meta.HitPoints ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.AC ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.Dexterity ?? 0);
@@ -2422,18 +2431,19 @@ namespace ScenarioEdit
 
                 if (item.Meta.SubType == ActorSubType.Projectile)
                 {
-                    if (projectiles.PhysicalNumberOfRows == 0) CreateHeader(projectiles, "Name,Type,Damage Type,Level,Damage,Weight,Bulk,Value,Rarity");
+                    if (projectiles.PhysicalNumberOfRows == 0) CreateHeader(projectiles, "Name,Level,Value,Bulk,Weight,Rarity,Type,Damage Type,Damage");
                     IRow body = projectiles.CreateRow(projectiles.PhysicalNumberOfRows);
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
                     body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
                     body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
                 }
 
                 if (item.Meta.SubType == ActorSubType.Armor
@@ -2446,17 +2456,19 @@ namespace ScenarioEdit
                     || item.Meta.SubType == ActorSubType.Ring
                     || item.Meta.SubType == ActorSubType.Shield)
                 {
-                    if (equipment.PhysicalNumberOfRows == 0) CreateHeader(equipment, "Name,Type,Damage Type,Level,AC,Weight,Bulk,Value,Rarity");
+                    if (equipment.PhysicalNumberOfRows == 0) CreateHeader(equipment, "NameLevel,Value,Bulk,Weight,Rarity,Type,Damage Type,AC");
                     IRow body = equipment.CreateRow(equipment.PhysicalNumberOfRows);
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
                     body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
                     body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.AC ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
                 }
 
@@ -2464,24 +2476,26 @@ namespace ScenarioEdit
                     || item.Meta.SubType == ActorSubType.Chest
                     || item.Meta.SubType == ActorSubType.Pack)
                 {
-                    if (containers.PhysicalNumberOfRows == 0) CreateHeader(containers, "Name,Type,Item Capacity,Bulk Capacity,Weight Capacity,Level,Weight,Bulk,Value,Rarity");
+                    if (containers.PhysicalNumberOfRows == 0) CreateHeader(containers, "Name,Level,Value,Bulk,Weight,Rarity,Type,Item Capacity,Bulk Capacity,Weight Capacity");
                     IRow body = containers.CreateRow(containers.PhysicalNumberOfRows);
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
                     body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
                     body.CreateCell(cell++).SetCellValue(item.Meta.ItemCapacity ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.BulkCapacity ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.WeightCapacity ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
                 }
 
                 if (item.Meta.SubType == ActorSubType.Scroll)
                 {
-                    if (scrolls.PhysicalNumberOfRows == 0) CreateHeader(scrolls, "Name,Effect,Damage,Duration,Cast Time,Level,Weight,Bulk,Value");
+                    if (scrolls.PhysicalNumberOfRows == 0) CreateHeader(scrolls, "Name,Level,Value,Bulk,Weight,Rarity,Effect,Damage,Duration,Cast Time");
 
                     string effect = $"{item.Meta.Effect}";
 
@@ -2493,19 +2507,21 @@ namespace ScenarioEdit
                     IRow body = scrolls.CreateRow(scrolls.PhysicalNumberOfRows);
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
                     body.CreateCell(cell++).SetCellValue(effect);
                     body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
                     body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.CastTime ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
                 }
 
                 if (item.Meta.SubType == ActorSubType.Wand)
                 {
-                    if (wands.PhysicalNumberOfRows == 0) CreateHeader(wands, "Name,Effect,Damage,Duration,Cast Time,Level,Weight,Bulk,Value");
+                    if (wands.PhysicalNumberOfRows == 0) CreateHeader(wands, "Name,Level,Value,Bulk,Weight,Rarity,Effect,Damage,Duration,Cast Time");
 
                     string effect = $"{item.Meta.Effect}";
 
@@ -2517,19 +2533,21 @@ namespace ScenarioEdit
                     IRow body = wands.CreateRow(wands.PhysicalNumberOfRows);
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
                     body.CreateCell(cell++).SetCellValue(effect);
                     body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
                     body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
                     body.CreateCell(cell++).SetCellValue(item.Meta.CastTime ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
                 }
 
                 if (item.Meta.SubType == ActorSubType.Potion)
                 {
-                    if (potions.PhysicalNumberOfRows == 0) CreateHeader(potions, "Name,Effect,Duration,Level,Weight,Bulk,Value");
+                    if (potions.PhysicalNumberOfRows == 0) CreateHeader(potions, "Name,Level,Value,Bulk,Weight,Rarity,Effect,Duration");
 
                     string effect = $"{item.Meta.Effect}";
 
@@ -2541,12 +2559,14 @@ namespace ScenarioEdit
                     IRow body = potions.CreateRow(potions.PhysicalNumberOfRows);
                     int cell = 0;
                     body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
                     body.CreateCell(cell++).SetCellValue(effect);
                     body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
-                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
                 }
             }
 

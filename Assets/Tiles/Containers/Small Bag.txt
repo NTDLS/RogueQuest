@@ -6,5 +6,8 @@
   "CanWalkOn":"True",
   "IsContainer":"True",
   "Weight":"2",
-  "Bulk":"20"
+  "Bulk":"20",
+  "Value":"40",
+  "Rarity":"100",
+  "Level":"1"
 }

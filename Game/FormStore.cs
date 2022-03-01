@@ -333,8 +333,8 @@ namespace Game
                 return;
             }
 
-            int maxBulk = (int)pack.Meta.BulkCapacity;
-            int maxWeight = (int)pack.Meta.WeightCapacity;
+            double maxBulk = pack.Meta.BulkCapacity ?? 0;
+            double maxWeight = pack.Meta.WeightCapacity ?? 0;
             int? maxItems = pack.Meta.ItemCapacity;
 
             int askingPrice = 0;
@@ -376,14 +376,14 @@ namespace Game
             }
 
             //Do weight/bulk math.
-            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Sum(o => o.Tile.Meta.Weight * (o.Tile.Meta.Quantity ?? 1));
+            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if ((draggedItemTag.Tile.Meta.Weight * quantityToMove) + currentPackWeight > maxWeight)
             {
                 Constants.Alert($"{draggedItemTag.Tile.Meta.Name} is too heavy for your {pack.Meta.Name}. Drop something or move to free hand?");
                 return;
             }
 
-            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Sum(o => o.Tile.Meta.Bulk * (o.Tile.Meta.Quantity ?? 1));
+            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if ((draggedItemTag.Tile.Meta.Bulk * quantityToMove) + currentPackBulk > maxBulk)
             {
                 Constants.Alert($"{draggedItemTag.Tile.Meta.Name} is too bulky for your {pack.Meta.Name}. Drop something or move to free hand?");
@@ -610,8 +610,8 @@ namespace Game
                 if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
 
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
                 if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
@@ -846,8 +846,8 @@ namespace Game
                 if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
 
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
                 if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
@@ -888,8 +888,8 @@ namespace Game
                 if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
 
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N0}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N0}";
+                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
+                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
                 if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
 
                 if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)

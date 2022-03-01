@@ -57,19 +57,19 @@ namespace Game.Engine
             Guid putItemsIntoContainerId = (Guid)pack.Tile.Meta.UID;
             var groundContainer = Core.Actors.Tiles.Where(o => o.Meta.UID == (Guid)packOnGround.Meta.UID).First();
 
-            int maxBulk = (int)pack.Tile.Meta.BulkCapacity;
-            int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
+            double maxBulk = pack.Tile.Meta.BulkCapacity ?? 0;
+            double maxWeight = pack.Tile.Meta.WeightCapacity ?? 0;
 
-            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Weight);
-            var sourceContainerWeight = Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+            var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
+            var sourceContainerWeight = Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if (currentPackWeight + sourceContainerWeight > maxWeight)
             {
                 Core.LogLine($"This pack contains items too bulky for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                 return;
             }
 
-            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
-            var sourceContainerBulk = Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+            var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
+            var sourceContainerBulk = Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if (currentPackBulk + sourceContainerBulk > maxWeight)
             {
                 Core.LogLine($"This pack contains items too heavy for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
@@ -123,8 +123,8 @@ namespace Game.Engine
         private void PickupChestContents(Guid containerId)
         {
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
-            int maxBulk = (int)pack.Tile.Meta.BulkCapacity;
-            int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
+            double maxBulk = pack.Tile.Meta.BulkCapacity ?? 0;
+            double maxWeight = pack.Tile.Meta.WeightCapacity ?? 0;
             var containerContents = Core.State.Items.Where(o => o.ContainerId == containerId);
 
             var itemsToDelete = new List<Guid>();
@@ -132,14 +132,14 @@ namespace Game.Engine
             foreach (var item in containerContents)
             {
                 //Do weight/bulk math.
-                var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Weight);
+                var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                 if (item.Tile.Meta.Weight + currentPackWeight > maxWeight)
                 {
                     Core.LogLine($"{item.Tile.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                     break;
                 }
 
-                var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => o.Tile.Meta.Bulk);
+                var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                 if (item.Tile.Meta.Bulk + currentPackBulk > maxBulk)
                 {
                     Core.LogLine($"{item.Tile.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
@@ -956,8 +956,8 @@ namespace Game.Engine
             }
 
             Guid containerId = (Guid)pack.Tile.Meta.UID;
-            int maxBulk = (int)pack.Tile.Meta.BulkCapacity;
-            int maxWeight = (int)pack.Tile.Meta.WeightCapacity;
+            double maxBulk = pack.Tile.Meta.BulkCapacity ?? 0;
+            double maxWeight = pack.Tile.Meta.WeightCapacity ?? 0;
             int? maxItems = pack.Tile.Meta.ItemCapacity;
 
             foreach (var item in itemsUnderfoot)
@@ -977,14 +977,14 @@ namespace Game.Engine
                 else
                 {
                     //Do weight/bulk math.
-                    var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Weight);
+                    var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == containerId).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                     if (item.Meta.Weight + currentPackWeight > maxWeight)
                     {
                         Core.LogLine($"{item.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                         break;
                     }
 
-                    var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == containerId).Sum(o => o.Tile.Meta.Bulk);
+                    var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == containerId).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                     if (item.Meta.Bulk + currentPackBulk > maxBulk)
                     {
                         Core.LogLine($"{item.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");

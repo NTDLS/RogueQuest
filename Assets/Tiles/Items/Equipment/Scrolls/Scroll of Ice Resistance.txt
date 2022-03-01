@@ -9,7 +9,7 @@
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
   "ExpireTime": "60",
-  "Weight":"1",
+  "Weight":"0.05",
   "Bulk":"2",
   "Rarity":"65",
   "CanStack":"True",

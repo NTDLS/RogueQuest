@@ -3,8 +3,8 @@
   "SubType": "Necklace",
   "Value": "10",
   "AC":"1",
-  "Weight":"1",
-  "Bulk":"1",
+  "Weight":"0.01",
+  "Bulk":"0.025",
   "Rarity":"100",
   "Level":"1"
 }

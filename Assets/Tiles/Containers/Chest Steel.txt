@@ -4,5 +4,8 @@
   "Weight":"1000",
   "Bulk":"2000",
   "BulkCapacity":"7000",
-  "WeightCapacity":"3000"
+  "WeightCapacity":"8000",
+  "Value":"250",
+  "Rarity":"40",
+  "Level":"3"
 }

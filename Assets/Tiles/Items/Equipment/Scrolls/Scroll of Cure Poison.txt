@@ -7,7 +7,7 @@
   "Effect": "CurePoison",
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
-  "Weight":"1",
+  "Weight":"0.05",
   "Bulk":"2",
   "Rarity":"50",
   "CanStack":"True",
