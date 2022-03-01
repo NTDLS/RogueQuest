@@ -601,7 +601,7 @@ namespace Game
                 var lv = sender as ListView;
                 var item = lv.Items[0].Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
 
                 text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 
@@ -837,7 +837,7 @@ namespace Game
 
                 var item = selection.Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
 
                 text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 
@@ -879,7 +879,7 @@ namespace Game
 
                 var item = selection.Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name + $" ({StoreAndInventory.RarityText(item.Tile)})";
+                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
 
                 text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
 

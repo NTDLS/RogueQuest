@@ -9,31 +9,6 @@ namespace Game.Classes
 {
     public static class StoreAndInventory
     {
-        public static string RarityText(TileIdentifier tile)
-        {
-            if (tile.Meta.Rarity >= 40)
-            {
-                return "Common";
-            }
-            else if (tile.Meta.Rarity >= 20)
-            {
-                return "Uncommon";
-            }
-            else if (tile.Meta.Rarity >= 10)
-            {
-                return "Rare";
-            }
-            else if (tile.Meta.Rarity >= 1)
-            {
-                return "Ultra Rare";
-            }
-            else if (tile.Meta.Rarity >= 0)
-            {
-                return "Legendary";
-            }
-            return "n/a";
-        }
-
         public static double UnitPrice(EngineCoreBase core, TileIdentifier tile)
         {
             if (tile.Meta.Value == null)

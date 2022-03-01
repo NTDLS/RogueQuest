@@ -144,14 +144,51 @@ namespace Library.Engine
         {
             get
             {
-                var text = $"{this.DamageDice}d{this.DamageDiceFaces}";
-
-                if (this.DamageAdditional > 0)
+                if ((this.DamageDice ?? 0) > 0 && (this.DamageDiceFaces ?? 0) > 0)
                 {
-                    text += $" +{this.DamageAdditional}";
-                }
+                    var text = $"{this.DamageDice}d{this.DamageDiceFaces}";
 
-                return text;
+                    if (this.DamageAdditional > 0)
+                    {
+                        text += $" +{this.DamageAdditional}";
+                    }
+
+                    if (this.SplashDamageRange > 0)
+                    {
+                        text += $" (Splash Range {this.SplashDamageRange:N0})";
+                    }
+
+                    return text;
+                }
+                return "";
+            }
+        }
+
+        public string RarityText
+        {
+            get
+            {
+                if (Rarity >= 40)
+                {
+                    return "Common";
+                }
+                else if (Rarity >= 20)
+                {
+                    return "Uncommon";
+                }
+                else if (Rarity >= 10)
+                {
+                    return "Rare";
+                }
+                else if (Rarity >= 1)
+                {
+                    return "Ultra Rare";
+                }
+                else if (Rarity >= 0)
+                {
+                    return "Legendary";
+                }
+                return "n/a";
             }
         }
 

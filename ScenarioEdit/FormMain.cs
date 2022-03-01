@@ -3,6 +3,8 @@ using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using ScenarioEdit.Engine;
 using ScenarioEdit.Properties;
 using System;
@@ -2348,5 +2350,209 @@ namespace ScenarioEdit
         }
 
         #endregion
+
+        private void exportMaterialManifestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var materials = EnumFlatMaterials();
+
+            IWorkbook workbook = new XSSFWorkbook();
+
+            ISheet weapons = workbook.CreateSheet("Weapons");
+            ISheet projectiles = workbook.CreateSheet("Projectiles");
+            ISheet scrolls = workbook.CreateSheet("Scrolls");
+            ISheet potions = workbook.CreateSheet("Potions");
+            ISheet wands = workbook.CreateSheet("Wands");
+            ISheet equipment = workbook.CreateSheet("Equipment");
+            ISheet containers = workbook.CreateSheet("Containers");
+            ISheet hostiles = workbook.CreateSheet("Hostiles");
+
+            void CreateHeader(ISheet sheet, string nameCsv)
+            {
+                var boldStyle = workbook.CreateFont();
+                var boldCellStyle = workbook.CreateCellStyle();
+                boldStyle.IsBold = true;
+                boldCellStyle.SetFont(boldStyle);
+
+                IRow header = sheet.CreateRow(sheet.LastRowNum);
+                var names = nameCsv.Split(',');
+                int cellCount = 0;
+
+                foreach (var name in names)
+                {
+                    var cell = header.CreateCell(cellCount++);
+                    cell.CellStyle = boldCellStyle;
+                    cell.SetCellValue(name);
+                }
+            }
+
+            foreach (var item in materials)
+            {
+                if (item.Meta.SubType == ActorSubType.MeleeWeapon || item.Meta.SubType == ActorSubType.RangedWeapon)
+                {
+                    if (weapons.PhysicalNumberOfRows == 0) CreateHeader(weapons, "Name,Type,Damage Type,Level,Damage,Weight,Bulk,Value,Rarity");
+                    IRow body = weapons.CreateRow(weapons.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Level ?? 0));
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Weight ?? 0));
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Bulk ?? 0));
+                    body.CreateCell(cell++).SetCellValue((item.Meta.Value ?? 0));
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+                }
+
+                if (item.Meta.ActorClass == ActorClassName.ActorHostileBeing)
+                {
+                    if (hostiles.PhysicalNumberOfRows == 0) CreateHeader(hostiles, "Name,Level,Hit Points,AC,Dexterity,Strength,Damage,Damage Type,Weakness,Experience");
+                    IRow body = hostiles.CreateRow(hostiles.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.HitPoints ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.AC ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Dexterity ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Strength ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.WeaknessType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Experience ?? 0);
+                }
+
+                if (item.Meta.SubType == ActorSubType.Projectile)
+                {
+                    if (projectiles.PhysicalNumberOfRows == 0) CreateHeader(projectiles, "Name,Type,Damage Type,Level,Damage,Weight,Bulk,Value,Rarity");
+                    IRow body = projectiles.CreateRow(projectiles.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+                }
+
+                if (item.Meta.SubType == ActorSubType.Armor
+                    || item.Meta.SubType == ActorSubType.Boots
+                    || item.Meta.SubType == ActorSubType.Bracers
+                    || item.Meta.SubType == ActorSubType.Garment
+                    || item.Meta.SubType == ActorSubType.Gauntlets
+                    || item.Meta.SubType == ActorSubType.Helment
+                    || item.Meta.SubType == ActorSubType.Necklace
+                    || item.Meta.SubType == ActorSubType.Ring
+                    || item.Meta.SubType == ActorSubType.Shield)
+                {
+                    if (equipment.PhysicalNumberOfRows == 0) CreateHeader(equipment, "Name,Type,Damage Type,Level,AC,Weight,Bulk,Value,Rarity");
+                    IRow body = equipment.CreateRow(equipment.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.AC ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+                }
+
+                if (item.Meta.SubType == ActorSubType.Belt
+                    || item.Meta.SubType == ActorSubType.Chest
+                    || item.Meta.SubType == ActorSubType.Pack)
+                {
+                    if (containers.PhysicalNumberOfRows == 0) CreateHeader(containers, "Name,Type,Item Capacity,Bulk Capacity,Weight Capacity,Level,Weight,Bulk,Value,Rarity");
+                    IRow body = containers.CreateRow(containers.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.SubType?.ToString());
+                    body.CreateCell(cell++).SetCellValue(item.Meta.ItemCapacity ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.BulkCapacity ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.WeightCapacity ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+                }
+
+                if (item.Meta.SubType == ActorSubType.Scroll)
+                {
+                    if (scrolls.PhysicalNumberOfRows == 0) CreateHeader(scrolls, "Name,Effect,Damage,Duration,Cast Time,Level,Weight,Bulk,Value");
+
+                    string effect = $"{item.Meta.Effect}";
+
+                    if (!string.IsNullOrWhiteSpace(item.Meta.EffectFormula))
+                    {
+                        effect += $" +{item.Meta.EffectFormula}";
+                    }
+
+                    IRow body = scrolls.CreateRow(scrolls.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(effect);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.CastTime ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                }
+
+                if (item.Meta.SubType == ActorSubType.Wand)
+                {
+                    if (wands.PhysicalNumberOfRows == 0) CreateHeader(wands, "Name,Effect,Damage,Duration,Cast Time,Level,Weight,Bulk,Value");
+
+                    string effect = $"{item.Meta.Effect}";
+
+                    if (!string.IsNullOrWhiteSpace(item.Meta.EffectFormula))
+                    {
+                        effect += $" +{item.Meta.EffectFormula}";
+                    }
+
+                    IRow body = wands.CreateRow(wands.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(effect);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.CastTime ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                }
+
+                if (item.Meta.SubType == ActorSubType.Potion)
+                {
+                    if (potions.PhysicalNumberOfRows == 0) CreateHeader(potions, "Name,Effect,Duration,Level,Weight,Bulk,Value");
+
+                    string effect = $"{item.Meta.Effect}";
+
+                    if (!string.IsNullOrWhiteSpace(item.Meta.EffectFormula))
+                    {
+                        effect += $" +{item.Meta.EffectFormula}";
+                    }
+
+                    IRow body = potions.CreateRow(potions.PhysicalNumberOfRows);
+                    int cell = 0;
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                    body.CreateCell(cell++).SetCellValue(effect);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                    body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                }
+            }
+
+            FileStream sw = File.Create("C:\\RougeQuest Manifest.xlsx");
+            workbook.Write(sw);
+            sw.Close();
+        }
     }
 }
