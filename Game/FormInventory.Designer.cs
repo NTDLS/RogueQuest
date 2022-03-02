@@ -190,7 +190,7 @@ namespace Game
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(11, 439);
+            this.label6.Location = new System.Drawing.Point(322, 440);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(78, 20);
             this.label6.TabIndex = 10;
@@ -199,7 +199,7 @@ namespace Game
             // listViewRightRing
             // 
             this.listViewRightRing.HideSelection = false;
-            this.listViewRightRing.Location = new System.Drawing.Point(16, 463);
+            this.listViewRightRing.Location = new System.Drawing.Point(327, 464);
             this.listViewRightRing.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listViewRightRing.Name = "listViewRightRing";
             this.listViewRightRing.Size = new System.Drawing.Size(72, 72);
@@ -310,7 +310,7 @@ namespace Game
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(328, 439);
+            this.label13.Location = new System.Drawing.Point(16, 440);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(68, 20);
             this.label13.TabIndex = 28;
@@ -319,7 +319,7 @@ namespace Game
             // listViewLeftRing
             // 
             this.listViewLeftRing.HideSelection = false;
-            this.listViewLeftRing.Location = new System.Drawing.Point(328, 463);
+            this.listViewLeftRing.Location = new System.Drawing.Point(16, 464);
             this.listViewLeftRing.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listViewLeftRing.Name = "listViewLeftRing";
             this.listViewLeftRing.Size = new System.Drawing.Size(72, 72);
