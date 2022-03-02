@@ -64,7 +64,16 @@ namespace Library.Engine
 
         public int AugmentedDexterity { get; set; }
         public int AugmentedStrength { get; set; }
-        public int AugmentedAC { get; set; }
+        public int AugmentedAC { get; set; } //This + all AC modification equipment is the total AC.
+
+        public int AC
+        {
+            get
+            {
+                int equipmentAC = _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);
+                return equipmentAC + _core.State.Character.AugmentedAC;
+            }
+        }
 
         //Starting + Augmented attributes.
         public int Constitution => StartingConstitution + AugmentedConstitution;
@@ -122,6 +131,60 @@ namespace Library.Engine
                     return value;
                 }
                 return 0;
+            }
+        }
+
+        public double Bulk
+        {
+            get
+            {
+                double totalBulk = 0;
+
+                foreach (var equip in Equipment)
+                {
+                    if (equip.Tile != null)
+                    {
+                        totalBulk += (equip.Tile.Meta.Bulk ?? 0);
+                    }
+                }
+
+                var pack = _core.State.Character.GetEquipSlot(EquipSlot.Pack);
+                if (pack != null && pack.Tile != null)
+                {
+
+                    double packBulk = _core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
+
+                    totalBulk += packBulk;
+                }
+
+                return totalBulk;
+            }
+        }
+
+        public double Weight
+        {
+            get
+            {
+                double totalWeight = 0;
+
+                foreach (var equip in Equipment)
+                {
+                    if (equip.Tile != null)
+                    {
+                        totalWeight += (equip.Tile.Meta.Weight ?? 0);
+                    }
+                }
+
+                var pack = _core.State.Character.GetEquipSlot(EquipSlot.Pack);
+                if (pack != null && pack.Tile != null)
+                {
+
+                    double packWeight = _core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
+
+                    totalWeight += packWeight;
+                }
+
+                return totalWeight;
             }
         }
 

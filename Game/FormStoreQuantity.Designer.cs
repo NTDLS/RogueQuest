@@ -88,7 +88,7 @@ namespace Game
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(34, 86);
+            this.label3.Location = new System.Drawing.Point(34, 85);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 20);
             this.label3.TabIndex = 14;
@@ -132,7 +132,7 @@ namespace Game
             // 
             // textBoxBuyAmount
             // 
-            this.textBoxBuyAmount.Location = new System.Drawing.Point(130, 84);
+            this.textBoxBuyAmount.Location = new System.Drawing.Point(130, 83);
             this.textBoxBuyAmount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -152,7 +152,7 @@ namespace Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 225);
+            this.ClientSize = new System.Drawing.Size(288, 214);
             this.Controls.Add(this.textBoxBuyAmount);
             this.Controls.Add(this.labelTotalPrice);
             this.Controls.Add(this.label5);
@@ -171,7 +171,7 @@ namespace Game
             this.Name = "FormStoreQuantity";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "How many do you want to buy?";
+            this.Text = "Buy how many?";
             this.Load += new System.EventHandler(this.FormStoreQuantity_Load);
             ((System.ComponentModel.ISupportInitialize)(this.textBoxBuyAmount)).EndInit();
             this.ResumeLayout(false);

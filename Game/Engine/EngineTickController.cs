@@ -1087,7 +1087,6 @@ namespace Game.Engine
         {
             if (timeToPass != null && timeToPass > 0)
             {
-
                 int startGameTime = Core.State.TimePassed;
 
                 var input = new Types.TickInput() { InputType = Types.TickInputType.Wait };
@@ -1191,6 +1190,7 @@ namespace Game.Engine
             while (Core.State.ActiveThreadCount > 0)
             {
                 Thread.Sleep(1);
+                Application.DoEvents(); //The UI thread is a bitch.
             }
         }
 
@@ -1275,6 +1275,8 @@ namespace Game.Engine
             }
         }
 
+        private object GameLogicThreadLock = new object();
+
         /// <summary>
         /// Intersections contains all objects that the player collided with during their turn. If this
         /// contains actors that can be damaged, then these  would be the melee attack target for the player.
@@ -1282,11 +1284,14 @@ namespace Game.Engine
         /// <param name="intersections"></param>
         private void GameLogicThread(object param)
         {
-            Core.State.AddThreadReference();
-            GameLogicThreadStarted.Set();
-            Thread.CurrentThread.Name = $"GameLogicThread_{Core.State.ActiveThreadCount}";
-            GameLogicThreadEx((GameLogicParam)param);
-            Core.State.RemoveThreadReference();
+            lock (GameLogicThreadLock)
+            {
+                Core.State.AddThreadReference();
+                GameLogicThreadStarted.Set();
+                Thread.CurrentThread.Name = $"GameLogicThread_{Core.State.ActiveThreadCount}";
+                GameLogicThreadEx((GameLogicParam)param);
+                Core.State.RemoveThreadReference();
+            }
         }
 
         private void GameLogicThreadEx(GameLogicParam p)
@@ -1381,7 +1386,7 @@ namespace Game.Engine
             else //Melee attack.
             {
                 //If this is a ranged weapon but we are in a melee situation, then check the free hand for a melee weapon and use it instead.
-                if (weapon != null && weapon.ProjectileType != ProjectileType.Unspecified)
+                if (weapon != null && weapon.SubType == ActorSubType.RangedWeapon)
                 {
                     var freehandWeapon = Core.State.Character.GetEquipSlot(EquipSlot.FreeHand)?.Tile?.Meta;
 
@@ -1413,15 +1418,15 @@ namespace Game.Engine
                         Core.LogLine($"You are out of projectiles for the equipped ranged weapon!!!", Color.DarkRed);
                     }
                 }
-            }
 
-            if (projectile != null)
-            {
-                AnimateTo(projectile.TilePath, Core.Player, actorToAttack);
-            }
-            else if (weapon != null && string.IsNullOrEmpty(weapon.ProjectileTilePath) == false)
-            {
-                AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
+                if (projectile != null)
+                {
+                    AnimateTo(projectile.TilePath, Core.Player, actorToAttack);
+                }
+                else if (weapon != null && string.IsNullOrEmpty(weapon.ProjectileTilePath) == false)
+                {
+                    AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
+                }
             }
 
             string weaponDescription = weapon?.Name;
@@ -1623,13 +1628,11 @@ namespace Game.Engine
             earthResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
             iceResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
 
-            var totalPlayerAC = Core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);
-
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
             foreach (var hostile in hostileInteractions.Where(o => o.Visible))
             {
                 //Monster hit player.
-                var hitType = CalculateHitType((int)hostile.Meta.Dexterity, totalPlayerAC);
+                var hitType = CalculateHitType((int)hostile.Meta.Dexterity, Core.State.Character.AC);
                 if (hitType == HitType.Hit)
                 {
                     int hostileHitsFor = CalculateDealtDamage(hitType, (int)hostile.Meta.Strength,

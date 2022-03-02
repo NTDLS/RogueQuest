@@ -127,7 +127,7 @@ namespace Game
 
             var timer = new Timer()
             {
-                 Interval = 1000
+                Interval = 1000
             };
 
             timer.Tick += Timer_Tick;
@@ -908,6 +908,14 @@ namespace Game
         private void drawingsurface_Click(object sender, EventArgs e)
         {
             drawingsurface.Focus();
+        }
+
+        private void toolStripButtonCharacter_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormCharacter(_core))
+            {
+                form.ShowDialog();
+            }
         }
     }
 }

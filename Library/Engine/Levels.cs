@@ -169,7 +169,7 @@ namespace Library.Engine
 
             foreach (var obj in Core.Actors.Tiles.Where(o => o.ReadyForDeletion == false))
             {
-                chunks.Add(new LevelChunk
+                var chunk = new LevelChunk
                 {
                     TilePath = obj.TilePath,
                     X = obj.X,
@@ -177,7 +177,15 @@ namespace Library.Engine
                     Angle = obj.Velocity.Angle.Degrees == 0 ? null : obj.Velocity.Angle.Degrees,
                     DrawOrder = obj.DrawOrder == 0 ? null : obj.DrawOrder,
                     Meta = obj.Meta
-                });
+                };
+
+                if (chunk.Meta.ActorClass == Types.ActorClassName.ActorTerrain && chunk.Meta.UID != null)
+                {
+                    //We really shouldn't have UIDs for terrain tiles. They just take up space.
+                    chunk.Meta.UID = null;
+                }
+
+                chunks.Add(chunk);
             }
 
             var json = JsonConvert.SerializeObject(chunks,
@@ -305,6 +313,12 @@ namespace Library.Engine
 
                         if (tile != null)
                         {
+                            if (tile.Meta.ActorClass == Types.ActorClassName.ActorTerrain && tile.Meta.UID != null)
+                            {
+                                //We really shouldn't have UIDs for terrain tiles. They just take up space.
+                                tile.Meta.UID = null;
+                            }
+
                             Core.Actors.Add(tile);
                         }
                     }

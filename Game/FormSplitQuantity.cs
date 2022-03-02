@@ -47,6 +47,7 @@ namespace Game
         private void FormSplitQuantity_Load(object sender, EventArgs e)
         {
             this.CancelButton = buttonCancel;
+            this.AcceptButton = buttonOk;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)

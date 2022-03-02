@@ -50,6 +50,7 @@ namespace Library.Engine
         public bool HasBeenViewed { get; set; }
         public int? Rarity { get; set; } //100 being common and 0 being literally impossible (not in stores or dropped randomly).
         public bool? OnlyDialogOnce { get; set; }
+        public int? Mana { get; set; } //Amount of mana required to cast spell (only used for memorized scrolls).
         public bool? IsContainer { get; set; }
         public bool? CanStack { get; set; } //Remember that items with charges are NOT stackable.
         public bool? CanWalkOn { get; set; }
@@ -221,6 +222,7 @@ namespace Library.Engine
             this.IsUnique = with.IsUnique ?? this.IsUnique;
             this.Dialog = with.Dialog ?? this.Dialog;
             this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;
+            this.Mana = with.Mana ?? this.Mana;
             this.IsContainer = with.IsContainer ?? this.IsContainer;
             this.CanStack = with.CanStack ?? this.CanStack;
             this.SubType = with.SubType ?? this.SubType;
