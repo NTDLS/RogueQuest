@@ -3,7 +3,7 @@
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
-  "CastTime":"1",
+  "CastTime":"5",
   "Effect": "Heal",
   "EffectFormula": "%90,25",
   "IsConsumable":"True",
@@ -13,5 +13,6 @@
   "Rarity":"70",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2"
+  "Level":"2",
+  "Mana":"6"
 }

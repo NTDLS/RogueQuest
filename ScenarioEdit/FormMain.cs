@@ -2512,7 +2512,7 @@ namespace ScenarioEdit
 
                     if (item.Meta.SubType == ActorSubType.Scroll)
                     {
-                        if (scrolls.PhysicalNumberOfRows == 0) CreateHeader(scrolls, "Name,Level,Value,Bulk,Weight,Rarity,Effect,Damage,Duration,Cast Time");
+                        if (scrolls.PhysicalNumberOfRows == 0) CreateHeader(scrolls, "Name,Level,Value,Bulk,Weight,Rarity,Mana,Effect,Damage,Duration,Cast Time");
 
                         string effect = $"{item.Meta.Effect}";
 
@@ -2530,6 +2530,7 @@ namespace ScenarioEdit
                         body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
 
+                        body.CreateCell(cell++).SetCellValue(item.Meta.Mana ?? 0);
                         body.CreateCell(cell++).SetCellValue(effect);
                         body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
                         body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);

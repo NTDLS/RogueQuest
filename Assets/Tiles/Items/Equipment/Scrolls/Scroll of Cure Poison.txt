@@ -12,5 +12,6 @@
   "Rarity":"50",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"1"
+  "Level":"2",
+  "Mana":"3"
 }

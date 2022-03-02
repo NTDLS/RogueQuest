@@ -4,7 +4,7 @@
   "Value": "20",
   "TargetType":"Self",
   "Effect": "Heal",
-  "CastTime":"1",
+  "CastTime":"5",
   "EffectFormula": "30",
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
@@ -13,5 +13,6 @@
   "Rarity":"100",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"1"
+  "Level":"1",
+  "Mana":"3"
 }

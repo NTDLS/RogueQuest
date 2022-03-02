@@ -1,5 +1,5 @@
 {
-  "Name":"Summon Monster",
+  "Name":"Summon Monster III",
   "SubType": "Scroll",
   "TargetType":"Terrain",
   "Effect": "SummonMonster",
@@ -12,5 +12,6 @@
   "Rarity":"1",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"3"
+  "Level":"6",
+  "Mana":"6"
 }
