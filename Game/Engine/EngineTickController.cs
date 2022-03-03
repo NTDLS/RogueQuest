@@ -174,8 +174,6 @@ namespace Game.Engine
                 return false;
             }
 
-            //var projectile = Core.State.Items.Where(o => o.Tile.Meta.UID == rangedProjectile).FirstOrDefault();
-
             if (item.Tile.Meta.SubType == ActorSubType.Wand)
             {
                 var input = new Types.TickInput()
@@ -185,7 +183,9 @@ namespace Game.Engine
                     RangedTarget = target
                 };
 
+                int startTime = Core.State.TimePassed;
                 Advance(input);
+                PassTime(item.Tile.Meta.CastTime - (Core.State.TimePassed - startTime));
                 WaitOnIdleEngine();
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Scroll)
@@ -204,10 +204,12 @@ namespace Game.Engine
                         //If the spell or scroll does damage, then it would have a dice and would follow the standard logic in Advance().
                         int startTime = Core.State.TimePassed;
                         Advance(input);
-                        PassTime(startTime, item.Tile.Meta.CastTime ?? 1);
+                        PassTime(item.Tile.Meta.CastTime - (Core.State.TimePassed - startTime));
                     }
                     else
                     {
+                        PassTime(item.Tile.Meta.CastTime);
+
                         var hitType = CalculateHitType(Core.State.Character.Dexterity, target.Meta.AC ?? 0);
 
                         if (hitType == HitType.Miss || hitType == HitType.CriticalMiss)
@@ -216,26 +218,26 @@ namespace Game.Engine
                         }
                         else
                         {
+                            int expireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? (item.Tile.Meta.ExpireTime ?? 0) * 2 : (item.Tile.Meta.ExpireTime ?? 0));
+
                             //This is where we implement spells/scrolls that add attributes but do not do damage.
                             #region HoldMonster
                             if (item.Tile.Meta.Effect == ItemEffect.HoldMonster)
                             {
                                 if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
                                 {
-                                    var state = Core.State.ActorStates.AddState((Guid)target.Meta.UID, StateOfBeing.Held);
-                                    state.ExpireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? item.Tile.Meta.ExpireTime * 2 : item.Tile.Meta.ExpireTime);
+                                    var state = Core.State.ActorStates.UpsertState((Guid)target.Meta.UID, StateOfBeing.Held, expireTime);
                                     Core.LogLine($"You successfully held the beast{(hitType == HitType.CriticalHit ? " (Critical-hit doubles time)" : "")}!", Color.DarkGreen);
                                 }
 
                             }
                             #endregion
-                            #region HoldMonster
+                            #region Poison
                             else if (item.Tile.Meta.Effect == ItemEffect.Poison)
                             {
                                 if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
                                 {
-                                    var state = Core.State.ActorStates.AddState((Guid)target.Meta.UID, StateOfBeing.Poisoned);
-                                    state.ExpireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? item.Tile.Meta.ExpireTime * 2 : item.Tile.Meta.ExpireTime);
+                                    var state = Core.State.ActorStates.UpsertState((Guid)target.Meta.UID, StateOfBeing.Poisoned, expireTime);
                                     Core.LogLine($"You successfully poison the beast{(hitType == HitType.CriticalHit ? " (Critical-hit doubles time)" : "")}!", Color.DarkGreen);
                                 }
                             }
@@ -244,25 +246,18 @@ namespace Game.Engine
                             {
                                 throw new NotImplementedException();
                             }
-                        }
 
-                        if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
-                        {
-                            void passTime(object param)
+                            if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                             {
-                                WaitOnIdleEngine();
-                                PassTime((int)param);
+                                AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target);
                             }
-                            AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, item.Tile.Meta.CastTime ?? 1);
-                        }
-                        else
-                        {
-                            PassTime(item.Tile.Meta.CastTime ?? 1);
                         }
                     }
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Terrain)
                 {
+                    PassTime(item.Tile.Meta.CastTime ?? 1);
+
                     #region SummonMonster
                     if (item.Tile.Meta.Effect == ItemEffect.SummonMonster)
                     {
@@ -309,20 +304,13 @@ namespace Game.Engine
 
                     if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                     {
-                        void passTime(object param)
-                        {
-                            WaitOnIdleEngine();
-                            PassTime((int)param);
-                        }
-                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, item.Tile.Meta.CastTime ?? 1);
-                    }
-                    else
-                    {
-                        PassTime(item.Tile.Meta.CastTime ?? 1);
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target);
                     }
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Self)
                 {
+                    PassTime(item.Tile.Meta.CastTime ?? 1);
+
                     #region IncreaseIceResistance
                     if (item.Tile.Meta.Effect == ItemEffect.IncreaseIceResistance)
                     {
@@ -663,12 +651,7 @@ namespace Game.Engine
 
                     if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                     {
-                        void passTime(object param) => PassTime((int)param);
-                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, item.Tile.Meta.CastTime ?? 1);
-                    }
-                    else
-                    {
-                        PassTime(item.Tile.Meta.CastTime ?? 1);
+                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player);
                     }
                 }
 
@@ -680,7 +663,6 @@ namespace Game.Engine
                 {
                     InputType = Types.TickInputType.Ranged,
                     RangedItem = item,
-                    //RangedProjectile = projectile,
                     RangedTarget = target
                 };
 
@@ -689,6 +671,8 @@ namespace Game.Engine
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Potion)
             {
+                PassTime(item.Tile.Meta.CastTime ?? 1);
+
                 #region Heal.
                 if (item.Tile.Meta.Effect == ItemEffect.Heal)
                 {
@@ -908,12 +892,7 @@ namespace Game.Engine
 
                 if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                 {
-                    void passTime(object param) => PassTime((int)param);
-                    AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player, passTime, item.Tile.Meta.CastTime ?? 1);
-                }
-                else
-                {
-                    PassTime(item.Tile.Meta.CastTime ?? 1);
+                    AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player);
                 }
             }
 
@@ -2031,7 +2010,11 @@ namespace Game.Engine
         {
             if (state.State == StateOfBeing.Poisoned)
             {
-                var actor = Core.Actors.Tiles.Where(o => o.Meta.UID == state.ActorUID).First();
+                var actor = Core.Actors.Tiles.Where(o => o.Meta.UID == state.ActorUID).FirstOrDefault();
+                if (actor == null)
+                {
+                    return;
+                }
 
                 if (actor == Core.Player)
                 {

@@ -34,7 +34,7 @@ namespace Library.Engine
             }
         }
 
-        public ActorState UpsertState(Guid actorUID, StateOfBeing state)
+        public ActorState UpsertState(Guid actorUID, StateOfBeing state, int expireTime)
         {
             ActorState actorState = StateDictonary.Where(o => o.ActorUID == actorUID && o.State == state).FirstOrDefault();
 
@@ -43,10 +43,15 @@ namespace Library.Engine
                 actorState = new ActorState()
                 {
                     ActorUID = actorUID,
-                    State = state
+                    State = state,
+                    ExpireTime = expireTime
                 };
 
                 StateDictonary.Add(actorState);
+            }
+            else
+            {
+                actorState.ExpireTime += expireTime;
             }
 
             return actorState;
@@ -68,6 +73,11 @@ namespace Library.Engine
         public void RemoveState(ActorState state)
         {
             StateDictonary.Remove(state);
+        }
+
+        public void RemoveAll(Guid actorUID)
+        {
+            StateDictonary.RemoveAll(o => o.ActorUID == actorUID);
         }
 
         public void RemoveState(Guid actorUID, StateOfBeing state)

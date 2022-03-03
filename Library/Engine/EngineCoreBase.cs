@@ -221,6 +221,15 @@ namespace Library.Engine
         {
             lock (this.CollectionSemaphore)
             {
+                var tilesToDelete = Actors.Tiles.Where(o => o.ReadyForDeletion);
+                foreach (var tile in tilesToDelete)
+                {
+                    if (tile?.Meta?.UID != null)
+                    {
+                        State.ActorStates.RemoveAll((Guid)tile.Meta.UID);
+                    }
+                }
+
                 Actors.Tiles.RemoveAll(o => o.ReadyForDeletion);
             }
         }

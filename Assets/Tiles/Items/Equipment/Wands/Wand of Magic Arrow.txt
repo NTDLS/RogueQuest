@@ -3,6 +3,7 @@
   "SubType": "Wand",
   "TargetType":"HostileBeing",
   "Value": "0.5",
+  "CastTime":"1",
   "DamageDice":"1",
   "DamageDiceFaces":"5",
   "DamageAdditional":"0",
