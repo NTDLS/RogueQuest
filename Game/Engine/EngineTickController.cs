@@ -170,8 +170,11 @@ namespace Game.Engine
         {
             PassTime(item.Tile.Meta.CastTime ?? 1);
 
+            WaitOnIdleEngine();
+
             if (item.Tile.Meta.TargetType == TargetType.HostileBeing)
             {
+                #region Hostile target.
                 var hitType = CalculateHitType(Core.State.Character.Dexterity, target.Meta.AC ?? 0);
 
                 if (hitType == HitType.Miss || hitType == HitType.CriticalMiss)
@@ -210,9 +213,11 @@ namespace Game.Engine
                         AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target);
                     }
                 }
+                #endregion
             }
             else if (item.Tile.Meta.TargetType == TargetType.Terrain)
             {
+                #region Terrain target.
                 #region SummonMonster
                 if (item.Tile.Meta.Effect == ItemEffect.SummonMonster)
                 {
@@ -258,9 +263,11 @@ namespace Game.Engine
                 {
                     AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target);
                 }
+                #endregion
             }
             else if (item.Tile.Meta.TargetType == TargetType.Self)
             {
+                #region Self target.
                 #region IncreaseIceResistance
                 if (item.Tile.Meta.Effect == ItemEffect.IncreaseIceResistance)
                 {
@@ -599,6 +606,7 @@ namespace Game.Engine
                 {
                     AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player);
                 }
+                #endregion
             }
         }
 
