@@ -986,8 +986,8 @@ namespace Game
 
             var persistentStore = Core.State.Stores.Where(o => o.StoreID == _storeTileMeta.UID).FirstOrDefault();
 
-            //Populate the store once and then again every 1 game day.
-            if (persistentStore == null || Core.State.TimePassed - persistentStore.GameTime > 1440)
+            //Populate the store once now, then again every 1 game hour.
+            if (persistentStore == null || Core.State.TimePassed - persistentStore.GameTime > 3600)
             {
                 if (persistentStore == null)
                 {

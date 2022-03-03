@@ -16,6 +16,11 @@ namespace Library.Engine
             return StateDictonary.Where(o => o.ActorUID == actorUID).Select(o => o.State).ToList();
         }
 
+        public List<ActorState> States()
+        {
+            return StateDictonary.ToList();
+        }
+
         public List<ActorState> States(Guid actorUID)
         {
             return StateDictonary.Where(o => o.ActorUID == actorUID).ToList();
@@ -72,7 +77,7 @@ namespace Library.Engine
 
         public bool HasState(Guid actorUID, StateOfBeing state)
         {
-            return StatesOfBeing(actorUID)?.Contains(StateOfBeing.Poisoned) ?? false;
+            return StatesOfBeing(actorUID)?.Contains(state) ?? false;
         }
     }
 }

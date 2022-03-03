@@ -199,17 +199,74 @@ namespace Game.Engine
                         RangedTarget = target
                     };
 
-                    int startTime = Core.State.TimePassed;
+                    if (item.Tile.Meta.DamageDice > 0)
+                    {
+                        //If the spell or scroll does damage, then it would have a dice and would follow the standard logic in Advance().
+                        int startTime = Core.State.TimePassed;
+                        Advance(input);
+                        PassTime(startTime, item.Tile.Meta.CastTime ?? 1);
+                    }
+                    else
+                    {
+                        var hitType = CalculateHitType(Core.State.Character.Dexterity, target.Meta.AC ?? 0);
 
-                    Advance(input);
-                    PassTime(startTime, item.Tile.Meta.CastTime ?? 1);
+                        if (hitType == HitType.Miss || hitType == HitType.CriticalMiss)
+                        {
+                            Core.LogLine($"{Core.State.Character.Name} casts {item.Tile.Meta.Name} at {target.Meta.Name} but misses.", Color.DarkRed);
+                        }
+                        else
+                        {
+                            //This is where we implement spells/scrolls that add attributes but do not do damage.
+                            #region HoldMonster
+                            if (item.Tile.Meta.Effect == ItemEffect.HoldMonster)
+                            {
+                                if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
+                                {
+                                    var state = Core.State.ActorStates.AddState((Guid)target.Meta.UID, StateOfBeing.Held);
+                                    state.ExpireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? item.Tile.Meta.ExpireTime * 2 : item.Tile.Meta.ExpireTime);
+                                    Core.LogLine($"You successfully held the beast{(hitType == HitType.CriticalHit ? " (Critical-hit doubles time)" : "")}!", Color.DarkGreen);
+                                }
+
+                            }
+                            #endregion
+                            #region HoldMonster
+                            else if (item.Tile.Meta.Effect == ItemEffect.Poison)
+                            {
+                                if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
+                                {
+                                    var state = Core.State.ActorStates.AddState((Guid)target.Meta.UID, StateOfBeing.Poisoned);
+                                    state.ExpireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? item.Tile.Meta.ExpireTime * 2 : item.Tile.Meta.ExpireTime);
+                                    Core.LogLine($"You successfully poison the beast{(hitType == HitType.CriticalHit ? " (Critical-hit doubles time)" : "")}!", Color.DarkGreen);
+                                }
+                            }
+                            #endregion
+                            else
+                            {
+                                throw new NotImplementedException();
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
+                        {
+                            void passTime(object param)
+                            {
+                                WaitOnIdleEngine();
+                                PassTime((int)param);
+                            }
+                            AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target, passTime, item.Tile.Meta.CastTime ?? 1);
+                        }
+                        else
+                        {
+                            PassTime(item.Tile.Meta.CastTime ?? 1);
+                        }
+                    }
                 }
                 else if (item.Tile.Meta.TargetType == TargetType.Terrain)
                 {
                     #region SummonMonster
                     if (item.Tile.Meta.Effect == ItemEffect.SummonMonster)
                     {
-                        var randos = Core.Materials.Where(o => o.Meta.ActorClass ==  ActorClassName.ActorHostileBeing
+                        var randos = Core.Materials.Where(o => o.Meta.ActorClass == ActorClassName.ActorHostileBeing
                             && o.Meta.Level >= 1 && o.Meta.Level <= item.Tile.Meta.Level).ToList();
 
                         if (randos.Count > 0)
@@ -1083,7 +1140,7 @@ namespace Game.Engine
             }
         }
 
-        public void PassTime(int ?timeToPass)
+        public void PassTime(int? timeToPass)
         {
             if (timeToPass != null && timeToPass > 0)
             {
@@ -1296,7 +1353,6 @@ namespace Game.Engine
 
         private void GameLogicThreadEx(GameLogicParam p)
         {
-
             List<ActorBase> intersections = p.Intersections;
             TickInput Input = p.Input;
 
@@ -1335,6 +1391,15 @@ namespace Game.Engine
                 return;
             }
 
+            var allActiveStates = Core.State.ActorStates.States()
+                .Where(o => Core.State.TimePassed < o.ExpireTime).ToList();
+
+            foreach (var activeState in allActiveStates)
+            {
+                //We want do to do this early because we dont want states that are added this second to affect the players the same second.
+                ActOnActiveState(activeState);
+            }
+
             var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 200)
                 .Where(o => o.Meta.CanTakeDamage == true);
 
@@ -1355,7 +1420,6 @@ namespace Game.Engine
             foreach (var obj in actorsThatCanSeePlayer.Where(o => o.Meta.ActorClass == ActorClassName.ActorHostileBeing))
             {
                 var actor = obj as ActorHostileBeing;
-
                 double distance = Core.Player.DistanceTo(obj);
 
                 if (distance < actor.MaxFollowDistance)
@@ -1456,9 +1520,42 @@ namespace Game.Engine
 
             if (actorToAttack != null && weapon != null)
             {
-                //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
-                EquipSlot[] additionalDamageSearchSlots = new EquipSlot[]
+                var hitType = CalculateHitType(Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC);
+
+                /*
+                if ((weapon.DamageDice ?? 0) == 0 && weapon.SubType == ActorSubType.Scroll)
+                {
+                    if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
                     {
+                        if (projectile != null)
+                        {
+                            if (string.IsNullOrEmpty(projectile.Meta.UsageAnimationTilePath) == false)
+                            {
+                                AnimateAt(projectile.Meta.UsageAnimationTilePath, actorToAttack);
+                            }
+                        }
+                        else
+                        {
+                            if (string.IsNullOrEmpty(weapon.UsageAnimationTilePath) == false)
+                            {
+                                AnimateAt(weapon.UsageAnimationTilePath, actorToAttack);
+                            }
+                        }
+
+                        ApplyScrollEffectToTarget(weapon, actorToAttack);
+                    }
+                    else
+                    {
+                        Core.LogLine($"{Core.State.Character.Name} casts {weapon.Name} at {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
+                    }
+                }
+                else
+                */
+                if (weapon.DamageDice > 0)
+                {
+                    //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
+                    EquipSlot[] additionalDamageSearchSlots = new EquipSlot[]
+                        {
                         EquipSlot.Pack,
                         EquipSlot.Belt,
                         EquipSlot.RightRing,
@@ -1471,142 +1568,146 @@ namespace Game.Engine
                         EquipSlot.Shield,
                         EquipSlot.Gauntlets,
                         EquipSlot.LeftRing,
-                    };
+                        };
 
-                int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null && additionalDamageSearchSlots.Contains(o.Slot))
-                    .Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
+                    int additionalDamage = Core.State.Character.Equipment.Where(o => o.Tile != null && additionalDamageSearchSlots.Contains(o.Slot))
+                        .Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
 
-                //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
-                additionalDamage += (weapon.DamageAdditional ?? 0);
+                    //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
+                    additionalDamage += (weapon.DamageAdditional ?? 0);
 
-                var hitType = CalculateHitType(Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC);
-                if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
-                {
-                    int playerHitsFor = 0;
-
-                    if (weapon?.DamageDice > 0)
+                    if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
                     {
-                        playerHitsFor = CalculateDealtDamage(hitType, Core.State.Character.Strength,
-                            additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
-                    }
+                        int playerHitsFor = 0;
 
-                    if (projectile != null && projectile.Meta?.DamageDice > 0)
-                    {
-                        playerHitsFor += CalculateDealtDamage(hitType, Core.State.Character.Strength,
-                            additionalDamage, projectile.Meta?.DamageDice ?? 0, projectile.Meta?.DamageDiceFaces ?? 0);
-                    }
-
-                    var actorsTakingDamage = new List<ActorToDamage>
-                    {
-                        new ActorToDamage()
+                        if (weapon?.DamageDice > 0)
                         {
-                            Actor = actorToAttack,
-                            IsPrimaryTarget = true
+                            playerHitsFor = CalculateDealtDamage(hitType, Core.State.Character.Strength,
+                                additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
                         }
-                    };
 
-                    if (weapon?.SplashDamageRange > 0)
-                    {
-                        var splashActors = Core.Actors.Intersections(actorToAttack, (int)weapon?.SplashDamageRange)
-                            .Where(o => o.Meta.CanTakeDamage == true);
-
-                        foreach (var splashActor in splashActors)
+                        if (projectile != null && projectile.Meta?.DamageDice > 0)
                         {
-                            double distanceFromPrimary = splashActor.DistanceTo(actorToAttack);
-                            if (distanceFromPrimary < (int)weapon?.SplashDamageRange)
+                            playerHitsFor += CalculateDealtDamage(hitType, Core.State.Character.Strength,
+                                additionalDamage, projectile.Meta?.DamageDice ?? 0, projectile.Meta?.DamageDiceFaces ?? 0);
+                        }
+
+                        var actorsTakingDamage = new List<ActorToDamage>
+                        {
+                            new ActorToDamage()
                             {
-                                actorsTakingDamage.Add(new ActorToDamage()
-                                {
-                                    Actor = splashActor,
-                                    DistanceFromPrimary = distanceFromPrimary,
-                                    IsPrimaryTarget = false,
-                                    IsSplashDamage = true
-                                });
+                                Actor = actorToAttack,
+                                IsPrimaryTarget = true
                             }
-                        }
-                    }
+                        };
 
-                    //Hit animation:
-                    if (projectile != null)
-                    {
-                        if (string.IsNullOrEmpty(projectile.Meta.UsageAnimationTilePath) == false)
+                        if (weapon?.SplashDamageRange > 0)
                         {
-                            AnimateAt(projectile.Meta.UsageAnimationTilePath, actorToAttack);
-                        }
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(weapon.UsageAnimationTilePath) == false)
-                        {
-                            AnimateAt(weapon.UsageAnimationTilePath, actorToAttack);
-                        }
-                    }
+                            var splashActors = Core.Actors.Intersections(actorToAttack, (int)weapon?.SplashDamageRange)
+                                .Where(o => o.Meta.CanTakeDamage == true);
 
-                    foreach (var actorTakingDamage in actorsTakingDamage)
-                    {
-                        int damageToApply = playerHitsFor;
-
-                        if (actorTakingDamage.IsSplashDamage)
-                        {
-                            damageToApply = (int) (damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)weapon?.SplashDamageRange));
-                        }
-
-                        if (actorTakingDamage.Actor.Meta.WeaknessType == weapon.DamageType)
-                        {
-                            Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
-                            damageToApply = (damageToApply * 2);
-                        }
-
-                        if (weapon.DamageType == DamageType.Poison)
-                        {
-                            if (MathUtility.FlipCoin()) //50% chance
+                            foreach (var splashActor in splashActors)
                             {
-                                if (Core.State.ActorStates.HasState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned) == false)
+                                double distanceFromPrimary = splashActor.DistanceTo(actorToAttack);
+                                if (distanceFromPrimary < (int)weapon?.SplashDamageRange)
                                 {
-                                    var state = Core.State.ActorStates.AddState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned);
-                                    state.ExpireTime = 10;
-                                    Core.LogLine($"{actorToAttack.Meta.Name} has been poisoned!", Color.DarkOliveGreen);
+                                    actorsTakingDamage.Add(new ActorToDamage()
+                                    {
+                                        Actor = splashActor,
+                                        DistanceFromPrimary = distanceFromPrimary,
+                                        IsPrimaryTarget = false,
+                                        IsSplashDamage = true
+                                    });
                                 }
                             }
                         }
 
-                        if (hitType == HitType.CriticalHit)
+                        //Hit animation:
+                        if (projectile != null)
                         {
-                            Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
+                            if (string.IsNullOrEmpty(projectile.Meta.UsageAnimationTilePath) == false)
+                            {
+                                AnimateAt(projectile.Meta.UsageAnimationTilePath, actorToAttack);
+                            }
                         }
                         else
                         {
-                            Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp and hits.", Color.DarkGreen);
+                            if (string.IsNullOrEmpty(weapon.UsageAnimationTilePath) == false)
+                            {
+                                AnimateAt(weapon.UsageAnimationTilePath, actorToAttack);
+                            }
                         }
 
-                        if (actorTakingDamage.Actor.ApplyDamage(playerHitsFor))
+                        foreach (var actorTakingDamage in actorsTakingDamage)
                         {
-                            int experience = 0;
+                            int damageToApply = playerHitsFor;
 
-                            if (actorTakingDamage.Actor.Meta != null && actorTakingDamage.Actor.Meta.Experience != null)
+                            if (actorTakingDamage.IsSplashDamage)
                             {
-                                experience = (int)actorTakingDamage.Actor.Meta.Experience;
+                                damageToApply = (int)(damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)weapon?.SplashDamageRange));
                             }
 
-                            Core.LogLine($"{Core.State.Character.Name} kills {actorTakingDamage.Actor.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
-
-                            if (actorTakingDamage.Actor.Meta.IsContainer == true)
+                            if (actorTakingDamage.Actor.Meta.WeaknessType == weapon.DamageType)
                             {
-                                //If the enemy has loot, they drop it when they die.
-                                EmptyContainerToGround(actorTakingDamage.Actor.Meta.UID, actorTakingDamage.Actor);
+                                Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
+                                damageToApply = (damageToApply * 2);
                             }
 
-                            Core.State.Character.Experience += experience;
+                            if (weapon.DamageType == DamageType.Poison)
+                            {
+                                if (MathUtility.FlipCoin()) //50% chance
+                                {
+                                    if (Core.State.ActorStates.HasState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned) == false)
+                                    {
+                                        var state = Core.State.ActorStates.AddState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned);
+                                        state.ExpireTime = 10;
+                                        Core.LogLine($"{actorToAttack.Meta.Name} has been poisoned!", Color.DarkOliveGreen);
+                                    }
+                                }
+                            }
+
+                            if (hitType == HitType.CriticalHit)
+                            {
+                                Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
+                            }
+                            else
+                            {
+                                Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp and hits.", Color.DarkGreen);
+                            }
+
+                            if (actorTakingDamage.Actor.ApplyDamage(playerHitsFor))
+                            {
+                                int experience = 0;
+
+                                if (actorTakingDamage.Actor.Meta != null && actorTakingDamage.Actor.Meta.Experience != null)
+                                {
+                                    experience = (int)actorTakingDamage.Actor.Meta.Experience;
+                                }
+
+                                Core.LogLine($"{Core.State.Character.Name} kills {actorTakingDamage.Actor.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
+
+                                if (actorTakingDamage.Actor.Meta.IsContainer == true)
+                                {
+                                    //If the enemy has loot, they drop it when they die.
+                                    EmptyContainerToGround(actorTakingDamage.Actor.Meta.UID, actorTakingDamage.Actor);
+                                }
+
+                                Core.State.Character.Experience += experience;
+                            }
                         }
                     }
-                }
-                else if (hitType == HitType.CriticalMiss)
-                {
-                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} {GetCriticalMissText()}", Color.DarkRed);
+                    else if (hitType == HitType.CriticalMiss)
+                    {
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} {GetCriticalMissText()}", Color.DarkRed);
+                    }
+                    else
+                    {
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
+                    }
                 }
                 else
                 {
-                    Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
+                    Core.LogLine($"This item seems to do no damage nor have any effect?", Color.DarkRed);
                 }
             }
 
@@ -1616,21 +1717,27 @@ namespace Game.Engine
                 Core.LogLine($"{Core.State.Character.Name} reached level {Core.State.Character.Level}! Next level at {Core.State.Character.NextLevelExperience:N0}xp.", Color.Green);
             }
 
-            var activeStates = Core.State.ActorStates.States(Core.State.Character.UID);
+            var activePlayerStates = Core.State.ActorStates.States(Core.State.Character.UID);
 
-            var electricResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var fireResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var earthResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var iceResistance = (activeStates.Where(o => o.State == StateOfBeing.IncreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var electricResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var fireResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var earthResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var iceResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
 
-            electricResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
-            fireResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
-            earthResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
-            iceResistance -= (activeStates.Where(o => o.State == StateOfBeing.DecreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
+            electricResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
+            fireResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
+            earthResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
+            iceResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
 
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
             foreach (var hostile in hostileInteractions.Where(o => o.Visible))
             {
+                if (Core.State.ActorStates.HasState((Guid)hostile.Meta.UID, StateOfBeing.Held))
+                {
+                    Core.LogLine($"{hostile.Meta.Name} is held, cannot attack.", Color.DarkGreen);
+                    continue;
+                }
+
                 //Monster hit player.
                 var hitType = CalculateHitType((int)hostile.Meta.Dexterity, Core.State.Character.AC);
                 if (hitType == HitType.Hit)
@@ -1804,107 +1911,170 @@ namespace Game.Engine
                 }
             }
 
-            var states = Core.State.ActorStates.States(Core.State.Character.UID);
-            var expiredStates = states.Where(o => Core.State.TimePassed >= o.ExpireTime).ToList();
+            var expiredStates = Core.State.ActorStates.States()
+                .Where(o => Core.State.TimePassed >= o.ExpireTime).ToList();
 
             foreach (var state in expiredStates)
             {
-                #region IncreaseDexterity
-                if (state.State == StateOfBeing.IncreaseDexterity)
+                if (state.ActorUID != Core.State.Character.UID) //Other actor states expired.
                 {
+                    var actor = Core.Actors.Tiles.Where(o => o.Meta.UID == state.ActorUID).First();
+                    Core.LogLine($"{state.State} state expired for {actor.Meta.Name}.");
                     Core.State.ActorStates.RemoveState(state);
-                    Core.State.Character.AugmentedDexterity -= (int)state.ModificationAmount;
-                    Core.LogLine($"Dexterity augmentation expired, decreased by {state.ModificationAmount}.");
                 }
-                #endregion
-                #region IncreaseConstitution
-                else if (state.State == StateOfBeing.IncreaseConstitution)
+                else if (state.ActorUID == Core.State.Character.UID) //Player states expired.
                 {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.State.Character.AugmentedConstitution -= (int)state.ModificationAmount;
-                    Core.LogLine($"Constitution augmentation expired, decreased by {state.ModificationAmount}.");
-                }
-                #endregion
-                #region IncreaseArmorClass
-                else if (state.State == StateOfBeing.IncreaseArmorClass)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.State.Character.AugmentedAC -= (int)state.ModificationAmount;
-                    Core.LogLine($"AC augmentation expired, decreased by {state.ModificationAmount}.");
-                }
-                #endregion
-                #region IncreaseIntelligence
-                else if (state.State == StateOfBeing.IncreaseIntelligence)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.State.Character.AugmentedIntelligence -= (int)state.ModificationAmount;
-                    Core.LogLine($"Intelligence augmentation expired, decreased by {state.ModificationAmount}.");
-                }
-                #endregion
-                #region IncreaseStrength
-                else if (state.State == StateOfBeing.IncreaseStrength)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.State.Character.AugmentedStrength -= (int)state.ModificationAmount;
-                    Core.LogLine($"Strength augmentation expired, decreased by {state.ModificationAmount}.");
-                }
-                #endregion
-                #region Poison
-                else if (state.State == StateOfBeing.Poisoned)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
-                }
-                #endregion
-                else if (state.State == StateOfBeing.IncreaseEarthResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
-                }
-                else if (state.State == StateOfBeing.IncreaseFireResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Fire resistance has worn off, decreased by {state.ModificationAmount}.");
-                }
-                else if (state.State == StateOfBeing.IncreaseIceResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Ice resistance has worn off, decreased by {state.ModificationAmount}.");
-                }
-                else if (state.State == StateOfBeing.IncreaseElectricResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
-                }
-                else if (state.State == StateOfBeing.DecreaseEarthResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
-                }
-                else if (state.State == StateOfBeing.DecreaseFireResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Fire resistance has worn off, increased by {state.ModificationAmount}.");
-                }
-                else if (state.State == StateOfBeing.DecreaseIceResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Ice resistance has worn off, increased by {state.ModificationAmount}.");
-                }
-                else if (state.State == StateOfBeing.DecreaseElectricResistance)
-                {
-                    Core.State.ActorStates.RemoveState(state);
-                    Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
-                }
-                #endregion
-                else
-                {
-                    throw new NotImplementedException();
+                    #region IncreaseDexterity
+                    if (state.State == StateOfBeing.IncreaseDexterity)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.State.Character.AugmentedDexterity -= (int)state.ModificationAmount;
+                        Core.LogLine($"Dexterity augmentation expired, decreased by {state.ModificationAmount}.");
+                    }
+                    #endregion
+                    #region IncreaseConstitution
+                    else if (state.State == StateOfBeing.IncreaseConstitution)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.State.Character.AugmentedConstitution -= (int)state.ModificationAmount;
+                        Core.LogLine($"Constitution augmentation expired, decreased by {state.ModificationAmount}.");
+                    }
+                    #endregion
+                    #region IncreaseArmorClass
+                    else if (state.State == StateOfBeing.IncreaseArmorClass)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.State.Character.AugmentedAC -= (int)state.ModificationAmount;
+                        Core.LogLine($"AC augmentation expired, decreased by {state.ModificationAmount}.");
+                    }
+                    #endregion
+                    #region IncreaseIntelligence
+                    else if (state.State == StateOfBeing.IncreaseIntelligence)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.State.Character.AugmentedIntelligence -= (int)state.ModificationAmount;
+                        Core.LogLine($"Intelligence augmentation expired, decreased by {state.ModificationAmount}.");
+                    }
+                    #endregion
+                    #region IncreaseStrength
+                    else if (state.State == StateOfBeing.IncreaseStrength)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.State.Character.AugmentedStrength -= (int)state.ModificationAmount;
+                        Core.LogLine($"Strength augmentation expired, decreased by {state.ModificationAmount}.");
+                    }
+                    #endregion
+                    #region Poison
+                    else if (state.State == StateOfBeing.Poisoned)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
+                    }
+                    #endregion
+                    else if (state.State == StateOfBeing.IncreaseEarthResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.IncreaseFireResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Fire resistance has worn off, decreased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.IncreaseIceResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Ice resistance has worn off, decreased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.IncreaseElectricResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.DecreaseEarthResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.DecreaseFireResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Fire resistance has worn off, increased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.DecreaseIceResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Ice resistance has worn off, increased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.DecreaseElectricResistance)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
+                    }
+                    else if (state.State == StateOfBeing.Held)
+                    {
+                        Core.State.ActorStates.RemoveState(state);
+                        Core.LogLine($"You are no longer held!");
+                    }
+                    #endregion
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
             }
 
             Core.PurgeAllDeletedTiles();
         }
+
+        private void ActOnActiveState(ActorState state)
+        {
+            if (state.State == StateOfBeing.Poisoned)
+            {
+                var actor = Core.Actors.Tiles.Where(o => o.Meta.UID == state.ActorUID).First();
+
+                if (actor == Core.Player)
+                {
+                    int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.1); //10% of the remaining hit points.
+                    if (damage == 0) damage = 1;
+                    Core.State.Character.AvailableHitpoints -= damage;
+                    Core.LogLine($"{Core.State.Character.Name} took {damage} poison damage!", Color.DarkRed);
+
+                    if (Core.State.Character.AvailableHitpoints <= 0)
+                    {
+                        Core.LogLine($"{PlayerDeathText()}", Color.Red);
+                        Core.Player.QueueForDelete();
+                    }
+                }
+                else
+                {
+                    int damage = (int)((actor.Meta.HitPoints ?? 0) * 0.1); //10% of the remaining hit points.
+                    if (damage == 0) damage = 1;
+                    Core.LogLine($"{actor.Meta.Name} took {damage} poison damage!", Color.DarkGreen);
+
+                    if (actor.ApplyDamage(damage))
+                    {
+                        int experience = 0;
+
+                        if (actor.Meta != null && actor.Meta.Experience != null)
+                        {
+                            experience = (int)actor.Meta.Experience;
+                        }
+
+                        Core.LogLine($"{Core.State.Character.Name} dies of poisoning, gaining you {experience}xp!", Color.DarkGreen);
+
+                        if (actor.Meta.IsContainer == true)
+                        {
+                            //If the enemy has loot, they drop it when they die.
+                            EmptyContainerToGround(actor.Meta.UID, actor);
+                        }
+
+                        Core.State.Character.Experience += experience;
+                    }
+                }
+            }
+        }
+
 
         private void AnimateTo(string imagePath, ActorBase from, ActorBase to)
         {
@@ -1950,7 +2120,7 @@ namespace Game.Engine
                 width = int.Parse(nameParts[1]);
                 height = int.Parse(nameParts[2]);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Animation image name should be in the form Name_Width_Height.png: {ex.Message}");
             }
@@ -2056,62 +2226,21 @@ namespace Game.Engine
         /// </summary>
         private List<ActorBase> MoveActor(ActorBase actor, out Point<double> finalAppliedOffset)
         {
-            if (actor.Meta.UID != null && Core.State.ActorStates.HasState((Guid)actor.Meta.UID, StateOfBeing.Poisoned))
+            var appliedOffset = new Point<double>(0, 0);
+
+            if (Core.State.ActorStates.HasState((Guid)actor.Meta.UID, StateOfBeing.Held) == false)
             {
-                if (actor == Core.Player)
-                {
-                    int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.1); //10% of the remaining hit points.
-                    if (damage == 0) damage = 1;
-                    Core.State.Character.AvailableHitpoints -= damage;
-                    Core.LogLine($"{Core.State.Character.Name} took {damage} poison damage!", Color.DarkRed);
+                appliedOffset = new Point<double>(
+                    (int)(actor.Velocity.Angle.X * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage),
+                    (int)(actor.Velocity.Angle.Y * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage));
 
-                    if (Core.State.Character.AvailableHitpoints <= 0)
-                    {
-                        Core.LogLine($"{PlayerDeathText()}", Color.Red);
-                        Core.Player.QueueForDelete();
-
-                        finalAppliedOffset = new Point<double>(0, 0);
-                        return new List<ActorBase>();
-                    }
-                }
-                else
-                {
-                    int damage = (int)((actor.Meta.HitPoints ?? 0) * 0.1); //10% of the remaining hit points.
-                    if (damage == 0) damage = 1;
-                    Core.LogLine($"{actor.Meta.Name} took {damage} poison damage!", Color.DarkGreen);
-
-                    if (actor.ApplyDamage(damage))
-                    {
-                        int experience = 0;
-
-                        if (actor.Meta != null && actor.Meta.Experience != null)
-                        {
-                            experience = (int)actor.Meta.Experience;
-                        }
-
-                        Core.LogLine($"{Core.State.Character.Name} dies of poisoning, gaining you {experience}xp!", Color.DarkGreen);
-
-                        if (actor.Meta.IsContainer == true)
-                        {
-                            //If the enemy has loot, they drop it when they die.
-                            EmptyContainerToGround(actor.Meta.UID, actor);
-                        }
-
-                        Core.State.Character.Experience += experience;
-                    }
-                }
+                actor.X += appliedOffset.X;
+                actor.Y += appliedOffset.Y;
             }
-
-            Point<double> appliedOffset = new Point<double>(
-                (int)(actor.Velocity.Angle.X * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage),
-                (int)(actor.Velocity.Angle.Y * actor.Velocity.MaxSpeed * actor.Velocity.ThrottlePercentage));
-
-            actor.X += appliedOffset.X;
-            actor.Y += appliedOffset.Y;
 
             var intersections = Core.Actors.Intersections(actor)
                 .Where(o => o.Meta.ActorClass != ActorClassName.ActorTerrain)
-                  .Where(o => o.Meta.CanWalkOn == false).ToList();
+                .Where(o => o.Meta.CanWalkOn == false).ToList();
 
             //Only get the top terrain block, we dont want to dig to the ocean.
             var topTerrainBlock = Core.Actors.Intersections(actor)

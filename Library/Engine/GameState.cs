@@ -31,9 +31,8 @@ namespace Library.Engine
         public int DefaultLevel { get; set; }
         public bool IsDialogActive { get; set; }
         public int ActiveThreadCount { get; private set; } = 0;
-        public int TimePassed { get; set; } = 0;
+        public int TimePassed { get; set; } = 0; //Number of seconds passed in the game. (not real time, game time).
         public List<PersistentStore> Stores { get; set; } = new List<PersistentStore>();
-
         public object ActiveThreadCountLock { get; private set; } = new object();
 
 

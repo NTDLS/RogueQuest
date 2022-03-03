@@ -594,11 +594,7 @@ namespace Game
             }
 
             var belt = _core.State.Character.GetEquipSlot(EquipSlot.Belt);
-            if (belt.Tile != null &&
-                (freeHand.Tile.Meta.SubType == ActorSubType.RangedWeapon
-                || freeHand.Tile.Meta.SubType == ActorSubType.Potion
-                || freeHand.Tile.Meta.SubType == ActorSubType.Scroll
-                || freeHand.Tile.Meta.SubType == ActorSubType.Wand))
+            if (belt.Tile != null)
             {
                 var items = _core.State.Items.Where(o => o.ContainerId == belt.Tile.Meta.UID).ToList();
 
@@ -791,7 +787,7 @@ namespace Game
 
         private void UpdatePlayerStatLabels(EngineCore core)
         {
-            var time = TimeSpan.FromMinutes(core.State.TimePassed);
+            var time = TimeSpan.FromSeconds(core.State.TimePassed);
             labelPlayer.Text = $"{core.State.Character.Name}, Level {core.State.Character.Level:N0}";
             labelXP.Text = $"{core.State.Character.Experience.ToString():N0}/{core.State.Character.NextLevelExperience.ToString():N0}";
             labelHP.Text = $"{core.State.Character.AvailableHitpoints:N0}";

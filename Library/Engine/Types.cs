@@ -130,7 +130,9 @@
         DecreaseFireResistance,
         DecreaseEarthResistance,
         MagicArrow,
-        CastFireball
+        CastFireball,
+        HoldMonster,
+        CastPoison
     }
 
     public enum StateOfBeing
@@ -138,7 +140,7 @@
         Unspecified,
         Poisoned,
         Slowed,
-        Frozen,
+        Held,
         IncreaseStrength,
         IncreaseDexterity,
         IncreaseConstitution,
