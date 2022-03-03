@@ -13,6 +13,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FormCharacter - Copy %282%29.Designer.cs">
+      <DependentUpon>FormCharacter.Designer.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FormCharacter - Copy - Copy.Designer.cs">
+      <DependentUpon>FormCharacter - Copy.Designer.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FormCharacter - Copy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormCharacter - Copy.Designer.cs">
+      <DependentUpon>FormCharacter.Designer.cs</DependentUpon>
+    </Compile>
     <Compile Update="FormStoreQuantity.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -36,6 +48,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="FormCharacter - Copy %282%29.resx">
+      <DependentUpon>FormCharacter.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormCharacter - Copy - Copy.resx">
+      <DependentUpon>FormCharacter - Copy.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FormCharacter - Copy.resx">
+      <DependentUpon>FormCharacter.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

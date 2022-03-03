@@ -684,6 +684,10 @@ namespace Game.Engine
                     }
                 }
             }
+            else if(item.Tile.Meta.IsSpell ?? false)
+            {
+                Core.State.Character.AvailableMana -= (item.Tile.Meta.Mana ?? 0);
+            }
             else
             {
                 Core.State.Items.Remove(item);

@@ -48,6 +48,7 @@ namespace Library.Engine
         /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
         /// </summary>
         public bool HasBeenViewed { get; set; }
+        public bool? IsSpell { get; set; }
         public int? Rarity { get; set; } //100 being common and 0 being literally impossible (not in stores or dropped randomly).
         public bool? OnlyDialogOnce { get; set; }
         public int? Mana { get; set; } //Amount of mana required to cast spell (only used for memorized scrolls).
@@ -216,6 +217,7 @@ namespace Library.Engine
             this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
             this.UsageAnimationTilePath = with.UsageAnimationTilePath ?? this.UsageAnimationTilePath;
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
+            this.IsSpell = with.IsSpell ?? this.IsSpell;
             this.Rarity = with.Rarity ?? this.Rarity;
             this.WeaknessType = with.WeaknessType ?? this.WeaknessType;
             this.DamageType = with.DamageType ?? this.DamageType;

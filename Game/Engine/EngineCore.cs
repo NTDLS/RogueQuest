@@ -87,7 +87,7 @@ namespace Game.Engine
         }
 
         public void NewGame(string scenarioFile, string characterName, int avatar,
-            int dexterity, int constitution, int intelligence, int strength)
+            int dexterity, int constitution, int intelligence, int strength, TileIdentifier startingSpell)
         {
             this.QueueAllForDelete();
             this.PurgeAllDeletedTiles();
@@ -107,8 +107,11 @@ namespace Game.Engine
                 StartingStrength = strength
             };
 
-            this.State.Character.InitializeState();
+            var spell = startingSpell.DeriveCopy();
+            spell.Meta.IsSpell = true;
+            this.State.Character.KnownSpells.Add(spell);
 
+            this.State.Character.InitializeState();
             this.State.CurrentLevel = this.State.DefaultLevel;
 
             Levels.PopLevel(this.State.CurrentLevel);

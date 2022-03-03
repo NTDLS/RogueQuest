@@ -16,6 +16,20 @@ namespace Library.Engine
             this.TilePath = tilePath;
         }
 
+        public TileIdentifier(string tilePath, bool loadMetadata)
+        {
+            this.TilePath = tilePath;
+            if (loadMetadata)
+            {
+                LoadMetadata();
+            }
+        }
+
+        public void LoadMetadata()
+        {
+            Meta = TileMetadata.GetFreshMetadata(this.TilePath);
+        }
+
         public TileIdentifier(string tilePath, TileMetadata meta)
         {
             this.TilePath = tilePath;

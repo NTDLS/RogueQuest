@@ -410,7 +410,8 @@ namespace Game
                         form.Dexterity,
                         form.Constitution,
                         form.Intelligence,
-                        form.Strength);
+                        form.Strength,
+                        form.StartingSpell);
 
                     UpdatePlayerStatLabels(_core);
 
@@ -554,7 +555,112 @@ namespace Game
             return tilePath;
         }
 
+        private Image GetImage(string tilePath)
+        {
+            if (_imageList.Images.Keys.Contains(tilePath))
+            {
+                return _imageList.Images[tilePath];
+            }
+
+            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetAssetPath($"{tilePath}.png"));
+            _imageList.Images.Add(tilePath, bitmap);
+
+            return bitmap;
+        }
+
         #endregion
+
+        private void UpdateKnownSpells()
+        {
+            var currentlyLoadedSpells = new List<QuickItemButtonInfo>();
+            var itemsToRemove = new List<ToolStripItem>();
+
+            foreach (var item in toolStripDropDownButtonSpells.DropDownItems)
+            {
+                var tag = ((ToolStripItem)item).Tag as QuickItemButtonInfo;
+
+                if (_core.State.Character.KnownSpells.Where(o => o.Meta.UID == tag.Tile.Meta.UID).Any() == false)
+                {
+                    itemsToRemove.Add(item as ToolStripItem);
+                }
+
+                currentlyLoadedSpells.Add(tag);
+            }
+
+            foreach (var item in itemsToRemove)
+            {
+                toolStripDropDownButtonSpells.DropDownItems.Remove(item);
+            }
+
+            foreach (var spell in _core.State.Character.KnownSpells)
+            {
+                if (currentlyLoadedSpells.Where(o => o.UID == spell.Meta.UID).Any() == false)
+                {
+                    QuickItemButtonInfo info = new QuickItemButtonInfo()
+                    {
+                        Tile = spell,
+                        UID = (Guid)spell.Meta.UID
+                    };
+
+                    var item = toolStripDropDownButtonSpells.DropDownItems.Add(spell.Meta.Name);
+                    item.Tag = info;
+                    item.ToolTipText = $"{spell.Meta.Name} ({spell.Meta.Mana} mana)";
+                    item.Image = GetImage(spell.TilePath);
+                    item.Click += KnownSpellItem_Click;
+
+                    _core.State.Items.Add(new CustodyItem()
+                    {
+                        Tile = spell,
+                        ContainerId = null
+                    });
+                }
+            }
+        }
+
+        private void KnownSpellItem_Click(object sender, EventArgs e)
+        {
+            PendingQuickItemMouseOperation = null;
+            CurrentMouseMode = MouseMode.None;
+            splitContainerHoriz.Cursor = Cursors.Default;
+
+            if (sender is ToolStripItem && ((ToolStripItem)sender).Tag is QuickItemButtonInfo)
+            {
+                var tag = (QuickItemButtonInfo)(((ToolStripItem)sender).Tag);
+                var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tag.UID).FirstOrDefault();
+
+                if (inventoryItem == null)
+                {
+                    return;
+                }
+
+                if (_core.State.Character.AvailableMana < inventoryItem.Tile.Meta.Mana)
+                {
+                    Constants.Alert("You do not have enough mana to activate this spell.");
+                    return;
+                }
+
+                if ((inventoryItem.Tile.Meta.SubType == ActorSubType.Wand && inventoryItem.Tile.Meta.TargetType != TargetType.Self)
+                    || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType != TargetType.Self))
+                {
+                    splitContainerHoriz.Cursor = Cursors.Cross;
+                    _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.Name}... (right-click to cancel)");
+                    CurrentMouseMode = MouseMode.RangedTargetSelction;
+                    PendingQuickItemMouseOperation = tag;
+                }
+                else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType == TargetType.Self)
+                {
+                    if (inventoryItem.Tile.Meta.IsConsumable == true)
+                    {
+                        if (UseSelfPotionOrScroll(inventoryItem.Tile))
+                        {
+
+                        }
+                    }
+                }
+            }
+
+            UpdatePlayerStatLabels(_core);
+        }
 
         private void UpdateQuickSlots()
         {
@@ -770,7 +876,13 @@ namespace Game
 
         private bool UseSelfPotionOrScroll(TileIdentifier item)
         {
-            if (MessageBox.Show($"Use {item.Meta.Name}?", $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            string message = $"Use {item.Meta.Name}?";
+            if (item.Meta.IsSpell == true)
+            {
+                message = $"Use {item.Meta.Name} ({item.Meta.Mana} mana)?";
+            }
+
+            if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == item.Meta.UID).First();
 
@@ -796,6 +908,7 @@ namespace Game
             labelGold.Text = $"{core.State.Character.Money:N0}gp";
 
             UpdateQuickSlots();
+            UpdateKnownSpells(); 
 
             labelPlayer.ForeColor = Color.Black;
 

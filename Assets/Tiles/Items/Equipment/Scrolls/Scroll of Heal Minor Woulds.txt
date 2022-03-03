@@ -1,18 +1,18 @@
 {
-  "Name":"Greater Health",
+  "Name":"Heal Minor Woulds",
   "SubType": "Scroll",
-  "Value": "100",
+  "Value": "20",
   "TargetType":"Self",
-  "CastTime":"5",
   "Effect": "Heal",
-  "EffectFormula": "%90,25",
+  "CastTime":"5",
+  "EffectFormula": "25%",
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
   "Weight":"0.05",
   "Bulk":"2",
-  "Rarity":"70",
+  "Rarity":"100",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2",
-  "Mana":"6"
+  "Level":"1",
+  "Mana":"3"
 }

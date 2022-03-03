@@ -30,6 +30,7 @@ namespace Library.Engine
         public int StartingDexterity { get; set; }
         public int StartingIntelligence { get; set; }
         public int StartingStrength { get; set; }
+        public List<TileIdentifier> KnownSpells { get; set; } = new List<TileIdentifier>();
 
         //Augmented attributes are increased/decreased via enchanted items, potions, etc.
         private int _augmentedConstitution = 0;

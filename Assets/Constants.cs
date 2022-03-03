@@ -57,5 +57,10 @@ namespace Assets
         {
             return BaseAssetPath + partialAssetPath;
         }
+
+        public static string GetAssetPath()
+        {
+            return BaseAssetPath;
+        }
     }
 }

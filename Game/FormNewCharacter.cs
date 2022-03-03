@@ -19,6 +19,18 @@ namespace Game
         public int Strength => progressBarStrength.Value;
         public string CharacterName => textBoxName.Text;
 
+        public TileIdentifier StartingSpell
+        {
+            get
+            {
+                if (listViewSpells.SelectedItems?.Count > 0)
+                {
+                    return listViewSpells.SelectedItems[0].Tag as TileIdentifier;
+                }
+                return null;
+            }
+        }
+
         public string ScenerioFile
         {
             get
@@ -63,10 +75,10 @@ namespace Game
             pictureBoxPlayer3.MouseClick += PictureBoxPlayer_MouseClick;
             pictureBoxPlayer4.MouseClick += PictureBoxPlayer_MouseClick;
 
+            PopulateSpells();
+
             buttonRandom_Click(null, null);
-
             ToolTip toolTip = new ToolTip() { AutoPopDelay = 0, InitialDelay = 0, ReshowDelay = 0, ShowAlways = true, };
-
             comboBoxScenario.DrawMode = DrawMode.OwnerDrawFixed;
 
             comboBoxScenario.DrawItem += (s, e) =>
@@ -151,6 +163,51 @@ namespace Game
 
             this.AcceptButton = buttonOk;
             this.CancelButton = buttonCancel;
+        }
+
+        private void PopulateSpells()
+        {
+            PopulateSpellsEx(@"\");
+        }
+
+        private void PopulateSpellsEx(string childFolder)
+        {
+            string spellsPath = Assets.Constants.GetAssetPath();
+            string partialPath = @$"Tiles\Items\Equipment\Scrolls\{childFolder}".Replace(@"\\", @"\");
+
+            foreach (var f in Directory.GetFiles(Path.Combine(spellsPath, partialPath), "*.txt"))
+            {
+                if (Path.GetFileName(f).StartsWith("@"))
+                {
+                    continue;
+                }
+                string relativePath = Path.GetRelativePath(spellsPath, f);
+                string tilePath = relativePath.Substring(0, relativePath.Length - 4);
+                TileIdentifier tile = new TileIdentifier(tilePath, true);
+
+                if (tile.Meta.Level == 1)
+                {
+                    ListViewItem lvItem = new ListViewItem(new string[]
+                    {
+                        tile.Meta.Name,
+                        tile.Meta.Level.ToString(),
+                        tile.Meta.Mana.ToString()
+                    });
+
+                    lvItem.Tag = tile;
+
+                    listViewSpells.Items.Add(lvItem);
+                }
+            }
+
+            foreach (var d in Directory.GetDirectories(Path.Combine(spellsPath, partialPath)))
+            {
+                if (Path.GetFileName(d).StartsWith("@") || Path.GetFileName(d).StartsWith("."))
+                {
+                    continue;
+                }
+                PopulateSpellsEx(Path.Combine(childFolder, d));
+            }
         }
 
         private void buttonRandom_Click(object sender, EventArgs e)
@@ -320,6 +377,12 @@ namespace Game
             if (string.IsNullOrWhiteSpace(textBoxName.Text))
             {
                 Constants.Alert("Give you character a name.", "Character is incomplete.");
+                return;
+            }
+
+            if ((listViewSpells.SelectedItems?.Count ?? 0) == 0)
+            {
+                Constants.Alert("Select a starting spell.", "Character is incomplete.");
                 return;
             }
 
