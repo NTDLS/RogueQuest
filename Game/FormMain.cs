@@ -151,9 +151,7 @@ namespace Game
                 {
                     if (spellForm.ShowDialog() == DialogResult.OK)
                     {
-                        var spell = spellForm.SelectedSpell.DeriveCopy();
-                        spell.Meta.IsSpell = true;
-                        _core.State.Character.KnownSpells.Add(spell);
+                        _core.State.Character.AddKnownSpell(spellForm.SelectedSpell);
                     }
                 }
             }
@@ -900,7 +898,7 @@ namespace Game
         private bool UseSelfPotionOrScroll(TileIdentifier item)
         {
             string message = $"Use {item.Meta.Name}?";
-            if (item.Meta.IsSpell == true)
+            if (item.Meta.IsMemoriziedSpell == true)
             {
                 message = $"Use {item.Meta.Name} ({item.Meta.Mana} mana)?";
             }

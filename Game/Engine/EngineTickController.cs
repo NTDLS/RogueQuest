@@ -684,7 +684,7 @@ namespace Game.Engine
                     }
                 }
             }
-            else if(item.Tile.Meta.IsSpell ?? false)
+            else if(item.Tile.Meta.IsMemoriziedSpell ?? false)
             {
                 Core.State.Character.AvailableMana -= (item.Tile.Meta.Mana ?? 0);
             }
@@ -1390,10 +1390,20 @@ namespace Game.Engine
                                 damageToApply = (int)(damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)weapon?.SplashDamageRange));
                             }
 
-                            if (actorTakingDamage.Actor.Meta.WeaknessType == weapon.DamageType)
+                            if (actorTakingDamage.Actor.Meta.DamageType != null)
                             {
-                                Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
-                                damageToApply = (damageToApply * 2);
+                                var weakness = Utility.GetOppositeOfDamageType((DamageType)actorTakingDamage.Actor.Meta.DamageType);
+
+                                if (weakness == weapon.DamageType)
+                                {
+                                    Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
+                                    damageToApply = (damageToApply * 2);
+                                }
+                                else if (actorTakingDamage.Actor.Meta.DamageType == weapon.DamageType)
+                                {
+                                    Core.LogLine($"{actorToAttack.Meta.Name} is resistant to {weaponDescription}'s {weapon.DamageType} which does half damage.", Color.DarkRed);
+                                    damageToApply = (damageToApply / 2);
+                                }
                             }
 
                             if (weapon.DamageType == DamageType.Poison)

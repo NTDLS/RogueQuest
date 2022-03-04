@@ -15,11 +15,10 @@ namespace Library.Engine
         private string _ProjectileTilePath;
         private string _UsageAnimationTilePath;
         private string _Name;
-        private string _Tag;
-        private int? _Quantity; //Stacking because things like money only really matter in multiples.
+        private int? _Quantity;
         private int? _Experience;
         private int? _HitPoints;
-        private int? _AC; //Armor Class. yay.
+        private int? _AC;
         private int? _DamageDice;
         private int? _DamageDiceFaces;
         private int? _DamageAdditional;
@@ -48,98 +47,207 @@ namespace Library.Engine
         /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
         /// </summary>
         public bool HasBeenViewed { get; set; }
-        public bool? IsSpell { get; set; }
-        public int? Rarity { get; set; } //100 being common and 0 being literally impossible (not in stores or dropped randomly).
-        public bool? OnlyDialogOnce { get; set; }
-        public int? Mana { get; set; } //Amount of mana required to cast spell (only used for memorized scrolls).
-        public bool? IsContainer { get; set; }
-        public bool? CanStack { get; set; } //Remember that items with charges are NOT stackable.
-        public bool? CanWalkOn { get; set; }
-        public int? CastTime { get; set; } //How long it take a spell to cast.
-        public int? SplashDamageRange { get; set; }
-        public DamageType? DamageType { get; set; }
-        public DamageType? WeaknessType { get; set; }
         /// <summary>
-        /// There can only be one.
+        /// Tells us that a scroll in the inventory is actually a memorized spell and not a scroll. It consumes mana and not quantity.
+        /// </summary>
+        public bool? IsMemoriziedSpell { get; set; }
+        /// <summary>
+        /// Liklihood in drops and stores.
+        /// 100 being common and 0 being literally impossible (not in stores or dropped randomly).
+        /// </summary>
+        public int? Rarity { get; set; }
+        /// <summary>
+        /// Whether an item with a dialog text attribute will only show the text once.
+        /// </summary>
+        public bool? OnlyDialogOnce { get; set; }
+        /// <summary>
+        /// Amount of mana required to cast spell (only used for memorized scrolls).
+        /// </summary>
+        public int? Mana { get; set; }
+        /// <summary>
+        /// Whether the tile is a container or not. Containers such as bags, chests and belts can hold other tiles.
+        /// Contents of containers (even the characters inventory) is tracked via [Core.State.Items].
+        /// </summary>
+        public bool? IsContainer { get; set; }
+        /// <summary>
+        /// Whether the item can be stacked with a variable amount of quantity. Items with "Charges" are NOT stackable.
+        /// </summary>
+        public bool? CanStack { get; set; }
+        /// <summary>
+        /// Whether or not a tile can be walked on or blocks travel
+        /// </summary>
+        public bool? CanWalkOn { get; set; }
+        /// <summary>
+        /// The number of moves it takes to activate an item
+        /// </summary>
+        public int? CastTime { get; set; }
+        /// <summary>
+        /// The range in pixiles that a weapon applies splash damage. The damage is applied as a percentage from the center of the selected target area.
+        /// </summary>
+        public int? SplashDamageRange { get; set; }
+        /// <summary>
+        /// The type of damage being done (fire, ice, earth, electrical, etc.)
+        /// </summary>
+        public DamageType? DamageType { get; set; }
+        /// <summary>
+        /// There can only be one item of this type. It will not be repopulated in stores if its lost.
         /// </summary>
         public bool? IsUnique { get; set; }
+        /// <summary>
+        /// Whether the item (actor) can be attacked and take damage then be destroyed when HitPoints fall to 0.
+        /// </summary>
         public bool? CanTakeDamage { get; set; }
-        // This is only populated for tiles that need it.
+        /// <summary>
+        /// The globally unique identifier of the tile. Not populated for terrain tiles.
+        /// </summary>
         public Guid? UID { get { return _UID == Guid.Empty ? null : _UID; } set { _UID = value; } }
+        /// <summary>
+        /// The path to the tile to use for "animating" a projectile. This is a single PNG, not an animation.
+        /// </summary>
         public string ProjectileTilePath { get { return _ProjectileTilePath == string.Empty ? null : _ProjectileTilePath; } set { _ProjectileTilePath = value; } }
+        /// <summary>
+        /// The path to the animation frames that will be used on a successful hit with this tile. Such as an explosion.
+        /// </summary>
         public string UsageAnimationTilePath { get { return _UsageAnimationTilePath == string.Empty ? null : _UsageAnimationTilePath; } set { _UsageAnimationTilePath = value; } }
+        /// <summary>
+        /// The name of the tile.
+        /// </summary>
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
-        public string Tag { get { return _Tag == string.Empty ? null : _Tag; } set { _Tag = value; } }
-        //Stacking because things like money only really matter in multiples.
+        /// <summary>
+        /// Used to track the number in a stack when CanStack=true because things like money, arrows, etc only matter in multiples.
+        /// </summary>
         public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
+        /// <summary>
+        /// Used for magical items, tells the engine what effect the tile will have (Poison, magic arrow, etc.)
+        /// </summary>
         public ItemEffect? Effect { get; set; }
+        /// <summary>
+        /// Whether the ranged weapon uses a bolt or an arrow. Used to search the quiver for an appropriate projectile.
+        /// </summary>
         public ProjectileType? ProjectileType { get; set; }
+        /// <summary>
+        /// Used for magical items to determine what they affect (the player, terrain, or another actor)
+        /// </summary>
         public TargetType? TargetType { get; set; }
+        /// <summary>
+        /// The formula used to determine how much effect to apply. e.g. how much HP to restore or how much intelligence to add.
+        /// </summary>
         public string EffectFormula { get; set; }
+        /// <summary>
+        /// Whether the item is consumable. e.g. wands have a finite number of charges and scrolls can only be used once.
+        /// </summary>
         public bool? IsConsumable { get; set; }
         /// <summary>
-        /// Game time for expiration.
+        /// For magical items, this is how long an effect will last before it is removed.
         /// </summary>
         public int? ExpireTime { get; set; }
-        public int? Charges { get { return _Charges == 0 ? null : _Charges; } set { _Charges = value; } } //Remember that items with charges are NOT stackable.
-
+        /// <summary>
+        /// The number of charges left on a wand.
+        /// </summary>
+        public int? Charges { get { return _Charges == 0 ? null : _Charges; } set { _Charges = value; } }
+        /// <summary>
+        /// How much expereicne the player will receive when destroying this tile.
+        /// </summary>
         public int? Experience { get { return _Experience == 0 ? null : _Experience; } set { _Experience = value; } }
-
+        /// <summary>
+        /// The number of hitpoints that are required to destroy this tile.
+        /// </summary>
         public int? HitPoints { get { return _HitPoints == 0 ? null : _HitPoints; } set { _HitPoints = value; } }
-
+        /// <summary>
+        /// The armor class of this tile.
+        /// </summary>
         public int? AC { get { return _AC == 0 ? null : _AC; } set { _AC = value; } }
-
+        /// <summary>
+        /// The number of dice used when calcuating damage.
+        /// </summary>
         public int? DamageDice { get { return _DamageDice == 0 ? null : _DamageDice; } set { _DamageDice = value; } }
-
+        /// <summary>
+        /// The number of faces on the dice used when calcuating damage.
+        /// </summary>
         public int? DamageDiceFaces { get { return _DamageDiceFaces == 0 ? null : _DamageDiceFaces; } set { _DamageDiceFaces = value; } }
-
+        /// <summary>
+        /// The number extra hitpoints that are added when calcuating damage.
+        /// </summary>
         public int? DamageAdditional { get { return _DamageAdditional == 0 ? null : _DamageAdditional; } set { _DamageAdditional = value; } }
-
+        /// <summary>
+        /// The original number of hitpoints a tile had. Used to determine the damage percentage.
+        /// </summary>
         public int? OriginalHitPoints { get { return _OriginalHitPoints == 0 ? null : _OriginalHitPoints; } set { _OriginalHitPoints = value; } }
-
+        /// <summary>
+        /// For containers: the amount of bulk it can carry.
+        /// </summary>
         public int? BulkCapacity { get { return _BulkCapacity == 0 ? null : _BulkCapacity; } set { _BulkCapacity = value; } }
-
+        /// <summary>
+        /// For containers: the amount of weight it can carry.
+        /// </summary>
         public int? WeightCapacity { get { return _WeightCapacity == 0 ? null : _WeightCapacity; } set { _WeightCapacity = value; } }
-
+        /// <summary>
+        /// For containers: the count of items it can carry.
+        /// </summary>
         public int? ItemCapacity { get { return _ItemCapacity == 0 ? null : _ItemCapacity; } set { _ItemCapacity = value; } }
-
+        /// <summary>
+        /// The weight in grams that an item weighs
+        /// </summary>
         public double? Weight { get { return _Weight == 0 ? null : _Weight; } set { _Weight = value; } }
-
+        /// <summary>
+        /// The bulk in cubic centimeters of an item.
+        /// </summary>
         public double? Bulk { get { return _Bulk == 0 ? null : _Bulk; } set { _Bulk = value; } }
-
+        /// <summary>
+        /// The dexterity of an actor. Used when determining if a player can hit.
+        /// </summary>
         public int? Dexterity { get { return _Dexterity == 0 ? null : _Dexterity; } set { _Dexterity = value; } }
-
+        /// <summary>
+        /// The strength of an actor. Used when determining how much damage will be done to player.
+        /// </summary>
         public int? Strength { get { return _Strength == 0 ? null : _Strength; } set { _Strength = value; } }
-
-        //Used by the ActorSpawner
+        /// <summary>
+        /// The type of tile that will be spawned by the ActorSpawner
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorClassName? SpawnType { get; set; }
-
-        //Used by the ActorSpawner
+        /// <summary>
+        /// The type of tile that will be spawned by the ActorSpawner
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public ActorSubType? SpawnSubType { get { return _SpawnSubType ==  ActorSubType.Unspecified ? null : _SpawnSubType; } set { _SpawnSubType = value; } }
-
-        public int? MinLevel { get { return _MinLevel == 0 ? null : _MinLevel; } set { _MinLevel = value; } } //Used by the ActorSpawner
-
-        public int? MaxLevel { get { return _MaxLevel == 0 ? null : _MaxLevel; } set { _MaxLevel = value; } } //Used by the ActorSpawner
-
-        public int? Level { get { return _Level == 0 ? null : _Level; } set { _Level = value; } } //Used to know when we should show items, enemies and what to populate in shops.
-
-        public double? Value { get { return _Value == 0 ? null : _Value; } set { _Value = value; } } //Rough monetary value of the item in a shop.
-
-        // Used for level warp tiles. This tells the engine which level to load.
+        public ActorSubType? SpawnSubType { get { return _SpawnSubType == ActorSubType.Unspecified ? null : _SpawnSubType; } set { _SpawnSubType = value; } }
+        /// <summary>
+        /// The minimum level of tile that will be spawned by the ActorSpawner
+        /// </summary>
+        public int? MinLevel { get { return _MinLevel == 0 ? null : _MinLevel; } set { _MinLevel = value; } }
+        /// <summary>
+        /// The maximum level of tile that will be spawned by the ActorSpawner
+        /// </summary>
+        public int? MaxLevel { get { return _MaxLevel == 0 ? null : _MaxLevel; } set { _MaxLevel = value; } }
+        /// <summary>
+        /// Used to know when we should show items, enemies and what to populate in shops.
+        /// </summary>
+        public int? Level { get { return _Level == 0 ? null : _Level; } set { _Level = value; } }
+        /// <summary>
+        /// Rough monetary value of the item in a shop.
+        /// </summary>
+        public double? Value { get { return _Value == 0 ? null : _Value; } set { _Value = value; } }
+        /// <summary>
+        /// Used for level warp tiles. This tells the engine which level to load.
+        /// </summary>
         public string LevelWarpName { get { return _LevelWarpName == string.Empty ? null : _LevelWarpName; } set { _LevelWarpName = value; } }
-
+        /// <summary>
         /// Used for level warp tiles. This tells the engine which tile to spawn to.
+        /// </summary>
         public Guid? LevelWarpTargetTileUID { get { return _LevelWarpTargetTileUID == Guid.Empty ? null : _LevelWarpTargetTileUID; } set { _LevelWarpTargetTileUID = value; } }
-
+        /// <summary>
+        /// The class that is used to drive the behaivior of this tile.
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorClassName? ActorClass { get; set; }
-
+        /// <summary>
+        /// The subtype of this tile. Belt, pack, weapon, etc.
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public ActorSubType? SubType { get { return _SubType == ActorSubType.Unspecified ? null : _SubType; } set { _SubType = value; } }
-
-        // This is what the object will say to the player when approached.
+        /// <summary>
+        /// This is what the object will say to the player when approached.
+        /// </summary>
         public string Dialog { get { return _Dialog == string.Empty ? null : _Dialog; } set { _Dialog = value; } }
 
         public string DndDamageText
@@ -170,26 +278,11 @@ namespace Library.Engine
         {
             get
             {
-                if (Rarity >= 40)
-                {
-                    return "Common";
-                }
-                else if (Rarity >= 20)
-                {
-                    return "Uncommon";
-                }
-                else if (Rarity >= 10)
-                {
-                    return "Rare";
-                }
-                else if (Rarity >= 1)
-                {
-                    return "Ultra Rare";
-                }
-                else if (Rarity >= 0)
-                {
-                    return "Legendary";
-                }
+                if (Rarity >= 40) return "Common";
+                else if (Rarity >= 20) return "Uncommon";
+                else if (Rarity >= 10) return "Rare";
+                else if (Rarity >= 1) return "Ultra Rare";
+                else if (Rarity >= 0) return "Legendary";
                 return "n/a";
             }
         }
@@ -197,7 +290,6 @@ namespace Library.Engine
         public void OverrideWith(TileMetadata with)
         {
             this.UID = with.UID ?? this.UID;
-            this.Tag = with.Tag ?? this.Tag;
             this.CanWalkOn = with.CanWalkOn ?? this.CanWalkOn;
             this.CastTime = with.CastTime ?? this.CastTime;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
@@ -217,9 +309,8 @@ namespace Library.Engine
             this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
             this.UsageAnimationTilePath = with.UsageAnimationTilePath ?? this.UsageAnimationTilePath;
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
-            this.IsSpell = with.IsSpell ?? this.IsSpell;
+            this.IsMemoriziedSpell = with.IsMemoriziedSpell ?? this.IsMemoriziedSpell;
             this.Rarity = with.Rarity ?? this.Rarity;
-            this.WeaknessType = with.WeaknessType ?? this.WeaknessType;
             this.DamageType = with.DamageType ?? this.DamageType;
             this.IsUnique = with.IsUnique ?? this.IsUnique;
             this.Dialog = with.Dialog ?? this.Dialog;

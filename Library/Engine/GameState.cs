@@ -35,7 +35,6 @@ namespace Library.Engine
         public List<PersistentStore> Stores { get; set; } = new List<PersistentStore>();
         public object ActiveThreadCountLock { get; private set; } = new object();
 
-
         public void AddThreadReference()
         {
             lock (ActiveThreadCountLock)

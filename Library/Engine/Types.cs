@@ -1,5 +1,21 @@
 ﻿namespace Library.Engine.Types
 {
+    public static class Utility
+    {
+        public static DamageType GetOppositeOfDamageType(DamageType damageType)
+        {
+            switch (damageType)
+            {
+                case DamageType.Ice: return DamageType.Fire;
+                case DamageType.Fire: return DamageType.Ice;
+                case DamageType.Electric: return DamageType.Earth;
+                case DamageType.Earth: return DamageType.Electric;
+            }
+
+            return DamageType.Unspecified;
+        }
+    }
+
     public enum ReplayMode
     {
         SinglePlay,

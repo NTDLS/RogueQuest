@@ -117,9 +117,7 @@ namespace Game.Engine
                 StartingStrength = strength
             };
 
-            var spell = startingSpell.DeriveCopy();
-            spell.Meta.IsSpell = true;
-            this.State.Character.KnownSpells.Add(spell);
+            this.State.Character.AddKnownSpell(startingSpell);
 
             this.State.Character.InitializeState();
             this.State.CurrentLevel = this.State.DefaultLevel;

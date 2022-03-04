@@ -1816,13 +1816,6 @@ namespace ScenarioEdit
                                     //{
                                     //    tile.Meta.SpawnSubType = dialog.PropertyValue;
                                     //}
-                                    else if (selectedRow.Text == "Tag")
-                                    {
-                                        foreach (var tile in selectedItems)
-                                        {
-                                            tile.Meta.Tag = dialog.PropertyValue;
-                                        }
-                                    }
                                     else if (selectedRow.Text == "Hit Points")
                                     {
                                         foreach (var tile in selectedItems)
@@ -1949,7 +1942,6 @@ namespace ScenarioEdit
             {
                 listViewProperties.Items.Add("Name").SubItems.Add(selectedTile.Meta?.Name);
                 listViewProperties.Items.Add("Tile").SubItems.Add(selectedTile.TilePath);
-                listViewProperties.Items.Add("Tag").SubItems.Add(selectedTile.Meta?.Tag);
                 listViewProperties.Items.Add("Actor Class").SubItems.Add(selectedTile.Meta?.ActorClass.ToString());
                 listViewProperties.Items.Add("Sub Type").SubItems.Add(selectedTile.Meta?.SubType.ToString());
                 listViewProperties.Items.Add("z-Order").SubItems.Add(selectedTile.DrawOrder.ToString());
@@ -2442,7 +2434,7 @@ namespace ScenarioEdit
                         body.CreateCell(cell++).SetCellValue(item.Meta.Strength ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
                         body.CreateCell(cell++).SetCellValue(item.Meta.DamageType?.ToString());
-                        body.CreateCell(cell++).SetCellValue(item.Meta.WeaknessType?.ToString());
+                        body.CreateCell(cell++).SetCellValue((Utility.GetOppositeOfDamageType(item.Meta.DamageType ?? DamageType.Unspecified)).ToString());
                         body.CreateCell(cell++).SetCellValue(item.Meta.Experience ?? 0);
                     }
 

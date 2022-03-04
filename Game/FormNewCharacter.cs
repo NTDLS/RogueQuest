@@ -185,7 +185,7 @@ namespace Game
                 string tilePath = relativePath.Substring(0, relativePath.Length - 4);
                 TileIdentifier tile = new TileIdentifier(tilePath, true);
 
-                if (tile.Meta.Level == 1)
+                if ((tile.Meta.Mana ?? 0) > 0 && tile.Meta.Level == 1)
                 {
                     ListViewItem lvItem = new ListViewItem(new string[]
                     {

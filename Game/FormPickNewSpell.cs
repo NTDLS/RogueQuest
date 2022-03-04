@@ -1,6 +1,5 @@
 ﻿using Library.Engine;
 using System;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -49,27 +48,15 @@ namespace Game
 
         private void PopulateSpells()
         {
-            PopulateSpellsEx(@"\");
-        }
+            var tiles = _core.Materials.Where(o =>
+                o.Meta.SubType == Library.Engine.Types.ActorSubType.Scroll
+                && o.Meta.Mana > 0 && o.Meta.Level <= _core.State.Character.Level).ToList();
 
-        private void PopulateSpellsEx(string childFolder)
-        {
-            string spellsPath = Assets.Constants.GetAssetPath();
-            string partialPath = @$"Tiles\Items\Equipment\Scrolls\{childFolder}".Replace(@"\\", @"\");
-
-            foreach (var f in Directory.GetFiles(Path.Combine(spellsPath, partialPath), "*.txt"))
+            foreach (var tile in tiles)
             {
-                if (Path.GetFileName(f).StartsWith("@"))
+                if ((tile.Meta.Mana ?? 0) > 0 && tile.Meta.Level <= _core.State.Character.Level)
                 {
-                    continue;
-                }
-                string relativePath = Path.GetRelativePath(spellsPath, f);
-                string tilePath = relativePath.Substring(0, relativePath.Length - 4);
-                TileIdentifier tile = new TileIdentifier(tilePath, true);
-
-                if (tile.Meta.Level <= _core.State.Character.Level)
-                {
-                    ListViewItem lvItem = new ListViewItem(new string[]
+                    var lvItem = new ListViewItem(new string[]
                     {
                         tile.Meta.Name,
                         tile.Meta.Level.ToString(),
@@ -80,15 +67,6 @@ namespace Game
 
                     listViewSpells.Items.Add(lvItem);
                 }
-            }
-
-            foreach (var d in Directory.GetDirectories(Path.Combine(spellsPath, partialPath)))
-            {
-                if (Path.GetFileName(d).StartsWith("@") || Path.GetFileName(d).StartsWith("."))
-                {
-                    continue;
-                }
-                PopulateSpellsEx(Path.Combine(childFolder, d));
             }
         }
 

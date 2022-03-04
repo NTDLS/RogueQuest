@@ -189,6 +189,13 @@ namespace Library.Engine
             }
         }
 
+        public void AddKnownSpell(TileIdentifier spellTile)
+        {
+            var spell = spellTile.DeriveCopy();
+            spell.Meta.IsMemoriziedSpell = true;
+            this.KnownSpells.Add(spell);
+        }
+
         public void AddMoney(TileIdentifier moneyToAdd)
         {
             var equipSlot = _core.State.Character.GetEquipSlot(EquipSlot.Purse);
