@@ -24,6 +24,9 @@ namespace Game.Engine
         public delegate void LogEvent(EngineCore core, string text, Color color);
         public event LogEvent OnLog;
 
+        public delegate void OnLevelUpEvent(EngineCore core);
+        public event OnLevelUpEvent OnLevelUp;
+
         public EngineCore(Control drawingSurface, Size visibleSize)
             : base(drawingSurface, visibleSize)
         {
@@ -48,6 +51,13 @@ namespace Game.Engine
         public void LogLine(string text, Color color)
         {
             OnLog?.Invoke(this, "\r\n" + text, color);
+        }
+
+        public void LevelUp()
+        {
+            State.Character.LevelUp();
+            LogLine($"{State.Character.Name} reached level {State.Character.Level}! Next level at {State.Character.NextLevelExperience:N0}xp.", Color.Green);
+            OnLevelUp?.Invoke(this);
         }
 
         public void LevelWarp(string levelName, Guid targetTileUID)

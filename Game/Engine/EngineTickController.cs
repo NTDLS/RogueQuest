@@ -1456,8 +1456,7 @@ namespace Game.Engine
 
             if (Core.State.Character.Experience > Core.State.Character.NextLevelExperience)
             {
-                Core.State.Character.LevelUp();
-                Core.LogLine($"{Core.State.Character.Name} reached level {Core.State.Character.Level}! Next level at {Core.State.Character.NextLevelExperience:N0}xp.", Color.Green);
+                Core.LevelUp();
             }
 
             var activePlayerStates = Core.State.ActorStates.States(Core.State.Character.UID);

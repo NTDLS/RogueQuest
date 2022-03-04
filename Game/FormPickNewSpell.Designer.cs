@@ -30,7 +30,7 @@ namespace Game
         private void InitializeComponent()
         {
             this.buttonOk = new System.Windows.Forms.Button();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listViewSpells = new System.Windows.Forms.ListView();
             this.columnHeaderName = new System.Windows.Forms.ColumnHeader();
             this.columnHeaderLevel = new System.Windows.Forms.ColumnHeader();
             this.columnHeaderMana = new System.Windows.Forms.ColumnHeader();
@@ -46,19 +46,24 @@ namespace Game
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
-            // listView1
+            // listViewSpells
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listViewSpells.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderName,
             this.columnHeaderLevel,
             this.columnHeaderMana});
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 12);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(426, 209);
-            this.listView1.TabIndex = 33;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.listViewSpells.FullRowSelect = true;
+            this.listViewSpells.GridLines = true;
+            this.listViewSpells.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewSpells.HideSelection = false;
+            this.listViewSpells.Location = new System.Drawing.Point(12, 12);
+            this.listViewSpells.MultiSelect = false;
+            this.listViewSpells.Name = "listViewSpells";
+            this.listViewSpells.Size = new System.Drawing.Size(426, 209);
+            this.listViewSpells.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.listViewSpells.TabIndex = 33;
+            this.listViewSpells.UseCompatibleStateImageBehavior = false;
+            this.listViewSpells.View = System.Windows.Forms.View.Details;
             // 
             // columnHeaderName
             // 
@@ -78,7 +83,7 @@ namespace Game
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(450, 262);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.listViewSpells);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -87,13 +92,14 @@ namespace Game
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Pick a New Spell";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPickNewSpell_FormClosing);
             this.ResumeLayout(false);
 
         }
 
         #endregion
         private System.Windows.Forms.Button buttonOk;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listViewSpells;
         private System.Windows.Forms.ColumnHeader columnHeaderName;
         private System.Windows.Forms.ColumnHeader columnHeaderLevel;
         private System.Windows.Forms.ColumnHeader columnHeaderMana;

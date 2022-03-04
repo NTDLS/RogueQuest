@@ -120,6 +120,7 @@ namespace Game
             _core.OnStart += _core_OnStart;
             _core.AfterTick += _core_AfterTick;
             _core.OnLog += _core_OnLog;
+            _core.OnLevelUp += _core_OnLevelUp;
 
             toolStripButtonGet.Click += ToolStripButtonGet_Click;
             toolStripButtonRest.Click += ToolStripButtonRest_Click;
@@ -132,6 +133,30 @@ namespace Game
 
             timer.Tick += Timer_Tick;
             timer.Start();
+        }
+
+        private void _core_OnLevelUp(EngineCore core)
+        {
+            if (this.InvokeRequired)
+            {
+                Action safeWrite = delegate
+                {
+                    _core_OnLevelUp(core);
+                };
+                this.Invoke(safeWrite);
+            }
+            else
+            {
+                using (var spellForm = new FormPickNewSpell(_core))
+                {
+                    if (spellForm.ShowDialog() == DialogResult.OK)
+                    {
+                        var spell = spellForm.SelectedSpell.DeriveCopy();
+                        spell.Meta.IsSpell = true;
+                        _core.State.Character.KnownSpells.Add(spell);
+                    }
+                }
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -221,8 +246,6 @@ namespace Game
             toolStripStatusLabelDebug.Text = $"Mouse: {e.X:N0}x,{e.Y:N0}y, Screen: {x:N0}x,{y:N0}y, Offset: {_core.Display.BackgroundOffset.X:N0}x,{_core.Display.BackgroundOffset.Y:N0}y";
 
             /*
-
-
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
                 .Where(o => o.Visible == true).OrderBy(o => o.DrawOrder).LastOrDefault();
             if (hoverTile == null)
