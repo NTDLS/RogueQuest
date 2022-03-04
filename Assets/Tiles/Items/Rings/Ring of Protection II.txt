@@ -3,7 +3,7 @@
   "SubType": "Ring",
   "Value": "20",
   "AC":"2",
-  "Weight":"Potion",
+  "Weight":"30",
   "Bulk":"50",
   "Rarity":"90",
   "Level":"1",
