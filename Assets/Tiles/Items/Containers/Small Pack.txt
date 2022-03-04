@@ -1,0 +1,13 @@
+{
+  "Name":"Small Pack",
+  "SubType":"Pack",
+  "BulkCapacity":"50000",
+  "WeightCapacity":"12000",
+  "CanWalkOn":"True",
+  "IsContainer":"True",
+  "Weight":"1000",
+  "Bulk":"1000",
+  "Value":"500",
+  "Rarity":"100",
+  "Level":"5"
+}

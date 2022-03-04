@@ -1,0 +1,11 @@
+{
+  "Name":"Enchanted Cloak of Protection",
+  "SubType": "Garment",
+  "Value": "200",
+  "AC":"6",
+  "Weight":"500",
+  "Bulk":"6000",
+  "Rarity":"85",
+  "Level":"3",
+  "Enchantment":"Enchanted"
+}

@@ -108,6 +108,13 @@
         Terrain //Summon being, etc.
     }
 
+    public enum EnchantmentType
+    {
+        Normal,
+        Cursed,
+        Enchanted
+    }
+
     public enum ProjectileType
     {
         Unspecified,
@@ -141,6 +148,10 @@
         IncreaseElectricResistance,
         IncreaseFireResistance,
         IncreaseEarthResistance,
+        PermanentlyIncreaseStrength,
+        PermanentlyIncreaseDexterity,
+        PermanentlyIncreaseConstitution,
+        PermanentlyIncreaseIntelligence,
         DecreaseIceResistance,
         DecreaseElectricResistance,
         DecreaseFireResistance,

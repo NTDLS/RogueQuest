@@ -1,0 +1,11 @@
+{
+  "Name":"Ring of Protection I",
+  "SubType": "Ring",
+  "Value": "10",
+  "AC":"1",
+  "Weight":"30",
+  "Bulk":"50",
+  "Rarity":"100",
+  "Level":"1",
+  "Enchantment":"Enchanted"
+}

@@ -1,0 +1,13 @@
+{
+  "Name":"Knight Sword",
+  "SubType": "MeleeWeapon",
+  "Value": "48",
+  "DamageDice":"1",
+  "DamageDiceFaces":"12",
+  "DamageAdditional":"0",
+  "Weight":"5000",
+  "Bulk":"12000",
+  "Rarity":"50",
+  "Level":"6",
+  "Enchantment":"Normal"
+}

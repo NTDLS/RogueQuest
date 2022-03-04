@@ -1,0 +1,19 @@
+{
+  "Name":"Fire Resistance",
+  "SubType": "Scroll",
+  "Value": "125",
+  "TargetType":"Self",
+  "CastTime":"2",
+  "Effect": "IncreaseFireResistance",
+  "EffectFormula": "1",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "ExpireTime": "60",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"65",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"5",
+  "Mana":"3"
+}

@@ -1,0 +1,10 @@
+{
+  "Name":"Leather Bracers",
+  "SubType": "Bracers",
+  "Value": "10",
+  "AC":"1",
+  "Weight":"250",
+  "Bulk":"2000",
+  "Rarity":"100",
+  "Level":"1"
+}

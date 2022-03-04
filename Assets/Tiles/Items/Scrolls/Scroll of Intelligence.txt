@@ -1,0 +1,18 @@
+{
+  "Name":"Intelligence",
+  "SubType": "Scroll",
+  "Value": "20",
+  "TargetType":"Self",
+  "Effect": "IncreaseIntelligence",
+  "CastTime":"2",
+  "EffectFormula": "5",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "ExpireTime": "60",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"75",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"4"
+}

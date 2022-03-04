@@ -1,0 +1,18 @@
+{
+  "Name":"Heal Minor Woulds",
+  "SubType": "Scroll",
+  "Value": "20",
+  "TargetType":"Self",
+  "Effect": "Heal",
+  "CastTime":"5",
+  "EffectFormula": "25%",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"100",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"1",
+  "Mana":"3"
+}

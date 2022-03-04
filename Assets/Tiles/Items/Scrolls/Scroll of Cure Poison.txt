@@ -1,0 +1,17 @@
+{
+  "Name":"Cure Poison",
+  "SubType": "Scroll",
+  "Value": "40",
+  "CastTime":"4",
+  "TargetType":"Self",
+  "Effect": "CurePoison",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"50",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"2",
+  "Mana":"3"
+}

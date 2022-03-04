@@ -1,0 +1,13 @@
+{
+  "Name":"Medium Pack",
+  "SubType":"Pack",
+  "BulkCapacity":"75000",
+  "WeightCapacity":"22000",
+  "CanWalkOn":"True",
+  "IsContainer":"True",
+  "Weight":"2850",
+  "Bulk":"3900",
+  "Value":"700",
+  "Rarity":"80",
+  "Level":"6"
+}

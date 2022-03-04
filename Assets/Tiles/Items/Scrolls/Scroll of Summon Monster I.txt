@@ -1,0 +1,16 @@
+{
+  "Name":"Summon Monster I",
+  "SubType": "Scroll",
+  "TargetType":"Terrain",
+  "Effect": "SummonMonster",
+  "Value": "5",
+  "CastTime":"3",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/SkullSmoke2_192_256",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"1",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"2"
+}

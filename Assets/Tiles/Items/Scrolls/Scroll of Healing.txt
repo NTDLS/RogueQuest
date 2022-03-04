@@ -1,0 +1,18 @@
+{
+  "Name":"Healing",
+  "SubType": "Scroll",
+  "Value": "150",
+  "TargetType":"Self",
+  "CastTime":"5",
+  "Effect": "Heal",
+  "EffectFormula": "%90,25",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"70",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"5",
+  "Mana":"6"
+}

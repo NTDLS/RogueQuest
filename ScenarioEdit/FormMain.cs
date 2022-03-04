@@ -2408,8 +2408,22 @@ namespace ScenarioEdit
                         if (weapons.PhysicalNumberOfRows == 0) CreateHeader(weapons, "Name,Level,Value,Bulk,Weight,Rarity,Type,Damage Type,Damage");
                         IRow body = weapons.CreateRow(weapons.PhysicalNumberOfRows);
                         int cell = 0;
+
+                        if (item.Meta.Name == "Abaddon")
+                        {
+                        }
+
+                        /*
+                        double value = ((((item.Meta.DamageDice ?? 0) * 2) * (item.Meta.DamageDiceFaces ?? 0)) * 2);
+                        if ((item.Meta.DamageAdditional ?? 0) > 0)
+                        {
+                            value *= ((item.Meta.DamageAdditional ?? 0) * 10);
+                        }
+                        */
+
                         body.CreateCell(cell++).SetCellValue(item.Meta.Name);
                         body.CreateCell(cell++).SetCellValue((item.Meta.Level ?? 0));
+                        //body.CreateCell(cell++).SetCellValue(value);
                         body.CreateCell(cell++).SetCellValue((item.Meta.Value ?? 0));
                         body.CreateCell(cell++).SetCellValue((item.Meta.Bulk ?? 0));
                         body.CreateCell(cell++).SetCellValue((item.Meta.Weight ?? 0));

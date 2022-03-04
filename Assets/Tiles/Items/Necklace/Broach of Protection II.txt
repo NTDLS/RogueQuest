@@ -1,0 +1,11 @@
+{
+  "Name":"Broach of Protection II",
+  "SubType": "Necklace",
+  "Value": "20",
+  "AC":"2",
+  "Weight":"200",
+  "Bulk":"350",
+  "Rarity":"90",
+  "Level":"1",
+  "Enchantment":"Enchanted"
+}

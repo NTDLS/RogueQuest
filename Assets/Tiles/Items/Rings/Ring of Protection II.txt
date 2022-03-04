@@ -1,0 +1,11 @@
+{
+  "Name":"Ring of Protection II",
+  "SubType": "Ring",
+  "Value": "20",
+  "AC":"2",
+  "Weight":"Potion",
+  "Bulk":"50",
+  "Rarity":"90",
+  "Level":"1",
+  "Enchantment":"Enchanted"
+}

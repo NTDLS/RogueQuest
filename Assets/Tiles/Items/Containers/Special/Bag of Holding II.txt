@@ -1,0 +1,14 @@
+{
+  "Name":"Bag of Holding II",
+  "SubType":"Pack",
+  "BulkCapacity":"250000",
+  "WeightCapacity":"",
+  "CanWalkOn":"True",
+  "IsContainer":"True",
+  "Weight":"8500",
+  "Bulk":"120000",
+  "Value":"3600",
+  "Rarity":"0",
+  "Level":"9",
+  "Enchantment":"Enchanted"
+}

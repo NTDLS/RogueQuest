@@ -166,6 +166,11 @@ namespace Game.Engine
             Core.State.Items.RemoveAll(o => itemsToDelete.Contains((Guid)o.Tile?.Meta?.UID));
         }
 
+        /// <summary>
+        /// This works for potions, wands and scrolls.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="target"></param>
         void CastNonWeaponMagic(CustodyItem item, ActorBase target)
         {
             PassTime(item.Tile.Meta.CastTime ?? 1);
@@ -268,8 +273,65 @@ namespace Game.Engine
             else if (item.Tile.Meta.TargetType == TargetType.Self)
             {
                 #region Self target.
+                #region PermanentlyIncreaseStrength
+                if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseStrength)
+                {
+                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    {
+                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                    }
+
+                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseStrength);
+                    state.ModificationAmount = totalAdded;
+                    Core.State.Character.AugmentedStrength -= (int)state.ModificationAmount;
+                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
+                    Core.LogLine($"Strength has been permanently increased by {totalAdded}.");
+                }
+                #endregion
+                #region PermanentlyIncreaseDexterity
+                else if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseDexterity)
+                {
+                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    {
+                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                    }
+
+                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseDexterity);
+                    state.ModificationAmount = totalAdded;
+                    Core.State.Character.AugmentedDexterity -= (int)state.ModificationAmount;
+                    Core.LogLine($"Dexterity has been permanently increased by {totalAdded}.");
+                }
+                #endregion
+                #region PermanentlyIncreaseConstitution
+                else if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseConstitution)
+                {
+                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    {
+                        throw new Exception($"Constitution percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                    }
+
+                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseConstitution);
+                    state.ModificationAmount = totalAdded;
+                    Core.State.Character.AugmentedConstitution -= (int)state.ModificationAmount;
+                    Core.LogLine($"Strength has been permanently increased by {totalAdded}.");
+                }
+                #endregion
+                #region PermanentlyIncreaseIntelligence
+                else if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseIntelligence)
+                {
+                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    {
+                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                    }
+
+                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIntelligence);
+                    state.ModificationAmount = totalAdded;
+                    Core.State.Character.AugmentedIntelligence -= (int)state.ModificationAmount;
+                    Core.LogLine($"Intelligence has been permanently increased by {totalAdded}.");
+                }
+                #endregion
                 #region IncreaseIceResistance
-                if (item.Tile.Meta.Effect == ItemEffect.IncreaseIceResistance)
+                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseIceResistance)
                 {
                     if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
                     {

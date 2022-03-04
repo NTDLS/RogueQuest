@@ -1,0 +1,16 @@
+{
+  "Name":"Wooden Bow",
+  "SubType": "RangedWeapon",
+  "ProjectileType":"Arrow",
+  "Value": "40",
+  "DamageDice":"0",
+  "DamageDiceFaces":"0",
+  "DamageAdditional":"0",
+  "Weight":"10",
+  "Bulk":"9",
+  "Rarity":"100",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"1",
+  "Enchantment":"Normal"
+}

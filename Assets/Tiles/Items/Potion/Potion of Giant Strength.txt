@@ -1,0 +1,17 @@
+{
+  "Name":"Potion of Giant Strength",
+  "SubType": "Potion",
+  "Value": "250",
+  "TargetType":"Self",
+  "Effect": "IncreaseStrength",
+  "EffectFormula": "15",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "ExpireTime": "60",
+  "Weight":"200",
+  "Bulk":"200",
+  "Rarity":"20",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"3"
+}

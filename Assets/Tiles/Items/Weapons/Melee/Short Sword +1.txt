@@ -1,0 +1,13 @@
+{
+  "Name":"Short Sword +1",
+  "SubType": "MeleeWeapon",
+  "Value": "240",
+  "DamageDice":"1",
+  "DamageDiceFaces":"6",
+  "DamageAdditional":"1",
+  "Weight":"1000",
+  "Bulk":"5000",
+  "Rarity":"70",
+  "Level":"3",
+  "Enchantment":"Enchanted"
+}

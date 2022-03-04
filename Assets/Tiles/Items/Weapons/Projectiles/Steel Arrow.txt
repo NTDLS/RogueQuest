@@ -1,0 +1,17 @@
+{
+  "Name":"Steel Arrow",
+  "SubType": "Projectile",
+  "ProjectileType":"Arrow",
+  "Value": "0.4",
+  "DamageDice":"1",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"0",
+  "Weight":"0.01",
+  "Bulk":"0.05",
+  "Rarity":"90",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "IsConsumable":"True",
+  "Level":"1",
+  "Enchantment":"Normal"
+}

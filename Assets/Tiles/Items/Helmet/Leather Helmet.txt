@@ -1,0 +1,10 @@
+{
+  "Name":"Leather Helment",
+  "SubType": "Helment",
+  "Value": "5",
+  "AC":"3",
+  "Weight":"500",
+  "Bulk":"500",
+  "Rarity":"100",
+  "Level":"1"
+}

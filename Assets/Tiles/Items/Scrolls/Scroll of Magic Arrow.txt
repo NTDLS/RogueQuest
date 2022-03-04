@@ -1,0 +1,21 @@
+{
+  "Name":"Magic Arrow",
+  "SubType": "Scroll",
+  "TargetType":"HostileBeing",
+  "Effect": "MagicArrow",
+  "Value": "5",
+  "CastTime":"1",
+  "DamageDice":"1",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"0",
+  "IsConsumable":"True",
+  "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Scroll of Magic Arrow Projectile",
+  "UsageAnimationTilePath":"Animations\\Hits\\Smoke1_66_66",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"80",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"1",
+  "Mana":"1"
+}

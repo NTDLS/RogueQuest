@@ -1,0 +1,10 @@
+{
+  "Name":"Cloak of Protection",
+  "SubType": "Garment",
+  "Value": "1",
+  "AC":"0",
+  "Weight":"500",
+  "Bulk":"6000",
+  "Rarity":"80",
+  "Level":"1"
+}

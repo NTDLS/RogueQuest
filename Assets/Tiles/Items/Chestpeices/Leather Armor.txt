@@ -1,0 +1,10 @@
+{
+  "Name":"Leather Armor",
+  "SubType": "Armor",
+  "Value": "11",
+  "AC":"6",
+  "Weight":"5000",
+  "Bulk":"24000",
+  "Rarity":"100",
+  "Level":"1"
+}

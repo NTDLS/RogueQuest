@@ -1,0 +1,17 @@
+{
+  "Name":"Silver Arrow",
+  "SubType": "Projectile",
+  "ProjectileType":"Arrow",
+  "Value": "0.48",
+  "DamageDice":"2",
+  "DamageDiceFaces":"3",
+  "DamageAdditional":"0",
+  "Weight":"0.01",
+  "Bulk":"0.05",
+  "Rarity":"80",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "IsConsumable":"True",
+  "Level":"1",
+  "Enchantment":"Normal"
+ }

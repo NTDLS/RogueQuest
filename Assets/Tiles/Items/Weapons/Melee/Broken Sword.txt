@@ -1,0 +1,13 @@
+{
+  "Name":"Broken Sword",
+  "SubType": "MeleeWeapon",
+  "Value": "1",
+  "DamageDice":"0",
+  "DamageDiceFaces":"0",
+  "DamageAdditional":"0",
+  "Weight":"10",
+  "Bulk":"1000",
+  "Rarity":"5000",
+  "Level":"1",
+  "Enchantment":"Normal"
+}

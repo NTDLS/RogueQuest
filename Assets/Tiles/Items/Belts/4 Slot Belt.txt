@@ -1,0 +1,12 @@
+{
+  "Name":"4 Slot Belt",
+  "SubType":"Belt",
+  "Weight":"300",
+  "Bulk":"300",
+  "Rarity":"40",
+  "Value":"320",
+  "ItemCapacity":"4",
+  "BulkCapacity":"100000",
+  "WeightCapacity":"35000",
+  "Level":"6"
+}

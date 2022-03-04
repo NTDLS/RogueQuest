@@ -1,0 +1,13 @@
+{
+  "Name":"Flail",
+  "SubType": "MeleeWeapon",
+  "Value": "20",
+  "DamageDice":"1",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"0",
+  "Weight":"2000",
+  "Bulk":"3250",
+  "Rarity":"80",
+  "Level":"1",
+  "Enchantment":"Normal"
+}

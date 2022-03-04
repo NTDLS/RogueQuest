@@ -1,0 +1,15 @@
+{
+  "Name":"Antidote",
+  "SubType": "Potion",
+  "Value": "40",
+  "TargetType":"Self",
+  "Effect": "CurePoison",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Weight":"200",
+  "Bulk":"200",
+  "Rarity":"60",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"1"
+}

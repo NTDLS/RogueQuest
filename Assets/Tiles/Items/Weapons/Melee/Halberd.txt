@@ -1,0 +1,13 @@
+{
+  "Name":"Halberd",
+  "SubType": "MeleeWeapon",
+  "Value": "36",
+  "DamageDice":"1",
+  "DamageDiceFaces":"9",
+  "DamageAdditional":"0",
+  "Weight":"6000",
+  "Bulk":"4000",
+  "Rarity":"70",
+  "Level":"3",
+  "Enchantment":"Normal"
+}

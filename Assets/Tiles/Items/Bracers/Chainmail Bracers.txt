@@ -1,0 +1,10 @@
+{
+  "Name":"Chainmail Bracers",
+  "SubType": "Bracers",
+  "Value": "80",
+  "AC":"4",
+  "Weight":"450",
+  "Bulk":"2000",
+  "Rarity":"80",
+  "Level":"2"
+}

@@ -1,0 +1,15 @@
+{
+  "Name":"Leviathans Bane",
+  "SubType": "MeleeWeapon",
+  "Value": "2400",
+  "DamageType":"Ice",
+  "DamageDice":"3",
+  "DamageDiceFaces":"10",
+  "DamageAdditional":"2",
+  "Weight":"5000",
+  "Bulk":"12000",
+  "Rarity":"0",
+  "Level":"28",
+  "IsUnique": "True",
+  "Enchantment":"Enchanted"
+}

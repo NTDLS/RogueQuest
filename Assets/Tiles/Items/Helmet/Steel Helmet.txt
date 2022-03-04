@@ -1,0 +1,10 @@
+{
+  "Name":"Steel Helment",
+  "SubType": "Helment",
+  "Value": "60",
+  "AC":"9",
+  "Weight":"2500",
+  "Bulk":"2000",
+  "Rarity":"80",
+  "Level":"1"
+}

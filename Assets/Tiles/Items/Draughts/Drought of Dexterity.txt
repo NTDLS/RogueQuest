@@ -1,0 +1,16 @@
+{
+  "Name":"Drought of Dexterity",
+  "SubType": "Potion",
+  "Value": "3000",
+  "TargetType":"Self",
+  "Effect": "PermanentlyIncreaseDexterity",
+  "EffectFormula": "1",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Weight":"200",
+  "Bulk":"200",
+  "Rarity":"2",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"6"
+}

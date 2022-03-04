@@ -1,0 +1,17 @@
+{
+  "Name":"Potion of Dexterity",
+  "SubType": "Potion",
+  "Value": "20",
+  "TargetType":"Self",
+  "Effect": "IncreaseDexterity",
+  "EffectFormula": "5",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "ExpireTime": "60",
+  "Weight":"200",
+  "Bulk":"200",
+  "Rarity":"75",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"1"
+}

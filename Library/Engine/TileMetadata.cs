@@ -44,6 +44,10 @@ namespace Library.Engine
         #endregion
 
         /// <summary>
+        /// Whether is iten is normal, cursed or enchanted.
+        /// </summary>
+        public EnchantmentType? Enchantment { get; set; }
+        /// <summary>
         /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
         /// </summary>
         public bool HasBeenViewed { get; set; }
@@ -310,6 +314,7 @@ namespace Library.Engine
             this.UsageAnimationTilePath = with.UsageAnimationTilePath ?? this.UsageAnimationTilePath;
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
             this.IsMemoriziedSpell = with.IsMemoriziedSpell ?? this.IsMemoriziedSpell;
+            this.Enchantment = with.Enchantment ?? this.Enchantment;
             this.Rarity = with.Rarity ?? this.Rarity;
             this.DamageType = with.DamageType ?? this.DamageType;
             this.IsUnique = with.IsUnique ?? this.IsUnique;

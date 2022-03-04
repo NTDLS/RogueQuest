@@ -1,0 +1,13 @@
+{
+  "Name":"Glaive Axe",
+  "SubType": "MeleeWeapon",
+  "Value": "32",
+  "DamageDice":"1",
+  "DamageDiceFaces":"8",
+  "DamageAdditional":"0",
+  "Weight":"3000",
+  "Bulk":"6000",
+  "Rarity":"6",
+  "Level":"3",
+  "Enchantment":"Normal"
+}

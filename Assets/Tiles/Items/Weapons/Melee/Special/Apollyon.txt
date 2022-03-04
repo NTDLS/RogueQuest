@@ -1,0 +1,15 @@
+{
+  "Name":"Apollyon",
+  "SubType": "MeleeWeapon",
+  "Value": "1600",
+  "DamageType":"Fire",
+  "DamageDice":"4",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"2",
+  "Weight":"5000",
+  "Bulk":"12000",
+  "Rarity":"0",
+  "Level":"30",
+  "IsUnique": "True",
+  "Enchantment":"Enchanted"
+}

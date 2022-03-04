@@ -1,0 +1,13 @@
+{
+  "Name":"Large Bag",
+  "SubType":"Pack",
+  "BulkCapacity":"18000",
+  "WeightCapacity":"15000",
+  "CanWalkOn":"True",
+  "IsContainer":"True",
+  "Weight":"1500",
+  "Bulk":"1500",
+  "Value":"200",
+  "Rarity":"60",
+  "Level":"2"
+}

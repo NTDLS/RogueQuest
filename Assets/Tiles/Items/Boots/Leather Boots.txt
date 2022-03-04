@@ -1,0 +1,10 @@
+{
+  "Name":"Leather Boots",
+  "SubType": "Boots",
+  "Value": "5",
+  "Weight":"1500",
+  "Bulk":"4000",
+  "Rarity":"100",
+  "AC":"1",
+  "Level":"1"
+}

@@ -1,0 +1,18 @@
+{
+  "Name":"Heal Major Woulds",
+  "SubType": "Scroll",
+  "Value": "110",
+  "TargetType":"Self",
+  "Effect": "Heal",
+  "CastTime":"5",
+  "EffectFormula": "75%",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"50",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"4",
+  "Mana":"3"
+}

@@ -1,0 +1,13 @@
+{
+  "Name":"Large Pack",
+  "SubType":"Pack",
+  "BulkCapacity":"100000",
+  "WeightCapacity":"35000",
+  "CanWalkOn":"True",
+  "IsContainer":"True",
+  "Weight":"4000",
+  "Bulk":"10000",
+  "Value":"900",
+  "Rarity":"60",
+  "Level":"7"
+}

@@ -1,0 +1,16 @@
+{
+  "Name":"Poison",
+  "SubType": "Scroll",
+  "Value": "1",
+  "CastTime":"5",
+  "TargetType":"Self",
+  "Effect": "Poison",
+  "IsConsumable":"True",
+  "UsageAnimationTilePath":"Animations/Spells/SkullSmoke1_192_256",
+  "Weight":"150",
+  "Bulk":"200",
+  "Rarity":"20",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "Level":"1"
+}

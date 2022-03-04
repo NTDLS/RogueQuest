@@ -1,0 +1,2 @@
+Normal: (((Dice * 2) * Dice_Faces) * 2) / 50
+Enchanted: ((((Dice * 2) * Dice_Faces) * 2) * (Additional_Damage * 10)) / 50

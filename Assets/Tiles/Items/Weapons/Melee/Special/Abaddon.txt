@@ -1,0 +1,15 @@
+{
+  "Name":"Abaddon",
+  "SubType": "MeleeWeapon",
+  "Value": "2880",
+  "DamageType":"Fire",
+  "DamageDice":"2",
+  "DamageDiceFaces":"9",
+  "DamageAdditional":"4",
+  "Weight":"5000",
+  "Bulk":"12000",
+  "Rarity":"0",
+  "Level":"20",
+  "IsUnique": "True",
+  "Enchantment":"Enchanted"
+}
