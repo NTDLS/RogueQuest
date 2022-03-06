@@ -118,6 +118,10 @@ namespace Library.Engine
         /// </summary>
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
         /// <summary>
+        /// For scrolls, this is the name of the spell when it is learned and cast.
+        /// </summary>
+        public string SpellName { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
+        /// <summary>
         /// Used to track the number in a stack when CanStack=true because things like money, arrows, etc only matter in multiples.
         /// </summary>
         public int? Quantity { get { return _Quantity == 0 ? null : _Quantity; } set { _Quantity = value; } }
@@ -305,6 +309,7 @@ namespace Library.Engine
             this.Charges = with.Charges ?? this.Charges;
             this.ExpireTime = with.ExpireTime ?? this.ExpireTime;
             this.Quantity = with.Quantity ?? this.Quantity;
+            this.SpellName = with.SpellName ?? this.SpellName;
             this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
             this.HitPoints = with.HitPoints ?? this.HitPoints;
             this.Experience = with.Experience ?? this.Experience;

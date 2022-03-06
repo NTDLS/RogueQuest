@@ -274,7 +274,26 @@ namespace Game
             var selectedItem = listViewSelectedContainer.SelectedItems[0];
             var item = selectedItem.Tag as EquipTag;
 
-            if (item.Tile.Meta.SubType == ActorSubType.Pack
+            if (item.Tile.Meta.SubType == ActorSubType.Book)
+            {
+                string message = $"Read {item.Tile.Meta.Name} to learn new spell?";
+
+                if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    Core.State.Character.AddKnownSpell(item.Tile);
+                    Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == item.Tile.Meta.UID);
+
+                    var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
+                    if (slotToVacate != null)
+                    {
+                        slotToVacate.Tile = null;
+                    }
+
+                    listViewSelectedContainer.Items.Remove(selectedItem);
+                    Core.LogLine($"You learned a new spell,  {item.Tile.Meta.SpellName}!");
+                }
+            }
+            else if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
@@ -525,7 +544,27 @@ namespace Game
 
             var selectedItem = listViewPlayerPack.SelectedItems[0];
             var item = selectedItem.Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack
+
+            if (item.Tile.Meta.SubType == ActorSubType.Book)
+            {
+                string message = $"Read {item.Tile.Meta.Name} to learn new spell?";
+
+                if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    Core.State.Character.AddKnownSpell(item.Tile);
+                    Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == item.Tile.Meta.UID);
+
+                    var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
+                    if (slotToVacate != null)
+                    {
+                        slotToVacate.Tile = null;
+                    }
+
+                    listViewPlayerPack.Items.Remove(selectedItem);
+                    Core.LogLine($"You learned a new spell,  {item.Tile.Meta.SpellName}!");
+                }
+            }
+            else if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)

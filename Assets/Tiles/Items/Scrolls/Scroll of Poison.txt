@@ -1,5 +1,6 @@
 {
-  "Name":"Poison",
+  "Name":"Scroll of Poison",
+  "SpellName":"Poison",
   "SubType": "Scroll",
   "Value": "1",
   "CastTime":"5",

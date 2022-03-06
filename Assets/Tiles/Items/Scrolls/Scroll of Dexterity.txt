@@ -1,5 +1,6 @@
 {
-  "Name":"Speed",
+  "Name":"Scroll of Dexterity",
+  "SpellName":"Dexterity",
   "SubType": "Scroll",
   "Value": "100",
   "TargetType":"Self",
@@ -14,6 +15,5 @@
   "Rarity":"75",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"1",
-  "Mana":"2"
+  "Level":"1"
 }

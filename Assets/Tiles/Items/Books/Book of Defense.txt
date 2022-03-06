@@ -1,0 +1,14 @@
+{
+  "Name":"Book of Defense",
+  "SpellName":"Defense",
+  "SubType": "Book",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Value": "5000",
+  "Weight":"300",
+  "Bulk":"300",
+  "Rarity":"1",
+  "CanWalkOn":"True",
+  "IsConsumable":"True",
+  "Level":"1",
+  "Mana":"2"
+}

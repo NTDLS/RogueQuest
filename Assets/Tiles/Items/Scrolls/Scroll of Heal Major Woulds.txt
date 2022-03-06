@@ -1,5 +1,6 @@
 {
-  "Name":"Heal Major Woulds",
+  "Name":"Scroll of Heal Major Woulds",
+  "SpellName":"Heal Major Woulds",
   "SubType": "Scroll",
   "Value": "110",
   "TargetType":"Self",
@@ -13,6 +14,5 @@
   "Rarity":"50",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"4",
-  "Mana":"3"
+  "Level":"4"
 }

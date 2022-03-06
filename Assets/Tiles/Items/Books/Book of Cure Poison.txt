@@ -1,0 +1,14 @@
+{
+  "Name":"Book of Cure Poison",
+  "SpellName":"Cure Poison",
+  "SubType": "Book",
+  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Value": "2000",
+  "Weight":"300",
+  "Bulk":"300",
+  "Rarity":"1",
+  "CanWalkOn":"True",
+  "IsConsumable":"True",
+  "Level":"2",
+  "Mana":"3"
+}

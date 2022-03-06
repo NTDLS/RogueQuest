@@ -1,5 +1,6 @@
 {
-  "Name":"Intelligence",
+  "Name":"Scroll of Intelligence",
+  "SpellName":"Intelligence",
   "SubType": "Scroll",
   "Value": "20",
   "TargetType":"Self",

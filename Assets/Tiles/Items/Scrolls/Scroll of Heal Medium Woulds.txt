@@ -1,5 +1,6 @@
 {
-  "Name":"Heal Medium Woulds",
+  "Name":"Scroll of Heal Medium Woulds",
+  "SpellName":"Heal Medium Woulds",
   "SubType": "Scroll",
   "Value": "80",
   "TargetType":"Self",
@@ -13,6 +14,5 @@
   "Rarity":"60",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"3",
-  "Mana":"3"
+  "Level":"3"
 }

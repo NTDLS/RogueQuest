@@ -191,9 +191,11 @@ namespace Library.Engine
 
         public void AddKnownSpell(TileIdentifier spellTile)
         {
-            var spell = spellTile.DeriveCopy();
+            var scroll = _core.Materials.Where(o => o.Meta.SubType == ActorSubType.Scroll && o.Meta.SpellName == spellTile.Meta.SpellName).First();
+            var spell = scroll.DeriveCopy();
+            spell.Meta.Mana = spellTile.Meta.Mana;
             spell.Meta.IsMemoriziedSpell = true;
-            this.KnownSpells.Add(spell);
+            KnownSpells.Add(spell);
         }
 
         public void AddMoney(TileIdentifier moneyToAdd)

@@ -152,6 +152,7 @@ namespace Game
                     if (spellForm.ShowDialog() == DialogResult.OK)
                     {
                         _core.State.Character.AddKnownSpell(spellForm.SelectedSpell);
+                        _core.LogLine($"You learned a new spell,  {spellForm.SelectedSpell.SpellName}!");
                     }
                 }
             }
@@ -707,6 +708,7 @@ namespace Game
                 (freeHand.Tile.Meta.SubType == ActorSubType.RangedWeapon
                 || freeHand.Tile.Meta.SubType == ActorSubType.Potion
                 || freeHand.Tile.Meta.SubType == ActorSubType.Scroll
+                || freeHand.Tile.Meta.SubType == ActorSubType.Book
                 || freeHand.Tile.Meta.SubType == ActorSubType.Wand))
             {
                 var info = UpsertQuickSlotItem(freeHand.Tile, existingButtons);
@@ -838,6 +840,23 @@ namespace Game
                     _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.Name}... (right-click to cancel)");
                     CurrentMouseMode = MouseMode.RangedTargetSelction;
                     PendingQuickItemMouseOperation = tag;
+                }
+                else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Book)
+                {
+                    string message = $"Read {inventoryItem.Tile.Meta.Name} to learn new spell?";
+
+                    if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        _core.State.Character.AddKnownSpell(inventoryItem.Tile);
+                        _core.State.Items.RemoveAll(o => o.Tile.Meta.UID == inventoryItem.Tile.Meta.UID);
+                        toolStripQuick.Items.Remove(tag.Button);
+
+                        var slotToVacate = _core.State.Character.FindEquipSlotByItemId(inventoryItem.Tile.Meta.UID);
+                        if (slotToVacate != null)
+                        {
+                            slotToVacate.Tile = null;
+                        }
+                    }
                 }
                 else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Potion
                     || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType == TargetType.Self))

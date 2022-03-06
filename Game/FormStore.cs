@@ -251,8 +251,25 @@ namespace Game
                 return;
             }
 
-            var item = listView.SelectedItems[0].Tag as EquipTag;
-            if (item.Tile.Meta.SubType == ActorSubType.Pack
+            var selectedListviewItem = listView.SelectedItems[0];
+            var item = selectedListviewItem.Tag as EquipTag;
+
+            string message = $"Read {item.Tile.Meta.Name} to learn new spell?";
+
+            if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Core.State.Character.AddKnownSpell(item.Tile);
+                Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == item.Tile.Meta.UID);
+                listView.Items.Remove(selectedListviewItem);
+
+                var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
+                if (slotToVacate != null)
+                {
+                    slotToVacate.Tile = null;
+                }
+                Core.LogLine($"You learned a new spell,  {item.Tile.Meta.SpellName}!");
+            }
+            else if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {

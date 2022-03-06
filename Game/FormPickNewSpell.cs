@@ -49,8 +49,8 @@ namespace Game
         private void PopulateSpells()
         {
             var tiles = _core.Materials.Where(o =>
-                o.Meta.SubType == Library.Engine.Types.ActorSubType.Scroll
-                && o.Meta.Mana > 0 && o.Meta.Level <= _core.State.Character.Level).ToList();
+                o.Meta.SubType == Library.Engine.Types.ActorSubType.Book
+                && o.Meta.Level <= _core.State.Character.Level).ToList();
 
             foreach (var tile in tiles)
             {

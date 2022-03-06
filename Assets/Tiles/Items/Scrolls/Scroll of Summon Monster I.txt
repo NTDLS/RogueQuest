@@ -1,5 +1,6 @@
 {
-  "Name":"Summon Monster I",
+  "Name":"Scroll of Summon Monster I",
+  "SpellName":"Summon Monster I",
   "SubType": "Scroll",
   "TargetType":"Terrain",
   "Effect": "SummonMonster",

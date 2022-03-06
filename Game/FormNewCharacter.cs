@@ -173,7 +173,7 @@ namespace Game
         private void PopulateSpellsEx(string childFolder)
         {
             string spellsPath = Assets.Constants.GetAssetPath();
-            string partialPath = @$"Tiles\Items\Equipment\Scrolls\{childFolder}".Replace(@"\\", @"\");
+            string partialPath = @$"Tiles\Items\Books\{childFolder}".Replace(@"\\", @"\");
 
             foreach (var f in Directory.GetFiles(Path.Combine(spellsPath, partialPath), "*.txt"))
             {
@@ -185,11 +185,11 @@ namespace Game
                 string tilePath = relativePath.Substring(0, relativePath.Length - 4);
                 TileIdentifier tile = new TileIdentifier(tilePath, true);
 
-                if ((tile.Meta.Mana ?? 0) > 0 && tile.Meta.Level == 1)
+                if (tile.Meta.Level == 1)
                 {
-                    ListViewItem lvItem = new ListViewItem(new string[]
+                    var lvItem = new ListViewItem(new string[]
                     {
-                        tile.Meta.Name,
+                        tile.Meta.SpellName,
                         tile.Meta.Level.ToString(),
                         tile.Meta.Mana.ToString()
                     });

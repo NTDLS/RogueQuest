@@ -1,5 +1,6 @@
 {
-  "Name":"Cast Poison",
+  "Name":"Scroll of Cast Poison",
+  "SpellName":"Cast Poison",
   "SubType": "Scroll",
   "Value": "100",
   "CastTime":"2",
@@ -7,13 +8,12 @@
   "TargetType":"HostileBeing",
   "Effect": "Poison",
   "IsConsumable":"True",
-  "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Generic Magic Projectile",
+  "ProjectileTilePath":"Tiles\\Items\\Scrolls\\@Generic Magic Projectile",
   "UsageAnimationTilePath":"Animations/Spells/SkullSmoke1_192_256",
   "Weight":"150",
   "Bulk":"200",
   "Rarity":"40",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"5",
-  "Mana":"2"
+  "Level":"5"
 }

@@ -1,5 +1,6 @@
 {
-  "Name":"Cure Poison",
+  "Name":"Scroll of Cure Poison",
+  "SpellName":"Cure Poison",
   "SubType": "Scroll",
   "Value": "40",
   "CastTime":"4",
@@ -12,6 +13,5 @@
   "Rarity":"50",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2",
-  "Mana":"3"
+  "Level":"2"
 }

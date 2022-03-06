@@ -1,5 +1,6 @@
 {
-  "Name":"Hold Monster",
+  "Name":"Scroll of Hold Monster",
+  "SpellName":"Hold Monster",
   "SubType": "Scroll",
   "TargetType":"HostileBeing",
   "Effect": "HoldMonster",
@@ -7,13 +8,12 @@
   "CastTime":"5",
   "ExpireTime": "30",
   "IsConsumable":"True",
-  "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Generic Magic Projectile",
+  "ProjectileTilePath":"Tiles\\Items\\Scrolls\\@Generic Magic Projectile",
   "UsageAnimationTilePath":"Animations\\Spells\\Flash4_64_64",
   "Weight":"150",
   "Bulk":"200",
   "Rarity":"40",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"3",
-  "Mana":"4"
+  "Level":"3"
 }

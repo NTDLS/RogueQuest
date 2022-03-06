@@ -1,5 +1,6 @@
 {
-  "Name":"Healing",
+  "Name":"Scroll of Healing",
+  "SpellName":"Healing",
   "SubType": "Scroll",
   "Value": "150",
   "TargetType":"Self",
