@@ -152,7 +152,7 @@ namespace Game
                     if (spellForm.ShowDialog() == DialogResult.OK)
                     {
                         _core.State.Character.AddKnownSpell(spellForm.SelectedSpell);
-                        _core.LogLine($"You learned a new spell,  {spellForm.SelectedSpell.SpellName}!");
+                        _core.LogLine($"You learned a new spell,  {spellForm.SelectedSpell.Meta.SpellName}!");
                     }
                 }
             }

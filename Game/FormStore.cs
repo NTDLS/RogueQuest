@@ -988,6 +988,7 @@ namespace Game
             }
             else if (_storeTileMeta.SubType == ActorSubType.MageStore)
             {
+                subtypes.Add(ActorSubType.Book);
                 subtypes.Add(ActorSubType.Scroll);
                 subtypes.Add(ActorSubType.Wand);
             }
