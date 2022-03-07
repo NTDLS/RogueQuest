@@ -246,6 +246,7 @@ namespace Game.Engine
                             tile.Velocity.Angle.Degrees = tile.Velocity.Angle.Degrees;
                             tile.DrawOrder = target.DrawOrder + 100;
                             tile.Meta = TileMetadata.GetFreshMetadata(randomTile.TilePath);
+                            tile.Meta.HasBeenViewed = true;
 
                             /* //Maybe add some random drops?
                             var ownedItems = Core.State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
@@ -954,6 +955,7 @@ namespace Game.Engine
                         Application.DoEvents(); //The UI thread is a bitch.
                     }
                 }
+                Thread.Sleep(500);
             }
         }
 
@@ -979,6 +981,7 @@ namespace Game.Engine
                             Application.DoEvents(); //The UI thread is a bitch.
                         }
                     }
+                    Thread.Sleep(500);
                 }
             }
         }
@@ -1710,13 +1713,19 @@ namespace Game.Engine
                     }
                     #endregion
 
+                    string damageType = string.Empty;
+                    if (hostile.Meta.DamageType != null && hostile.Meta.DamageType != DamageType.Unspecified)
+                    {
+                        damageType = $" ({hostile.Meta.DamageType} damage)";
+                    }
+
                     if (hitType == HitType.CriticalHit)
                     {
-                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp landing a critical hit!", Color.DarkRed);
+                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp{damageType} landing a critical hit!", Color.DarkRed);
                     }
                     else
                     {
-                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp and hits.", Color.DarkRed);
+                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp{damageType} and hits.", Color.DarkRed);
                     }
 
                     Core.State.Character.AvailableHitpoints -= hostileHitsFor;

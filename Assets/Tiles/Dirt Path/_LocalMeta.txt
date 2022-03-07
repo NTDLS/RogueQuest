@@ -1,3 +1,0 @@
-{
-  "CanWalkOn": "True",
-}

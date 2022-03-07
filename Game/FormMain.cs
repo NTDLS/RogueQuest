@@ -25,11 +25,17 @@ namespace Game
         private EngineCore _core;
         private bool _fullScreen = false;
         private ToolTip _interrogationTip = new ToolTip();
-
         private bool _hasBeenModified = false;
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
-
+        /// <summary>
+        /// What the background offset was then the user started dragging the map.
+        /// </summary>
+        private Point<double> dragStartOffset = new Point<double>();
+        /// <summary>
+        /// Where the mouse was when the user started dragging the map.
+        /// </summary>
+        private Point<double> dragStartMouse = new Point<double>();
         private MouseMode CurrentMouseMode = MouseMode.None;
         private QuickItemButtonInfo PendingQuickItemMouseOperation = null;
 
@@ -197,8 +203,13 @@ namespace Game
                     else if (inventoryItem.Tile.Meta.TargetType == TargetType.Terrain)
                     {
                         hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
-                            .Where(o => o.Visible == true && o.Meta.ActorClass == ActorClassName.ActorTerrain)
+                            .Where(o => o.Visible == true)
                             .OrderBy(o => o.DrawOrder).LastOrDefault();
+
+                        if (hoverTile.Meta.CanWalkOn == false)
+                        {
+                            return;
+                        }
                     }
                     if (hoverTile == null)
                     {
@@ -244,6 +255,13 @@ namespace Game
 
             toolStripStatusLabelDebug.Text = $"Mouse: {e.X:N0}x,{e.Y:N0}y, Screen: {x:N0}x,{y:N0}y, Offset: {_core.Display.BackgroundOffset.X:N0}x,{_core.Display.BackgroundOffset.Y:N0}y";
 
+            if (e.Button == MouseButtons.Middle)
+            {
+                _core.Display.BackgroundOffset.X = dragStartOffset.X - (e.X - dragStartMouse.X);
+                _core.Display.BackgroundOffset.Y = dragStartOffset.Y - (e.Y - dragStartMouse.Y);
+                _core.Display.DrawingSurface.Invalidate();
+            }
+
             /*
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
                 .Where(o => o.Visible == true).OrderBy(o => o.DrawOrder).LastOrDefault();
@@ -282,7 +300,12 @@ namespace Game
 
             var hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1)).OrderBy(o => o.DrawOrder ?? 0).LastOrDefault();
 
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Middle)
+            {
+                dragStartOffset = new Point<double>(_core.Display.BackgroundOffset.X, _core.Display.BackgroundOffset.Y);
+                dragStartMouse = new Point<double>(e.X, e.Y);
+            }
+            else if (e.Button == MouseButtons.Right)
             {
                 if (hoverTile != null)
                 {
@@ -906,7 +929,7 @@ namespace Game
 
             if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
             {
-                var result = _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target/*, projectile.Meta.UID*/);
+                var result = _core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, target);
                 _core.State.Character.PushFreshInventoryItemsToEquipSlots();
                 return result;
             }
