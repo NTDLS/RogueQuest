@@ -1,11 +1,11 @@
 
 {
-  "Name":"Metal Gauntlets",
+  "Name":"Iron Gauntlets",
   "SubType": "Gauntlets",
   "Value": "30",
   "AC":"5",
   "Weight":"500",
   "Bulk":"2000",
-  "Rarity":"80",
+  "Rarity":"60",
   "Level":"1"
 }

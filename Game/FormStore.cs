@@ -576,11 +576,11 @@ namespace Game
                 lv.DragDrop += ListView_EquipSlot_DragDrop;
                 lv.DragEnter += ListView_EquipSlot_DragEnter;
                 lv.ItemDrag += ListView_EquipSlot_ItemDrag;
-                lv.MouseDown += Lv_MouseDown;
-                lv.MouseUp += Lv_MouseUp;
+                lv.MouseDown += ListView_EquipSlot_MouseDown;
+                lv.MouseUp += ListView_EquipSlot_MouseUp;
             }
 
-            lv.MouseDoubleClick += Lv_MouseDoubleClick;
+            lv.MouseDoubleClick += ListView_EquipSlot_MouseDoubleClick;
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
@@ -611,7 +611,7 @@ namespace Game
             lv.Items.Add(item);
         }
 
-        private void Lv_MouseDown(object sender, MouseEventArgs e)
+        private void ListView_EquipSlot_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -652,7 +652,7 @@ namespace Game
             }
         }
 
-        private void Lv_MouseUp(object sender, MouseEventArgs e)
+        private void ListView_EquipSlot_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -660,7 +660,7 @@ namespace Game
             }
         }
 
-        private void Lv_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void ListView_EquipSlot_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             var listView = sender as ListView;
 
@@ -689,6 +689,7 @@ namespace Game
                 }
             }
         }
+
         private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
         {
             var destination = sender as ListView;

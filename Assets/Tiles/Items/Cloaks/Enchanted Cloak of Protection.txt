@@ -5,7 +5,7 @@
   "AC":"6",
   "Weight":"500",
   "Bulk":"6000",
-  "Rarity":"85",
+  "Rarity":"50",
   "Level":"3",
   "Enchantment":"Enchanted"
 }

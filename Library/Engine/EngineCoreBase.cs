@@ -1,9 +1,11 @@
-﻿using Library.Types;
+﻿using Assets;
+using Library.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -328,6 +330,114 @@ namespace Library.Engine
             IsRendering = false;
 
             return _ScreenBitmap;
+        }
+
+
+        private Assembly _gameAssembly = null;
+        private bool _gameAssemblyAttempted = false;
+
+        public Assembly GameAssembly
+        {
+            get
+            {
+                if (_gameAssembly == null && _gameAssemblyAttempted == false)
+                {
+                    _gameAssemblyAttempted = true;
+                    AppDomain currentDomain = AppDomain.CurrentDomain;
+                    var assemblies = currentDomain.GetAssemblies();
+                    foreach (var assembly in assemblies)
+                    {
+                        if (assembly.FullName.StartsWith("Game,"))
+                        {
+                            _gameAssembly = Assembly.Load("Game");
+                        }
+                    }
+                }
+
+                return _gameAssembly;
+            }
+        }
+
+
+        /// <summary>
+        /// Inserts a spawn tile. (e.g. a random tile of the type specified by the spawn tile).
+        /// </summary>
+        /// <param name="spawner"></param>
+        /// <returns></returns>
+        public TileIdentifier GetWeightedLotteryTile(TileMetadata spawnerMeta)
+        {
+            object[] param = { this };
+
+            int rarity = Utility.MathUtility.RandomNumber(1, 100);
+
+            var randos = Materials.Where(o => o.Meta.ActorClass == spawnerMeta.SpawnType
+                && ((spawnerMeta.SpawnSubTypes?.Length ?? 0) == 0 || spawnerMeta.SpawnSubTypes.Contains(o.Meta.SubType ?? Types.ActorSubType.Unspecified))
+                && o.Meta.Rarity >= rarity
+                && (o.Meta.Level ?? 1) >= (o.Meta.MinLevel ?? 1)
+                && (o.Meta.Level ?? 1) <= (o.Meta.MaxLevel ?? 1)).ToList();
+
+            if (randos.Count > 0)
+            {
+                int rand = Utility.MathUtility.RandomNumber(0, randos.Count);
+                var tile = randos[rand];
+
+                tile.Meta = TileMetadata.GetFreshMetadata(tile.TilePath);
+
+                if (tile.Meta.SubType == Types.ActorSubType.Money)
+                {
+                    double divisor = (100.0 * (tile.Meta.Value ?? 1.0));
+                    tile.Meta.Quantity = Utility.MathUtility.RandomNumber(1, 1000);
+                    tile.Meta.Quantity = (int)(tile.Meta.Quantity / divisor);
+                    if ((tile.Meta.Quantity ?? 0) <= 0)
+                    {
+                        tile.Meta.Quantity = 1;
+                    }
+                }
+                else if (tile.Meta.CanStack == true)
+                {
+                    tile.Meta.Quantity = 1;
+                }
+
+                return tile;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Inserts a spawn tile. (e.g. a random tile of the type specified by the spawn tile).
+        /// </summary>
+        /// <param name="spawner"></param>
+        /// <returns></returns>
+        public ActorBase GetWeightedLotteryActor(ActorBase spawner)
+        {
+            TileIdentifier randomTile = GetWeightedLotteryTile(spawner.Meta);
+
+            if (randomTile != null)
+            {
+                object[] param = { this };
+
+                var tileType = GameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
+                var actor = (ActorBase)Activator.CreateInstance(tileType, param);
+
+                actor.SetImage(Constants.GetAssetPath($"{randomTile.TilePath}.png"));
+                actor.X = spawner.X;
+                actor.Y = spawner.Y;
+                actor.TilePath = randomTile.TilePath;
+                actor.Velocity.Angle.Degrees = actor.Velocity.Angle.Degrees;
+                actor.DrawOrder = spawner.DrawOrder;
+                actor.Meta.OverrideWith(randomTile.Meta);
+
+                var ownedItems = State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
+                foreach (var ownedItem in ownedItems)
+                {
+                    ownedItem.ContainerId = actor.Meta.UID;
+                }
+
+                return actor;
+            }
+
+            return null;
         }
     }
 }

@@ -14,6 +14,16 @@
 
             return DamageType.Unspecified;
         }
+
+        public static string RarityText(int rarity)
+        {
+            if (rarity >= 40) return "Common";
+            else if (rarity >= 20) return "Uncommon";
+            else if (rarity >= 10) return "Rare";
+            else if (rarity >= 1) return "Ultra Rare";
+            else if (rarity >= 0) return "Legendary";
+            return "n/a";
+        }
     }
 
     public enum ReplayMode

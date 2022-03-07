@@ -5,6 +5,6 @@
   "AC":"6",
   "Weight":"5000",
   "Bulk":"24000",
-  "Rarity":"100",
+  "Rarity":"95",
   "Level":"1"
 }

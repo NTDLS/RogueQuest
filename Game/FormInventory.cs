@@ -825,11 +825,11 @@ namespace Game
                 lv.DragDrop += ListView_EquipSlot_DragDrop;
                 lv.DragEnter += ListView_EquipSlot_DragEnter;
                 lv.ItemDrag += ListView_EquipSlot_ItemDrag;
-                lv.MouseDown += Lv_MouseDown;
-                lv.MouseUp += Lv_MouseUp;
+                lv.MouseDown += Lv_EquipSlot_MouseDown;
+                lv.MouseUp += Lv_EquipSlot_MouseUp;
             }
 
-            lv.MouseDoubleClick += Lv_MouseDoubleClick;
+            lv.MouseDoubleClick += ListView_EquipSlot_MouseDoubleClick;
 
             ListViewItem item = new ListViewItem("");
             item.Tag = new EquipTag()
@@ -860,7 +860,7 @@ namespace Game
             lv.Items.Add(item);
         }
 
-        private void Lv_MouseDown(object sender, MouseEventArgs e)
+        private void Lv_EquipSlot_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -893,7 +893,7 @@ namespace Game
             }
         }
 
-        private void Lv_MouseUp(object sender, MouseEventArgs e)
+        private void Lv_EquipSlot_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -901,7 +901,7 @@ namespace Game
             }
         }
 
-        private void Lv_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void ListView_EquipSlot_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             var listView = sender as ListView;
 
@@ -935,11 +935,17 @@ namespace Game
                 {
                     if (item.Tile.Meta.IsConsumable == true)
                     {
+                        var slotToVacate = Core.State.Character.FindEquipSlotByItem(item.Tile);
+
                         if (UseItem(item.Tile, true))
                         {
                             if ((item.Tile.Meta.Quantity ?? 0) == 0)
                             {
-                                listViewPlayerPack.Items.Remove(selectedItem);
+                                slotToVacate.Tile = null;
+
+                                //We dont remove the items from equip slots, we just clear their text and image.
+                                selectedItem.ImageKey = null;
+                                selectedItem.Text = "";
                             }
                             else
                             {

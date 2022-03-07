@@ -8,7 +8,7 @@
   "DamageAdditional":"1",
   "Weight":"15",
   "Bulk":"10",
-  "Rarity":"80",
+  "Rarity":"50",
   "CanStack":"False",
   "CanWalkOn":"True",
   "Level":"2",

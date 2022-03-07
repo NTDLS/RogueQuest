@@ -308,7 +308,7 @@ namespace Library.Engine
 
                         if (_gameAssembly != null && tile.Meta.ActorClass == Types.ActorClassName.ActorSpawner)
                         {
-                            tile = InsertSpawnedTile(tile);
+                            tile = Core.GetWeightedLotteryActor(tile);
                         }
 
                         if (tile != null)
@@ -329,63 +329,6 @@ namespace Library.Engine
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Inserts a spawn tile. (e.g. a random tile of the type specified by the spawn tile).
-        /// </summary>
-        /// <param name="spawner"></param>
-        /// <returns></returns>
-        private ActorBase InsertSpawnedTile(ActorBase spawner)
-        {
-            ActorBase tile = null;
-            TileIdentifier randomTile = null;
-
-            object[] param = { Core };
-
-            if (spawner.Meta.SpawnType == Types.ActorClassName.ActorHostileBeing)
-            {
-                var randos = Core.Materials.Where(o => o.Meta.ActorClass == spawner.Meta.SpawnType
-                    && o.Meta.Level >= (o.Meta.MinLevel ?? 1)
-                    && o.Meta.Level <= (o.Meta.MaxLevel ?? 1)).ToList();
-
-                if (randos.Count > 0)
-                {
-                    int rand = Utility.MathUtility.RandomNumber(0, randos.Count);
-                    randomTile = randos[rand];
-
-                    var tileType = _gameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
-
-                    tile = (ActorBase)Activator.CreateInstance(tileType, param);
-                }
-                else
-                {
-
-                }
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-
-            if (randomTile != null)
-            {
-                tile.SetImage(Constants.GetAssetPath($"{randomTile.TilePath}.png"));
-                tile.X = spawner.X;
-                tile.Y = spawner.Y;
-                tile.TilePath = randomTile.TilePath;
-                tile.Velocity.Angle.Degrees = tile.Velocity.Angle.Degrees;
-                tile.DrawOrder = spawner.DrawOrder;
-                tile.Meta = TileMetadata.GetFreshMetadata(randomTile.TilePath);
-
-                var ownedItems = Core.State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
-                foreach (var ownedItem in ownedItems)
-                {
-                    ownedItem.ContainerId = tile.Meta.UID;
-                }
-            }
-
-            return tile;
         }
     }
 }

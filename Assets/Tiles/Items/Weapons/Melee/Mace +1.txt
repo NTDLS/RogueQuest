@@ -7,7 +7,7 @@
   "DamageAdditional":"1",
   "Weight":"500",
   "Bulk":"4375",
-  "Rarity":"70",
+  "Rarity":"50",
   "Level":"2",
   "Enchantment":"Enchanted"
 }

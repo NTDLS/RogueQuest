@@ -13,7 +13,7 @@
   "UsageAnimationTilePath":"Animations\\Hits\\Smoke1_66_66",
   "Weight":"200",
   "Bulk":"350",
-  "Rarity":"100",
+  "Rarity":"80",
   "CanStack":"False",
   "CanWalkOn":"True",
   "Level":"1"

@@ -6,7 +6,7 @@
   "Value": "5500",
   "Weight":"300",
   "Bulk":"300",
-  "Rarity":"1",
+  "Rarity":"3",
   "CanWalkOn":"True",
   "IsConsumable":"True",
   "Level":"4",

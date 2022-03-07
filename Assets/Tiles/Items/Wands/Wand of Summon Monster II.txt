@@ -10,7 +10,7 @@
   "UsageAnimationTilePath":"Animations/Spells/SkullSmoke2_192_256",
   "Weight":"200",
   "Bulk":"350",
-  "Rarity":"1",
+  "Rarity":"8",
   "CanStack":"False",
   "CanWalkOn":"True",
   "Level":"4"

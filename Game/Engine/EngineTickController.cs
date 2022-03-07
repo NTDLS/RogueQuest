@@ -2013,8 +2013,24 @@ namespace Game.Engine
 
             var items = Core.State.Items.Where(o => o.ContainerId == containerId).ToList();
 
-            foreach (var item in items)
+            foreach (var continerItem in items)
             {
+                CustodyItem item = continerItem;
+
+                if (item.Tile.Meta.ActorClass == ActorClassName.ActorSpawner)
+                {
+                    var spawnedItem = Core.GetWeightedLotteryTile(item.Tile.Meta);
+                    if (spawnedItem == null)
+                    {
+                        continue;
+                    }
+
+                    item = new CustodyItem()
+                    {
+                        Tile = spawnedItem.DeriveCopy()
+                    };
+                }
+
                 bool wasStacked = false;
 
                 if (item.Tile.Meta.CanStack == true)

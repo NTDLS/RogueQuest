@@ -1,24 +1,20 @@
 ﻿using Assets;
 using Library.Engine;
+using Library.Engine.Types;
 using ScenarioEdit.Engine;
 using ScenarioEdit.Properties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ScenarioEdit
 {
     public partial class FormEditContainer : Form
     {
-        const int QTY_COLUMN = 1;
-
+        const int DATA_COLUMN = 1;
         public EngineCore Core { get; set; }
         public Guid ContainerId { get; set; }
 
@@ -61,6 +57,15 @@ namespace ScenarioEdit
                 if (obj.Tile.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
                 {
                     AddItemToContainer(obj.Tile.TilePath, obj.Tile.Meta.Charges);
+                }
+                else if (obj.Tile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+                {
+                    if (obj.Tile.Meta.SpawnSubTypes == null)
+                    {
+                        obj.Tile.Meta.SpawnSubTypes = new Library.Engine.Types.ActorSubType[0];
+                    }
+
+                    AddItemToContainer(obj.Tile.TilePath, String.Join(",", obj.Tile.Meta.SpawnSubTypes));
                 }
                 else if (obj.Tile.Meta.CanStack == true)
                 {
@@ -107,26 +112,40 @@ namespace ScenarioEdit
             var selectedItem = listViewContainer.SelectedItems[0];
 
             var item = selectedItem.Tag as TileIdentifier;
-            if (item.Meta.CanStack == true || item.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
+
+            if (item.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+            {
+                var selectedTypes = new List<Library.Engine.Types.ActorSubType>();
+
+                var values = selectedItem.SubItems[DATA_COLUMN].Text.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var value in values)
+                {
+                    selectedTypes.Add((Library.Engine.Types.ActorSubType)
+                        Enum.Parse(typeof(Library.Engine.Types.ActorSubType), value));
+                }
+
+                using var form = new FormEditSpawner(Core, selectedTypes);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    selectedItem.SubItems[DATA_COLUMN].Text = String.Join(',', form.SelectedSubTypes);
+                }
+            }
+            else if (item.Meta.CanStack == true || item.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
             {
                 if (item.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
                 {
-                    using (var form = new FormEditQuantity("Charges", selectedItem.SubItems[QTY_COLUMN].Text))
+                    using var form = new FormEditQuantity("Charges", selectedItem.SubItems[DATA_COLUMN].Text);
+                    if (form.ShowDialog() == DialogResult.OK)
                     {
-                        if (form.ShowDialog() == DialogResult.OK)
-                        {
-                            selectedItem.SubItems[QTY_COLUMN].Text = form.PropertyValue;
-                        }
+                        selectedItem.SubItems[DATA_COLUMN].Text = form.PropertyValue;
                     }
                 }
                 else
                 {
-                    using (var form = new FormEditQuantity("Quantity", selectedItem.SubItems[QTY_COLUMN].Text))
+                    using var form = new FormEditQuantity("Quantity", selectedItem.SubItems[DATA_COLUMN].Text);
+                    if (form.ShowDialog() == DialogResult.OK)
                     {
-                        if (form.ShowDialog() == DialogResult.OK)
-                        {
-                            selectedItem.SubItems[QTY_COLUMN].Text = form.PropertyValue;
-                        }
+                        selectedItem.SubItems[DATA_COLUMN].Text = form.PropertyValue;
                     }
                 }
             }
@@ -165,6 +184,16 @@ namespace ScenarioEdit
             listViewContainer.Items.Add(item);
         }
 
+        private void AddItemToContainer(string tilePath, string value)
+        {
+            var metaData = TileMetadata.GetFreshMetadata(tilePath);
+            var item = new ListViewItem(metaData.Name);
+            item.SubItems.Add(value);
+            item.ImageKey = tilePath;
+            item.Tag = new TileIdentifier(tilePath, metaData);
+            listViewContainer.Items.Add(item);
+        }
+
         private void ListViewContainer_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = e.AllowedEffect;
@@ -174,7 +203,22 @@ namespace ScenarioEdit
         {
             TreeNode draggedNode = (TreeNode)e.Data.GetData(typeof(TreeNode));
 
-            AddItemToContainer(draggedNode.ImageKey, 1);
+            var metaData = TileMetadata.GetFreshMetadata(draggedNode.ImageKey);
+
+            if (metaData.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+            {
+                var values = Enum.GetValues<ActorSubType>().ToList();
+
+                values.Remove(ActorSubType.Unspecified);
+                values.Sort();
+
+                AddItemToContainer(draggedNode.ImageKey, String.Join(',', values));
+            }
+            else
+            {
+
+                AddItemToContainer(draggedNode.ImageKey, 1);
+            }
         }
 
         private void TreeViewTiles_DragEnter(object sender, DragEventArgs e)
@@ -198,7 +242,7 @@ namespace ScenarioEdit
 
         public TreeNode CreateImageListAndAssets(ImageList imageList, TreeNode parent, string basePath, string partialPath)
         {
-            TreeNode node = null;
+            TreeNode node;
 
             if (parent == null)
             {
@@ -264,17 +308,30 @@ namespace ScenarioEdit
 
                 if (tile.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
                 {
-                    tile.Meta.Charges = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
+                    tile.Meta.Charges = Int32.Parse(obj.SubItems[DATA_COLUMN].Text);
+                }
+                else if (tile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+                {
+                    var selectedValues = new List<Library.Engine.Types.ActorSubType>();
+
+                    var values = obj.SubItems[DATA_COLUMN].Text.Split(',');
+                    foreach (var value in values)
+                    {
+                        selectedValues.Add((Library.Engine.Types.ActorSubType)
+                            Enum.Parse(typeof(Library.Engine.Types.ActorSubType), value));
+                    }
+
+                    tile.Meta.SpawnSubTypes = selectedValues.ToArray();
                 }
                 else
                 {
-                    if (obj.SubItems[QTY_COLUMN].Text == "-")
+                    if (obj.SubItems[DATA_COLUMN].Text == "-")
                     {
                         tile.Meta.Quantity = null;
                     }
                     else
                     {
-                        tile.Meta.Quantity = Int32.Parse(obj.SubItems[QTY_COLUMN].Text);
+                        tile.Meta.Quantity = Int32.Parse(obj.SubItems[DATA_COLUMN].Text);
                     }
                 }
 

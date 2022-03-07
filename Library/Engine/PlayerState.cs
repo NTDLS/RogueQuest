@@ -357,6 +357,15 @@ namespace Library.Engine
             AvailableMana = Mana;
         }
 
+        public Equip FindEquipSlotByItem(TileIdentifier tile)
+        {
+            if (tile.Meta.UID != null)
+            {
+                return FindEquipSlotByItemId((Guid)tile.Meta.UID);
+            }
+            return null;
+        }
+
         public Equip FindEquipSlotByItemId(Guid? itemUid)
         {
             if (itemUid == null)

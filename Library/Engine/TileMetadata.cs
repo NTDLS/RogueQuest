@@ -3,6 +3,7 @@ using Library.Engine.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Library.Engine
@@ -31,7 +32,6 @@ namespace Library.Engine
         private int? _Dexterity;
         private int? _Charges;
         private int? _Strength;
-        private ActorSubType? _SpawnSubType;
         private string _Dialog;
         private int? _MinLevel;
         private int? _MaxLevel;
@@ -217,8 +217,7 @@ namespace Library.Engine
         /// <summary>
         /// The type of tile that will be spawned by the ActorSpawner
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ActorSubType? SpawnSubType { get { return _SpawnSubType == ActorSubType.Unspecified ? null : _SpawnSubType; } set { _SpawnSubType = value; } }
+        public ActorSubType[] SpawnSubTypes;
         /// <summary>
         /// The minimum level of tile that will be spawned by the ActorSpawner
         /// </summary>
@@ -286,12 +285,7 @@ namespace Library.Engine
         {
             get
             {
-                if (Rarity >= 40) return "Common";
-                else if (Rarity >= 20) return "Uncommon";
-                else if (Rarity >= 10) return "Rare";
-                else if (Rarity >= 1) return "Ultra Rare";
-                else if (Rarity >= 0) return "Legendary";
-                return "n/a";
+                return Types.Utility.RarityText(Rarity ?? -1);
             }
         }
 
@@ -341,7 +335,7 @@ namespace Library.Engine
             this.Strength = with.Strength ?? this.Strength;
             this.Dexterity = with.Dexterity ?? this.Dexterity;
             this.SpawnType = with.SpawnType ?? this.SpawnType;
-            this.SpawnSubType = with.SpawnSubType ?? this.SpawnSubType;
+            this.SpawnSubTypes = with.SpawnSubTypes ?? this.SpawnSubTypes;
             this.MinLevel = with.MinLevel ?? this.MinLevel;
             this.MaxLevel = with.MaxLevel ?? this.MaxLevel;
             this.Level = with.Level ?? this.Level;
