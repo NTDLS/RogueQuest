@@ -2376,6 +2376,7 @@ namespace ScenarioEdit
                 var weapons = workbook.CreateSheet("Weapons");
                 var projectiles = workbook.CreateSheet("Projectiles");
                 var scrolls = workbook.CreateSheet("Scrolls");
+                var books = workbook.CreateSheet("Books");
                 var potions = workbook.CreateSheet("Potions");
                 var wands = workbook.CreateSheet("Wands");
                 var equipment = workbook.CreateSheet("Equipment");
@@ -2514,6 +2515,23 @@ namespace ScenarioEdit
                         body.CreateCell(cell++).SetCellValue(item.Meta.BulkCapacity ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.WeightCapacity ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+                    }
+
+                    if (item.Meta.SubType == ActorSubType.Book)
+                    {
+                        if (books.PhysicalNumberOfRows == 0) CreateHeader(books, "Name,Level,Value,Bulk,Weight,Rarity,Mana,Effect");
+
+                        IRow body = books.CreateRow(books.PhysicalNumberOfRows);
+                        int cell = 0;
+                        body.CreateCell(cell++).SetCellValue(item.Meta.Name);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.Level ?? 0);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.Value ?? 0);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.Bulk ?? 0);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
+
+                        body.CreateCell(cell++).SetCellValue(item.Meta.Mana ?? 0);
+                        body.CreateCell(cell++).SetCellValue($"Permanently learn {item.Meta.SpellName}");
                     }
 
                     if (item.Meta.SubType == ActorSubType.Scroll)
