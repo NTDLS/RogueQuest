@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -172,27 +173,68 @@ namespace Library.Engine
         {
         }
 
+        /// <summary>
+        /// Resets the metadata on all tiles and removes not-found / container-orphaned items.
+        /// </summary>
         public void ResetAllTilesMetadata()
         {
             Actors.ResetAllTilesMetadata();
 
+            var orphanedItems = new List<CustodyItem>();
+
+            var _allLevelChunks = Levels.GetAllLevelsChunks();
+
             foreach (var obj in this.State.Items)
             {
-                Guid? uid = obj.Tile.Meta.UID;
-
-                var freshMeta = TileMetadata.GetFreshMetadata(obj.Tile.TilePath);
-                obj.Tile.Meta.OverrideWith(freshMeta);
-
-                if (uid != null)
+                if (obj.ContainerId != null)
                 {
-                    obj.Tile.Meta.UID = (Guid)uid; //Never change the UID once it is set.
+                    bool found = false;
+
+                    for (int level = 0; level < _allLevelChunks.Count; level++)
+                    {
+                        var parent = _allLevelChunks[level].Where(o => o.Meta.UID == obj.ContainerId).FirstOrDefault();
+
+                        if (parent != null)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found == false)
+                    {
+                        orphanedItems.Add(obj);
+                        continue;
+                    }
                 }
 
-                //All items need UIDs.
-                if (obj.Tile.Meta.UID == null)
+                if (File.Exists(Assets.Constants.GetAssetPath($"{obj.Tile.TilePath}.png")) == false)
                 {
-                    obj.Tile.Meta.UID = Guid.NewGuid();
+                    orphanedItems.Add(obj);
                 }
+                else
+                {
+                    Guid? uid = obj.Tile.Meta.UID;
+
+                    var freshMeta = TileMetadata.GetFreshMetadata(obj.Tile.TilePath);
+                    obj.Tile.Meta.OverrideWith(freshMeta);
+
+                    if (uid != null)
+                    {
+                        obj.Tile.Meta.UID = (Guid)uid; //Never change the UID once it is set.
+                    }
+
+                    //All items need UIDs.
+                    if (obj.Tile.Meta.UID == null)
+                    {
+                        obj.Tile.Meta.UID = Guid.NewGuid();
+                    }
+                }
+            }
+
+            foreach (var item in orphanedItems)
+            {
+                this.State.Items.Remove(item);
             }
         }
 

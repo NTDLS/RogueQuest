@@ -894,7 +894,8 @@ namespace Game.Engine
         {
             var input = new Types.TickInput() { InputType = Types.TickInputType.Rest };
 
-            if (Core.State.Character.AvailableHitpoints >= Core.State.Character.Hitpoints)
+            if (Core.State.Character.AvailableHitpoints >= Core.State.Character.Hitpoints
+                && Core.State.Character.AvailableMana >= Core.State.Character.Mana)
             {
                 Core.LogLine($"Feeling no need to rest you press on.", Color.DarkGreen);
                 Advance(input);
@@ -902,12 +903,15 @@ namespace Game.Engine
                 return;
             }
 
-            while (Core.State.Character.AvailableHitpoints < Core.State.Character.Hitpoints)
+            int statMod = 0;
+
+            while (Core.State.Character.AvailableHitpoints < Core.State.Character.Hitpoints
+                || Core.State.Character.AvailableMana < Core.State.Character.Mana)
             {
                 Advance(input);
                 WaitOnIdleEngine();
 
-                var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 150)
+                var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 250)
                     .Where(o => o.Meta.CanTakeDamage == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing);
 
                 if (actorsThatCanSeePlayer.Any())
@@ -917,7 +921,15 @@ namespace Game.Engine
                     return;
                 }
 
-                Core.State.Character.AvailableHitpoints++;
+                if ((statMod % 2) == 0)
+                {
+                    Core.State.Character.AvailableHitpoints++;
+                }
+
+                if ((statMod % 4) == 0)
+                {
+                    Core.State.Character.AvailableMana++;
+                }
             }
 
             Core.LogLine($"You awake feeling refreshed.", Color.DarkGreen);
@@ -1205,7 +1217,7 @@ namespace Game.Engine
                 ActOnActiveState(activeState);
             }
 
-            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 200)
+            var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 250)
                 .Where(o => o.Meta.CanTakeDamage == true);
 
             var hostileInteractions = new List<ActorHostileBeing>();

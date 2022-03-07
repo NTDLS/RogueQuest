@@ -98,6 +98,10 @@ namespace Library.Engine
             set
             {
                 _availableMana = value < 0 ? 0 : value;
+                if (_availableMana > Mana)
+                {
+                    _availableMana = Mana;
+                }
             }
         }
 
@@ -111,6 +115,10 @@ namespace Library.Engine
             set
             {
                 _availableHitpoints = value < 0 ? 0 : value;
+                if (_availableHitpoints > Hitpoints)
+                {
+                    _availableHitpoints = Hitpoints;
+                }
             }
         }
 

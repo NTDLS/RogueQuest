@@ -15,7 +15,8 @@ namespace Game.Actors
         {
             get
             {
-                return _maxFollowDistance + ((this.Meta.Dexterity ?? 0) * 5);
+                int maxFollowDistance = _maxFollowDistance + ((this.Meta.Dexterity ?? 0) * 10);
+                return maxFollowDistance;
             }
             set
             {
