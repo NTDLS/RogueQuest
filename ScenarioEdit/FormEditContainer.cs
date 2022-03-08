@@ -54,15 +54,15 @@ namespace ScenarioEdit
 
             foreach (var obj in objs)
             {
-                if (obj.Tile.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
+                if (obj.Tile.Meta.SubType == ActorSubType.Wand)
                 {
                     AddItemToContainer(obj.Tile.TilePath, obj.Tile.Meta.Charges);
                 }
-                else if (obj.Tile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+                else if (obj.Tile.Meta.ActorClass == ActorClassName.ActorSpawner)
                 {
                     if (obj.Tile.Meta.SpawnSubTypes == null)
                     {
-                        obj.Tile.Meta.SpawnSubTypes = new Library.Engine.Types.ActorSubType[0];
+                        obj.Tile.Meta.SpawnSubTypes = new ActorSubType[0];
                     }
 
                     AddItemToContainer(obj.Tile.TilePath, String.Join(",", obj.Tile.Meta.SpawnSubTypes));
@@ -113,26 +113,25 @@ namespace ScenarioEdit
 
             var item = selectedItem.Tag as TileIdentifier;
 
-            if (item.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+            if (item.Meta.ActorClass == ActorClassName.ActorSpawner)
             {
-                var selectedTypes = new List<Library.Engine.Types.ActorSubType>();
+                var selectedTypes = new List<ActorSubType>();
 
                 var values = selectedItem.SubItems[DATA_COLUMN].Text.Split(',', StringSplitOptions.RemoveEmptyEntries);
                 foreach (var value in values)
                 {
-                    selectedTypes.Add((Library.Engine.Types.ActorSubType)
-                        Enum.Parse(typeof(Library.Engine.Types.ActorSubType), value));
+                    selectedTypes.Add((ActorSubType)Enum.Parse(typeof(ActorSubType), value));
                 }
 
-                using var form = new FormEditSpawner(Core, selectedTypes);
+                using var form = new FormEditItemSpawner(Core, selectedTypes);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     selectedItem.SubItems[DATA_COLUMN].Text = String.Join(',', form.SelectedSubTypes);
                 }
             }
-            else if (item.Meta.CanStack == true || item.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
+            else if (item.Meta.CanStack == true || item.Meta.SubType == ActorSubType.Wand)
             {
-                if (item.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
+                if (item.Meta.SubType == ActorSubType.Wand)
                 {
                     using var form = new FormEditQuantity("Charges", selectedItem.SubItems[DATA_COLUMN].Text);
                     if (form.ShowDialog() == DialogResult.OK)
@@ -205,14 +204,9 @@ namespace ScenarioEdit
 
             var metaData = TileMetadata.GetFreshMetadata(draggedNode.ImageKey);
 
-            if (metaData.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+            if (metaData.ActorClass == ActorClassName.ActorSpawner)
             {
-                var values = Enum.GetValues<ActorSubType>().ToList();
-
-                values.Remove(ActorSubType.Unspecified);
-                values.Sort();
-
-                AddItemToContainer(draggedNode.ImageKey, String.Join(',', values));
+                AddItemToContainer(draggedNode.ImageKey, String.Join(',', Utility.RandomDropSubTypes));
             }
             else
             {
@@ -306,19 +300,18 @@ namespace ScenarioEdit
 
                 var tile = obj.Tag as TileIdentifier;
 
-                if (tile.Meta.SubType == Library.Engine.Types.ActorSubType.Wand)
+                if (tile.Meta.SubType == ActorSubType.Wand)
                 {
                     tile.Meta.Charges = Int32.Parse(obj.SubItems[DATA_COLUMN].Text);
                 }
-                else if (tile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorSpawner)
+                else if (tile.Meta.ActorClass == ActorClassName.ActorSpawner)
                 {
-                    var selectedValues = new List<Library.Engine.Types.ActorSubType>();
+                    var selectedValues = new List<ActorSubType>();
 
                     var values = obj.SubItems[DATA_COLUMN].Text.Split(',');
                     foreach (var value in values)
                     {
-                        selectedValues.Add((Library.Engine.Types.ActorSubType)
-                            Enum.Parse(typeof(Library.Engine.Types.ActorSubType), value));
+                        selectedValues.Add((ActorSubType)Enum.Parse(typeof(ActorSubType), value));
                     }
 
                     tile.Meta.SpawnSubTypes = selectedValues.ToArray();

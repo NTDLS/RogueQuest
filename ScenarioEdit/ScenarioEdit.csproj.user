@@ -7,7 +7,7 @@
     <Compile Update="FormEditContainer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormEditSpawner.cs">
+    <Compile Update="FormEditItemSpawner.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormMain.cs">

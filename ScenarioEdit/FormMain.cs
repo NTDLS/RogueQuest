@@ -443,6 +443,11 @@ namespace ScenarioEdit
                     }
                 }
 
+                if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawner && insertedTile.Meta.SpawnType == ActorClassName.ActorItem)
+                {
+                    insertedTile.Meta.SpawnSubTypes = (ActorSubType[])Utility.RandomDropSubTypes.Clone();
+                }
+
                 if (insertedTile.Meta.CanStack == true && (insertedTile.Meta.Quantity ?? 0) == 0)
                 {
                     insertedTile.Meta.Quantity = 1;
@@ -1712,6 +1717,17 @@ namespace ScenarioEdit
                             }
                         }
                     }
+                    else if (selectedRow.Text == "Spawn Type" && selectedItems.Count == 1)
+                    {
+                    }
+                    else if (selectedRow.Text == "Spawn Sub-Types" && selectedItems.Count == 1)
+                    {
+                        using var form = new FormEditItemSpawner(_core, selectedTile.Meta.SpawnSubTypes?.ToList());
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            selectedTile.Meta.SpawnSubTypes = form.SelectedSubTypes.ToArray();
+                        }
+                    }
                     else
                     {
                         if (selectedRow.Text == "Dialog")
@@ -1808,14 +1824,6 @@ namespace ScenarioEdit
                                             tile.Meta.MaxLevel = int.Parse(dialog.PropertyValue);
                                         }
                                     }
-                                    //else if (selectedRow.Text == "Spawn Type")
-                                    //{
-                                    //    tile.Meta.SpawnType = dialog.PropertyValue;
-                                    //}
-                                    //else if (selectedRow.Text == "Spawn Sub-Type")
-                                    //{
-                                    //    tile.Meta.SpawnSubType = dialog.PropertyValue;
-                                    //}
                                     else if (selectedRow.Text == "Hit Points")
                                     {
                                         foreach (var tile in selectedItems)
@@ -1886,7 +1894,7 @@ namespace ScenarioEdit
                                             tile.Meta.Dexterity = int.Parse(dialog.PropertyValue);
                                         }
                                     }
-                                     else if (selectedRow.Text == "Armor Class")
+                                    else if (selectedRow.Text == "Armor Class")
                                     {
                                         foreach (var tile in selectedItems)
                                         {
@@ -1945,14 +1953,14 @@ namespace ScenarioEdit
                                 }
                             }
                         }
-
-                        PopulateSelectedItemProperties();
-
-                        foreach (var tile in selectedItems)
-                        {
-                            tile.Invalidate();
-                        }
                     }
+                }
+
+                PopulateSelectedItemProperties();
+
+                foreach (var tile in selectedItems)
+                {
+                    tile.Invalidate();
                 }
             }
             catch
@@ -1989,7 +1997,15 @@ namespace ScenarioEdit
                     listViewProperties.Items.Add("Min level").SubItems.Add(selectedTile.Meta?.MinLevel.ToString());
                     listViewProperties.Items.Add("Max level").SubItems.Add(selectedTile.Meta?.MaxLevel.ToString());
                     listViewProperties.Items.Add("Spawn Type").SubItems.Add(selectedTile.Meta.SpawnType.ToString());
-                    //listViewProperties.Items.Add("Spawn Sub-Type").SubItems.Add(selectedTile.Meta.SpawnSubType.ToString());
+
+                    string subTypes = string.Empty;
+
+                    if (selectedTile.Meta.SpawnSubTypes != null)
+                    {
+                        subTypes = String.Join(',', selectedTile.Meta.SpawnSubTypes);
+                    }
+
+                    listViewProperties.Items.Add("Spawn Sub-Types").SubItems.Add(subTypes);
                 }
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorFriendyBeing

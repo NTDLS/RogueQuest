@@ -2,25 +2,30 @@
 using ScenarioEdit.Engine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace ScenarioEdit
 {
-    public partial class FormEditSpawner : Form
+    public partial class FormEditItemSpawner : Form
     {
         public EngineCore Core { get; set; }
 
         public List<ActorSubType> SelectedSubTypes { get; set; } = new List<ActorSubType>();
 
-        public FormEditSpawner(EngineCore core, List<ActorSubType> selectedTypes)
+        public FormEditItemSpawner(EngineCore core, List<ActorSubType> selectedTypes)
         {
             InitializeComponent();
             SelectedSubTypes = selectedTypes;
+
+            if (SelectedSubTypes == null)
+            {
+                SelectedSubTypes = new List<ActorSubType>();
+            }
+
             Core = core;
         }
 
-        public FormEditSpawner()
+        public FormEditItemSpawner()
         {
             InitializeComponent();
         }
@@ -30,11 +35,7 @@ namespace ScenarioEdit
             this.AcceptButton = buttonSave;
             this.CancelButton = buttonCancel;
 
-            var subTypes = Enum.GetValues<ActorSubType>().ToList();
-
-            subTypes.Remove(ActorSubType.Unspecified);
-
-            foreach (var obj in subTypes)
+            foreach (var obj in Utility.RandomDropSubTypes)
             {
                 var item = new ListViewItem(obj.ToString())
                 {

@@ -1,7 +1,7 @@
 ﻿
 namespace ScenarioEdit
 {
-    partial class FormEditSpawner
+    partial class FormEditItemSpawner
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace ScenarioEdit
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditSpawner));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditItemSpawner));
             this.label1 = new System.Windows.Forms.Label();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();

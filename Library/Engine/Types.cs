@@ -24,6 +24,35 @@
             else if (rarity >= 0) return "Legendary";
             return "n/a";
         }
+
+        public static ActorSubType[] RandomDropSubTypes
+        {
+            get
+            {
+                return new ActorSubType[]
+                {
+                    ActorSubType.Armor,
+                    ActorSubType.Belt,
+                    ActorSubType.Book,
+                    ActorSubType.Boots,
+                    ActorSubType.Bracers,
+                    ActorSubType.Garment,
+                    ActorSubType.Gauntlets,
+                    ActorSubType.Helment,
+                    ActorSubType.MeleeWeapon,
+                    ActorSubType.Money,
+                    ActorSubType.Necklace,
+                    ActorSubType.Pack,
+                    ActorSubType.Potion,
+                    ActorSubType.Projectile,
+                    ActorSubType.RangedWeapon,
+                    ActorSubType.Ring,
+                    ActorSubType.Scroll,
+                    ActorSubType.Shield,
+                    ActorSubType.Wand
+                };
+            }
+        }
     }
 
     public enum ReplayMode
