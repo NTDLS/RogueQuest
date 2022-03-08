@@ -1970,9 +1970,16 @@ namespace ScenarioEdit
 
         void PopulateSelectedItemProperties()
         {
-            listViewProperties.Items.Clear();
-
             var selectedTile = listViewProperties.Tag as ActorBase;
+
+            string selectedRowText = string.Empty;
+
+            if (listViewProperties.SelectedItems?.Count == 1)
+            {
+                selectedRowText = listViewProperties.SelectedItems[0].Text;
+            }
+
+            listViewProperties.Items.Clear();
 
             if (selectedTile != null && selectedTile.Visible)
             {
@@ -2097,9 +2104,19 @@ namespace ScenarioEdit
                 }
 
                 listViewProperties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+                //If there was an item selected before, select it again and scroll it into view.
+                if (string.IsNullOrEmpty(selectedRowText) == false)
+                {
+                    var item = listViewProperties.FindItemWithText(selectedRowText);
+                    if (item != null)
+                    {
+                        item.Selected = true;
+                        item.EnsureVisible();
+                    }
+                }
             }
         }
-
 
         private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
