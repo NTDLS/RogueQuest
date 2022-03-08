@@ -1823,6 +1823,20 @@ namespace ScenarioEdit
                                             tile.Meta.HitPoints = int.Parse(dialog.PropertyValue);
                                         }
                                     }
+                                    else if (selectedRow.Text == "Level")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Level = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Rarity")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Rarity = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
                                     else if (selectedRow.Text == "Experience")
                                     {
                                         foreach (var tile in selectedItems)
@@ -1858,7 +1872,21 @@ namespace ScenarioEdit
                                             tile.DrawOrder = int.Parse(dialog.PropertyValue);
                                         }
                                     }
-                                    else if (selectedRow.Text == "Armor Class")
+                                    else if (selectedRow.Text == "Strength")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Strength = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Dexterity")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.Dexterity = int.Parse(dialog.PropertyValue);
+                                        }
+                                    }
+                                     else if (selectedRow.Text == "Armor Class")
                                     {
                                         foreach (var tile in selectedItems)
                                         {
@@ -2004,6 +2032,9 @@ namespace ScenarioEdit
                     listViewProperties.Items.Add("Can Take Damage").SubItems.Add(selectedTile.Meta?.CanTakeDamage.ToString());
                     listViewProperties.Items.Add("Hit Points").SubItems.Add(selectedTile.Meta?.HitPoints.ToString());
                     listViewProperties.Items.Add("Experience").SubItems.Add(selectedTile.Meta?.Experience.ToString());
+                    listViewProperties.Items.Add("Strength").SubItems.Add(selectedTile.Meta?.Strength.ToString());
+                    listViewProperties.Items.Add("Dexterity").SubItems.Add(selectedTile.Meta?.Dexterity.ToString());
+                    listViewProperties.Items.Add("Armor Class").SubItems.Add(selectedTile.Meta?.AC.ToString());
                 }
 
                 if (selectedTile.Meta.SubType == ActorSubType.Armor || selectedTile.Meta.SubType == ActorSubType.Gauntlets
@@ -2032,6 +2063,7 @@ namespace ScenarioEdit
 
                 listViewProperties.Items.Add("Bulk").SubItems.Add(selectedTile.Meta?.Bulk.ToString());
                 listViewProperties.Items.Add("Weight").SubItems.Add(selectedTile.Meta?.Weight.ToString());
+                listViewProperties.Items.Add("Level").SubItems.Add(selectedTile.Meta?.Level.ToString());
 
                 listViewProperties.Items.Add("Location").SubItems.Add($"{selectedTile.Location.X},{selectedTile.Location.Y}");
 
