@@ -66,6 +66,7 @@ namespace ScenarioEdit
             this.toolStripMenuItemResetAllTileMeta = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemViewWorldItems = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemScenarioProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportMaterialManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.levelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemAddLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemChangeLevel = new System.Windows.Forms.ToolStripMenuItem();
@@ -105,8 +106,7 @@ namespace ScenarioEdit
             this.toolStripButtonMoveTileUp = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonMoveTileDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonPlayMap = new System.Windows.Forms.ToolStripButton();
-            this.exportMaterialManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripButtonToggleMinimap = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBody)).BeginInit();
             this.splitContainerBody.Panel2.SuspendLayout();
             this.splitContainerBody.SuspendLayout();
@@ -134,7 +134,7 @@ namespace ScenarioEdit
             // 
             this.splitContainerBody.Panel2.Controls.Add(this.splitContainerTools1);
             this.splitContainerBody.Size = new System.Drawing.Size(896, 641);
-            this.splitContainerBody.SplitterDistance = 608;
+            this.splitContainerBody.SplitterDistance = 607;
             this.splitContainerBody.SplitterWidth = 5;
             this.splitContainerBody.TabIndex = 0;
             this.splitContainerBody.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainerBody_SplitterMoved);
@@ -155,7 +155,7 @@ namespace ScenarioEdit
             // splitContainerTools1.Panel2
             // 
             this.splitContainerTools1.Panel2.Controls.Add(this.groupBoxProperties);
-            this.splitContainerTools1.Size = new System.Drawing.Size(283, 641);
+            this.splitContainerTools1.Size = new System.Drawing.Size(284, 641);
             this.splitContainerTools1.SplitterDistance = 319;
             this.splitContainerTools1.SplitterWidth = 5;
             this.splitContainerTools1.TabIndex = 1;
@@ -167,7 +167,7 @@ namespace ScenarioEdit
             this.treeViewTiles.Location = new System.Drawing.Point(0, 27);
             this.treeViewTiles.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.treeViewTiles.Name = "treeViewTiles";
-            this.treeViewTiles.Size = new System.Drawing.Size(283, 292);
+            this.treeViewTiles.Size = new System.Drawing.Size(284, 292);
             this.treeViewTiles.TabIndex = 0;
             // 
             // toolStrip1
@@ -178,7 +178,7 @@ namespace ScenarioEdit
             this.toolStripButtonCollapseAll});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(283, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(284, 27);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -210,7 +210,7 @@ namespace ScenarioEdit
             this.groupBoxProperties.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBoxProperties.Name = "groupBoxProperties";
             this.groupBoxProperties.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBoxProperties.Size = new System.Drawing.Size(283, 317);
+            this.groupBoxProperties.Size = new System.Drawing.Size(284, 317);
             this.groupBoxProperties.TabIndex = 1;
             this.groupBoxProperties.TabStop = false;
             this.groupBoxProperties.Text = "Properties";
@@ -229,7 +229,7 @@ namespace ScenarioEdit
             this.listViewProperties.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listViewProperties.MultiSelect = false;
             this.listViewProperties.Name = "listViewProperties";
-            this.listViewProperties.Size = new System.Drawing.Size(277, 289);
+            this.listViewProperties.Size = new System.Drawing.Size(278, 289);
             this.listViewProperties.TabIndex = 0;
             this.listViewProperties.UseCompatibleStateImageBehavior = false;
             this.listViewProperties.View = System.Windows.Forms.View.Details;
@@ -458,6 +458,13 @@ namespace ScenarioEdit
             this.toolStripMenuItemScenarioProperties.Size = new System.Drawing.Size(255, 26);
             this.toolStripMenuItemScenarioProperties.Text = "Scenario Properties";
             // 
+            // exportMaterialManifestToolStripMenuItem
+            // 
+            this.exportMaterialManifestToolStripMenuItem.Name = "exportMaterialManifestToolStripMenuItem";
+            this.exportMaterialManifestToolStripMenuItem.Size = new System.Drawing.Size(255, 26);
+            this.exportMaterialManifestToolStripMenuItem.Text = "Export Material Manifest";
+            this.exportMaterialManifestToolStripMenuItem.Click += new System.EventHandler(this.exportMaterialManifestToolStripMenuItem_Click);
+            // 
             // levelToolStripMenuItem
             // 
             this.levelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -646,7 +653,7 @@ namespace ScenarioEdit
             this.toolStripButtonMoveTileUp,
             this.toolStripButtonMoveTileDown,
             this.toolStripSeparator6,
-            this.toolStripButtonPlayMap});
+            this.toolStripButtonToggleMinimap});
             this.toolStrip.Location = new System.Drawing.Point(0, 30);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(896, 51);
@@ -790,22 +797,16 @@ namespace ScenarioEdit
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(6, 51);
             // 
-            // toolStripButtonPlayMap
+            // toolStripButtonToggleMinimap
             // 
-            this.toolStripButtonPlayMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonPlayMap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonPlayMap.Image")));
-            this.toolStripButtonPlayMap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonPlayMap.Name = "toolStripButtonPlayMap";
-            this.toolStripButtonPlayMap.Size = new System.Drawing.Size(29, 48);
-            this.toolStripButtonPlayMap.Text = "Play Map";
-            this.toolStripButtonPlayMap.ToolTipText = "Play Map";
-            // 
-            // exportMaterialManifestToolStripMenuItem
-            // 
-            this.exportMaterialManifestToolStripMenuItem.Name = "exportMaterialManifestToolStripMenuItem";
-            this.exportMaterialManifestToolStripMenuItem.Size = new System.Drawing.Size(255, 26);
-            this.exportMaterialManifestToolStripMenuItem.Text = "Export Material Manifest";
-            this.exportMaterialManifestToolStripMenuItem.Click += new System.EventHandler(this.exportMaterialManifestToolStripMenuItem_Click);
+            this.toolStripButtonToggleMinimap.CheckOnClick = true;
+            this.toolStripButtonToggleMinimap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonToggleMinimap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonToggleMinimap.Image")));
+            this.toolStripButtonToggleMinimap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonToggleMinimap.Name = "toolStripButtonToggleMinimap";
+            this.toolStripButtonToggleMinimap.Size = new System.Drawing.Size(29, 48);
+            this.toolStripButtonToggleMinimap.Text = "Minimap";
+            this.toolStripButtonToggleMinimap.Click += new System.EventHandler(this.toolStripButtonToggleMinimap_Click);
             // 
             // FormMain
             // 
@@ -894,7 +895,6 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripButton toolStripButtonMoveTileDown;
         private System.Windows.Forms.ToolStripButton toolStripButtonShapeMode;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
-        private System.Windows.Forms.ToolStripButton toolStripButtonPlayMap;
         private System.Windows.Forms.ToolStripMenuItem scenarioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemResetAllTileMeta;
         private System.Windows.Forms.ToolStripMenuItem levelToolStripMenuItem;
@@ -926,6 +926,7 @@ namespace ScenarioEdit
         private System.Windows.Forms.ToolStripButton toolStripButtonFindSelectedTile;
         private System.Windows.Forms.ToolStripButton toolStripButtonCollapseAll;
         private System.Windows.Forms.ToolStripMenuItem exportMaterialManifestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripButtonToggleMinimap;
     }
 }
 

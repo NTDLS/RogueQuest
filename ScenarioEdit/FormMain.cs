@@ -174,7 +174,6 @@ namespace ScenarioEdit
             toolStripButtonMoveTileUp.Click += ToolStripButtonMoveTileUp_Click;
             toolStripButtonMoveTileDown.Click += ToolStripButtonMoveTileDown_Click;
             toolStripButtonShapeMode.Click += ToolStripButtonShapeMode_Click;
-            toolStripButtonPlayMap.Click += ToolStripButtonPlayMap_Click;
             toolStripMenuItemResetAllTileMeta.Click += ToolStripMenuItemResetAllTileMeta_Click;
             treeViewTiles.MouseDown += TreeViewTiles_MouseDown;
             treeViewTiles.MouseUp += TreeViewTiles_MouseUp;
@@ -722,22 +721,6 @@ namespace ScenarioEdit
                 _core.Materials = EnumFlatMaterials();
                 _core.ResetAllTilesMetadata();
                 MessageBox.Show("Complete.");
-            }
-        }
-
-        private void ToolStripButtonPlayMap_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(_currentMapFilename))
-            {
-                _hasBeenModified = true;
-            }
-
-            if (CheckForNeededSave())
-            {
-                var gameApp = new System.Diagnostics.Process();
-                gameApp.StartInfo.FileName = @"..\..\..\..\Game\bin\Debug\net5.0-windows\Game.exe";
-                gameApp.StartInfo.Arguments = $"/levelfile:\"{_currentMapFilename}\" /levelindex:{_core.State.CurrentLevel}";
-                gameApp.Start();
             }
         }
 
@@ -2098,7 +2081,7 @@ namespace ScenarioEdit
                 {
                     listViewProperties.Items.Add("Quantity").SubItems.Add(selectedTile.Meta?.Quantity.ToString());
                 }
-                if (selectedTile.Meta?.Charges > 0)
+                if (selectedTile.Meta.SubType == ActorSubType.Wand)
                 {
                     listViewProperties.Items.Add("Charges").SubItems.Add(selectedTile.Meta?.Charges.ToString());
                 }
@@ -2685,6 +2668,12 @@ namespace ScenarioEdit
             {
                 MessageBox.Show($"Error: {ex.Message}");
             }
+        }
+
+        private void toolStripButtonToggleMinimap_Click(object sender, EventArgs e)
+        {
+            _core.DrawMinimap = toolStripButtonToggleMinimap.Checked;
+            drawingsurface.Invalidate();
         }
     }
 }

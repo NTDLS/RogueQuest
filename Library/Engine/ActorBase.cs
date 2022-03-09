@@ -2,11 +2,9 @@
 using Library.Engine.Types;
 using Library.Types;
 using Library.Utility;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 
 namespace Library.Engine
@@ -101,7 +99,7 @@ namespace Library.Engine
         public bool ApplyDamage(int points)
         {
             this.Meta.HitPoints = (this.Meta.HitPoints ?? 0) - points;
-            if ((this.Meta.HitPoints ??  0) <= 0)
+            if ((this.Meta.HitPoints ?? 0) <= 0)
             {
                 this.QueueForDelete();
                 return true;
@@ -187,14 +185,10 @@ namespace Library.Engine
             }
         }
 
-        public Point<int> RadarDotSize { get; set; } = new Point<int>(4, 4);
-        private SolidBrush _radarDotBrush = new SolidBrush(Color.FromArgb(255, 255, 0, 0));
-
-
         public Bitmap ResizeBitmap(Bitmap bmp, int width, int height)
         {
-            Bitmap result = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(result))
+            Bitmap result = new(width, height);
+            using (var g = Graphics.FromImage(result))
             {
                 g.DrawImage(bmp, 0, 0, width, height);
             }
@@ -202,39 +196,30 @@ namespace Library.Engine
             return result;
         }
 
-        public void RenderRadar(Graphics dc, Point<double> scale, Point<double> offset)
+        public void RenderMiniMap(Graphics dc, Point<double> scale, Point<double> offset)
         {
+            int scaleSzX = (int)(_image.Width * scale.X);
+            int scaleSzY = (int)(_image.Height * scale.Y);
 
-            Bitmap bitmap = new Bitmap(_image);
+            if (scaleSzX <= 0) scaleSzX = 4;
+            if (scaleSzY <= 0) scaleSzY = 4;
 
-            int scaleSzX = (int)(((double)bitmap.Width) * scale.X);
-            int scaleSzY = (int)(((double)bitmap.Height) * scale.Y);
+            scaleSzX++; //Try to fill the gaps between tiles.
+            scaleSzY++; //Try to fill the gaps between tiles.
 
+            var rect = new Rectangle(
+                (int)((ScreenBounds.X * scale.X) + (offset.X)),
+                (int)((ScreenBounds.Y * scale.Y) + (offset.Y)),
+                scaleSzX, scaleSzY);
 
-            var rect = new Rectangle((int)(((double)ScreenBounds.X) * scale.X), (int)(((double)ScreenBounds.Y) * scale.Y), scaleSzX, scaleSzY);
-
-            ResizeBitmap(bitmap, scaleSzX, scaleSzY);
-
-
-            dc.DrawImage(bitmap, rect);
-
-            /*
-
-            if (Visible && _image != null && !DoNotDraw)
-            {
-                double x = (int)((this.X * scale.X) + offset.X - ((double)RadarDotSize.X / 2.0));
-                double y = (int)((this.Y * scale.Y) + offset.Y - ((double)RadarDotSize.Y / 2.0));
-
-                dc.FillEllipse(_radarDotBrush, (int)x, (int)y, RadarDotSize.X, RadarDotSize.Y);
-            }
-            */
+            dc.DrawImage(_image, rect);
         }
 
         private void DrawImageRealative(Graphics dc, Image rawImage, double? angleInDegrees = null)
         {
             double angle = (double)(angleInDegrees == null ? Velocity.Angle.Degrees : angleInDegrees);
 
-            Bitmap bitmap = new Bitmap(rawImage);
+            Bitmap bitmap = new(rawImage);
 
             if (angle != 0 && RotationMode != RotationMode.None)
             {
@@ -277,7 +262,7 @@ namespace Library.Engine
         {
             double angle = (double)(angleInDegrees == null ? Velocity.Angle.Degrees : angleInDegrees);
 
-            Bitmap bitmap = new Bitmap(rawImage);
+            Bitmap bitmap = new(rawImage);
 
             if (angle != 0 && RotationMode != RotationMode.None)
             {
@@ -304,13 +289,13 @@ namespace Library.Engine
 
             if (SelectedHighlight)
             {
-                Pen pen = new Pen(Color.Red, 3);
+                Pen pen = new(Color.Red, 3);
                 dc.DrawRectangle(pen, BoundsI);
             }
 
             if (HoverHighlight)
             {
-                Pen pen = new Pen(Color.Yellow, 1);
+                Pen pen = new(Color.Yellow, 1);
                 dc.DrawRectangle(pen, BoundsI);
             }
         }
@@ -597,13 +582,13 @@ namespace Library.Engine
 
         #endregion
 
-        public bool IsPointingAt( ActorBase atObj, double toleranceDegrees)
+        public bool IsPointingAt(ActorBase atObj, double toleranceDegrees)
         {
             var deltaAngle = Math.Abs(MathUtility.DeltaAngle(this, atObj));
             return deltaAngle <= toleranceDegrees || deltaAngle >= (360 - toleranceDegrees);
         }
 
-        public bool IsPointingAt( ActorBase atObj, double toleranceDegrees, double maxDistance, double offsetAngle = 0)
+        public bool IsPointingAt(ActorBase atObj, double toleranceDegrees, double maxDistance, double offsetAngle = 0)
         {
             var deltaAngle = Math.Abs(MathUtility.DeltaAngle(this, atObj, offsetAngle));
             if (deltaAngle <= toleranceDegrees || deltaAngle >= (360 - toleranceDegrees))

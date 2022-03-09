@@ -45,46 +45,45 @@ namespace Library.Engine
             return Tiles.Where(o => o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
         }
 
-        /*
-        Graphics _radarDC;
-        Bitmap _radarBitmap;
-        int _radarWidth = 200;
-        int _radarHeight = 200;
-        Point<double> _radarScale;
-        Point<double> _radarOffset;
-        int _radarDistance = 4;
-        */
+        Graphics _miniMapDC;
+        Bitmap _miniMapBitmap;
+        int _miniMapWidth = 350;
+        int _miniMapHeight = 350;
+        Point<double> _miniMapScale;
+        Point<double> _miniMapOffset;
+        int _miniMapDistance = 10;
 
         public void Render(Graphics screenDc)
         {
             lock (Core.CollectionSemaphore)
             {
-                /*
-                if (_radarBitmap == null && Core.Display.VisibleBounds.Width > 0 && Core.Display.VisibleBounds.Height > 0)
+                if (Core.DrawMinimap)
                 {
-                    double radarVisionWidth = Core.Display.VisibleBounds.Width * _radarDistance;
-                    double radarVisionHeight = Core.Display.VisibleBounds.Height * _radarDistance;
+                    if (_miniMapBitmap == null && Core.Display.VisibleBounds.Width > 0 && Core.Display.VisibleBounds.Height > 0)
+                    {
+                        double miniMapVisionWidth = Core.Display.VisibleBounds.Width * _miniMapDistance;
+                        double miniMapVisionHeight = Core.Display.VisibleBounds.Height * _miniMapDistance;
 
-                    _radarBitmap = new Bitmap((int)_radarWidth, (int)_radarHeight);
+                        _miniMapBitmap = new Bitmap((int)_miniMapWidth, (int)_miniMapHeight);
 
-                    _radarScale = new Point<double>((double)_radarBitmap.Width / radarVisionWidth, (double)_radarBitmap.Height / radarVisionHeight);
-                    _radarOffset = new Point<double>(_radarWidth / 2.0, _radarHeight / 2.0);
+                        _miniMapScale = new Point<double>((double)_miniMapBitmap.Width / miniMapVisionWidth, (double)_miniMapBitmap.Height / miniMapVisionHeight);
+                        _miniMapOffset = new Point<double>(_miniMapWidth / 2.0, _miniMapHeight / 2.0);
 
-                    _radarDC = Graphics.FromImage(_radarBitmap);
-                    _radarDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                    _radarDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                    _radarDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                    _radarDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                    _radarDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                        _miniMapDC = Graphics.FromImage(_miniMapBitmap);
+                        _miniMapDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                        _miniMapDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                        _miniMapDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                        _miniMapDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        _miniMapDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
-                    Rectangle rect = new Rectangle(0, 0, _radarBitmap.Width, _radarBitmap.Height);
+                        Rectangle rect = new Rectangle(0, 0, _miniMapBitmap.Width, _miniMapBitmap.Height);
+                    }
+
+                    if (_miniMapBitmap != null)
+                    {
+                        _miniMapDC.Clear(Color.Black);
+                    }
                 }
-
-                if (_radarBitmap != null)
-                {
-                    _radarDC.Clear(Color.Black);
-                }
-                */
 
                 var onScreenTiles = OnScreenTiles();
 
@@ -133,54 +132,30 @@ namespace Library.Engine
                     }
                 }
 
-                /*
-                if (_radarBitmap != null)
+                if (Core.DrawMinimap)
                 {
-                    RectangleF radarVision = new RectangleF(
-                        (int)Core.Display.BackgroundOffset.X / _radarDistance,
-                        (int)Core.Display.BackgroundOffset.Y / _radarDistance,
-                        Core.Display.DrawingSurface.Width * _radarDistance,
-                        Core.Display.DrawingSurface.Height * _radarDistance);
-
-
-                    var radarTiles = Tiles.Where(o => o.AlwaysRender || radarVision.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
-
-                    List<ActorBase> radarRenderTiles = new List<ActorBase>();
-
-                    //Add first layer of tiles.
-                    radarRenderTiles.AddRange(radarTiles.Where(o => o.Visible == true && o.DoNotDraw == false
-                            && o.Meta.ActorClass != Types.ActorClassName.ActorFriendyBeing
-                            && o.Meta.ActorClass != Types.ActorClassName.ActorHostileBeing
-                            && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
-                            && o.Meta.ActorClass != Types.ActorClassName.ActorPlayer
-                            && o.Meta.ActorClass != Types.ActorClassName.ActorAnimation
-                            && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
-                        .OrderBy(o => o.DrawOrder ?? 0).ToList());
-
-                    //Add top layer of tiles.
-                    radarRenderTiles.AddRange(radarTiles.Where(o => o.Visible == true && o.DoNotDraw == false
-                            && (o.Meta.ActorClass == Types.ActorClassName.ActorFriendyBeing
-                            || o.Meta.ActorClass == Types.ActorClassName.ActorHostileBeing
-                            || o.Meta.ActorClass == Types.ActorClassName.ActorAnimation
-                            || o.Meta.ActorClass == Types.ActorClassName.ActorPlayer)
-                            && o.Meta.ActorClass != Types.ActorClassName.ActorDialog)
-                        .OrderBy(o => o.DrawOrder ?? 0).ToList());
-
-                    //Add dialogs.
-                    radarRenderTiles.AddRange(radarTiles.Where(o => o.Visible == true && o.DoNotDraw == false
-                        && o.Meta.ActorClass == Types.ActorClassName.ActorDialog)
-                        .OrderBy(o => o.DrawOrder ?? 0).ToList());
-
-                    foreach (var obj in radarRenderTiles)
+                    if (_miniMapBitmap != null)
                     {
-                        Utility.Types.DynamicCast(obj, obj.GetType()).RenderRadar(_radarDC, _radarScale, _radarOffset);
+                        RectangleF miniMapVision = new RectangleF(
+                            (int)(Core.Display.BackgroundOffset.X / _miniMapDistance),
+                            (int)(Core.Display.BackgroundOffset.Y / _miniMapDistance),
+                            (Core.Display.DrawingSurface.Width * _miniMapDistance),
+                            (Core.Display.DrawingSurface.Height * _miniMapDistance)
+                            );
+
+                        var miniMapTiles = Tiles.Where(o => o.Visible == true && o.DoNotDraw == false && o.ReadyForDeletion == false
+                            && miniMapVision.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false
+                        
+                        );
+
+                        foreach (var obj in miniMapTiles)
+                        {
+                            Utility.Types.DynamicCast(obj, obj.GetType()).RenderMiniMap(_miniMapDC, _miniMapScale, _miniMapOffset);
+                        }
+
+                        screenDc.DrawImage(_miniMapBitmap, new Rectangle(0, 0, _miniMapBitmap.Width, _miniMapBitmap.Height));
                     }
-
-                    Rectangle rect = new Rectangle(0, 0, _radarBitmap.Width, _radarBitmap.Height);
-
-                    screenDc.DrawImage(_radarBitmap, rect);
                 }
-                */
             }
         }
 
