@@ -1,5 +1,5 @@
 {
-  "Name":"Large Wooden Shield",
+  "Name":"Enchanted Large Wooden Shield",
   "SubType": "Shield",
   "Value": "24",
   "Weight":"5000",

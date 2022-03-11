@@ -8,6 +8,5 @@
   "Weight":"1600",
   "Bulk":"3250",
   "Rarity":"70",
-  "Level":"1",
-  "Enchantment":"Normal"
+  "Level":"1"
 }

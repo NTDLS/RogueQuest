@@ -1,5 +1,5 @@
 {
-  "Name":"Small Wooden Shield",
+  "Name":"Cursed Small Wooden Shield",
   "SubType": "Shield",
   "Value": "11",
   "Weight":"3000",

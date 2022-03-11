@@ -63,33 +63,35 @@ namespace Game.Classes
 
         public static string GetItemTip(EngineCore core, TileIdentifier tile, bool includeOfferPrice = false, bool includeAskingPrice = false)
         {
-            string text = tile.Meta.Name + $" ({tile.Meta.RarityText})";
+            string text = tile.Meta.DisplayName;
+
+            if ((tile.Meta.Enchantment != null && (tile.Meta.IsIdentified ?? false) == false) == false)
+            {
+                text += $" ({tile.Meta.RarityText})";
+            }
+            else
+            {
+                text += $" (UNIDENTIFIED)";
+            }
 
             text += "\r\n" + $"Type: {tile.Meta.SubType}";
 
-            if (tile.Meta.Enchantment != null && (tile.Meta.IsIdentified ?? false) == false)
-                text += "\r\n" + $"Enchantment: UNIDENTIFIED!!";
-            else if (tile.Meta.Enchantment == EnchantmentType.Enchanted && (tile.Meta.IsIdentified ?? false) == true)
+            if (tile.Meta.Enchantment == EnchantmentType.Enchanted && (tile.Meta.IsIdentified ?? false) == true)
                 text += "\r\n" + $"Enchantment: ENCHANTED!!";
             else if (tile.Meta.Enchantment == EnchantmentType.Cursed && (tile.Meta.IsIdentified ?? false) == true)
                 text += "\r\n" + $"Enchantment: CURSED!!";
 
+            if (tile.Meta.Weight != null) text += "\r\n" + $"Weight: {(tile.Meta.Weight * (tile.Meta.Quantity ?? 1)):N2}";
+            if (tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {(tile.Meta.Bulk * (tile.Meta.Quantity ?? 1)):N2}";
+
             if (tile.Meta.CanStack == true && tile.Meta.Quantity > 0)
                 text += "\r\n" + $"Quantity: {tile.Meta.Quantity}";
 
-            if (tile.Meta.Enchantment != null && (tile.Meta.IsIdentified ?? false) == false)
-            {
-
-            }
-            else
+            if ((tile.Meta.Enchantment != null && (tile.Meta.IsIdentified ?? false) == false) == false)
             {
                 if (tile.Meta.CanStack == false && tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {tile.Meta.Charges}";
-
-                if (tile.Meta.Weight != null) text += "\r\n" + $"Weight: {tile.Meta.Weight:N2}";
-                if (tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {tile.Meta.Bulk:N2}";
                 if (tile.Meta.AC != null) text += "\r\n" + $"AC: {tile.Meta.AC:N0}";
-
                 if (tile.Meta.SubType == ActorSubType.MeleeWeapon || tile.Meta.SubType == ActorSubType.RangedWeapon)
                     text += "\r\n" + $"Stats: {tile.Meta.DndDamageText}";
             }
@@ -110,7 +112,7 @@ namespace Game.Classes
 
         public static void AddItemToListView(ListView listView, TileIdentifier tile)
         {
-            string text = tile.Meta.Name;
+            string text = tile.Meta.DisplayName;
 
             if (tile.Meta.CanStack == true && tile.Meta.Quantity > 0)
             {

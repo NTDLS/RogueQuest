@@ -1,5 +1,5 @@
 {
-  "Name":"Cross Shield",
+  "Name":"Enchanted Cross Shield",
   "SubType": "Shield",
   "Value": "300",
   "Weight":"4800",

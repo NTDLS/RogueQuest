@@ -1,5 +1,5 @@
 {
-  "Name":"Dark Lord Shield",
+  "Name":"Cursed Dark Lord Shield",
   "SubType": "Shield",
   "Value": "700",
   "Weight":"5500",

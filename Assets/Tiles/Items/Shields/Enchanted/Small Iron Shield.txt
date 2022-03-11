@@ -1,5 +1,5 @@
 {
-  "Name":"Small Iron Shield",
+  "Name":"Enchanted Small Iron Shield",
   "SubType": "Shield",
   "Value": "25",
   "Weight":"4000",

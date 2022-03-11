@@ -100,7 +100,7 @@ namespace Game
 
             _persistentStore = PopulateContainerFromStore(listViewStore);
 
-            this.Text = _storeTileMeta.Name;
+            this.Text = _storeTileMeta.DisplayName;
         }
 
         #region ListViewStore
@@ -270,7 +270,7 @@ namespace Game
             var selectedListviewItem = listView.SelectedItems[0];
             var item = selectedListviewItem.Tag as EquipTag;
 
-            string message = $"Read {item.Tile.Meta.Name} to learn new spell?";
+            string message = $"Read {item.Tile.Meta.DisplayName} to learn new spell?";
 
             if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
@@ -357,7 +357,7 @@ namespace Game
             if (pack.Meta.UID == draggedItemTag.Tile.Meta.UID)
             {
                 //A container cannot contain itsself.
-                Constants.Alert($"A {pack.Meta.Name} cannot contain itself.");
+                Constants.Alert($"A {pack.Meta.DisplayName} cannot contain itself.");
                 return;
             }
             if (Core.State.GetInventoryItem(draggedItemTag.Tile)?.ContainerId == (Guid)pack.Meta.UID)
@@ -412,14 +412,14 @@ namespace Game
             var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if ((draggedItemTag.Tile.Meta.Weight * quantityToMove) + currentPackWeight > maxWeight)
             {
-                Constants.Alert($"{draggedItemTag.Tile.Meta.Name} is too heavy for your {pack.Meta.Name}. Drop something or move to free hand?");
+                Constants.Alert($"{draggedItemTag.Tile.Meta.DisplayName} is too heavy for your {pack.Meta.DisplayName}. Drop something or move to free hand?");
                 return;
             }
 
             var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if ((draggedItemTag.Tile.Meta.Bulk * quantityToMove) + currentPackBulk > maxBulk)
             {
-                Constants.Alert($"{draggedItemTag.Tile.Meta.Name} is too bulky for your {pack.Meta.Name}. Drop something or move to free hand?");
+                Constants.Alert($"{draggedItemTag.Tile.Meta.DisplayName} is too bulky for your {pack.Meta.DisplayName}. Drop something or move to free hand?");
                 return;
             }
 
@@ -428,7 +428,7 @@ namespace Game
                 var currentPackItems = Core.State.Items.Where(o => o.ContainerId == pack.Meta.UID).Count();
                 if (currentPackItems + 1 > (int)maxItems)
                 {
-                    Constants.Alert($"{pack.Meta.Name} can only carry {maxItems} items. Drop something or move to free hand?");
+                    Constants.Alert($"{pack.Meta.DisplayName} can only carry {maxItems} items. Drop something or move to free hand?");
                     return;
                 }
             }
@@ -473,7 +473,7 @@ namespace Game
                     var listViewItem = StoreAndInventory.FindListViewObjectByUid((ListView)sender, (Guid)existingItemInDestinationContainer.Tile.Meta.UID);
                     if (listViewItem != null)
                     {
-                        string text = existingItemInDestinationContainer.Tile.Meta.Name;
+                        string text = existingItemInDestinationContainer.Tile.Meta.DisplayName;
 
                         if (existingItemInDestinationContainer.Tile.Meta.CanStack == true && existingItemInDestinationContainer.Tile.Meta.Quantity > 0)
                         {
@@ -525,7 +525,7 @@ namespace Game
                 }
                 else
                 {
-                    string text = draggedItemTag.Tile.Meta.Name;
+                    string text = draggedItemTag.Tile.Meta.DisplayName;
                     text += $" ({draggedItemTag.Tile.Meta.Quantity})";
                     draggedItem.Text = text;
                 }
@@ -608,7 +608,7 @@ namespace Game
             var equipSlot = Core.State.Character.GetEquipSlot(slot);
             if (equipSlot.Tile != null)
             {
-                string text = equipSlot.Tile.Meta.Name;
+                string text = equipSlot.Tile.Meta.DisplayName;
 
                 if (equipSlot.Tile.Meta.CanStack == true && equipSlot.Tile.Meta.Quantity > 0)
                 {
@@ -769,7 +769,7 @@ namespace Game
                 }
 
                 destination.Items[0].ImageKey = StoreAndInventory.GetImageKey(draggedItemTag.Tile.ImagePath);
-                destination.Items[0].Text = draggedItem.Text;
+                destination.Items[0].Text = draggedItemTag.Tile.Meta.DisplayName;
                 destinationTag.Tile = draggedItemTag.Tile;
 
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
@@ -1022,7 +1022,7 @@ namespace Game
         {
             listView.Items.Clear();
 
-            labelPack.Text = $"Pack: ({containerTile.Meta.Name})";
+            labelPack.Text = $"Pack: ({containerTile.Meta.DisplayName})";
 
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
@@ -1040,7 +1040,7 @@ namespace Game
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
                 _currentlySelectedPack = item.Tile;
-                labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.Name})";
+                labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.DisplayName})";
                 PopulateContainerFromPack(listViewSelectedContainer, item.Tile);
             }
         }

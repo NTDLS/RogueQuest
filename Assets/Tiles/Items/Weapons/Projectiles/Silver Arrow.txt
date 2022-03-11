@@ -12,6 +12,5 @@
   "CanStack":"True",
   "CanWalkOn":"True",
   "IsConsumable":"True",
-  "Level":"1",
-  "Enchantment":"Normal"
+  "Level":"1"
  }

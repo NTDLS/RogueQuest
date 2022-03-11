@@ -1,5 +1,5 @@
 {
-  "Name":"Large Steel Shield",
+  "Name":"Cursed Large Steel Shield",
   "SubType": "Shield",
   "Value": "84",
   "Weight":"6000",

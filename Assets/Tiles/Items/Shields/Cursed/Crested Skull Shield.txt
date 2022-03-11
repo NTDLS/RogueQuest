@@ -1,5 +1,5 @@
 {
-  "Name":"Crested Skull Shield",
+  "Name":"Cursed Crested Skull Shield",
   "SubType": "Shield",
   "Value": "800",
   "Weight":"6000",

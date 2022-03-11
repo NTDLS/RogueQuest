@@ -16,6 +16,7 @@ namespace Library.Engine
         private string _ProjectileTilePath;
         private string _UsageAnimationTilePath;
         private string _Name;
+        private string _DisplayName;
         private int? _Quantity;
         private int? _Experience;
         private int? _HitPoints;
@@ -40,13 +41,28 @@ namespace Library.Engine
         private string _LevelWarpName;
         private Guid? _LevelWarpTargetTileUID;
         private ActorSubType? _SubType;
+        private bool? _IsIdentified;
 
         #endregion
 
         /// <summary>
         /// For enchanted or cursed items, they will be unidentified when found unless bought from a store.
         /// </summary>
-        public bool? IsIdentified { get; set; }
+        public bool? IsIdentified
+        {
+            get
+            {
+                return _IsIdentified;
+            }
+            set
+            {
+                _IsIdentified = value;
+                if (_IsIdentified == true)
+                {
+                    DisplayName = Name;
+                }
+            }
+        }
         /// <summary>
         /// For enchanted or cursed items, they will be unidentified when found unless bought from a store. This is the image that will be shown until identified.
         /// </summary>
@@ -54,7 +70,7 @@ namespace Library.Engine
         /// <summary>
         /// Whether is iten is normal, cursed or enchanted.
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))] 
+        [JsonConverter(typeof(StringEnumConverter))]
         public EnchantmentType? Enchantment { get; set; }
         /// <summary>
         /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
@@ -120,6 +136,14 @@ namespace Library.Engine
         public string UsageAnimationTilePath { get { return _UsageAnimationTilePath == string.Empty ? null : _UsageAnimationTilePath; } set { _UsageAnimationTilePath = value; } }
         /// <summary>
         /// The name of the tile.
+        /// </summary>
+
+        /// <summary>
+        /// This is the name that should be shown to the user. It will the plain item name until identified.
+        /// </summary>
+        public string DisplayName { get { return _DisplayName == string.Empty ? null : _DisplayName; } set { _DisplayName = value; } }
+        /// <summary>
+        /// The name of the item.
         /// </summary>
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
         /// <summary>
@@ -343,6 +367,7 @@ namespace Library.Engine
             this.DamageDice = with.DamageDice ?? this.DamageDice;
             this.DamageDiceFaces = with.DamageDiceFaces ?? this.DamageDiceFaces;
             this.DamageAdditional = with.DamageAdditional ?? this.DamageAdditional;
+            this.DisplayName = with.DisplayName ?? this.DisplayName;
             this.Strength = with.Strength ?? this.Strength;
             this.Dexterity = with.Dexterity ?? this.Dexterity;
             this.SpawnType = with.SpawnType ?? this.SpawnType;
@@ -412,6 +437,20 @@ namespace Library.Engine
             }
 
             meta.OriginalHitPoints = meta.HitPoints;
+
+            meta.DisplayName = meta.Name;
+
+            if (meta.Enchantment != null && (meta.IsIdentified ?? false) == false)
+            {
+                if (meta.UnidentifiedTilePath != tilePath)
+                {
+                    if (string.IsNullOrWhiteSpace(meta.UnidentifiedTilePath))
+                    {
+                        throw new Exception("Unidentified tile must have an [UnidentifiedTilePath] specified.");
+                    }
+                    meta.DisplayName = GetFreshMetadata(meta.UnidentifiedTilePath).Name;
+                }
+            }
 
             return meta;
         }

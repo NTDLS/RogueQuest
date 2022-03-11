@@ -1,5 +1,5 @@
 {
-  "Name":"Knight Shield",
+  "Name":"Enchanted Knight Shield",
   "SubType": "Shield",
   "Value": "900",
   "Weight":"5800",

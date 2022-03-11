@@ -1,5 +1,5 @@
 {
-  "Name":"Valors Shield",
+  "Name":"Cursed Valors Shield",
   "SubType": "Shield",
   "Value": "500",
   "Weight":"5200",

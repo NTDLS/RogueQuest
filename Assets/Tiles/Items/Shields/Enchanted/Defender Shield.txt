@@ -1,5 +1,5 @@
 {
-  "Name":"Defender Shield",
+  "Name":"Enchanted Defender Shield",
   "SubType": "Shield",
   "Value": "400",
   "Weight":"5000",

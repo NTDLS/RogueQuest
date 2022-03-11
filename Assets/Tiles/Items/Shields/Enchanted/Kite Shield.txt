@@ -1,5 +1,5 @@
 {
-  "Name":"Kite Shield",
+  "Name":"Enchanted Kite Shield",
   "SubType": "Shield",
   "Value": "200",
   "Weight":"4500",

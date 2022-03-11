@@ -1,5 +1,5 @@
 {
-  "Name":"Medium Wooden Shield",
+  "Name":"Enchanted Medium Wooden Shield",
   "SubType": "Shield",
   "Value": "21",
   "Weight":"4000",
