@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Boots of Dexterity",
+  "SubType": "Boots",
+  "Value": "200",
+  "Weight":"1000",
+  "Bulk":"3200",
+  "Rarity":"10",
+  "AC":"2",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"3",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Level":"2",
+  "Enchantment":"Enchated",
+  "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Leather Boots"
+}

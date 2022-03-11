@@ -2528,7 +2528,7 @@ namespace ScenarioEdit
                         || item.Meta.SubType == ActorSubType.Ring
                         || item.Meta.SubType == ActorSubType.Shield)
                     {
-                        if (equipment.PhysicalNumberOfRows == 0) CreateHeader(equipment, "NameLevel,Value,Bulk,Weight,Rarity,Type,Damage Type,AC");
+                        if (equipment.PhysicalNumberOfRows == 0) CreateHeader(equipment, "Name,Level,Value,Bulk,Weight,Rarity,Type,Damage Type,AC");
                         IRow body = equipment.CreateRow(equipment.PhysicalNumberOfRows);
                         int cell = 0;
                         body.CreateCell(cell++).SetCellValue(item.Meta.Name);

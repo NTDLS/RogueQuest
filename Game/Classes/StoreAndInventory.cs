@@ -136,7 +136,7 @@ namespace Game.Classes
             listView.Items.Add(item);
         }
 
-        public static double UnitPrice(EngineCoreBase core, TileIdentifier tile)
+        private static double UnitPrice(EngineCoreBase core, TileIdentifier tile)
         {
             if (tile.Meta.Value == null)
             {
@@ -215,6 +215,7 @@ namespace Game.Classes
             else if (tile.Meta.Enchantment == EnchantmentType.Enchanted && tile.Meta.IsIdentified == true)
             {
                 value *= 3;
+                value += (tile.Meta.EnchantmentBonus ?? 0) * 500;
             }
 
             if (value >= 1)

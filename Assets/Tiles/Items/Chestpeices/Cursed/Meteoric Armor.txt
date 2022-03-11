@@ -1,0 +1,17 @@
+{
+  "Name":"Cursed Meteoric Armor",
+  "SubType": "Armor",
+  "Value": "8620",
+  "AC":"-58",
+  "Weight":"5000",
+  "Bulk":"30000",
+  "Rarity":"2",
+  "Level":"7",
+  "ModSpeed":"-1",
+  "ModConstitution":"",
+  "ModDexterity":"-1",
+  "ModIntelligence":"",
+  "ModStrength":"-1",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Meteoric Armor"
+}

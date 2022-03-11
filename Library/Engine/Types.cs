@@ -199,7 +199,8 @@
         MagicArrow,
         CastFireball,
         HoldMonster,
-        CastPoison
+        CastPoison,
+        RemoveCurse
     }
 
     public enum StateOfBeing

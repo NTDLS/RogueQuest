@@ -1,5 +1,6 @@
 ﻿using Assets;
 using Library.Engine.Types;
+using Library.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -56,13 +57,34 @@ namespace Library.Engine
             }
             set
             {
-                _IsIdentified = value;
-                if (_IsIdentified == true)
+                if (_IsIdentified == false && value == true)
                 {
+                    if (MathUtility.ChanceIn(30))
+                    {
+                        int bonusPoints = MathUtility.RandomNumber(1, 5);
+                        EnchantmentBonus = bonusPoints;
+
+                        while (bonusPoints > 0)
+                        {
+                            if (MathUtility.ChanceIn(20)) { ModConstitution++; ; bonusPoints--; }
+                            if (MathUtility.ChanceIn(20)) { ModDexterity++; ; bonusPoints--; }
+                            if (MathUtility.ChanceIn(20)) { ModIntelligence++; ; bonusPoints--; }
+                            if (MathUtility.ChanceIn(20)) { ModSpeed++; ; bonusPoints--; }
+                            if (MathUtility.ChanceIn(20)) { ModStrength++; ; bonusPoints--; }
+                            if (MathUtility.ChanceIn(20)) { AC++; bonusPoints--; }
+                        }
+                    }
+
                     DisplayName = Name;
                 }
+                _IsIdentified = value;
             }
         }
+
+        /// <summary>
+        /// The extra amount that one or more stats were randomly increased to.
+        /// </summary>
+        public int? EnchantmentBonus { get; set; }
         /// <summary>
         /// For enchanted or cursed items, they will be unidentified when found unless bought from a store. This is the image that will be shown until identified.
         /// </summary>
@@ -147,7 +169,7 @@ namespace Library.Engine
         /// </summary>
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
         /// <summary>
-        /// For scrolls, this is the name of the spell when it is learned and cast.
+        /// For scrolls, this is the name of the spell when it is learned and cast. This is also what spell a book will teach.
         /// </summary>
         public string SpellName { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
         /// <summary>
@@ -191,9 +213,31 @@ namespace Library.Engine
         /// </summary>
         public int? HitPoints { get { return _HitPoints == 0 ? null : _HitPoints; } set { _HitPoints = value; } }
         /// <summary>
-        /// The armor class of this tile.
+        /// The armor class of this tile (also the AC modifier of this tile when equipped).
         /// </summary>
         public int? AC { get { return _AC == 0 ? null : _AC; } set { _AC = value; } }
+
+        /// <summary>
+        /// The speed modifier of this tile when equipped.
+        /// </summary>
+        public int? ModSpeed { get; set; }
+        /// <summary>
+        /// The constitution modifier of this tile when equipped.
+        /// </summary>
+        public int? ModConstitution { get; set; }
+        /// <summary>
+        /// The constitution modifier of this tile when equipped.
+        /// </summary>
+        public int? ModDexterity { get; set; }
+        /// <summary>
+        /// The dexterity modifier of this tile when equipped.
+        /// </summary>
+        public int? ModIntelligence { get; set; }
+        /// <summary>
+        /// The strength modifier of this tile when equipped.
+        /// </summary>
+        public int? ModStrength { get; set; }
+
         /// <summary>
         /// The number of dice used when calcuating damage.
         /// </summary>
@@ -314,11 +358,6 @@ namespace Library.Engine
         {
             get
             {
-                if (Enchantment != null && (IsIdentified ?? false) == false)
-                {
-                    return "UNIDENTIFIED";
-                }
-
                 return Types.Utility.RarityText(Rarity ?? -1);
             }
         }

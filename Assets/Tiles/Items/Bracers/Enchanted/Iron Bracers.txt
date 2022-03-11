@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Iron Bracers",
+  "SubType": "Bracers",
+  "Value": "350",
+  "AC":"5",
+  "Weight":"500",
+  "Bulk":"2000",
+  "Rarity":"30",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"1",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Level":"4",
+  "Enchantment":"Enchated",
+  "UnidentifiedTilePath":"Tiles\\Items\\Bracers\\Iron Bracers"
+}

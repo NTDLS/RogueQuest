@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Leather Bracers",
+  "SubType": "Bracers",
+  "Value": "270",
+  "AC":"3",
+  "Weight":"250",
+  "Bulk":"2000",
+  "Rarity":"40",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"1",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Level":"2",
+  "Enchantment":"Enchated",
+  "UnidentifiedTilePath":"Tiles\\Items\\Bracers\\Leather Bracers"
+}

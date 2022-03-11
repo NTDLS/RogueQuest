@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Splintmail Armor",
+  "SubType": "Armor",
+  "Value": "525",
+  "AC":"38",
+  "Weight":"12000",
+  "Bulk":"40000",
+  "Rarity":"15",
+  "Level":"4",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"1",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Splintmail Armor"
+}

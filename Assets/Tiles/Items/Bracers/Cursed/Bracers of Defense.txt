@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Bracers of Defense",
+  "SubType": "Bracers",
+  "Value": "400",
+  "AC":"6",
+  "Weight":"250",
+  "Bulk":"2000",
+  "Rarity":"50",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"3",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Level":"3",
+  "Enchantment":"Enchated",
+  "UnidentifiedTilePath":"Tiles\\Items\\Bracers\\Bracers of Defense"
+}

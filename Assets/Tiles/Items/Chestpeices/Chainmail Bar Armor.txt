@@ -1,0 +1,18 @@
+{
+  "Name":"Chainmail Bar Armor",
+  "SubType": "Armor",
+  "Value": "315",
+  "AC":"30",
+  "Weight":"10000",
+  "Bulk":"30000",
+  "Rarity":"60",
+  "Level":"3",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Enchantment":"Normal",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Chainmail Bar Armor"
+
+}

@@ -1,0 +1,17 @@
+{
+  "Name":"Cursed Full Platemail Armor",
+  "SubType": "Armor",
+  "Value": "1852",
+  "AC":"-51",
+  "Weight":"15000",
+  "Bulk":"60000",
+  "Rarity":"5",
+  "Level":"4",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Full Platemail Armor"
+}

@@ -89,6 +89,8 @@ namespace Game
             InitEquipSlot(listViewQuiver4, ActorSubType.Projectile, EquipSlot.Projectile4);
             InitEquipSlot(listViewQuiver5, ActorSubType.Projectile, EquipSlot.Projectile5);
 
+            RefreshDialogEquipmentSlots();
+
             //If we are wearing a pack, go ahead and show its contents.
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack);
             if (pack.Tile != null)
@@ -124,7 +126,9 @@ namespace Game
             var inventoryItem = Core.State.GetOrCreateInventoryItem(item);
             if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
             {
-                return Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
+                var result = Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
+                RefreshDialogEquipmentSlots();
+                return result;
             }
 
             return false;
@@ -836,7 +840,39 @@ namespace Game
                 Slot = slot
             };
 
-            var equipSlot = Core.State.Character.GetEquipSlot(slot);
+            lv.Items.Add(item);
+        }
+
+        private void RefreshDialogEquipmentSlots()
+        {
+            RefreshDialogEquipmentSlot(listViewArmor);
+            RefreshDialogEquipmentSlot(listViewBracers);
+            RefreshDialogEquipmentSlot(listViewWeapon);
+            RefreshDialogEquipmentSlot(listViewPack);
+            RefreshDialogEquipmentSlot(listViewBelt);
+            RefreshDialogEquipmentSlot(listViewRightRing);
+            RefreshDialogEquipmentSlot(listViewNecklace);
+            RefreshDialogEquipmentSlot(listViewHelment);
+            RefreshDialogEquipmentSlot(listViewGarment);
+            RefreshDialogEquipmentSlot(listViewPurse);
+            RefreshDialogEquipmentSlot(listViewBoots);
+            RefreshDialogEquipmentSlot(listViewLeftRing);
+            RefreshDialogEquipmentSlot(listViewFreeHand);
+            RefreshDialogEquipmentSlot(listViewGauntlets);
+            RefreshDialogEquipmentSlot(listViewShield);
+            RefreshDialogEquipmentSlot(listViewQuiver1);
+            RefreshDialogEquipmentSlot(listViewQuiver2);
+            RefreshDialogEquipmentSlot(listViewQuiver3);
+            RefreshDialogEquipmentSlot(listViewQuiver4);
+            RefreshDialogEquipmentSlot(listViewQuiver5);
+        }
+
+        private void RefreshDialogEquipmentSlot(ListView lv)
+        {
+            var listViewItem = lv.Items[0] as ListViewItem;
+            var equipTag = listViewItem.Tag as EquipTag;
+
+            var equipSlot = Core.State.Character.GetEquipSlot(equipTag.Slot);
             if (equipSlot.Tile != null)
             {
                 string text = equipSlot.Tile.Meta.DisplayName;
@@ -850,12 +886,17 @@ namespace Game
                     text += $" ({equipSlot.Tile.Meta.Charges})";
                 }
 
-                item.Text = text;
-                item.ImageKey = StoreAndInventory.GetImageKey(equipSlot.Tile.ImagePath);
-                (item.Tag as EquipTag).Tile = equipSlot.Tile;
+                listViewItem.Text = text;
+                listViewItem.ImageKey = StoreAndInventory.GetImageKey(equipSlot.Tile.ImagePath);
+                (listViewItem.Tag as EquipTag).Tile = equipSlot.Tile;
+            }
+            else
+            {
+                //We dont remove the items from equip slots, we just clear their text and image.
+                listViewItem.ImageKey = null;
+                listViewItem.Text = "";
             }
 
-            lv.Items.Add(item);
         }
 
         private void ListView_EquipSlot_MouseDown(object sender, MouseEventArgs e)

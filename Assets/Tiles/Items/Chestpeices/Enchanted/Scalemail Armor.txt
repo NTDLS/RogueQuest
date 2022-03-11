@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Scalemail Armor",
+  "SubType": "Armor",
+  "Value": "126",
+  "AC":"19",
+  "Weight":"8000",
+  "Bulk":"30000",
+  "Rarity":"15",
+  "Level":"2",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Scalemail Armor"
+}

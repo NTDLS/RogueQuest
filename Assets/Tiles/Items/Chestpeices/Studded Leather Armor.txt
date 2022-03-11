@@ -1,10 +1,10 @@
 {
-  "Name":"Leather Armor",
+  "Name":"Studded Leather Armor",
   "SubType": "Armor",
-  "Value": "21",
-  "AC":"6",
-  "Weight":"5000",
-  "Bulk":"24000",
+  "Value": "63",
+  "AC":"12",
+  "Weight":"7000",
+  "Bulk":"25000",
   "Rarity":"95",
   "Level":"1",
   "ModSpeed":"",
@@ -13,5 +13,6 @@
   "ModIntelligence":"",
   "ModStrength":"",
   "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Leather Armor"
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Studded Leather Armor"
+
 }

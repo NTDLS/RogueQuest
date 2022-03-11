@@ -1,17 +1,17 @@
 {
-  "Name":"Leather Armor",
+  "Name":"Meteoric Armor",
   "SubType": "Armor",
-  "Value": "21",
-  "AC":"6",
+  "Value": "8620",
+  "AC":"54",
   "Weight":"5000",
-  "Bulk":"24000",
-  "Rarity":"95",
-  "Level":"1",
+  "Bulk":"30000",
+  "Rarity":"50",
+  "Level":"7",
   "ModSpeed":"",
   "ModConstitution":"",
   "ModDexterity":"",
   "ModIntelligence":"",
   "ModStrength":"",
   "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Leather Armor"
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Meteoric Armor"
 }

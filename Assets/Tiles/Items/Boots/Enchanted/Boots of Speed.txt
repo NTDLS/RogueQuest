@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Boots of Speed",
+  "SubType": "Boots",
+  "Value": "200",
+  "Weight":"500",
+  "Bulk":"3500",
+  "Rarity":"10",
+  "AC":"2",
+  "ModSpeed":"3",
+  "ModConstitution":"",
+  "ModDexterity":"",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Level":"3",
+  "Enchantment":"Enchated",
+  "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Leather Boots"
+}

@@ -1,0 +1,15 @@
+{
+  "Name":"Enchanted Valors Belt",
+  "SubType":"Belt",
+  "Weight":"300",
+  "Bulk":"300",
+  "Rarity":"0",
+  "AC":"10",
+  "Value":"1280",
+  "ItemCapacity":"8",
+  "BulkCapacity":"100000",
+  "WeightCapacity":"35000",
+  "Level":"10",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Belts\\Valors Belt"
+}

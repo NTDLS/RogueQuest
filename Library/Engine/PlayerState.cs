@@ -63,24 +63,19 @@ namespace Library.Engine
             }
         }
 
+        public int AugmentedSpeed { get; set; }
         public int AugmentedDexterity { get; set; }
         public int AugmentedStrength { get; set; }
         public int AugmentedAC { get; set; } //This + all AC modification equipment is the total AC.
-
-        public int AC
-        {
-            get
-            {
-                int equipmentAC = _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);
-                return equipmentAC + _core.State.Character.AugmentedAC;
-            }
-        }
+        public int AC => AugmentedAC + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);
 
         //Starting + Augmented attributes.
-        public int Constitution => StartingConstitution + AugmentedConstitution;
-        public int Dexterity => StartingDexterity + AugmentedDexterity;
-        public int Intelligence => StartingIntelligence + AugmentedIntelligence;
-        public int Strength => StartingStrength + AugmentedStrength;
+
+        public int Speed => AugmentedSpeed + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModConstitution ?? 0);
+        public int Constitution => StartingConstitution + AugmentedConstitution + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModConstitution ?? 0);
+        public int Dexterity => StartingDexterity + AugmentedDexterity + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModDexterity ?? 0);
+        public int Intelligence => StartingIntelligence + AugmentedIntelligence + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModIntelligence ?? 0);
+        public int Strength => StartingStrength + AugmentedStrength + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModStrength ?? 0);
         public int Mana => ((6 * Level) + StartingIntelligence) + AugmentedIntelligence;
         public int Hitpoints => ((6 * Level) + StartingConstitution) + AugmentedConstitution;
         public int MaxWeight => ((Level * 20) + StartingStrength) + AugmentedStrength;

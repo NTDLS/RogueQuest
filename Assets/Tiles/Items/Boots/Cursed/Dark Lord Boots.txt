@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Dark Lord Boots",
+  "SubType": "Boots",
+  "Value": "1200",
+  "Weight":"2500",
+  "Bulk":"4000",
+  "Rarity":"4",
+  "AC":"-5",
+  "ModSpeed":"-1",
+  "ModConstitution":"",
+  "ModDexterity":"-2",
+  "ModIntelligence":"",
+  "ModStrength":"-3",
+  "Level":"6",
+  "Enchantment":"Enchated",
+  "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Metal Boots"
+}

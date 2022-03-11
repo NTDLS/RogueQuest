@@ -1,17 +1,18 @@
 {
-  "Name":"Leather Armor",
+  "Name":"Elvin Armor",
   "SubType": "Armor",
-  "Value": "21",
-  "AC":"6",
+  "Value": "5100",
+  "AC":"52",
   "Weight":"5000",
   "Bulk":"24000",
-  "Rarity":"95",
-  "Level":"1",
+  "Rarity":"50",
+  "Level":"6",
   "ModSpeed":"",
   "ModConstitution":"",
   "ModDexterity":"",
   "ModIntelligence":"",
   "ModStrength":"",
   "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Leather Armor"
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Elvin Armor"
+
 }

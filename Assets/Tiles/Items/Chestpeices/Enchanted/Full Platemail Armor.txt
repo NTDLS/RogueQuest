@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Full Platemail Armor",
+  "SubType": "Armor",
+  "Value": "1852",
+  "AC":"51",
+  "Weight":"15000",
+  "Bulk":"60000",
+  "Rarity":"8",
+  "Level":"4",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Full Platemail Armor"
+}

@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Knights Boots",
+  "SubType": "Boots",
+  "Value": "1000",
+  "Weight":"2500",
+  "Bulk":"4000",
+  "Rarity":"10",
+  "AC":"-2",
+  "ModSpeed":"-1",
+  "ModConstitution":"",
+  "ModDexterity":"-2",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Level":"4",
+  "Enchantment":"Enchated",
+  "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Metal Boots"
+}

@@ -173,8 +173,6 @@ namespace Game.Engine
         /// <param name="target"></param>
         void CastNonWeaponMagic(CustodyItem item, ActorBase target)
         {
-            PassTime(item.Tile.Meta.CastTime ?? 1);
-
             WaitOnIdleEngine();
 
             if (item.Tile.Meta.TargetType == TargetType.HostileBeing)
@@ -663,6 +661,27 @@ namespace Game.Engine
                     }
                 }
                 #endregion
+                #region RemoveCurse
+                else if (item.Tile.Meta.Effect == ItemEffect.RemoveCurse)
+                {
+                    var cursedEquipment = Core.State.Character.Equipment.Where(o => o.Tile != null && o.Tile.Meta.Enchantment == EnchantmentType.Cursed).ToList();
+
+                    foreach (var cursedEquip in cursedEquipment)
+                    {
+                        var droppedItem = Core.Actors.AddDynamic(cursedEquip.Tile.Meta.ActorClass.ToString(),
+                            Core.Player.X, Core.Player.Y, cursedEquip.Tile.TilePath);
+
+                        droppedItem.Meta = cursedEquip.Tile.Meta;
+                        droppedItem.Meta.HasBeenViewed = true;
+                        droppedItem.AlwaysRender = true;
+                        droppedItem.Invalidate();
+
+                        cursedEquip.Tile = null;
+                    }
+
+                    Core.LogLine($"All equipped cursed items fall to the ground!", Color.DarkGreen);
+                }
+                #endregion
                 else throw new NotImplementedException();
 
                 if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
@@ -696,11 +715,11 @@ namespace Game.Engine
                 {
                     int startTime = Core.State.TimePassed;
                     Advance(input);
-                    PassTime(item.Tile.Meta.CastTime - (Core.State.TimePassed - startTime));
+                    PassTime(((item.Tile.Meta.CastTime ?? 0) - (Core.State.TimePassed - startTime)) - Core.State.Character.Speed);
                 }
                 else
                 {
-                    PassTime(item.Tile.Meta.CastTime);
+                    PassTime(item.Tile.Meta.CastTime - Core.State.Character.Speed);
                     CastNonWeaponMagic(item, target);
                 }
 
@@ -760,6 +779,8 @@ namespace Game.Engine
                     slotToVacate.Tile = null;
                 }
             }
+
+            Core.State.Character.PushFreshInventoryItemsToEquipSlots();
 
             return true;
         }
@@ -950,10 +971,7 @@ namespace Game.Engine
                     {
                         Advance(input);
                     }
-                    else
-                    {
-                        Application.DoEvents(); //The UI thread is a bitch.
-                    }
+                    Application.DoEvents(); //The UI thread is a bitch.
                 }
                 Thread.Sleep(500);
             }
@@ -976,12 +994,10 @@ namespace Game.Engine
                             Advance(input);
                             GameLogicThreadStarted.WaitOne();
                         }
-                        else
-                        {
-                            Application.DoEvents(); //The UI thread is a bitch.
-                        }
+
+                        Application.DoEvents(); //The UI thread is a bitch.
                     }
-                    Thread.Sleep(500);
+                    Thread.Sleep(250);
                 }
             }
         }
@@ -1474,7 +1490,7 @@ namespace Game.Engine
                                 if (weakness == weapon.DamageType)
                                 {
                                     Core.LogLine($"{actorToAttack.Meta.DisplayName} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
-                                    damageToApply = (damageToApply * 2);
+                                    damageToApply *= 2;
                                 }
                                 else if (actorTakingDamage.Actor.Meta.DamageType == weapon.DamageType)
                                 {

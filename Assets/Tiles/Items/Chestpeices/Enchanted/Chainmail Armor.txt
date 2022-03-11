@@ -1,0 +1,17 @@
+{
+  "Name":"Enchanted Chainmail Armor",
+  "SubType": "Armor",
+  "Value": "210",
+  "AC":"26",
+  "Weight":"9000",
+  "Bulk":"30000",
+  "Rarity":"20",
+  "Level":"2",
+  "ModSpeed":"",
+  "ModConstitution":"",
+  "ModDexterity":"1",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Chainmail Armor"
+}

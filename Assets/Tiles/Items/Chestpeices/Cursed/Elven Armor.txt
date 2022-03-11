@@ -1,0 +1,17 @@
+{
+  "Name":"Cursed Elvin Armor",
+  "SubType": "Armor",
+  "Value": "5100",
+  "AC":"-55",
+  "Weight":"5000",
+  "Bulk":"24000",
+  "Rarity":"3",
+  "Level":"6",
+  "ModSpeed":"-1",
+  "ModConstitution":"",
+  "ModDexterity":"-1",
+  "ModIntelligence":"",
+  "ModStrength":"",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Elvin Armor"
+}
