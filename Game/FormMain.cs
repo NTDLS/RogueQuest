@@ -311,15 +311,14 @@ namespace Game
                 {
                     string text = hoverTile?.Meta.Name;
 
-                    if (hoverTile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorHostileBeing)
+                    if (hoverTile.Meta.ActorClass == ActorClassName.ActorHostileBeing)
                     {
                         var hostile = (hoverTile as ActorHostileBeing);
                         text += $" ({hostile.DamageText})";
                     }
-                    else if (hoverTile.Meta.ActorClass == Library.Engine.Types.ActorClassName.ActorItem)
+                    else if (hoverTile.Meta.ActorClass == ActorClassName.ActorItem)
                     {
-                        text += "\r\n" + $"Weight: {hoverTile.Meta.Bulk:N0}";
-                        text += "\r\n" + $"Bulk: {hoverTile.Meta.Weight:N0}";
+                        text = StoreAndInventory.GetItemTip(_core, hoverTile);
                     }
 
                     if (string.IsNullOrWhiteSpace(text) == false)

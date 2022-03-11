@@ -1,5 +1,4 @@
-﻿using Assets;
-using Game.Classes;
+﻿using Game.Classes;
 using Game.Engine;
 using Library.Engine;
 using Library.Engine.Types;
@@ -14,7 +13,6 @@ namespace Game
 {
     public partial class FormStore : Form
     {
-        private ImageList _imageList = new ImageList();
         private Button _buttonClose = new Button();
         private TileIdentifier _currentlySelectedPack = null;
         private ToolTip _interrogationTip = new ToolTip();
@@ -39,8 +37,8 @@ namespace Game
             _buttonClose.Click += _buttonClose_Click;
             this.CancelButton = _buttonClose;
 
-            listViewSelectedContainer.SmallImageList = _imageList;
-            listViewSelectedContainer.LargeImageList = _imageList;
+            listViewSelectedContainer.SmallImageList = StoreAndInventory.ImageList;
+            listViewSelectedContainer.LargeImageList = StoreAndInventory.ImageList;
             listViewSelectedContainer.View = View.List;
             listViewSelectedContainer.ItemDrag += Generic_ItemDrag;
             listViewSelectedContainer.DragEnter += Generic_DragEnter;
@@ -50,8 +48,8 @@ namespace Game
             listViewSelectedContainer.MouseUp += ListView_Shared_MouseUp;
             listViewSelectedContainer.MouseDown += ListView_Shared_MouseDown;
 
-            listViewStore.SmallImageList = _imageList;
-            listViewStore.LargeImageList = _imageList;
+            listViewStore.SmallImageList = StoreAndInventory.ImageList;
+            listViewStore.LargeImageList = StoreAndInventory.ImageList;
             listViewStore.View = View.List;
             listViewStore.ItemDrag += ListViewStore_ItemDrag;
             listViewStore.DragEnter += ListViewStore_DragEnter;
@@ -61,8 +59,8 @@ namespace Game
             listViewStore.MouseUp += ListView_Shared_MouseUp;
             listViewStore.MouseDown += ListView_Store_MouseDown;
 
-            listViewPlayerPack.SmallImageList = _imageList;
-            listViewPlayerPack.LargeImageList = _imageList;
+            listViewPlayerPack.SmallImageList = StoreAndInventory.ImageList;
+            listViewPlayerPack.LargeImageList = StoreAndInventory.ImageList;
             listViewPlayerPack.View = View.List;
             listViewPlayerPack.ItemDrag += Generic_ItemDrag;
             listViewPlayerPack.DragEnter += Generic_DragEnter;
@@ -183,9 +181,27 @@ namespace Game
                 }
             }
 
-            //We do nto stack items when sold to the store.
+            if (draggedItemTag.Tile.Meta.Enchantment != null && (draggedItemTag.Tile.Meta.IsIdentified ?? false) == false)
+            {
+                draggedItemTag.Tile.Meta.IsIdentified = true;
 
-            AddItemToListView(listViewStore, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
+                {
+                    MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed, the shop owner gives you a scowl!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Enchanted)
+                {
+                    MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} has been enchanted, the shop is delighted!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Normal)
+                {
+                    MessageBox.Show($"This is just a normal {draggedItemTag.Tile.Meta.SubType}!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+
+            //We do not stack items when sold to the store.
+
+            StoreAndInventory.AddItemToListView(listViewStore, draggedItemTag.Tile);
             _persistentStore.Items.Add(draggedItemTag.Tile);
 
             Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
@@ -454,7 +470,7 @@ namespace Game
                     {
                         Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
                     }
-                    var listViewItem = FindListViewObjectByUid((ListView)sender, (Guid)existingItemInDestinationContainer.Tile.Meta.UID);
+                    var listViewItem = StoreAndInventory.FindListViewObjectByUid((ListView)sender, (Guid)existingItemInDestinationContainer.Tile.Meta.UID);
                     if (listViewItem != null)
                     {
                         string text = existingItemInDestinationContainer.Tile.Meta.Name;
@@ -483,7 +499,7 @@ namespace Game
                     //Move part of the stack.
                     var clonedItem = draggedItemTag.Tile.DeriveCopy(); //Create a copy of the item with a new ID
                     clonedItem.Meta.Quantity = quantityToMove;
-                    AddItemToListView((ListView)sender, clonedItem.TilePath, clonedItem.Meta);
+                    StoreAndInventory.AddItemToListView((ListView)sender, clonedItem);
 
                     var newInventoryItem = Core.State.GetOrCreateInventoryItem(clonedItem);
                     newInventoryItem.ContainerId = (Guid)pack.Meta.UID;
@@ -494,7 +510,7 @@ namespace Game
                 {
                     //Move the whole stack.
                     var itemInPlayerInventory = Core.State.GetInventoryItem(draggedItemTag.Tile);
-                    AddItemToListView((ListView)sender, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                    StoreAndInventory.AddItemToListView((ListView)sender, draggedItemTag.Tile);
                     itemInPlayerInventory.ContainerId = (Guid)pack.Meta.UID;
                 }
             }
@@ -566,8 +582,8 @@ namespace Game
         private void InitEquipSlot(ListView lv, ActorSubType[] acceptTypes, EquipSlot slot)
         {
             lv.HideSelection = true;
-            lv.LargeImageList = _imageList;
-            lv.SmallImageList = _imageList;
+            lv.LargeImageList = StoreAndInventory.ImageList;
+            lv.SmallImageList = StoreAndInventory.ImageList;
             lv.Scrollable = false;
 
             if (slot != EquipSlot.Purse)
@@ -604,7 +620,7 @@ namespace Game
                 }
 
                 item.Text = text;
-                item.ImageKey = GetImageKey(equipSlot.Tile.TilePath);
+                item.ImageKey = StoreAndInventory.GetImageKey(equipSlot.Tile.ImagePath);
                 (item.Tag as EquipTag).Tile = equipSlot.Tile;
             }
 
@@ -617,38 +633,8 @@ namespace Game
             {
                 var lv = sender as ListView;
                 var item = lv.Items[0].Tag as EquipTag;
-
-                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
-
-                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
-
-                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
-                    text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
-                if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
-                    text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
-
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
-                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
-
-                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
-                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
-                else if (item.Tile.Meta.SubType == ActorSubType.Money)
-                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
-
-                if (string.IsNullOrWhiteSpace(text) == false)
-                {
-                    var location = new Point(e.X + 10, e.Y - 25);
-                    _interrogationTip.Show(text, lv, location, 5000);
-                }
-
-                text += "\r\n" + $"Offer: {StoreAndInventory.OfferPrice(Core, item.Tile):N0}";
-
-                if (string.IsNullOrWhiteSpace(text) == false)
-                {
-                    var location = new Point(e.X + 10, e.Y - 25);
-                    _interrogationTip.Show(text, lv, location, 5000);
-                }
+                var location = new Point(e.X + 10, e.Y - 25);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, true), lv, location, 5000);
             }
         }
 
@@ -764,9 +750,27 @@ namespace Game
             if ((draggedItemTag.Tile.Meta.SubType != null && destinationTag.AcceptTypes.Contains((ActorSubType)draggedItemTag.Tile.Meta.SubType))
                 || destinationTag.AcceptTypes.Contains(ActorSubType.Unspecified))
             {
-                destination.Items[0].ImageKey = draggedItem.ImageKey;
+                if (draggedItemTag.Tile.Meta.Enchantment != null && (draggedItemTag.Tile.Meta.IsIdentified ?? false) == false)
+                {
+                    draggedItemTag.Tile.Meta.IsIdentified = true;
+
+                    if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
+                    {
+                        MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed and cannot be removed by conventional means!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Enchanted)
+                    {
+                        MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} has been enchanted!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Normal)
+                    {
+                        MessageBox.Show($"This is just a normal {draggedItemTag.Tile.Meta.SubType}!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+
+                destination.Items[0].ImageKey = StoreAndInventory.GetImageKey(draggedItemTag.Tile.ImagePath);
                 destination.Items[0].Text = draggedItem.Text;
-                destinationTag.Tile = draggedItemTag.Tile.Clone();
+                destinationTag.Tile = draggedItemTag.Tile;
 
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
                 equipSlot.Tile = draggedItemTag.Tile;
@@ -827,13 +831,18 @@ namespace Game
 
         private void ListView_EquipSlot_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
             {
+                var draggedItem = e.Item as ListViewItem;
+                var draggedItemTag = draggedItem.Tag as EquipTag;
+
+                if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
+                {
+                    MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed and cannot be removed by conventional means!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
                 DoDragDrop(e.Item, DragDropEffects.Move);
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                DoDragDrop(e.Item, DragDropEffects.Copy);
             }
         }
 
@@ -854,32 +863,8 @@ namespace Game
                 }
 
                 var item = selection.Tag as EquipTag;
-
-                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
-
-                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
-
-                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
-                    text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
-                if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
-                    text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
-
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
-                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
-
-                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
-                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
-                else if (item.Tile.Meta.SubType == ActorSubType.Money)
-                    text += "\r\n" + $"Value: {((int)((item.Tile.Meta.Quantity ?? 0) * item.Tile.Meta.Value)):N0} gold";
-
-                text += "\r\n" + $"Offer: {StoreAndInventory.OfferPrice(Core, item.Tile):N0}";
-
-                if (string.IsNullOrWhiteSpace(text) == false)
-                {
-                    var location = new Point(e.X + 10, e.Y - 25);
-                    _interrogationTip.Show(text, lv, location, 5000);
-                }
+                var location = new Point(e.X + 10, e.Y - 25);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, true), lv, location, 5000);
             }
         }
 
@@ -897,31 +882,8 @@ namespace Game
 
                 var item = selection.Tag as EquipTag;
 
-                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
-
-                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
-
-                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
-                    text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
-                if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
-                    text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
-
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
-                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
-
-                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
-                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
-                else if (item.Tile.Meta.SubType == ActorSubType.Money)
-                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
-
-                text += "\r\n" + $"Asking Price: {StoreAndInventory.AskingPrice(Core, item.Tile):N0}";
-
-                if (string.IsNullOrWhiteSpace(text) == false)
-                {
-                    var location = new Point(e.X + 10, e.Y - 25);
-                    _interrogationTip.Show(text, lv, location, 5000);
-                }
+                var location = new Point(e.X + 10, e.Y - 25);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, false, true), lv, location, 5000);
             }
         }
 
@@ -941,19 +903,6 @@ namespace Game
         #endregion
 
         #region Utility.
-
-        string GetImageKey(string tilePath)
-        {
-            if (_imageList.Images.Keys.Contains(tilePath))
-            {
-                return tilePath;
-            }
-
-            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetAssetPath($"{tilePath}.png"));
-            _imageList.Images.Add(tilePath, bitmap);
-
-            return tilePath;
-        }
 
         private List<ActorSubType> GetStoreItemTypes()
         {
@@ -1019,19 +968,25 @@ namespace Game
                 }
 
                 var itemsInStore = Core.Materials
-                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem
-                        && o.Meta.Value > 0
+                    .Where(o =>
+                        o.Meta.ActorClass == ActorClassName.ActorItem //We don't sell terrain blocks or buildings. :D
+                        && o.Meta.Value > 0 //We don't sell free items.
                         && persistentStore.Items.Where(i => i.TilePath == o.TilePath).FirstOrDefault() == null //Don't add duplicate items.
-                        && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified)
-                        && (o.Meta.Rarity ?? 0) > 0
-                        && (o.Meta.Rarity == 100 || Library.Utility.MathUtility.ChanceIn(100 - (int)o.Meta.Rarity))
-                        && (o.Meta.IsUnique ?? false) == false
-                        && o.Meta.Level <= Core.State.Character.Level)
-                    .Cast<TileIdentifier>();
+                        && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified) //Only show the items that this store type sells.
+                        && o.Meta.Enchantment != EnchantmentType.Cursed //We dont sell cursed items.
+                        && (o.Meta.Rarity ?? 0) > 0 //Items with a Rarity of 0 are impossible to find or buy. They have to be placed by the map creator.
+                        && (o.Meta.Rarity == 100 || Library.Utility.MathUtility.ChanceIn(100 - (int)o.Meta.Rarity)) //Apply the rarity lottery.
+                        && o.Meta.Level <= Core.State.Character.Level //Only show items that are appropriate for the character level.
+                    ).Cast<TileIdentifier>();
 
                 foreach (var item in itemsInStore)
                 {
                     var newItem = item.DeriveCopy();
+
+                    if (newItem.Meta.Enchantment != null)
+                    {
+                        newItem.Meta.IsIdentified = true;
+                    }
 
                     int max = (int)newItem.Meta.Rarity / 4;
                     if (max < 5) max = 5;
@@ -1054,7 +1009,7 @@ namespace Game
 
             foreach (var item in persistentStore.Items)
             {
-                AddItemToListView(listView, item.TilePath, item.Meta);
+                StoreAndInventory.AddItemToListView(listView, item);
             }
 
             listView.Sorting = SortOrder.Ascending;
@@ -1071,37 +1026,11 @@ namespace Game
 
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
-                AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
+                StoreAndInventory.AddItemToListView(listView, item.Tile);
             }
 
             listView.Sorting = SortOrder.Ascending;
             listView.Sort();
-        }
-
-        private void AddItemToListView(ListView listView, string tilePath, TileMetadata meta)
-        {
-            string text = meta.Name;
-
-            if (meta.CanStack == true && meta.Quantity > 0)
-            {
-                text += $" ({meta.Quantity})";
-            }
-            else if (meta.CanStack == false && meta.Charges > 0)
-            {
-                text += $" ({meta.Charges})";
-            }
-
-            var equipTag = new EquipTag()
-            {
-                Tile = new TileIdentifier(tilePath, meta)
-            };
-
-            equipTag.AcceptTypes.Add((ActorSubType)meta.SubType);
-
-            ListViewItem item = new ListViewItem(text);
-            item.ImageKey = GetImageKey(tilePath);
-            item.Tag = equipTag;
-            listView.Items.Add(item);
         }
 
         private void OpenPack(EquipTag item)
@@ -1115,22 +1044,6 @@ namespace Game
                 PopulateContainerFromPack(listViewSelectedContainer, item.Tile);
             }
         }
-
-        private ListViewItem FindListViewObjectByUid(ListView listView, Guid uid)
-        {
-            foreach (ListViewItem obj in listView.Items)
-            {
-                var item = obj.Tag as EquipTag;
-
-                if (item.Tile.Meta.UID == uid)
-                {
-                    return obj;
-                }
-            }
-
-            return null;
-        }
-
 
         #endregion
 

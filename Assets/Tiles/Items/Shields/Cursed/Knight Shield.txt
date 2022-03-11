@@ -1,0 +1,14 @@
+{
+  "Name":"Knight Shield",
+  "SubType": "Shield",
+  "Value": "900",
+  "Weight":"5800",
+  "Bulk":"42000",
+  "Rarity":"20",
+  "AC":"-25",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"8",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Knight Shield"
+}

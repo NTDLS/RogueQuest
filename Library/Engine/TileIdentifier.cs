@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Assets;
+using Library.Engine.Types;
+using System;
 
 namespace Library.Engine
 {
@@ -6,6 +8,23 @@ namespace Library.Engine
     {
         public string TilePath { get; set; }
         public TileMetadata Meta { get; set; }
+
+        public string ImagePath
+        {
+            get
+            {
+                if ((Meta.Enchantment == EnchantmentType.Enchanted || Meta.Enchantment == EnchantmentType.Cursed)
+                    && (Meta.IsIdentified ?? false) == false)
+                {
+                    if (string.IsNullOrWhiteSpace(Meta.UnidentifiedTilePath))
+                    {
+                        throw new Exception("Unidentified tile must have an [UnidentifiedTilePath] specified.");
+                    }
+                    return Constants.GetAssetPath($"{Meta.UnidentifiedTilePath}.png");
+                }
+                return Constants.GetAssetPath($"{TilePath}.png"); ;
+            }
+        }
 
         public TileIdentifier()
         {

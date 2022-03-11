@@ -10,6 +10,5 @@
   "Bulk":"12000",
   "Rarity":"0",
   "Level":"10",
-  "IsUnique": "True",
-  "Enchantment":"Enchanted"
+  "IsUnique": "True"
 }

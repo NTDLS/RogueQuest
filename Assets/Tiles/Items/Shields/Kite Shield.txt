@@ -1,0 +1,14 @@
+{
+  "Name":"Kite Shield",
+  "SubType": "Shield",
+  "Value": "200",
+  "Weight":"4500",
+  "Bulk":"35000",
+  "Rarity":"25",
+  "AC":"18",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"5",
+  "Enchantment":"Normal",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Kite Shield"
+}

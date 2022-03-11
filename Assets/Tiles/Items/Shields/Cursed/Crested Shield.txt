@@ -1,0 +1,14 @@
+{
+  "Name":"Crested Shield",
+  "SubType": "Shield",
+  "Value": "600",
+  "Weight":"5000",
+  "Bulk":"39000",
+  "Rarity":"20",
+  "AC":"-22",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"6",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Crested Shield"
+}

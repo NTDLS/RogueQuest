@@ -293,13 +293,13 @@ namespace Library.Engine
                             tile = (ActorBase)Activator.CreateInstance(Type.GetType("Library.Engine.ActorBase"), param);
                         }
 
-                        tile.SetImage(tilePath);
+                        tile.TilePath = chunk.TilePath;
                         tile.X = chunk.X;
                         tile.Y = chunk.Y;
-                        tile.TilePath = chunk.TilePath;
                         tile.Velocity.Angle.Degrees = chunk.Angle ?? 0;
                         tile.DrawOrder = chunk.DrawOrder;
                         tile.Meta = chunk.Meta;
+                        tile.SetImage(tile.ImagePath);
 
                         if (refreshMetadata)
                         {

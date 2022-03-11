@@ -1,0 +1,12 @@
+{
+  "Name":"Large Steel Shield",
+  "SubType": "Shield",
+  "Value": "84",
+  "Weight":"6000",
+  "Bulk":"50000",
+  "Rarity":"50",
+  "AC":"15",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"4"
+}

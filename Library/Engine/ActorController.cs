@@ -10,6 +10,13 @@ namespace Library.Engine
 {
     public class ActorController
     {
+        private Graphics _miniMapDC;
+        private Bitmap _miniMapBitmap;
+        private readonly int _miniMapWidth = 350;
+        private readonly int _miniMapHeight = 350;
+        private Point<double> _miniMapScale;
+        private Point<double> _miniMapOffset;
+        private int _miniMapDistance = 10;
         public EngineCoreBase Core { get; set; }
         public List<ActorBase> Tiles { get; private set; }
         public Assembly GameAssembly { get; private set; } = null;
@@ -44,14 +51,6 @@ namespace Library.Engine
 
             return Tiles.Where(o => o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
         }
-
-        Graphics _miniMapDC;
-        Bitmap _miniMapBitmap;
-        int _miniMapWidth = 350;
-        int _miniMapHeight = 350;
-        Point<double> _miniMapScale;
-        Point<double> _miniMapOffset;
-        int _miniMapDistance = 10;
 
         public void Render(Graphics screenDc)
         {
@@ -264,7 +263,7 @@ namespace Library.Engine
             var obj = (ActorBase)Activator.CreateInstance(tileType, param);
 
             obj.TilePath = TilePath;
-            obj.SetImage(SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{TilePath}.png")));
+            obj.SetImage(SpriteCache.GetBitmapCached(obj.ImagePath));
             obj.X = x;
             obj.Y = y;
 
@@ -281,7 +280,7 @@ namespace Library.Engine
                 var obj = (ActorBase)Activator.CreateInstance(typeof(T), param);
 
                 obj.TilePath = TilePath;
-                obj.SetImage(SpriteCache.GetBitmapCached(Constants.GetAssetPath($"{TilePath}.png")));
+                obj.SetImage(SpriteCache.GetBitmapCached(obj.ImagePath));
                 obj.X = x;
                 obj.Y = y;
 

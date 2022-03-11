@@ -1,0 +1,14 @@
+{
+  "Name":"Medium Steel Shield",
+  "SubType": "Shield",
+  "Value": "67",
+  "Weight":"5000",
+  "Bulk":"35000",
+  "Rarity":"50",
+  "AC":"15",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"4",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Medium Steel Shield"
+}

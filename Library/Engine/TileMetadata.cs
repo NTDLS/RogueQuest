@@ -44,8 +44,17 @@ namespace Library.Engine
         #endregion
 
         /// <summary>
+        /// For enchanted or cursed items, they will be unidentified when found unless bought from a store.
+        /// </summary>
+        public bool? IsIdentified { get; set; }
+        /// <summary>
+        /// For enchanted or cursed items, they will be unidentified when found unless bought from a store. This is the image that will be shown until identified.
+        /// </summary>
+        public string UnidentifiedTilePath { get; set; }
+        /// <summary>
         /// Whether is iten is normal, cursed or enchanted.
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))] 
         public EnchantmentType? Enchantment { get; set; }
         /// <summary>
         /// Set to true when Core.BlindPlay is enabled. Allows the map to be slowly revealed.
@@ -93,10 +102,6 @@ namespace Library.Engine
         /// The type of damage being done (fire, ice, earth, electrical, etc.)
         /// </summary>
         public DamageType? DamageType { get; set; }
-        /// <summary>
-        /// There can only be one item of this type. It will not be repopulated in stores if its lost.
-        /// </summary>
-        public bool? IsUnique { get; set; }
         /// <summary>
         /// Whether the item (actor) can be attacked and take damage then be destroyed when HitPoints fall to 0.
         /// </summary>
@@ -285,6 +290,11 @@ namespace Library.Engine
         {
             get
             {
+                if (Enchantment != null && (IsIdentified ?? false) == false)
+                {
+                    return "UNIDENTIFIED";
+                }
+
                 return Types.Utility.RarityText(Rarity ?? -1);
             }
         }
@@ -314,9 +324,10 @@ namespace Library.Engine
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
             this.IsMemoriziedSpell = with.IsMemoriziedSpell ?? this.IsMemoriziedSpell;
             this.Enchantment = with.Enchantment ?? this.Enchantment;
+            this.IsIdentified = with.IsIdentified ?? this.IsIdentified;
+            this.UnidentifiedTilePath = with.UnidentifiedTilePath ?? this.UnidentifiedTilePath;
             this.Rarity = with.Rarity ?? this.Rarity;
             this.DamageType = with.DamageType ?? this.DamageType;
-            this.IsUnique = with.IsUnique ?? this.IsUnique;
             this.Dialog = with.Dialog ?? this.Dialog;
             this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;
             this.Mana = with.Mana ?? this.Mana;

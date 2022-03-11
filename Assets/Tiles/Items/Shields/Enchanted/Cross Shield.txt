@@ -1,0 +1,14 @@
+{
+  "Name":"Cross Shield",
+  "SubType": "Shield",
+  "Value": "300",
+  "Weight":"4800",
+  "Bulk":"38000",
+  "Rarity":"20",
+  "AC":"21",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"5",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Cross Shield"
+}

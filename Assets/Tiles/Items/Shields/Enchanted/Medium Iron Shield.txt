@@ -1,0 +1,14 @@
+{
+  "Name":"Medium Iron Shield",
+  "SubType": "Shield",
+  "Value": "50",
+  "Weight":"5000",
+  "Bulk":"35000",
+  "Rarity":"70",
+  "AC":"12",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"3",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Medium Iron Shield"
+}

@@ -11,6 +11,5 @@
   "Rarity":"40",
   "CanStack":"False",
   "CanWalkOn":"True",
-  "Level":"4",
-  "Enchantment":"Enchanted"
+  "Level":"4"
 }

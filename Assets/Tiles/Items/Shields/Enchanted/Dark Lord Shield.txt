@@ -1,0 +1,14 @@
+{
+  "Name":"Dark Lord Shield",
+  "SubType": "Shield",
+  "Value": "700",
+  "Weight":"5500",
+  "Bulk":"40000",
+  "Rarity":"8",
+  "AC":"25",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"7",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Dark Lord Shield"
+}

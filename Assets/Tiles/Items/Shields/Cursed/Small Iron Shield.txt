@@ -1,0 +1,14 @@
+{
+  "Name":"Small Iron Shield",
+  "SubType": "Shield",
+  "Value": "25",
+  "Weight":"4000",
+  "Bulk":"15000",
+  "Rarity":"20",
+  "AC":"-6",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"1",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Small Iron Shield"
+}

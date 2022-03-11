@@ -1,0 +1,12 @@
+{
+  "Name":"Large Iron Shield",
+  "SubType": "Shield",
+  "Value": "63",
+  "Weight":"6000",
+  "Bulk":"50000",
+  "Rarity":"60",
+  "AC":"12",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"3"
+}

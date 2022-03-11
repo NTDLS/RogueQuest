@@ -1,0 +1,14 @@
+{
+  "Name":"Valors Shield",
+  "SubType": "Shield",
+  "Value": "500",
+  "Weight":"5200",
+  "Bulk":"36000",
+  "Rarity":"12",
+  "AC":"21",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"6",
+  "Enchantment":"Normal",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Valors Shield"
+}

@@ -4,3 +4,5 @@ Electric: #6530ff
      Ice: #65dace
 
 
+Enchanted: #44fef6
+   Cursed: #c30120

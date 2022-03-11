@@ -1,0 +1,14 @@
+{
+  "Name":"Large Steel Shield",
+  "SubType": "Shield",
+  "Value": "84",
+  "Weight":"6000",
+  "Bulk":"50000",
+  "Rarity":"50",
+  "AC":"17",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"4",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Large Steel Shield"
+}

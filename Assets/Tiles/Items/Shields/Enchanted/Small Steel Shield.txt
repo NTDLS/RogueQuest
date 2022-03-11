@@ -1,0 +1,14 @@
+{
+  "Name":"Small Steel Shield",
+  "SubType": "Shield",
+  "Value": "55",
+  "Weight":"4000",
+  "Bulk":"15000",
+  "Rarity":"70",
+  "AC":"13",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"3",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Small Steel Shield"
+}

@@ -10,6 +10,5 @@
   "Bulk":"12350",
   "Rarity":"0",
   "Level":"18",
-  "IsUnique": "True",
-  "Enchantment":"Enchanted"
+  "IsUnique": "True"
 }

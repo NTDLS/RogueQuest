@@ -211,7 +211,7 @@ namespace Library.Engine
                     }
                 }
 
-                if (File.Exists(Assets.Constants.GetAssetPath($"{obj.Tile.TilePath}.png")) == false)
+                if (File.Exists(Constants.GetAssetPath($"{obj.Tile.TilePath}.png")) == false)
                 {
                     orphanedItems.Add(obj);
                 }
@@ -219,8 +219,7 @@ namespace Library.Engine
                 {
                     Guid? uid = obj.Tile.Meta.UID;
 
-                    var freshMeta = TileMetadata.GetFreshMetadata(obj.Tile.TilePath);
-                    obj.Tile.Meta.OverrideWith(freshMeta);
+                    obj.Tile.Meta = TileMetadata.GetFreshMetadata(obj.Tile.TilePath);
 
                     if (uid != null)
                     {

@@ -1,5 +1,4 @@
-﻿using Assets;
-using Game.Actors;
+﻿using Game.Actors;
 using Game.Classes;
 using Game.Engine;
 using Library.Engine;
@@ -15,7 +14,6 @@ namespace Game
 {
     public partial class FormInventory : Form
     {
-        private ImageList _imageList = new ImageList();
         private Button _buttonClose = new Button();
         private TileIdentifier _currentlySelectedPack = null;
         private ToolTip _interrogationTip = new ToolTip();
@@ -37,8 +35,8 @@ namespace Game
             _buttonClose.Click += _buttonClose_Click;
             this.CancelButton = _buttonClose;
 
-            listViewSelectedContainer.SmallImageList = _imageList;
-            listViewSelectedContainer.LargeImageList = _imageList;
+            listViewSelectedContainer.SmallImageList = StoreAndInventory.ImageList;
+            listViewSelectedContainer.LargeImageList = StoreAndInventory.ImageList;
             listViewSelectedContainer.View = View.List;
             listViewSelectedContainer.ItemDrag += ListViewSelectedContainer_ItemDrag;
             listViewSelectedContainer.DragEnter += ListViewSelectedContainer_DragEnter;
@@ -48,8 +46,8 @@ namespace Game
             listViewSelectedContainer.MouseUp += ListView_Shared_MouseUp;
             listViewSelectedContainer.MouseDown += ListView_Shared_MouseDown;
 
-            listViewGround.SmallImageList = _imageList;
-            listViewGround.LargeImageList = _imageList;
+            listViewGround.SmallImageList = StoreAndInventory.ImageList;
+            listViewGround.LargeImageList = StoreAndInventory.ImageList;
             listViewGround.View = View.List;
             listViewGround.ItemDrag += ListViewGround_ItemDrag;
             listViewGround.DragEnter += ListViewGround_DragEnter;
@@ -59,8 +57,8 @@ namespace Game
             listViewGround.MouseUp += ListView_Shared_MouseUp;
             listViewGround.MouseDown += ListView_Shared_MouseDown;
 
-            listViewPlayerPack.SmallImageList = _imageList;
-            listViewPlayerPack.LargeImageList = _imageList;
+            listViewPlayerPack.SmallImageList = StoreAndInventory.ImageList;
+            listViewPlayerPack.LargeImageList = StoreAndInventory.ImageList;
             listViewPlayerPack.View = View.List;
             listViewPlayerPack.ItemDrag += ListViewPlayerPack_ItemDrag;
             listViewPlayerPack.DragEnter += ListViewPlayerPack_DragEnter;
@@ -191,7 +189,7 @@ namespace Game
                 {
                     itemUnderfoot.Meta.Quantity = (itemUnderfoot.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
 
-                    var listViewItem = FindListViewObjectByUid(listViewGround, (Guid)itemUnderfoot.Meta.UID);
+                    var listViewItem = StoreAndInventory.FindListViewObjectByUid(listViewGround, (Guid)itemUnderfoot.Meta.UID);
                     if (listViewItem != null)
                     {
                         string text = itemUnderfoot.Meta.Name;
@@ -218,7 +216,7 @@ namespace Game
                     Core.Player.X, Core.Player.Y, inventoryItem.Tile.TilePath);
                 droppedItem.Meta = inventoryItem.Tile.Meta;
 
-                AddItemToListView(listViewGround, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                StoreAndInventory.AddItemToListView(listViewGround, draggedItemTag.Tile);
             }
 
             Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
@@ -466,7 +464,7 @@ namespace Game
                     existingInventoryItem.Tile.Meta.Quantity = (existingInventoryItem.Tile.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
                     Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
-                    var listViewItem = FindListViewObjectByUid(listViewSelectedContainer, (Guid)existingInventoryItem.Tile.Meta.UID);
+                    var listViewItem = StoreAndInventory.FindListViewObjectByUid(listViewSelectedContainer, (Guid)existingInventoryItem.Tile.Meta.UID);
                     if (listViewItem != null)
                     {
                         string text = existingInventoryItem.Tile.Meta.Name;
@@ -489,7 +487,7 @@ namespace Game
 
             if (wasStacked == false)
             {
-                AddItemToListView(listViewSelectedContainer, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                StoreAndInventory.AddItemToListView(listViewSelectedContainer, draggedItemTag.Tile);
                 inventoryItem.ContainerId = (Guid)pack.Meta.UID;
             }
 
@@ -736,7 +734,7 @@ namespace Game
                     existingInventoryItem.Tile.Meta.Quantity = (existingInventoryItem.Tile.Meta.Quantity ?? 0) + inventoryItem.Tile.Meta.Quantity;
                     Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
-                    var listViewItem = FindListViewObjectByUid(listViewPlayerPack, (Guid)existingInventoryItem.Tile.Meta.UID);
+                    var listViewItem = StoreAndInventory.FindListViewObjectByUid(listViewPlayerPack, (Guid)existingInventoryItem.Tile.Meta.UID);
                     if (listViewItem != null)
                     {
                         string text = existingInventoryItem.Tile.Meta.Name;
@@ -759,7 +757,7 @@ namespace Game
 
             if (wasStacked == false)
             {
-                AddItemToListView(listViewPlayerPack, draggedItemTag.Tile.TilePath, draggedItemTag.Tile.Meta);
+                StoreAndInventory.AddItemToListView(listViewPlayerPack, draggedItemTag.Tile);
                 inventoryItem.ContainerId = (Guid)pack.Meta.UID;
             }
 
@@ -815,8 +813,8 @@ namespace Game
         private void InitEquipSlot(ListView lv, ActorSubType[] acceptTypes, EquipSlot slot)
         {
             lv.HideSelection = true;
-            lv.LargeImageList = _imageList;
-            lv.SmallImageList = _imageList;
+            lv.LargeImageList = StoreAndInventory.ImageList;
+            lv.SmallImageList = StoreAndInventory.ImageList;
             lv.Scrollable = false;
 
             if (slot != EquipSlot.Purse)
@@ -825,8 +823,8 @@ namespace Game
                 lv.DragDrop += ListView_EquipSlot_DragDrop;
                 lv.DragEnter += ListView_EquipSlot_DragEnter;
                 lv.ItemDrag += ListView_EquipSlot_ItemDrag;
-                lv.MouseDown += Lv_EquipSlot_MouseDown;
-                lv.MouseUp += Lv_EquipSlot_MouseUp;
+                lv.MouseDown += ListView_EquipSlot_MouseDown;
+                lv.MouseUp += ListView_EquipSlot_MouseUp;
             }
 
             lv.MouseDoubleClick += ListView_EquipSlot_MouseDoubleClick;
@@ -853,47 +851,25 @@ namespace Game
                 }
 
                 item.Text = text;
-                item.ImageKey = GetImageKey(equipSlot.Tile.TilePath);
+                item.ImageKey = StoreAndInventory.GetImageKey(equipSlot.Tile.ImagePath);
                 (item.Tag as EquipTag).Tile = equipSlot.Tile;
             }
 
             lv.Items.Add(item);
         }
 
-        private void Lv_EquipSlot_MouseDown(object sender, MouseEventArgs e)
+        private void ListView_EquipSlot_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
                 var lv = sender as ListView;
                 var item = lv.Items[0].Tag as EquipTag;
-
-                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
-
-                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
-
-                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
-                    text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
-                if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
-                    text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
-
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
-                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
-
-                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
-                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
-                else if (item.Tile.Meta.SubType == ActorSubType.Money)
-                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
-
-                if (string.IsNullOrWhiteSpace(text) == false)
-                {
-                    var location = new Point(e.X + 10, e.Y - 25);
-                    _interrogationTip.Show(text, lv, location, 5000);
-                }
+                var location = new Point(e.X + 10, e.Y - 25);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile), lv, location, 5000);
             }
         }
 
-        private void Lv_EquipSlot_MouseUp(object sender, MouseEventArgs e)
+        private void ListView_EquipSlot_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -1005,7 +981,25 @@ namespace Game
             if ((draggedItemTag.Tile.Meta.SubType != null && destinationTag.AcceptTypes.Contains((ActorSubType)draggedItemTag.Tile.Meta.SubType))
                 || destinationTag.AcceptTypes.Contains(ActorSubType.Unspecified))
             {
-                destination.Items[0].ImageKey = draggedItem.ImageKey;
+                if (draggedItemTag.Tile.Meta.Enchantment != null && (draggedItemTag.Tile.Meta.IsIdentified ?? false) == false)
+                {
+                    draggedItemTag.Tile.Meta.IsIdentified = true;
+
+                    if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
+                    {
+                        MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed and cannot be removed by conventional means!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Enchanted)
+                    {
+                        MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} has been enchanted!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Normal)
+                    {
+                        MessageBox.Show($"This is just a normal {draggedItemTag.Tile.Meta.SubType}!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+
+                destination.Items[0].ImageKey = StoreAndInventory.GetImageKey(draggedItemTag.Tile.ImagePath);
                 destination.Items[0].Text = draggedItem.Text;
                 destinationTag.Tile = draggedItemTag.Tile;
 
@@ -1075,13 +1069,18 @@ namespace Game
 
         private void ListView_EquipSlot_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
             {
+                var draggedItem = e.Item as ListViewItem;
+                var draggedItemTag = draggedItem.Tag as EquipTag;
+
+                if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
+                {
+                    MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed and cannot be removed by conventional means!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
                 DoDragDrop(e.Item, DragDropEffects.Move);
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                DoDragDrop(e.Item, DragDropEffects.Copy);
             }
         }
 
@@ -1102,30 +1101,8 @@ namespace Game
                 }
 
                 var item = selection.Tag as EquipTag;
-
-                string text = item.Tile.Meta.Name + $" ({item.Tile.Meta.RarityText})";
-
-                text += "\r\n" + $"Type: {item.Tile.Meta.SubType}";
-
-                if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
-                    text += "\r\n" + $"Quantity: {item.Tile.Meta.Quantity}";
-                if (item.Tile.Meta.CanStack == false && item.Tile.Meta.Charges > 0)
-                    text += "\r\n" + $"Charges: {item.Tile.Meta.Charges}";
-
-                if (item.Tile.Meta.Weight != null) text += "\r\n" + $"Weight: {item.Tile.Meta.Weight:N2}";
-                if (item.Tile.Meta.Bulk != null) text += "\r\n" + $"Bulk: {item.Tile.Meta.Bulk:N2}";
-                if (item.Tile.Meta.AC != null) text += "\r\n" + $"AC: {item.Tile.Meta.AC:N0}";
-
-                if (item.Tile.Meta.SubType == ActorSubType.MeleeWeapon || item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
-                    text += "\r\n" + $"Stats: {item.Tile.Meta.DndDamageText}";
-                else if (item.Tile.Meta.SubType == ActorSubType.Money)
-                    text += "\r\n" + $"Value: {((int)(item.Tile.Meta.Quantity * item.Tile.Meta.Value)):N0} gold";
-
-                if (string.IsNullOrWhiteSpace(text) == false)
-                {
-                    var location = new Point(e.X + 10, e.Y - 25);
-                    _interrogationTip.Show(text, lv, location, 5000);
-                }
+                var location = new Point(e.X + 10, e.Y - 25);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile), lv, location, 5000);
             }
         }
 
@@ -1146,19 +1123,6 @@ namespace Game
 
         #region Utility.
 
-        string GetImageKey(string tilePath)
-        {
-            if (_imageList.Images.Keys.Contains(tilePath))
-            {
-                return tilePath;
-            }
-
-            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetAssetPath($"{tilePath}.png"));
-            _imageList.Images.Add(tilePath, bitmap);
-
-            return tilePath;
-        }
-
         void PopulateContainerFromGround(ListView listView)
         {
             listView.Items.Clear();
@@ -1169,7 +1133,7 @@ namespace Game
 
             foreach (var item in itemUnderfoot)
             {
-                AddItemToListView(listView, item.TilePath, item.Meta);
+                StoreAndInventory.AddItemToListView(listView, item);
             }
 
             listView.Sorting = SortOrder.Ascending;
@@ -1187,37 +1151,11 @@ namespace Game
 
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
-                AddItemToListView(listView, item.Tile.TilePath, item.Tile.Meta);
+                StoreAndInventory.AddItemToListView(listView, item.Tile);
             }
 
             listView.Sorting = SortOrder.Ascending;
             listView.Sort();
-        }
-
-        private void AddItemToListView(ListView listView, string tilePath, TileMetadata meta)
-        {
-            string text = meta.Name;
-
-            if (meta.CanStack == true && meta.Quantity > 0)
-            {
-                text += $" ({meta.Quantity})";
-            }
-            else if (meta.CanStack == false && meta.Charges > 0)
-            {
-                text += $" ({meta.Charges})";
-            }
-
-            var equipTag = new EquipTag()
-            {
-                Tile = new TileIdentifier(tilePath, meta)
-            };
-
-            equipTag.AcceptTypes.Add((ActorSubType)meta.SubType);
-
-            ListViewItem item = new ListViewItem(text);
-            item.ImageKey = GetImageKey(tilePath);
-            item.Tag = equipTag;
-            listView.Items.Add(item);
         }
 
         private void OpenPack(EquipTag item)
@@ -1231,21 +1169,6 @@ namespace Game
                 labelSelectedContainer.Text = $"Selected Container: ({item.Tile.Meta.Name})";
                 PopulateContainerFromPack(listViewSelectedContainer, item.Tile);
             }
-        }
-
-        private ListViewItem FindListViewObjectByUid(ListView listView, Guid uid)
-        {
-            foreach (ListViewItem obj in listView.Items)
-            {
-                var item = obj.Tag as EquipTag;
-
-                if (item.Tile.Meta.UID == uid)
-                {
-                    return obj;
-                }
-            }
-
-            return null;
         }
 
         #endregion

@@ -1,0 +1,14 @@
+{
+  "Name":"Small Wooden Shield",
+  "SubType": "Shield",
+  "Value": "11",
+  "Weight":"3000",
+  "Bulk":"15000",
+  "Rarity":"100",
+  "AC":"5",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"1",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Small Wooden Shield"
+}

@@ -1,0 +1,14 @@
+{
+  "Name":"Medium Wooden Shield",
+  "SubType": "Shield",
+  "Value": "21",
+  "Weight":"4000",
+  "Bulk":"35000",
+  "Rarity":"20",
+  "AC":"-6",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"1",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Medium Wooden Shield"
+}

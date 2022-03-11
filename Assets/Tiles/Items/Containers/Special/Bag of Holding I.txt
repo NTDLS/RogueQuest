@@ -9,6 +9,5 @@
   "Bulk":"100000",
   "Value":"2500",
   "Rarity":"0",
-  "Level":"6",
-  "Enchantment":"Enchanted"
+  "Level":"6"
 }

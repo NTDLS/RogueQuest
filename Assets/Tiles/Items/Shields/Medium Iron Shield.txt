@@ -1,0 +1,12 @@
+{
+  "Name":"Medium Iron Shield",
+  "SubType": "Shield",
+  "Value": "50",
+  "Weight":"5000",
+  "Bulk":"35000",
+  "Rarity":"70",
+  "AC":"10",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"3"
+}

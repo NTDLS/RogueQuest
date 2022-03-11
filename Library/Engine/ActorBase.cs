@@ -37,6 +37,23 @@ namespace Library.Engine
             }
         }
 
+        public string ImagePath
+        {
+            get
+            {
+                if ((Meta.Enchantment == EnchantmentType.Enchanted || Meta.Enchantment == EnchantmentType.Cursed)
+                    && (Meta.IsIdentified ?? false) == false)
+                {
+                    if (string.IsNullOrWhiteSpace(Meta.UnidentifiedTilePath))
+                    {
+                        throw new Exception("Unidentified tile must have an [UnidentifiedTilePath] specified.");
+                    }
+                    return Constants.GetAssetPath($"{Meta.UnidentifiedTilePath}.png");
+                }
+                return Constants.GetAssetPath($"{TilePath}.png"); ;
+            }
+        }
+
         #endregion
 
         public ActorBase(EngineCoreBase core)
@@ -110,6 +127,7 @@ namespace Library.Engine
         #region Image.
 
         public Image _image = null;
+        public Image _unidentifiedImage = null;
 
         private bool _hoverHighlight = false;
         public bool HoverHighlight
@@ -174,6 +192,9 @@ namespace Library.Engine
         {
             if (Visible && _image != null && !DoNotDraw)
             {
+                if (Meta.SubType == ActorSubType.Shield)
+                {
+                }
                 if (DrawRealitiveToBackgroundOffset)
                 {
                     DrawImageRealative(dc, _image);

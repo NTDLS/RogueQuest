@@ -1,0 +1,14 @@
+{
+  "Name":"Crested Skull Shield",
+  "SubType": "Shield",
+  "Value": "800",
+  "Weight":"6000",
+  "Bulk":"45000",
+  "Rarity":"20",
+  "AC":"-24",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"7",
+  "Enchantment":"Cursed",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Crested Skull Shield"
+}

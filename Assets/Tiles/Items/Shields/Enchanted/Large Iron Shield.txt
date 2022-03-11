@@ -1,0 +1,14 @@
+{
+  "Name":"Large Iron Shield",
+  "SubType": "Shield",
+  "Value": "63",
+  "Weight":"6000",
+  "Bulk":"50000",
+  "Rarity":"60",
+  "AC":"14",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "Level":"3",
+  "Enchantment":"Enchanted",
+  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Large Iron Shield"
+}
