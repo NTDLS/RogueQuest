@@ -46,6 +46,19 @@ namespace Library.Engine
 
         #endregion
 
+        public class Effect
+        {
+            [JsonConverter(typeof(StringEnumConverter))]
+            public ItemEffect EffectType { get; set; }
+            [JsonConverter(typeof(StringEnumConverter))]
+            public ItemEffectType ValueType { get; set; }
+            public int Value { get; set; }
+            /// <summary>
+            /// For magical items, this is how long an effect will last before it is removed.
+            /// </summary>
+            public int? Duration { get; set; }
+        }
+
         /// <summary>
         /// For enchanted or cursed items, they will be unidentified when found unless bought from a store.
         /// </summary>
@@ -139,6 +152,7 @@ namespace Library.Engine
         /// <summary>
         /// The type of damage being done (fire, ice, earth, electrical, etc.)
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))] 
         public DamageType? DamageType { get; set; }
         /// <summary>
         /// Whether the item (actor) can be attacked and take damage then be destroyed when HitPoints fall to 0.
@@ -179,27 +193,21 @@ namespace Library.Engine
         /// <summary>
         /// Used for magical items, tells the engine what effect the tile will have (Poison, magic arrow, etc.)
         /// </summary>
-        public ItemEffect? Effect { get; set; }
+        public List<Effect> Effects { get; set; }
         /// <summary>
         /// Whether the ranged weapon uses a bolt or an arrow. Used to search the quiver for an appropriate projectile.
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))] 
         public ProjectileType? ProjectileType { get; set; }
         /// <summary>
         /// Used for magical items to determine what they affect (the player, terrain, or another actor)
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))] 
         public TargetType? TargetType { get; set; }
-        /// <summary>
-        /// The formula used to determine how much effect to apply. e.g. how much HP to restore or how much intelligence to add.
-        /// </summary>
-        public string EffectFormula { get; set; }
         /// <summary>
         /// Whether the item is consumable. e.g. wands have a finite number of charges and scrolls can only be used once.
         /// </summary>
         public bool? IsConsumable { get; set; }
-        /// <summary>
-        /// For magical items, this is how long an effect will last before it is removed.
-        /// </summary>
-        public int? ExpireTime { get; set; }
         /// <summary>
         /// The number of charges left on a wand.
         /// </summary>
@@ -237,6 +245,23 @@ namespace Library.Engine
         /// The strength modifier of this tile when equipped.
         /// </summary>
         public int? ModStrength { get; set; }
+
+        /// <summary>
+        /// The Electric Resistance modifier of this tile when equipped. Can be positive or negative.
+        /// </summary>
+        public int? ElectricResistance { get; set; }
+        /// <summary>
+        /// The Fire Resistance modifier of this tile when equipped. Can be positive or negative.
+        /// </summary>
+        public int? FireResistance { get; set; }
+        /// <summary>
+        /// The Earth Resistance modifier of this tile when equipped. Can be positive or negative.
+        /// </summary>
+        public int? EarthResistance { get; set; }
+        /// <summary>
+        /// The Ice Resistance modifier of this tile when equipped. Can be positive or negative.
+        /// </summary>
+        public int? IceResistance { get; set; }
 
         /// <summary>
         /// The number of dice used when calcuating damage.
@@ -330,6 +355,7 @@ namespace Library.Engine
         /// </summary>
         public string Dialog { get { return _Dialog == string.Empty ? null : _Dialog; } set { _Dialog = value; } }
 
+        [JsonIgnore]
         public string DndDamageText
         {
             get
@@ -354,11 +380,22 @@ namespace Library.Engine
             }
         }
 
+        [JsonIgnore]
         public string RarityText
         {
             get
             {
                 return Types.Utility.RarityText(Rarity ?? -1);
+            }
+        }
+
+        [JsonIgnore]
+        public string EffectText
+        {
+            get
+            {
+                throw new NotImplementedException();
+                return "";
             }
         }
 
@@ -369,15 +406,12 @@ namespace Library.Engine
             this.CastTime = with.CastTime ?? this.CastTime;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
             this.ProjectileType = with.ProjectileType ?? this.ProjectileType;
-            this.Effect = with.Effect ?? this.Effect;
+            this.Effects = with.Effects ?? this.Effects;
             this.TargetType = with.TargetType ?? this.TargetType;
-            this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
             this.IsConsumable = with.IsConsumable ?? this.IsConsumable;
             this.Charges = with.Charges ?? this.Charges;
-            this.ExpireTime = with.ExpireTime ?? this.ExpireTime;
             this.Quantity = with.Quantity ?? this.Quantity;
             this.SpellName = with.SpellName ?? this.SpellName;
-            this.EffectFormula = with.EffectFormula ?? this.EffectFormula;
             this.HitPoints = with.HitPoints ?? this.HitPoints;
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;

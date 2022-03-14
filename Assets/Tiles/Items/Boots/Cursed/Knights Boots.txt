@@ -1,17 +1,19 @@
 {
-  "Name":"Enchanted Knights Boots",
+  "Name":"Cursed Knights Boots",
   "SubType": "Boots",
   "Value": "1000",
   "Weight":"2500",
   "Bulk":"4000",
   "Rarity":"10",
-  "AC":"-2",
-  "ModSpeed":"-1",
-  "ModConstitution":"",
-  "ModDexterity":"-2",
-  "ModIntelligence":"",
-  "ModStrength":"",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"-2"},
+    {"EffectType":"Speed,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"Dexterity,","ValueType":"Fixed","Value":"-3"},
+    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"-1"}
+  ],
   "Level":"4",
-  "Enchantment":"Enchated",
+  "Enchantment":"Cursed",
   "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Metal Boots"
 }

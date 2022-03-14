@@ -12,6 +12,10 @@
   "ModDexterity":"1",
   "ModIntelligence":"",
   "ModStrength":"",
+  "ElectricResistance":"2",
+  "FireResistance":"2",
+  "EarthResistance":"2",
+  "IceResistance":"2",
   "Enchantment":"Enchanted",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Elvin Armor"
 }

@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using static Game.Engine.Types;
+using static Library.Engine.TileMetadata;
 
 namespace Game.Engine
 {
@@ -167,11 +168,12 @@ namespace Game.Engine
         }
 
         /// <summary>
-        /// This works for potions, wands and scrolls.
+        /// /// This works for potions, wands and scrolls.
         /// </summary>
         /// <param name="item"></param>
         /// <param name="target"></param>
-        void CastNonWeaponMagic(CustodyItem item, ActorBase target)
+        /// <returns>Return true is spell was cast, return false for cancel.</returns>
+        private bool CastNonWeaponMagic(CustodyItem item, ActorBase target)
         {
             WaitOnIdleEngine();
 
@@ -186,30 +188,26 @@ namespace Game.Engine
                 }
                 else
                 {
-                    int expireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? (item.Tile.Meta.ExpireTime ?? 0) * 2 : (item.Tile.Meta.ExpireTime ?? 0));
-
-                    #region HoldMonster
-                    if (item.Tile.Meta.Effect == ItemEffect.HoldMonster)
+                    foreach (var effect in item.Tile.Meta.Effects)
                     {
-                        if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
+                        #region HoldMonster
+                        if (effect.EffectType == ItemEffect.HoldMonster)
                         {
+                            int expireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? (effect.Duration ?? 0) * 2 : (effect.Duration ?? 0));
                             var state = Core.State.ActorStates.UpsertState((Guid)target.Meta.UID, StateOfBeing.Held, expireTime);
                             Core.LogLine($"You successfully held the beast{(hitType == HitType.CriticalHit ? " (Critical-hit doubles time)" : "")}!", Color.DarkGreen);
                         }
-
-                    }
-                    #endregion
-                    #region Poison
-                    else if (item.Tile.Meta.Effect == ItemEffect.Poison)
-                    {
-                        if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
+                        #endregion
+                        #region Poison
+                        else if (effect.EffectType == ItemEffect.Poison)
                         {
+                            int expireTime = Core.State.TimePassed + (hitType == HitType.CriticalHit ? (effect.Duration ?? 0) * 2 : (effect.Duration ?? 0));
                             var state = Core.State.ActorStates.UpsertState((Guid)target.Meta.UID, StateOfBeing.Poisoned, expireTime);
                             Core.LogLine($"You successfully poison the beast{(hitType == HitType.CriticalHit ? " (Critical-hit doubles time)" : "")}!", Color.DarkGreen);
                         }
+                        #endregion
+                        else throw new NotImplementedException();
                     }
-                    #endregion
-                    else throw new NotImplementedException();
 
                     if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                     {
@@ -220,48 +218,51 @@ namespace Game.Engine
             }
             else if (item.Tile.Meta.TargetType == TargetType.Terrain)
             {
-                #region Terrain target.
-                #region SummonMonster
-                if (item.Tile.Meta.Effect == ItemEffect.SummonMonster)
+                foreach (var effect in item.Tile.Meta.Effects)
                 {
-                    var randos = Core.Materials.Where(o => o.Meta.ActorClass == ActorClassName.ActorHostileBeing
-                        && o.Meta.Level >= 1 && o.Meta.Level <= item.Tile.Meta.Level).ToList();
-
-                    if (randos.Count > 0)
+                    #region Terrain target.
+                    #region SummonMonster
+                    if (effect.EffectType == ItemEffect.SummonMonster)
                     {
-                        object[] param = { Core };
-                        int rand = MathUtility.RandomNumber(0, randos.Count);
-                        var randomTile = randos[rand];
-                        var tileType = GameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
-                        var tile = (ActorBase)Activator.CreateInstance(tileType, param);
+                        var randos = Core.Materials.Where(o => o.Meta.ActorClass == ActorClassName.ActorHostileBeing
+                            && o.Meta.Level >= 1 && o.Meta.Level <= item.Tile.Meta.Level).ToList();
 
-                        if (randomTile != null)
+                        if (randos.Count > 0)
                         {
-                            tile.SetImage(Assets.Constants.GetAssetPath($"{randomTile.TilePath}.png"));
-                            tile.X = target.X;
-                            tile.Y = target.Y;
-                            tile.TilePath = randomTile.TilePath;
-                            tile.Velocity.Angle.Degrees = tile.Velocity.Angle.Degrees;
-                            tile.DrawOrder = target.DrawOrder + 100;
-                            tile.Meta = TileMetadata.GetFreshMetadata(randomTile.TilePath);
-                            tile.Meta.HasBeenViewed = true;
+                            object[] param = { Core };
+                            int rand = MathUtility.RandomNumber(0, randos.Count);
+                            var randomTile = randos[rand];
+                            var tileType = GameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
+                            var tile = (ActorBase)Activator.CreateInstance(tileType, param);
 
-                            /* //Maybe add some random drops?
-                            var ownedItems = Core.State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
-                            foreach (var ownedItem in ownedItems)
+                            if (randomTile != null)
                             {
-                                ownedItem.ContainerId = tile.Meta.UID;
+                                tile.SetImage(Assets.Constants.GetAssetPath($"{randomTile.TilePath}.png"));
+                                tile.X = target.X;
+                                tile.Y = target.Y;
+                                tile.TilePath = randomTile.TilePath;
+                                tile.Velocity.Angle.Degrees = tile.Velocity.Angle.Degrees;
+                                tile.DrawOrder = target.DrawOrder + 100;
+                                tile.Meta = TileMetadata.GetFreshMetadata(randomTile.TilePath);
+                                tile.Meta.HasBeenViewed = true;
+
+                                /* //Maybe add some random drops?
+                                var ownedItems = Core.State.Items.Where(o => o.ContainerId == spawner.Meta.UID).ToList();
+                                foreach (var ownedItem in ownedItems)
+                                {
+                                    ownedItem.ContainerId = tile.Meta.UID;
+                                }
+                                */
+
+                                Core.Actors.Add(tile);
+
+                                Core.LogLine($"You carelessly summon a level {tile.Meta.Level} {tile.Meta.DisplayName}!", Color.DarkRed);
                             }
-                            */
-
-                            Core.Actors.Add(tile);
-
-                            Core.LogLine($"You carelessly summon a level {tile.Meta.Level} {tile.Meta.DisplayName}!", Color.DarkRed);
                         }
                     }
+                    #endregion
+                    else throw new NotImplementedException();
                 }
-                #endregion
-                else throw new NotImplementedException();
 
                 if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                 {
@@ -271,418 +272,243 @@ namespace Game.Engine
             }
             else if (item.Tile.Meta.TargetType == TargetType.Self)
             {
-                #region Self target.
-                #region PermanentlyIncreaseStrength
-                if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseStrength)
+                foreach (var effect in item.Tile.Meta.Effects)
                 {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    #region Self target.
+                    #region ModIceResistance
+                    if (effect.EffectType == ItemEffect.ModIceResistance)
                     {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModIceResistance);
+                        state.ModificationAmount = effect.Value;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseStrength);
-                    state.ModificationAmount = totalAdded;
-                    Core.State.Character.AugmentedStrength -= (int)state.ModificationAmount;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-                    Core.LogLine($"Strength has been permanently increased by {totalAdded}.");
-                }
-                #endregion
-                #region PermanentlyIncreaseDexterity
-                else if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseDexterity)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    #endregion
+                    #region ModElectricResistance
+                    else if (effect.EffectType == ItemEffect.ModElectricResistance)
                     {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModElectricResistance);
+                        state.ModificationAmount = effect.Value;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseDexterity);
-                    state.ModificationAmount = totalAdded;
-                    Core.State.Character.AugmentedDexterity -= (int)state.ModificationAmount;
-                    Core.LogLine($"Dexterity has been permanently increased by {totalAdded}.");
-                }
-                #endregion
-                #region PermanentlyIncreaseConstitution
-                else if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseConstitution)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    #endregion
+                    #region ModFireResistance
+                    else if (effect.EffectType == ItemEffect.ModFireResistance)
                     {
-                        throw new Exception($"Constitution percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModFireResistance);
+                        state.ModificationAmount = effect.Value;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseConstitution);
-                    state.ModificationAmount = totalAdded;
-                    Core.State.Character.AugmentedConstitution -= (int)state.ModificationAmount;
-                    Core.LogLine($"Strength has been permanently increased by {totalAdded}.");
-                }
-                #endregion
-                #region PermanentlyIncreaseIntelligence
-                else if (item.Tile.Meta.Effect == ItemEffect.PermanentlyIncreaseIntelligence)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    #endregion
+                    #region ModEarthResistance
+                    else if (effect.EffectType == ItemEffect.ModEarthResistance)
                     {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModEarthResistance);
+                        state.ModificationAmount = effect.Value;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIntelligence);
-                    state.ModificationAmount = totalAdded;
-                    Core.State.Character.AugmentedIntelligence -= (int)state.ModificationAmount;
-                    Core.LogLine($"Intelligence has been permanently increased by {totalAdded}.");
-                }
-                #endregion
-                #region IncreaseIceResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseIceResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
+                    #endregion
+                    #region Heal
+                    else if (effect.EffectType == ItemEffect.Heal)
                     {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
+                        int totalHealing = 0;
 
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIceResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Ice resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region IncreaseElectricResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseElectricResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
-                    {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseElectricResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Electric resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region IncreaseFireResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseFireResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
-                    {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseFireResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Fire resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region IncreaseEarthResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseEarthResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
-                    {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseEarthResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Earth resistance increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region DecreaseIceResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.DecreaseIceResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
-                    {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseIceResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Ice resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region DecreaseElectricResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.DecreaseElectricResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
-                    {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseElectricResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Electric resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region DecreaseFireResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.DecreaseFireResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
-                    {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseFireResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Fire resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region DecreaseEarthResistance
-                else if (item.Tile.Meta.Effect == ItemEffect.DecreaseEarthResistance)
-                {
-                    if (int.TryParse(item.Tile.Meta.EffectFormula, out int totalAdded) == false)
-                    {
-                        throw new Exception($"Formula percentage not implemented for this type of attribute: {item.Tile.Meta.Effect}");
-                    }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.DecreaseEarthResistance);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Earth resistance decreased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region Heal.
-                else if (item.Tile.Meta.Effect == ItemEffect.Heal)
-                {
-                    int totalHealing = 0;
-
-                    var formulas = item.Tile.Meta.EffectFormula.Split(',');
-                    foreach (var formula in formulas)
-                    {
-                        if (formula[0] == '%') //Raise the hitpoints by a percentage.
+                        if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            var pct = int.Parse(formula.Substring(1)) / 100.0;
-                            int hpToAdd = (int)((double)Core.State.Character.Hitpoints * pct);
+                            int hpToAdd = (int)((double)Core.State.Character.Hitpoints * (double)effect.Value);
                             totalHealing += hpToAdd;
                             Core.State.Character.AvailableHitpoints += hpToAdd;
                         }
-                        else //Raise the hitpoints by a fixed ammount.
+                        else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
-                            var hpToAdd = int.Parse(formula);
-                            totalHealing += hpToAdd;
-                            Core.State.Character.AvailableHitpoints += hpToAdd;
+                            totalHealing += effect.Value;
+                            Core.State.Character.AvailableHitpoints += effect.Value;
                         }
+                        else throw new Exception($"Value type {effect.ValueType} is not implemented.");
+
+                        if (Core.State.Character.AvailableHitpoints > Core.State.Character.Hitpoints)
+                        {
+                            Core.State.Character.AvailableHitpoints = Core.State.Character.Hitpoints;
+                        }
+
+                        Core.LogLine($"Healed {totalHealing} hitpoints.");
                     }
-
-                    if (Core.State.Character.AvailableHitpoints > Core.State.Character.Hitpoints)
-                    {
-                        Core.State.Character.AvailableHitpoints = Core.State.Character.Hitpoints;
-                    }
-
-                    Core.LogLine($"Healed {totalHealing} hitpoints.");
-                }
-                #endregion
-                #region IncreaseDexterity
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseDexterity)
-                {
-                    int totalAdded = 0;
-
-                    var formulas = item.Tile.Meta.EffectFormula.Split(',');
-                    foreach (var formula in formulas)
+                    #endregion
+                    #region ModDexterity
+                    else if (effect.EffectType == ItemEffect.ModDexterity)
                     {
                         int toAdd = 0;
 
-                        if (formula[0] == '%') //Raise the attribute by a percentage.
+                        if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            var pct = int.Parse(formula.Substring(1)) / 100.0;
-                            toAdd = (int)((double)Core.State.Character.Dexterity * pct);
+                            toAdd = (int)((double)Core.State.Character.Dexterity * (double)effect.Value);
                         }
-                        else //Raise the hitpoints by a fixed ammount.
+                        else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
-                            toAdd = int.Parse(formula);
+                            toAdd = effect.Value;
                         }
+                        else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
                         Core.State.Character.AugmentedDexterity += toAdd;
-                        totalAdded += toAdd;
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModDexterity);
+                        state.ModificationAmount = toAdd;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseDexterity);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Dexterity increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region IncreaseConstitution
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseConstitution)
-                {
-                    int totalAdded = 0;
-
-                    var formulas = item.Tile.Meta.EffectFormula.Split(',');
-                    foreach (var formula in formulas)
+                    #endregion
+                    #region ModConstitution
+                    else if (effect.EffectType == ItemEffect.ModConstitution)
                     {
                         int toAdd = 0;
 
-                        if (formula[0] == '%') //Raise the attribute by a percentage.
+                        if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            var pct = int.Parse(formula.Substring(1)) / 100.0;
-                            toAdd = (int)((double)Core.State.Character.Hitpoints * pct);
+                            toAdd = (int)((double)Core.State.Character.Hitpoints * (double)effect.Value);
                         }
-                        else //Raise the hitpoints by a fixed ammount.
+                        else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
-                            toAdd = int.Parse(formula);
+                            toAdd = effect.Value;
                         }
+                        else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
                         Core.State.Character.AugmentedConstitution += toAdd;
-                        totalAdded += toAdd;
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModConstitution);
+                        state.ModificationAmount = toAdd;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseConstitution);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Constitution increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region IncreaseArmorClass
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseArmorClass)
-                {
-                    int totalAdded = 0;
-
-                    var formulas = item.Tile.Meta.EffectFormula.Split(',');
-                    foreach (var formula in formulas)
+                    #endregion
+                    #region ModArmorClass
+                    else if (effect.EffectType == ItemEffect.ModArmorClass)
                     {
                         int toAdd = 0;
 
-                        if (formula[0] == '%') //Raise the attribute by a percentage.
+                        if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            var pct = int.Parse(formula.Substring(1)) / 100.0;
-                            toAdd = (int)((double)Core.State.Character.AugmentedAC * pct);
+                            toAdd = (int)((double)Core.State.Character.AugmentedAC * (double)effect.Value);
                         }
-                        else //Raise the hitpoints by a fixed ammount.
+                        else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
-                            toAdd = int.Parse(formula);
+                            toAdd = effect.Value;
                         }
+                        else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
                         Core.State.Character.AugmentedAC += toAdd;
-                        totalAdded += toAdd;
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModArmorClass);
+                        state.ModificationAmount = toAdd;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseArmorClass);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"AC increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region IncreaseIntelligence
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseIntelligence)
-                {
-                    int totalAdded = 0;
-
-                    var formulas = item.Tile.Meta.EffectFormula.Split(',');
-                    foreach (var formula in formulas)
+                    #endregion
+                    #region ModIntelligence
+                    else if (effect.EffectType == ItemEffect.ModIntelligence)
                     {
                         int toAdd = 0;
 
-                        if (formula[0] == '%') //Raise the attribute by a percentage.
+                        if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            var pct = int.Parse(formula.Substring(1)) / 100.0;
-                            toAdd = (int)((double)Core.State.Character.Intelligence * pct);
+                            toAdd = (int)((double)Core.State.Character.Strength * (double)effect.Value);
                         }
-                        else //Raise the hitpoints by a fixed ammount.
+                        else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
-                            toAdd = int.Parse(formula);
+                            toAdd = effect.Value;
                         }
+                        else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
                         Core.State.Character.AugmentedIntelligence += toAdd;
-                        totalAdded += toAdd;
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModIntelligence);
+                        state.ModificationAmount = toAdd;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var stateInt = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseIntelligence);
-                    stateInt.ModificationAmount = totalAdded;
-                    stateInt.ExpireTime = item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Intelligence increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region IncreaseStrength
-                else if (item.Tile.Meta.Effect == ItemEffect.IncreaseStrength)
-                {
-                    int totalAdded = 0;
-
-                    var formulas = item.Tile.Meta.EffectFormula.Split(',');
-                    foreach (var formula in formulas)
+                    #endregion
+                    #region ModStrength
+                    else if (effect.EffectType == ItemEffect.ModStrength)
                     {
                         int toAdd = 0;
 
-                        if (formula[0] == '%') //Raise the attribute by a percentage.
+                        if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            var pct = int.Parse(formula.Substring(1)) / 100.0;
-                            toAdd = (int)((double)Core.State.Character.Strength * pct);
+                            toAdd = (int)((double)Core.State.Character.Strength * (double)effect.Value);
                         }
-                        else //Raise the hitpoints by a fixed ammount.
+                        else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
-                            toAdd = int.Parse(formula);
+                            toAdd = effect.Value;
                         }
+                        else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
                         Core.State.Character.AugmentedStrength += toAdd;
-                        totalAdded += toAdd;
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModStrength);
+                        state.ModificationAmount = toAdd;
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine(GetAugmentationText(effect));
                     }
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.IncreaseStrength);
-                    state.ModificationAmount = totalAdded;
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-
-                    Core.LogLine($"Strength increased by {totalAdded} for {item.Tile.Meta.ExpireTime} minutes.");
-                }
-                #endregion
-                #region Poison
-                else if (item.Tile.Meta.Effect == ItemEffect.Poison)
-                {
-                    int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.1); //10% of the remaining hit points.
-                    if (damage == 0) damage = 1;
-                    Core.State.Character.AvailableHitpoints -= damage;
-
-                    var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
-                    state.ExpireTime = Core.State.TimePassed + item.Tile.Meta.ExpireTime;
-                    Core.LogLine($"You have been poisoned! {damage} damage!", Color.DarkRed);
-                }
-                #endregion
-                #region CurePoison
-                else if (item.Tile.Meta.Effect == ItemEffect.CurePoison)
-                {
-                    if (Core.State.ActorStates.HasState(Core.State.Character.UID, StateOfBeing.Poisoned))
+                    #endregion
+                    #region Poison
+                    else if (effect.EffectType == ItemEffect.Poison)
                     {
-                        Core.LogLine($"Your body has been purged of all poisons!", Color.DarkGreen);
-                        Core.State.ActorStates.RemoveState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                        int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.05); //5% of the remaining hit points.
+                        if (damage == 0) damage = 1;
+                        Core.State.Character.AvailableHitpoints -= damage;
+
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                        state.ExpireTime = Core.State.TimePassed + effect.Duration;
+                        Core.LogLine($"You have been poisoned! {damage} damage!", Color.DarkRed);
                     }
-                    else
+                    #endregion
+                    #region CurePoison
+                    else if (effect.EffectType == ItemEffect.CurePoison)
                     {
-                        Core.LogLine($"Your needlesly burn a lifesaving scroll...");
+                        if (Core.State.ActorStates.HasState(Core.State.Character.UID, StateOfBeing.Poisoned))
+                        {
+                            Core.LogLine($"Your body has been purged of all poisons!", Color.DarkGreen);
+                            Core.State.ActorStates.RemoveState(Core.State.Character.UID, StateOfBeing.Poisoned);
+                        }
+                        else
+                        {
+                            Core.LogLine($"Your needlesly burn a lifesaving scroll...");
+                        }
                     }
-                }
-                #endregion
-                #region RemoveCurse
-                else if (item.Tile.Meta.Effect == ItemEffect.RemoveCurse)
-                {
-                    var cursedEquipment = Core.State.Character.Equipment.Where(o => o.Tile != null && o.Tile.Meta.Enchantment == EnchantmentType.Cursed).ToList();
-
-                    foreach (var cursedEquip in cursedEquipment)
+                    #endregion
+                    #region RemoveCurse
+                    else if (effect.EffectType == ItemEffect.RemoveCurse)
                     {
-                        var droppedItem = Core.Actors.AddDynamic(cursedEquip.Tile.Meta.ActorClass.ToString(),
-                            Core.Player.X, Core.Player.Y, cursedEquip.Tile.TilePath);
+                        TileIdentifier curseToRemove = null;
 
-                        droppedItem.Meta = cursedEquip.Tile.Meta;
+                        using (var form = new FormPickCursedItem(Core))
+                        {
+                            if (form.ShowDialog() != DialogResult.OK)
+                            {
+                                return false;
+                            }
+                            curseToRemove = form.SelectedCursedItem;
+                        }
+
+                        var equip = Core.State.Character.FindEquipSlotByItemId(curseToRemove.Meta.UID);
+
+                        //Place dropped item on the ground.
+                        var droppedItem = Core.Actors.AddDynamic(equip.Tile.Meta.ActorClass.ToString(), Core.Player.X, Core.Player.Y, equip.Tile.TilePath);
+                        droppedItem.Meta = equip.Tile.Meta;
                         droppedItem.Meta.HasBeenViewed = true;
                         droppedItem.AlwaysRender = true;
                         droppedItem.Invalidate();
 
-                        cursedEquip.Tile = null;
-                    }
+                        //Clear the equip slot.
+                        equip.Tile = null;
 
-                    Core.LogLine($"All equipped cursed items fall to the ground!", Color.DarkGreen);
+                        Core.LogLine($"The cursed item fell to the ground!", Color.DarkGreen);
+                    }
+                    #endregion
+                    else throw new NotImplementedException();
                 }
-                #endregion
-                else throw new NotImplementedException();
 
                 if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
                 {
@@ -690,6 +516,29 @@ namespace Game.Engine
                 }
                 #endregion
             }
+
+            return true;
+        }
+
+        private string GetAugmentationText(Effect effect)
+        {
+            string text = effect.EffectType.ToString().Replace("Mod", "");
+
+            if (effect.Duration == null)
+            {
+                text += " permanately";
+            }
+
+            text += effect.Value > 0 ? "increased" : "decreased";
+
+            text += $" by {effect.Value}";
+
+            if (effect.Duration != null)
+            {
+                text += $" for {effect.Duration} minutes.";
+            }
+
+            return text;
         }
 
         public bool UseConsumableItem(Guid itemUid, ActorBase target/*, Guid? rangedProjectile = null*/)
@@ -700,7 +549,22 @@ namespace Game.Engine
                 return false;
             }
 
-            if (item.Tile.Meta.SubType == ActorSubType.Scroll
+            int startTime = Core.State.TimePassed;
+
+            if (item.Tile.Meta.DamageDice > 0) //Bow and arrow, crossbow, etc.
+            {
+                //Items with damage dice are counted as weapons and need to call Advance to apply damage to actors. Cast fireball, cast magic arrow, etc.
+
+                var input = new Types.TickInput()
+                {
+                    InputType = Types.TickInputType.Ranged,
+                    RangedItem = item,
+                    RangedTarget = target
+                };
+
+                Advance(input);
+            }
+            else if (item.Tile.Meta.SubType == ActorSubType.Scroll
                 || item.Tile.Meta.SubType == ActorSubType.Wand
                 || item.Tile.Meta.SubType == ActorSubType.Potion)
             {
@@ -711,32 +575,20 @@ namespace Game.Engine
                     RangedTarget = target
                 };
 
-                if (item.Tile.Meta.DamageDice > 0) //These are weapons. e.g. Cast fireball, cast magic arrow, etc. If it does damage to another actor then it needs to call Advance().
+                if (CastNonWeaponMagic(item, target) == false)
                 {
-                    int startTime = Core.State.TimePassed;
-                    Advance(input);
-                    PassTime(((item.Tile.Meta.CastTime ?? 0) - (Core.State.TimePassed - startTime)) - Core.State.Character.Speed);
-                }
-                else
-                {
-                    PassTime(item.Tile.Meta.CastTime - Core.State.Character.Speed);
-                    CastNonWeaponMagic(item, target);
+                    return false;
                 }
 
                 WaitOnIdleEngine();
             }
-            else if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon) //Bow and arrow, crossbow, etc.
+            else
             {
-                var input = new Types.TickInput()
-                {
-                    InputType = Types.TickInputType.Ranged,
-                    RangedItem = item,
-                    RangedTarget = target
-                };
-
-                Advance(input);
-                WaitOnIdleEngine();
+                throw new Exception(@"This scenario was not implemented ¯\_(ツ)_/¯");
             }
+
+            PassTime(((item.Tile.Meta.CastTime ?? 0) - (Core.State.TimePassed - startTime)) - Core.State.Character.Speed);
+            WaitOnIdleEngine();
 
             if (item.Tile.Meta.Charges > 0) //Remember that items with charges are NOT stackable.
             {
@@ -766,7 +618,7 @@ namespace Game.Engine
                     }
                 }
             }
-            else if(item.Tile.Meta.IsMemoriziedSpell ?? false)
+            else if (item.Tile.Meta.IsMemoriziedSpell ?? false)
             {
                 Core.State.Character.AvailableMana -= (item.Tile.Meta.Mana ?? 0);
             }
@@ -1557,22 +1409,17 @@ namespace Game.Engine
                 }
             }
 
-            if (Core.State.Character.Experience > Core.State.Character.NextLevelExperience)
-            {
-                Core.LevelUp();
-            }
-
             var activePlayerStates = Core.State.ActorStates.States(Core.State.Character.UID);
 
-            var electricResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var fireResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var earthResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var iceResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.IncreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var electricResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var fireResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModFireResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var earthResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
+            var iceResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModIceResistance).Sum(o => o.ModificationAmount) ?? 0);
 
-            electricResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
-            fireResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseFireResistance).Sum(o => o.ModificationAmount) ?? 0);
-            earthResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
-            iceResistance -= (activePlayerStates.Where(o => o.State == StateOfBeing.DecreaseIceResistance).Sum(o => o.ModificationAmount) ?? 0);
+            electricResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.ElectricResistance ?? 0);
+            fireResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.FireResistance ?? 0);
+            earthResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.EarthResistance ?? 0);
+            iceResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.IceResistance ?? 0);
 
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
             foreach (var hostile in hostileInteractions.Where(o => o.Visible))
@@ -1775,80 +1622,60 @@ namespace Game.Engine
                 }
                 else if (state.ActorUID == Core.State.Character.UID) //Player states expired.
                 {
-                    if (state.State == StateOfBeing.IncreaseDexterity)
+                    if (state.State == StateOfBeing.ModDexterity)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.State.Character.AugmentedDexterity -= (int)state.ModificationAmount;
-                        Core.LogLine($"Dexterity augmentation expired, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"Dexterity augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.IncreaseConstitution)
+                    else if (state.State == StateOfBeing.ModConstitution)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.State.Character.AugmentedConstitution -= (int)state.ModificationAmount;
-                        Core.LogLine($"Constitution augmentation expired, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"Constitution augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.IncreaseArmorClass)
+                    else if (state.State == StateOfBeing.ModArmorClass)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.State.Character.AugmentedAC -= (int)state.ModificationAmount;
-                        Core.LogLine($"AC augmentation expired, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"AC augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.IncreaseIntelligence)
+                    else if (state.State == StateOfBeing.ModIntelligence)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.State.Character.AugmentedIntelligence -= (int)state.ModificationAmount;
-                        Core.LogLine($"Intelligence augmentation expired, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"Intelligence augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.IncreaseStrength)
+                    else if (state.State == StateOfBeing.ModStrength)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.State.Character.AugmentedStrength -= (int)state.ModificationAmount;
-                        Core.LogLine($"Strength augmentation expired, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"Strength augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
                     else if (state.State == StateOfBeing.Poisoned)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
                     }
-                    else if (state.State == StateOfBeing.IncreaseEarthResistance)
+                    else if (state.State == StateOfBeing.ModEarthResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"Earth resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.IncreaseFireResistance)
+                    else if (state.State == StateOfBeing.ModFireResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Fire resistance has worn off, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"Fire resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.IncreaseIceResistance)
+                    else if (state.State == StateOfBeing.ModIceResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Ice resistance has worn off, decreased by {state.ModificationAmount}.");
+                        Core.LogLine($"Ice resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.IncreaseElectricResistance)
+                    else if (state.State == StateOfBeing.ModElectricResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Earth resistance has worn off, decreased by {state.ModificationAmount}.");
-                    }
-                    else if (state.State == StateOfBeing.DecreaseEarthResistance)
-                    {
-                        Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
-                    }
-                    else if (state.State == StateOfBeing.DecreaseFireResistance)
-                    {
-                        Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Fire resistance has worn off, increased by {state.ModificationAmount}.");
-                    }
-                    else if (state.State == StateOfBeing.DecreaseIceResistance)
-                    {
-                        Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Ice resistance has worn off, increased by {state.ModificationAmount}.");
-                    }
-                    else if (state.State == StateOfBeing.DecreaseElectricResistance)
-                    {
-                        Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Earth resistance has worn off, increased by {state.ModificationAmount}.");
+                        Core.LogLine($"Earth resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
                     else if (state.State == StateOfBeing.Held)
                     {
@@ -1860,6 +1687,11 @@ namespace Game.Engine
                         throw new NotImplementedException();
                     }
                 }
+            }
+
+            if (Core.Player.Visible && Core.State.Character.Experience > Core.State.Character.NextLevelExperience)
+            {
+                Core.LevelUp();
             }
 
             Core.PurgeAllDeletedTiles();
@@ -1877,7 +1709,7 @@ namespace Game.Engine
 
                 if (actor == Core.Player)
                 {
-                    int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.1); //10% of the remaining hit points.
+                    int damage = (int)((double)Core.State.Character.AvailableHitpoints * 0.05); //5% of the remaining hit points.
                     if (damage == 0) damage = 1;
                     Core.State.Character.AvailableHitpoints -= damage;
                     Core.LogLine($"{Core.State.Character.Name} took {damage} poison damage!", Color.DarkRed);
@@ -1890,7 +1722,7 @@ namespace Game.Engine
                 }
                 else
                 {
-                    int damage = (int)((actor.Meta.HitPoints ?? 0) * 0.1); //10% of the remaining hit points.
+                    int damage = (int)((actor.Meta.HitPoints ?? 0) * 0.05); //5% of the remaining hit points.
                     if (damage == 0) damage = 1;
                     Core.LogLine($"{actor.Meta.DisplayName} took {damage} poison damage!", Color.DarkGreen);
 

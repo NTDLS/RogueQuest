@@ -5,6 +5,12 @@
   "Weight":"2500",
   "Bulk":"4000",
   "Rarity":"80",
-  "AC":"2",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"FireResistance,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"-1"}
+  ],
   "Level":"1"
 }

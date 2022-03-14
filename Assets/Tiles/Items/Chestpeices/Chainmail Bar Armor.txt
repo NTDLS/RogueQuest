@@ -12,6 +12,10 @@
   "ModDexterity":"",
   "ModIntelligence":"",
   "ModStrength":"",
+  "ElectricResistance":"-1",
+  "FireResistance":"1",
+  "EarthResistance":"1",
+  "IceResistance":"-1",
   "Enchantment":"Normal",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Chainmail Bar Armor"
 

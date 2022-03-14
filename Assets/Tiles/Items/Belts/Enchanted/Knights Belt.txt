@@ -4,7 +4,7 @@
   "Weight":"300",
   "Bulk":"300",
   "Rarity":"0",
-  "AC":"10",
+  "Effects":[{"EffectType":"ArmorClass","ValueType":"Fixed","Value":"10"}],
   "Value":"5120",
   "ItemCapacity":"10",
   "BulkCapacity":"100000",

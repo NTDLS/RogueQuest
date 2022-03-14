@@ -1,17 +1,20 @@
 {
-  "Name":"Enchanted Dark Lord Boots",
+  "Name":"Cursed Dark Lord Boots",
   "SubType": "Boots",
   "Value": "1200",
   "Weight":"2500",
   "Bulk":"4000",
   "Rarity":"4",
-  "AC":"-5",
-  "ModSpeed":"-1",
-  "ModConstitution":"",
-  "ModDexterity":"-2",
-  "ModIntelligence":"",
-  "ModStrength":"-3",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"-5"},
+    {"EffectType":"Speed,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"Dexterity,","ValueType":"Fixed","Value":"-2"},
+    {"EffectType":"Strength,","ValueType":"Fixed","Value":"-3"},
+    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"-1"}
+  ],
   "Level":"6",
-  "Enchantment":"Enchated",
+  "Enchantment":"Cursed",
   "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Metal Boots"
 }

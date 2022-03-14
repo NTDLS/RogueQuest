@@ -13,5 +13,9 @@
   "ModIntelligence":"",
   "ModStrength":"",
   "Enchantment":"Normal",
+  "ElectricResistance":"0",
+  "FireResistance":"0",
+  "EarthResistance":"0",
+  "IceResistance":"1",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Leather Armor"
 }

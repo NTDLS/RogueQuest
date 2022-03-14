@@ -2584,14 +2584,7 @@ namespace ScenarioEdit
 
                     if (item.Meta.SubType == ActorSubType.Scroll)
                     {
-                        if (scrolls.PhysicalNumberOfRows == 0) CreateHeader(scrolls, "Name,Level,Value,Bulk,Weight,Rarity,Mana,Effect,Damage,Duration,Cast Time");
-
-                        string effect = $"{item.Meta.Effect}";
-
-                        if (!string.IsNullOrWhiteSpace(item.Meta.EffectFormula))
-                        {
-                            effect += $" +{item.Meta.EffectFormula}";
-                        }
+                        if (scrolls.PhysicalNumberOfRows == 0) CreateHeader(scrolls, "Name,Level,Value,Bulk,Weight,Rarity,Mana,Effect,Damage,Cast Time");
 
                         IRow body = scrolls.CreateRow(scrolls.PhysicalNumberOfRows);
                         int cell = 0;
@@ -2603,22 +2596,14 @@ namespace ScenarioEdit
                         body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
 
                         body.CreateCell(cell++).SetCellValue(item.Meta.Mana ?? 0);
-                        body.CreateCell(cell++).SetCellValue(effect);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.EffectText);
                         body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
-                        body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.CastTime ?? 0);
                     }
 
                     if (item.Meta.SubType == ActorSubType.Wand)
                     {
-                        if (wands.PhysicalNumberOfRows == 0) CreateHeader(wands, "Name,Level,Value,Bulk,Weight,Rarity,Effect,Damage,Duration,Cast Time");
-
-                        string effect = $"{item.Meta.Effect}";
-
-                        if (!string.IsNullOrWhiteSpace(item.Meta.EffectFormula))
-                        {
-                            effect += $" +{item.Meta.EffectFormula}";
-                        }
+                        if (wands.PhysicalNumberOfRows == 0) CreateHeader(wands, "Name,Level,Value,Bulk,Weight,Rarity,Effect,Damage,Cast Time");
 
                         IRow body = wands.CreateRow(wands.PhysicalNumberOfRows);
                         int cell = 0;
@@ -2629,22 +2614,14 @@ namespace ScenarioEdit
                         body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
 
-                        body.CreateCell(cell++).SetCellValue(effect);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.EffectText);
                         body.CreateCell(cell++).SetCellValue(item.Meta.DndDamageText);
-                        body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.CastTime ?? 0);
                     }
 
                     if (item.Meta.SubType == ActorSubType.Potion)
                     {
-                        if (potions.PhysicalNumberOfRows == 0) CreateHeader(potions, "Name,Level,Value,Bulk,Weight,Rarity,Effect,Duration");
-
-                        string effect = $"{item.Meta.Effect}";
-
-                        if (!string.IsNullOrWhiteSpace(item.Meta.EffectFormula))
-                        {
-                            effect += $" +{item.Meta.EffectFormula}";
-                        }
+                        if (potions.PhysicalNumberOfRows == 0) CreateHeader(potions, "Name,Level,Value,Bulk,Weight,Rarity,Effect");
 
                         IRow body = potions.CreateRow(potions.PhysicalNumberOfRows);
                         int cell = 0;
@@ -2655,8 +2632,7 @@ namespace ScenarioEdit
                         body.CreateCell(cell++).SetCellValue(item.Meta.Weight ?? 0);
                         body.CreateCell(cell++).SetCellValue(item.Meta.RarityText);
 
-                        body.CreateCell(cell++).SetCellValue(effect);
-                        body.CreateCell(cell++).SetCellValue(item.Meta.ExpireTime ?? 0);
+                        body.CreateCell(cell++).SetCellValue(item.Meta.EffectText);
                     }
                 }
 

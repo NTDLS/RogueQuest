@@ -5,13 +5,13 @@
   "Weight":"1000",
   "Bulk":"3200",
   "Rarity":"10",
-  "AC":"2",
-  "ModSpeed":"",
-  "ModConstitution":"",
-  "ModDexterity":"3",
-  "ModIntelligence":"",
-  "ModStrength":"",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"Speed,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"Dexterity,","ValueType":"Fixed","Value":"3"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"1"}
+  ],  
   "Level":"2",
-  "Enchantment":"Enchated",
+  "Enchantment":"Enchanted",
   "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Leather Boots"
 }

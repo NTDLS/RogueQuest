@@ -2,16 +2,19 @@
   "Name":"Enchanted Leather Bracers",
   "SubType": "Bracers",
   "Value": "270",
-  "AC":"3",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"3"},
+    {"EffectType":"ModDexterity,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"FireResistance,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"1"}
+  ],
   "Weight":"250",
   "Bulk":"2000",
   "Rarity":"40",
   "ModSpeed":"",
-  "ModConstitution":"",
-  "ModDexterity":"1",
-  "ModIntelligence":"",
-  "ModStrength":"",
   "Level":"2",
-  "Enchantment":"Enchated",
+  "Enchantment":"Enchanted",
   "UnidentifiedTilePath":"Tiles\\Items\\Bracers\\Leather Bracers"
 }

@@ -2,16 +2,18 @@
   "Name":"Enchanted Chainmail Bracers",
   "SubType": "Bracers",
   "Value": "300",
-  "AC":"2",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"3"},
+    {"EffectType":"ModDexterity,","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"FireResistance,","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"0"}
+  ],
   "Weight":"450",
   "Bulk":"2000",
   "Rarity":"40",
-  "ModSpeed":"",
-  "ModConstitution":"",
-  "ModDexterity":"2",
-  "ModIntelligence":"",
-  "ModStrength":"",
   "Level":"3",
-  "Enchantment":"Enchated",
+  "Enchantment":"Enchanted",
   "UnidentifiedTilePath":"Tiles\\Items\\Bracers\\Chainmail Bracers"
 }

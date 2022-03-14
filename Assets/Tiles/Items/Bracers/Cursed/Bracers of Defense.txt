@@ -2,16 +2,18 @@
   "Name":"Enchanted Bracers of Defense",
   "SubType": "Bracers",
   "Value": "400",
-  "AC":"6",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"-3"},
+    {"EffectType":"ModDexterity,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"FireResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"-1"}
+  ],
   "Weight":"250",
   "Bulk":"2000",
   "Rarity":"50",
-  "ModSpeed":"",
-  "ModConstitution":"",
-  "ModDexterity":"3",
-  "ModIntelligence":"",
-  "ModStrength":"",
   "Level":"3",
-  "Enchantment":"Enchated",
+  "Enchantment":"Enchanted",
   "UnidentifiedTilePath":"Tiles\\Items\\Bracers\\Bracers of Defense"
 }

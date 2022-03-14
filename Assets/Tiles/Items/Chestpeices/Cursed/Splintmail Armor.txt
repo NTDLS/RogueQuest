@@ -12,6 +12,10 @@
   "ModDexterity":"-1",
   "ModIntelligence":"",
   "ModStrength":"",
+  "ElectricResistance":"-2",
+  "FireResistance":"-1",
+  "EarthResistance":"-2",
+  "IceResistance":"-2",
   "Enchantment":"Cursed",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Splintmail Armor"
 }

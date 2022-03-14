@@ -981,23 +981,23 @@ namespace Game
                 modifier += $"POISON,";
                 labelPlayer.ForeColor = Color.Red;
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.IncreaseStrength))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModStrength))
             {
                 modifier += "STR+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.IncreaseIntelligence))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModIntelligence))
             {
                 modifier += "INT+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.IncreaseConstitution))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModConstitution))
             {
                 modifier += "CON+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.IncreaseDexterity))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModDexterity))
             {
                 modifier += "DEX+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.IncreaseArmorClass))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModArmorClass))
             {
                 modifier += "AC+,";
             }

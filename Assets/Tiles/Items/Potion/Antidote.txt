@@ -3,7 +3,7 @@
   "SubType": "Potion",
   "Value": "40",
   "TargetType":"Self",
-  "Effect": "CurePoison",
+  "Effects":[{"EffectType":"CurePoison"}],
   "IsConsumable":"True",
   "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
   "Weight":"200",

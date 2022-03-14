@@ -12,6 +12,10 @@
   "ModDexterity":"",
   "ModIntelligence":"",
   "ModStrength":"",
+  "ElectricResistance":"0",
+  "FireResistance":"0",
+  "EarthResistance":"0",
+  "IceResistance":"2",
   "Enchantment":"Enchanted",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Studded Leather Armor"
 }

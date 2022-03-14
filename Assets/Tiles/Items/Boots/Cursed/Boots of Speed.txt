@@ -1,17 +1,19 @@
 {
-  "Name":"Enchanted Boots of Speed",
+  "Name":"Cursed Boots of Speed",
   "SubType": "Boots",
   "Value": "200",
   "Weight":"500",
   "Bulk":"3500",
   "Rarity":"20",
-  "AC":"-2",
-  "ModSpeed":"-3",
-  "ModConstitution":"",
-  "ModDexterity":"",
-  "ModIntelligence":"",
-  "ModStrength":"",
+  "Effects":[
+    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"-2"},
+    {"EffectType":"Speed,","ValueType":"Fixed","Value":"-2"},
+    {"EffectType":"Dexterity,","ValueType":"Fixed","Value":"-3"},
+    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"-1"}
+  ],
   "Level":"3",
-  "Enchantment":"Enchated",
+  "Enchantment":"Cursed",
   "UnidentifiedTilePath":"Tiles\\Items\\Boots\\Leather Boots"
 }
