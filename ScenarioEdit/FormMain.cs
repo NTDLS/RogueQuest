@@ -1711,6 +1711,17 @@ namespace ScenarioEdit
                             selectedTile.Meta.SpawnSubTypes = form.SelectedSubTypes.ToArray();
                         }
                     }
+                    else if (selectedRow.Text == "Effects" && selectedItems.Count == 1)
+                    {
+                        using var form = new FormEditEffects(_core, selectedTile.Meta.Effects);
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            selectedTile.Meta.Effects = form.Effects;
+                        }
+                    }
+                    //listViewProperties.Items.Add("Is Identified").SubItems.Add(selectedTile.Meta.IsIdentified.ToString());
+                    //listViewProperties.Items.Add("Enchantment").SubItems.Add(selectedTile.Meta.Enchantment.ToString());
+                    //listViewProperties.Items.Add("Effects").SubItems.Add(Utility.GetEffectsText(selectedTile.Meta.Effects));
                     else
                     {
                         if (selectedRow.Text == "Dialog")
@@ -1732,7 +1743,8 @@ namespace ScenarioEdit
                         }
                         else if (selectedRow.Text == "Can Take Damage"
                             || selectedRow.Text == "Can Walk On"
-                            || selectedRow.Text == "Only Dialog Once")
+                            || selectedRow.Text == "Only Dialog Once"
+                            || selectedRow.Text == "Is Identified")
                         {
                             if (bool.TryParse(selectedRow.SubItems[1].Text.ToString(), out bool inputValue) == false)
                             {
@@ -1743,7 +1755,6 @@ namespace ScenarioEdit
                             {
                                 if (dialog.ShowDialog() == DialogResult.OK)
                                 {
-
                                     if (selectedRow.Text == "Can Take Damage")
                                     {
                                         foreach (var tile in selectedItems)
@@ -1763,6 +1774,13 @@ namespace ScenarioEdit
                                         foreach (var tile in selectedItems)
                                         {
                                             tile.Meta.OnlyDialogOnce = dialog.PropertyValue;
+                                        }
+                                    }
+                                    else if (selectedRow.Text == "Is Identified")
+                                    {
+                                        foreach (var tile in selectedItems)
+                                        {
+                                            tile.Meta.IsIdentified = dialog.PropertyValue;
                                         }
                                     }
                                 }
@@ -2011,6 +2029,13 @@ namespace ScenarioEdit
                 {
                     listViewProperties.Items.Add("Dialog").SubItems.Add(selectedTile.Meta.Dialog);
                     listViewProperties.Items.Add("Only Dialog Once").SubItems.Add(selectedTile.Meta.OnlyDialogOnce.ToString());
+                }
+
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorItem)
+                {
+                    listViewProperties.Items.Add("Is Identified").SubItems.Add(selectedTile.Meta.IsIdentified.ToString());
+                    listViewProperties.Items.Add("Enchantment").SubItems.Add(selectedTile.Meta.Enchantment.ToString());
+                    listViewProperties.Items.Add("Effects").SubItems.Add(Utility.GetEffectsText(selectedTile.Meta.Effects));
                 }
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden

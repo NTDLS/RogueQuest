@@ -1,11 +1,13 @@
 ﻿using Assets;
 using Library.Engine.Types;
+using Library.Types;
 using Library.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Library.Engine
 {
@@ -17,7 +19,6 @@ namespace Library.Engine
         private string _ProjectileTilePath;
         private string _UsageAnimationTilePath;
         private string _Name;
-        private string _DisplayName;
         private int? _Quantity;
         private int? _Experience;
         private int? _HitPoints;
@@ -42,55 +43,80 @@ namespace Library.Engine
         private string _LevelWarpName;
         private Guid? _LevelWarpTargetTileUID;
         private ActorSubType? _SubType;
-        private bool? _IsIdentified;
 
         #endregion
 
-        public class Effect
+        public int UIDHash
         {
-            [JsonConverter(typeof(StringEnumConverter))]
-            public ItemEffect EffectType { get; set; }
-            [JsonConverter(typeof(StringEnumConverter))]
-            public ItemEffectType ValueType { get; set; }
-            public int Value { get; set; }
-            /// <summary>
-            /// For magical items, this is how long an effect will last before it is removed.
-            /// </summary>
-            public int? Duration { get; set; }
+            get
+            {
+                return UID.ToString().ToCharArray().Sum(x => x);
+            }
         }
 
         /// <summary>
         /// For enchanted or cursed items, they will be unidentified when found unless bought from a store.
         /// </summary>
-        public bool? IsIdentified
+        /// 
+        public bool? IsIdentified { get; set; }
+
+        public void Identify()
         {
-            get
+            Random rand = new Random(UIDHash);
+
+            IsIdentified = true;
+
+            if (rand.Next() % 100 >= 80) //20% chance or being enchanted or cursed.
             {
-                return _IsIdentified;
-            }
-            set
-            {
-                if (_IsIdentified == false && value == true)
+                bool willBeCursed = rand.Next() % 100 < 50;
+
+                int targetBonusPoints = MathUtility.RandomNumber(1, 6); //Add some enchantment.
+                int bonusPointsApplied = 0;
+
+                if (Effects == null)
                 {
-                    if (MathUtility.ChanceIn(30))
-                    {
-                        int bonusPoints = MathUtility.RandomNumber(1, 5);
-                        EnchantmentBonus = bonusPoints;
-
-                        while (bonusPoints > 0)
-                        {
-                            if (MathUtility.ChanceIn(20)) { ModConstitution++; ; bonusPoints--; }
-                            if (MathUtility.ChanceIn(20)) { ModDexterity++; ; bonusPoints--; }
-                            if (MathUtility.ChanceIn(20)) { ModIntelligence++; ; bonusPoints--; }
-                            if (MathUtility.ChanceIn(20)) { ModSpeed++; ; bonusPoints--; }
-                            if (MathUtility.ChanceIn(20)) { ModStrength++; ; bonusPoints--; }
-                            if (MathUtility.ChanceIn(20)) { AC++; bonusPoints--; }
-                        }
-                    }
-
-                    DisplayName = Name;
+                    Effects = new List<MetaEffect>();
                 }
-                _IsIdentified = value;
+
+                while (bonusPointsApplied < targetBonusPoints)
+                {
+                    if (rand.Next() % 100 >= 50) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModArmorClass, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModConstitution, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModDexterity, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModIntelligence, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModStrength, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModEarthResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModElectricResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModFireResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModIceResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+
+                    if (Effects.Where(o => o.EffectType == ItemEffect.ModSpeed).Sum(o => o.Value) < 3)
+                    {
+                        if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModSpeed, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    }
+                }
+
+                EnchantmentBonus = bonusPointsApplied;
+
+                if (willBeCursed)
+                {
+                    Enchantment = EnchantmentType.Cursed;
+
+                    foreach (var effect in Effects)
+                    {
+                        effect.Value *= -1; //Make this item suck!
+                    }
+                    Name = $"Cursed {Name}";
+                }
+                else
+                {
+                    Enchantment = EnchantmentType.Enchanted;
+                    Name = $"Enchanted {Name}";
+                }
+            }
+            else
+            {
+                Enchantment = EnchantmentType.Normal;
             }
         }
 
@@ -99,9 +125,13 @@ namespace Library.Engine
         /// </summary>
         public int? EnchantmentBonus { get; set; }
         /// <summary>
-        /// For enchanted or cursed items, they will be unidentified when found unless bought from a store. This is the image that will be shown until identified.
+        /// The image to use for enchanted item.
         /// </summary>
-        public string UnidentifiedTilePath { get; set; }
+        public string EnchantedImagePath { get; set; }
+        /// <summary>
+        /// The image to use for cursed item.
+        /// </summary>
+        public string CursedImagePath { get; set; }
         /// <summary>
         /// Whether is iten is normal, cursed or enchanted.
         /// </summary>
@@ -171,14 +201,6 @@ namespace Library.Engine
         /// </summary>
         public string UsageAnimationTilePath { get { return _UsageAnimationTilePath == string.Empty ? null : _UsageAnimationTilePath; } set { _UsageAnimationTilePath = value; } }
         /// <summary>
-        /// The name of the tile.
-        /// </summary>
-
-        /// <summary>
-        /// This is the name that should be shown to the user. It will the plain item name until identified.
-        /// </summary>
-        public string DisplayName { get { return _DisplayName == string.Empty ? null : _DisplayName; } set { _DisplayName = value; } }
-        /// <summary>
         /// The name of the item.
         /// </summary>
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
@@ -193,7 +215,7 @@ namespace Library.Engine
         /// <summary>
         /// Used for magical items, tells the engine what effect the tile will have (Poison, magic arrow, etc.)
         /// </summary>
-        public List<Effect> Effects { get; set; }
+        public List<MetaEffect> Effects { get; set; }
         /// <summary>
         /// Whether the ranged weapon uses a bolt or an arrow. Used to search the quiver for an appropriate projectile.
         /// </summary>
@@ -224,44 +246,6 @@ namespace Library.Engine
         /// The armor class of this tile (also the AC modifier of this tile when equipped).
         /// </summary>
         public int? AC { get { return _AC == 0 ? null : _AC; } set { _AC = value; } }
-
-        /// <summary>
-        /// The speed modifier of this tile when equipped.
-        /// </summary>
-        public int? ModSpeed { get; set; }
-        /// <summary>
-        /// The constitution modifier of this tile when equipped.
-        /// </summary>
-        public int? ModConstitution { get; set; }
-        /// <summary>
-        /// The constitution modifier of this tile when equipped.
-        /// </summary>
-        public int? ModDexterity { get; set; }
-        /// <summary>
-        /// The dexterity modifier of this tile when equipped.
-        /// </summary>
-        public int? ModIntelligence { get; set; }
-        /// <summary>
-        /// The strength modifier of this tile when equipped.
-        /// </summary>
-        public int? ModStrength { get; set; }
-
-        /// <summary>
-        /// The Electric Resistance modifier of this tile when equipped. Can be positive or negative.
-        /// </summary>
-        public int? ElectricResistance { get; set; }
-        /// <summary>
-        /// The Fire Resistance modifier of this tile when equipped. Can be positive or negative.
-        /// </summary>
-        public int? FireResistance { get; set; }
-        /// <summary>
-        /// The Earth Resistance modifier of this tile when equipped. Can be positive or negative.
-        /// </summary>
-        public int? EarthResistance { get; set; }
-        /// <summary>
-        /// The Ice Resistance modifier of this tile when equipped. Can be positive or negative.
-        /// </summary>
-        public int? IceResistance { get; set; }
 
         /// <summary>
         /// The number of dice used when calcuating damage.
@@ -360,18 +344,18 @@ namespace Library.Engine
         {
             get
             {
-                if ((this.DamageDice ?? 0) > 0 && (this.DamageDiceFaces ?? 0) > 0)
+                if ((DamageDice ?? 0) > 0 && (DamageDiceFaces ?? 0) > 0)
                 {
-                    var text = $"{this.DamageDice}d{this.DamageDiceFaces}";
+                    var text = $"{DamageDice}d{DamageDiceFaces}";
 
-                    if (this.DamageAdditional > 0)
+                    if (DamageAdditional > 0)
                     {
-                        text += $" +{this.DamageAdditional}";
+                        text += $" +{DamageAdditional}";
                     }
 
-                    if (this.SplashDamageRange > 0)
+                    if (SplashDamageRange > 0)
                     {
-                        text += $" (Splash Range {this.SplashDamageRange:N0})";
+                        text += $" (Splash Range {SplashDamageRange:N0})";
                     }
 
                     return text;
@@ -394,8 +378,8 @@ namespace Library.Engine
         {
             get
             {
-                throw new NotImplementedException();
-                return "";
+
+                return Types.Utility.GetEffectsText(this.Effects).Replace("|","\r\n");
             }
         }
 
@@ -422,7 +406,8 @@ namespace Library.Engine
             this.IsMemoriziedSpell = with.IsMemoriziedSpell ?? this.IsMemoriziedSpell;
             this.Enchantment = with.Enchantment ?? this.Enchantment;
             this.IsIdentified = with.IsIdentified ?? this.IsIdentified;
-            this.UnidentifiedTilePath = with.UnidentifiedTilePath ?? this.UnidentifiedTilePath;
+            this.EnchantedImagePath = with.EnchantedImagePath ?? this.EnchantedImagePath;
+            this.CursedImagePath = with.CursedImagePath ?? this.CursedImagePath;
             this.Rarity = with.Rarity ?? this.Rarity;
             this.DamageType = with.DamageType ?? this.DamageType;
             this.Dialog = with.Dialog ?? this.Dialog;
@@ -440,7 +425,6 @@ namespace Library.Engine
             this.DamageDice = with.DamageDice ?? this.DamageDice;
             this.DamageDiceFaces = with.DamageDiceFaces ?? this.DamageDiceFaces;
             this.DamageAdditional = with.DamageAdditional ?? this.DamageAdditional;
-            this.DisplayName = with.DisplayName ?? this.DisplayName;
             this.Strength = with.Strength ?? this.Strength;
             this.Dexterity = with.Dexterity ?? this.Dexterity;
             this.SpawnType = with.SpawnType ?? this.SpawnType;
@@ -510,20 +494,6 @@ namespace Library.Engine
             }
 
             meta.OriginalHitPoints = meta.HitPoints;
-
-            meta.DisplayName = meta.Name;
-
-            if (meta.Enchantment != null && (meta.IsIdentified ?? false) == false)
-            {
-                if (meta.UnidentifiedTilePath != tilePath)
-                {
-                    if (string.IsNullOrWhiteSpace(meta.UnidentifiedTilePath))
-                    {
-                        throw new Exception("Unidentified tile must have an [UnidentifiedTilePath] specified.");
-                    }
-                    meta.DisplayName = GetFreshMetadata(meta.UnidentifiedTilePath).Name;
-                }
-            }
 
             return meta;
         }

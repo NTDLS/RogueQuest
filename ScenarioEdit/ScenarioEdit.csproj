@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FormEditEffects.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormEditSelection.cs">
       <SubType>Form</SubType>
     </Compile>

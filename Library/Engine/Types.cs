@@ -1,7 +1,26 @@
-﻿namespace Library.Engine.Types
+﻿using Library.Types;
+using System.Collections.Generic;
+using System.Linq;
+using static Library.Engine.TileMetadata;
+
+namespace Library.Engine.Types
 {
     public static class Utility
     {
+        public static string PosNeg(int val)
+        {
+            if (val > 0)
+            {
+                return $"+{val:N0}";
+            }
+            else if (val > 0)
+            {
+                return $"-{val:N0}";
+            }
+
+            return $"{val:N0}";
+        }
+
         public static DamageType GetOppositeOfDamageType(DamageType damageType)
         {
             switch (damageType)
@@ -23,6 +42,40 @@
             else if (rarity >= 1) return "Ultra Rare";
             else if (rarity >= 0) return "Legendary";
             return "n/a";
+        }
+
+        public static string GetEffectsText(List<MetaEffect> effects)
+        {
+            if (effects == null)
+            {
+                return "";
+            }
+
+            string text = string.Empty;
+
+            var modArmorClass = effects.Where(o => o.EffectType == ItemEffect.ModArmorClass).Sum(o => o.Value);
+            var modConstitution = effects.Where(o => o.EffectType == ItemEffect.ModConstitution).Sum(o => o.Value);
+            var modDexterity = effects.Where(o => o.EffectType == ItemEffect.ModDexterity).Sum(o => o.Value);
+            var modIntelligence = effects.Where(o => o.EffectType == ItemEffect.ModIntelligence).Sum(o => o.Value);
+            var modStrength = effects.Where(o => o.EffectType == ItemEffect.ModStrength).Sum(o => o.Value);
+            var modSpeed = effects.Where(o => o.EffectType == ItemEffect.ModSpeed).Sum(o => o.Value);
+            var modEarthResistance = effects.Where(o => o.EffectType == ItemEffect.ModEarthResistance).Sum(o => o.Value);
+            var modElectricResistance = effects.Where(o => o.EffectType == ItemEffect.ModElectricResistance).Sum(o => o.Value);
+            var modFireResistance = effects.Where(o => o.EffectType == ItemEffect.ModFireResistance).Sum(o => o.Value);
+            var modIceResistance = effects.Where(o => o.EffectType == ItemEffect.ModIceResistance).Sum(o => o.Value);
+
+            if (modArmorClass != 0) text += $"AC {PosNeg(modArmorClass)}\r\n";
+            if (modConstitution != 0) text += $"CON {PosNeg(modConstitution)}\r\n";
+            if (modDexterity != 0) text += $"DEX {PosNeg(modDexterity)}\r\n";
+            if (modIntelligence != 0) text += $"INT {PosNeg(modIntelligence)}\r\n";
+            if (modStrength != 0) text += $"STR {PosNeg(modStrength)}\r\n";
+            if (modSpeed != 0) text += $"SPD {PosNeg(modSpeed)}\r\n";
+            if (modEarthResistance != 0) text += $"EARTH {PosNeg(modEarthResistance)}\r\n";
+            if (modElectricResistance != 0) text += $"ELECTRIC {PosNeg(modElectricResistance)}\r\n";
+            if (modFireResistance != 0) text += $"FIRE {PosNeg(modFireResistance)}\r\n";
+            if (modIceResistance != 0) text += $"ICE {PosNeg(modIceResistance)}\r\n";
+
+            return text.Trim().Replace("\r\n", "|");
         }
 
         public static ActorSubType[] RandomDropSubTypes
@@ -151,9 +204,10 @@
 
     public enum EnchantmentType
     {
-        Normal,
-        Cursed,
-        Enchanted
+        Undecided, //Will be decided at runtime.
+        Normal, //Not cursed or enchanted, if set explicitly - does not need to be identified when found.
+        Enchanted, //Boosted stats
+        Cursed //Negative boosted stats
     }
 
     public enum ProjectileType
@@ -177,6 +231,7 @@
         Fixed,
         Percent
     }
+
     public enum ItemEffect
     {
         Unspecified, //¯\_(ツ)_/¯
@@ -185,6 +240,7 @@
         CurePoison,
         SummonMonster,
 
+        ModSpeed,
         ModStrength,
         ModDexterity,
         ModConstitution,
@@ -201,11 +257,12 @@
         CastPoison,
         RemoveCurse
     }
+
     public enum StateOfBeing
     {
         Unspecified, //¯\_(ツ)_/¯
         Poisoned,
-        Slowed,
+        ModSpeed,
         Held,
 
         ModStrength,
@@ -219,6 +276,7 @@
         ModElectricResistance,
         ModFireResistance
     }
+
     public enum RotationMode
     {
         None, //Almost free.

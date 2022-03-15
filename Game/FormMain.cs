@@ -270,7 +270,7 @@ namespace Game
                 return;
             }
 
-            string tipText = hoverTile.Meta?.DisplayName;
+            string tipText = hoverTile.Meta?.Name;
 
             if (hoverTile != null)
             {
@@ -309,7 +309,7 @@ namespace Game
             {
                 if (hoverTile != null)
                 {
-                    string text = hoverTile?.Meta.DisplayName;
+                    string text = hoverTile?.Meta.Name;
 
                     if (hoverTile.Meta.ActorClass == ActorClassName.ActorHostileBeing)
                     {
@@ -646,9 +646,9 @@ namespace Game
                         UID = (Guid)spell.Meta.UID
                     };
 
-                    var item = toolStripDropDownButtonSpells.DropDownItems.Add(spell.Meta.DisplayName);
+                    var item = toolStripDropDownButtonSpells.DropDownItems.Add(spell.Meta.Name);
                     item.Tag = info;
-                    item.ToolTipText = $"{spell.Meta.DisplayName} ({spell.Meta.Mana} mana)";
+                    item.ToolTipText = $"{spell.Meta.Name} ({spell.Meta.Mana} mana)";
                     item.Image = GetImage(spell.TilePath);
                     item.Click += KnownSpellItem_Click;
 
@@ -687,7 +687,7 @@ namespace Game
                     || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType != TargetType.Self))
                 {
                     splitContainerHoriz.Cursor = Cursors.Cross;
-                    _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.DisplayName}... (right-click to cancel)");
+                    _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.Name}... (right-click to cancel)");
                     CurrentMouseMode = MouseMode.RangedTargetSelction;
                     PendingQuickItemMouseOperation = tag;
                 }
@@ -776,7 +776,7 @@ namespace Game
             {
                 info.Button = existingButtons.Where(o => o.UID == (Guid)tile.Meta.UID).First().Button;
 
-                string text = tile.Meta.DisplayName;
+                string text = tile.Meta.Name;
                 if (tile.Meta.Charges > 0)
                 {
                     text += $"\r\n{tile.Meta.Charges} charges remaining.";
@@ -802,7 +802,7 @@ namespace Game
             }
             else
             {
-                string text = tile.Meta.DisplayName;
+                string text = tile.Meta.Name;
                 if (tile.Meta.Charges > 0)
                 {
                     text += $"\r\n{tile.Meta.Charges} charges remaining.";
@@ -859,13 +859,13 @@ namespace Game
                     || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType != TargetType.Self))
                 {
                     splitContainerHoriz.Cursor = Cursors.Cross;
-                    _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.DisplayName}... (right-click to cancel)");
+                    _core.LogLine($"Select a target for the {inventoryItem.Tile.Meta.Name}... (right-click to cancel)");
                     CurrentMouseMode = MouseMode.RangedTargetSelction;
                     PendingQuickItemMouseOperation = tag;
                 }
                 else if (inventoryItem.Tile.Meta.SubType == ActorSubType.Book)
                 {
-                    string message = $"Read {inventoryItem.Tile.Meta.DisplayName} to learn new spell?";
+                    string message = $"Read {inventoryItem.Tile.Meta.Name} to learn new spell?";
 
                     if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
@@ -893,7 +893,7 @@ namespace Game
                             }
                             else
                             {
-                                string text = inventoryItem.Tile.Meta.DisplayName;
+                                string text = inventoryItem.Tile.Meta.Name;
                                 if (inventoryItem.Tile.Meta.CanStack == true && inventoryItem.Tile.Meta.Quantity > 0)
                                 {
                                     text += $" ({inventoryItem.Tile.Meta.Quantity})";
@@ -938,10 +938,10 @@ namespace Game
 
         private bool UseSelfPotionOrScroll(TileIdentifier item)
         {
-            string message = $"Use {item.Meta.DisplayName}?";
+            string message = $"Use {item.Meta.Name}?";
             if (item.Meta.IsMemoriziedSpell == true)
             {
-                message = $"Use {item.Meta.DisplayName} ({item.Meta.Mana} mana)?";
+                message = $"Use {item.Meta.Name} ({item.Meta.Mana} mana)?";
             }
 
             if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)

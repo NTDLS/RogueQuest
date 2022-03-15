@@ -41,16 +41,32 @@ namespace Library.Engine
         {
             get
             {
-                if ((Meta.Enchantment == EnchantmentType.Enchanted || Meta.Enchantment == EnchantmentType.Cursed)
-                    && (Meta.IsIdentified ?? false) == false)
+                if ((Meta.Enchantment ?? EnchantmentType.Normal) == EnchantmentType.Normal
+                    || (Meta.Enchantment ?? EnchantmentType.Normal) == EnchantmentType.Undecided
+                    || Meta.IsIdentified == false)
                 {
-                    if (string.IsNullOrWhiteSpace(Meta.UnidentifiedTilePath))
-                    {
-                        throw new Exception("Unidentified tile must have an [UnidentifiedTilePath] specified.");
-                    }
-                    return Constants.GetAssetPath($"{Meta.UnidentifiedTilePath}.png");
+                    return Constants.GetAssetPath($"{TilePath}.png");
                 }
-                return Constants.GetAssetPath($"{TilePath}.png"); ;
+
+                if (Meta.Enchantment == EnchantmentType.Cursed && Meta.IsIdentified == true)
+                {
+                    if (string.IsNullOrWhiteSpace(Meta.EnchantedImagePath) || string.IsNullOrWhiteSpace(Meta.CursedImagePath))
+                    {
+                        throw new Exception("Cursed tile must have an [CursedImagePath] specified.");
+                    }
+                    return Constants.GetAssetPath($"{Meta.CursedImagePath}.png");
+                }
+
+                if (Meta.Enchantment == EnchantmentType.Enchanted && Meta.IsIdentified == true)
+                {
+                    if (string.IsNullOrWhiteSpace(Meta.EnchantedImagePath) || string.IsNullOrWhiteSpace(Meta.CursedImagePath))
+                    {
+                        throw new Exception("Cursed tile must have an [EnchantedImagePath] specified.");
+                    }
+                    return Constants.GetAssetPath($"{Meta.EnchantedImagePath}.png");
+                }
+
+                return Constants.GetAssetPath($"{TilePath}.png");
             }
         }
 

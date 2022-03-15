@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Library.Engine
 {
@@ -32,53 +33,58 @@ namespace Library.Engine
         public int StartingStrength { get; set; }
         public List<TileIdentifier> KnownSpells { get; set; } = new List<TileIdentifier>();
 
-        //Augmented attributes are increased/decreased via enchanted items, potions, etc.
-        private int _augmentedConstitution = 0;
-        public int AugmentedConstitution
-        {
-            get
-            {
-                return _augmentedConstitution;
-            }
-            set
-            {
-                var delta = value - _augmentedConstitution;
-                _augmentedConstitution = value;
-                AvailableHitpoints += delta;
-            }
-        }
 
-        private int _augmentedIntelligence = 0;
-        public int AugmentedIntelligence
-        {
-            get
-            {
-                return _augmentedIntelligence;
-            }
-            set
-            {
-                var delta = value - _augmentedIntelligence;
-                _augmentedIntelligence = value;
-                AvailableMana += delta;
-            }
-        }
+        #region Starting + Augmented attributes.
 
-        public int AugmentedSpeed { get; set; }
-        public int AugmentedDexterity { get; set; }
-        public int AugmentedStrength { get; set; }
-        public int AugmentedAC { get; set; } //This + all AC modification equipment is the total AC.
-        public int AC => AugmentedAC + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.AC ?? 0);
+        [JsonIgnore]
+        public int Armorclass => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModArmorClass).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModArmorClass).Sum(o => o.Value) ?? 0);
 
-        //Starting + Augmented attributes.
+        [JsonIgnore]
+        public int Speed => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModSpeed).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModSpeed).Sum(o => o.Value) ?? 0);
 
-        public int Speed => AugmentedSpeed + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModConstitution ?? 0);
-        public int Constitution => StartingConstitution + AugmentedConstitution + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModConstitution ?? 0);
-        public int Dexterity => StartingDexterity + AugmentedDexterity + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModDexterity ?? 0);
-        public int Intelligence => StartingIntelligence + AugmentedIntelligence + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModIntelligence ?? 0);
-        public int Strength => StartingStrength + AugmentedStrength + _core.State.Character.Equipment.Where(o => o.Tile != null).Sum(o => o.Tile?.Meta?.ModStrength ?? 0);
-        public int Mana => ((6 * Level) + StartingIntelligence) + AugmentedIntelligence;
-        public int Hitpoints => ((6 * Level) + StartingConstitution) + AugmentedConstitution;
-        public int MaxWeight => ((Level * 20) + StartingStrength) + AugmentedStrength;
+        [JsonIgnore]
+        public int Constitution => StartingConstitution
+            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModConstitution).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModConstitution).Sum(o => o.Value) ?? 0);
+
+        [JsonIgnore]
+        public int Dexterity => StartingDexterity
+            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModDexterity).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModDexterity).Sum(o => o.Value) ?? 0);
+
+        [JsonIgnore]
+        public int Intelligence => StartingIntelligence
+            + (_core?.State?.ActorStates?.States(UID)?.Where(o => o.State == StateOfBeing.ModIntelligence).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModIntelligence).Sum(o => o.Value) ?? 0);
+
+        [JsonIgnore]
+        public int Strength => StartingStrength
+            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModStrength).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModStrength).Sum(o => o.Value) ?? 0);
+
+        [JsonIgnore]
+        public int EarthResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModEarthResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModEarthResistance).Sum(o => o.Value) ?? 0);
+
+        [JsonIgnore]
+        public int ElectricResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModElectricResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModElectricResistance).Sum(o => o.Value) ?? 0);
+
+        [JsonIgnore]
+        public int FireResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModFireResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModFireResistance).Sum(o => o.Value) ?? 0);
+
+        [JsonIgnore]
+        public int IceResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModIceResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModIceResistance).Sum(o => o.Value) ?? 0);
+
+        #endregion
+
+        public int Mana => (6 * Level) + Intelligence;
+        public int Hitpoints => (6 * Level) + Constitution;
+        public int MaxWeight => (Level * 20) + Strength;
         public int Experience { get; set; }
         public int NextLevelExperience { get; set; }
         public int Level { get; set; }

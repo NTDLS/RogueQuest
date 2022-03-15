@@ -22,7 +22,7 @@ namespace Game
             labelCharacterExpereience.Text = $"{core.State.Character.Experience:N0}";
             labelNextLevelAt.Text = $"{core.State.Character.NextLevelExperience:N0}";
             labelCharacterLevel.Text = $"{core.State.Character.Level:N0}";
-            labelArmorValue.Text = $"{core.State.Character.AC:N0}";
+            labelArmorValue.Text = $"{core.State.Character.Armorclass:N0}";
             labelManaPoints.Text = $"{core.State.Character.Mana:N0}";
             labelHitPoints.Text = $"{core.State.Character.Hitpoints:N0}";
             labelGold.Text = $"{core.State.Character.Money:N0}";

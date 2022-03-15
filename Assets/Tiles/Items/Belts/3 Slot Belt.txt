@@ -8,5 +8,8 @@
   "ItemCapacity":"3",
   "BulkCapacity":"100000",
   "WeightCapacity":"35000",
-  "Level":"3"
+  "Level":"3",
+  "EnchantedImagePath":"Tiles\\Items\\Belts\\@Enchanted\\3 Slot Belt",
+  "CursedImagePath":"Tiles\\Items\\Belts\\@Cursed\\3 Slot Belt",
+  "Enchantment":"Undecided"
 }

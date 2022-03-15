@@ -63,9 +63,9 @@ namespace Game.Classes
 
         public static string GetItemTip(EngineCore core, TileIdentifier tile, bool includeOfferPrice = false, bool includeAskingPrice = false)
         {
-            string text = tile.Meta.DisplayName;
+            string text = tile.Meta.Name;
 
-            if ((tile.Meta.Enchantment != null && (tile.Meta.IsIdentified ?? false) == false) == false)
+            if (((tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (tile.Meta.IsIdentified ?? false) == false) == false)
             {
                 text += $" ({tile.Meta.RarityText})";
             }
@@ -87,13 +87,15 @@ namespace Game.Classes
             if (tile.Meta.CanStack == true && tile.Meta.Quantity > 0)
                 text += "\r\n" + $"Quantity: {tile.Meta.Quantity}";
 
-            if ((tile.Meta.Enchantment != null && (tile.Meta.IsIdentified ?? false) == false) == false)
+            if ((tile.Meta.Enchantment ?? EnchantmentType.Normal) == EnchantmentType.Normal || tile.Meta.IsIdentified == true)
             {
                 if (tile.Meta.CanStack == false && tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {tile.Meta.Charges}";
                 if (tile.Meta.AC != null) text += "\r\n" + $"AC: {tile.Meta.AC:N0}";
                 if (tile.Meta.SubType == ActorSubType.MeleeWeapon || tile.Meta.SubType == ActorSubType.RangedWeapon)
                     text += "\r\n" + $"Stats: {tile.Meta.DndDamageText}";
+
+                if (tile.Meta?.Effects?.Count > 0) text += "\r\n" + $"Effects:\r\n    {tile.Meta.EffectText.Replace("\r\n", "\r\n    ")}";
             }
 
             if (tile.Meta.SubType == ActorSubType.Money)
@@ -112,7 +114,7 @@ namespace Game.Classes
 
         public static void AddItemToListView(ListView listView, TileIdentifier tile)
         {
-            string text = tile.Meta.DisplayName;
+            string text = tile.Meta.Name;
 
             if (tile.Meta.CanStack == true && tile.Meta.Quantity > 0)
             {
@@ -165,6 +167,7 @@ namespace Game.Classes
             if (tile.Meta.Enchantment == EnchantmentType.Enchanted && tile.Meta.IsIdentified == true)
             {
                 value *= 3;
+                value += (tile.Meta.EnchantmentBonus ?? 0) * 500;
             }
 
             if (value >= 1)
@@ -204,7 +207,7 @@ namespace Game.Classes
             }
 
             //If the item is unidentified, then we will waaaaaaay undercut the offer price.
-            if (tile.Meta.Enchantment != null && (tile.Meta.IsIdentified ?? false) == false)
+            if ((tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (tile.Meta.IsIdentified ?? false) == false)
             {
                 value /= 3;
             }

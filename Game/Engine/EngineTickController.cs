@@ -65,7 +65,7 @@ namespace Game.Engine
             var sourceContainerWeight = Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if (currentPackWeight + sourceContainerWeight > maxWeight)
             {
-                Core.LogLine($"This pack contains items too bulky for your {pack.Tile.Meta.DisplayName}. Drop something or move to free hand?");
+                Core.LogLine($"This pack contains items too bulky for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace Game.Engine
             var sourceContainerBulk = Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
             if (currentPackBulk + sourceContainerBulk > maxWeight)
             {
-                Core.LogLine($"This pack contains items too heavy for your {pack.Tile.Meta.DisplayName}. Drop something or move to free hand?");
+                Core.LogLine($"This pack contains items too heavy for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                 return;
             }
 
@@ -98,7 +98,7 @@ namespace Game.Engine
             //Add all the items in the pack on the ground to the pack in the players inventory pack (nested). :(
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID))
             {
-                Core.LogLine($"Picked up" + ((item.Tile.Meta.CanStack == true) ? $" {item.Tile.Meta.Quantity:N0}" : "") + $" {item.Tile.Meta.DisplayName}");
+                Core.LogLine($"Picked up" + ((item.Tile.Meta.CanStack == true) ? $" {item.Tile.Meta.Quantity:N0}" : "") + $" {item.Tile.Meta.Name}");
 
                 if (item.Tile.Meta.CanStack == true)
                 {
@@ -136,18 +136,18 @@ namespace Game.Engine
                 var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                 if (item.Tile.Meta.Weight + currentPackWeight > maxWeight)
                 {
-                    Core.LogLine($"{item.Tile.Meta.DisplayName} is too bulky for your {pack.Tile.Meta.DisplayName}. Drop something or move to free hand?");
+                    Core.LogLine($"{item.Tile.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                     break;
                 }
 
                 var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == pack.Tile.Meta.UID).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                 if (item.Tile.Meta.Bulk + currentPackBulk > maxBulk)
                 {
-                    Core.LogLine($"{item.Tile.Meta.DisplayName} is too heavy for your {pack.Tile.Meta.DisplayName}. Drop something or move to free hand?");
+                    Core.LogLine($"{item.Tile.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                     break;
                 }
 
-                Core.LogLine($"Picked up" + ((item.Tile.Meta.CanStack == true) ? $" {item.Tile.Meta.Quantity:N0}" : "") + $" {item.Tile.Meta.DisplayName}");
+                Core.LogLine($"Picked up" + ((item.Tile.Meta.CanStack == true) ? $" {item.Tile.Meta.Quantity:N0}" : "") + $" {item.Tile.Meta.Name}");
 
                 if (item.Tile.Meta.CanStack == true)
                 {
@@ -184,7 +184,7 @@ namespace Game.Engine
 
                 if (hitType == HitType.Miss || hitType == HitType.CriticalMiss)
                 {
-                    Core.LogLine($"{Core.State.Character.Name} casts {item.Tile.Meta.DisplayName} at {target.Meta.DisplayName} but misses.", Color.DarkRed);
+                    Core.LogLine($"{Core.State.Character.Name} casts {item.Tile.Meta.Name} at {target.Meta.Name} but misses.", Color.DarkRed);
                 }
                 else
                 {
@@ -256,7 +256,7 @@ namespace Game.Engine
 
                                 Core.Actors.Add(tile);
 
-                                Core.LogLine($"You carelessly summon a level {tile.Meta.Level} {tile.Meta.DisplayName}!", Color.DarkRed);
+                                Core.LogLine($"You carelessly summon a level {tile.Meta.Level} {tile.Meta.Name}!", Color.DarkRed);
                             }
                         }
                     }
@@ -352,8 +352,6 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        Core.State.Character.AugmentedDexterity += toAdd;
-
                         var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModDexterity);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
@@ -375,8 +373,6 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        Core.State.Character.AugmentedConstitution += toAdd;
-
                         var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModConstitution);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
@@ -390,15 +386,13 @@ namespace Game.Engine
 
                         if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            toAdd = (int)((double)Core.State.Character.AugmentedAC * (double)effect.Value);
+                            toAdd = (int)((double)Core.State.Character.Armorclass * (double)effect.Value);
                         }
                         else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
                             toAdd = effect.Value;
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
-
-                        Core.State.Character.AugmentedAC += toAdd;
 
                         var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModArmorClass);
                         state.ModificationAmount = toAdd;
@@ -421,8 +415,6 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        Core.State.Character.AugmentedIntelligence += toAdd;
-
                         var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModIntelligence);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
@@ -443,8 +435,6 @@ namespace Game.Engine
                             toAdd = effect.Value;
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
-
-                        Core.State.Character.AugmentedStrength += toAdd;
 
                         var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModStrength);
                         state.ModificationAmount = toAdd;
@@ -520,7 +510,7 @@ namespace Game.Engine
             return true;
         }
 
-        private string GetAugmentationText(Effect effect)
+        private string GetAugmentationText(MetaEffect effect)
         {
             string text = effect.EffectType.ToString().Replace("Mod", "");
 
@@ -653,7 +643,7 @@ namespace Game.Engine
                 foreach (var moneyItem in moneyItems)
                 {
                     Core.State.Character.AddMoney(moneyItem.CloneIdentifier());
-                    Core.LogLine($"Picked up {moneyItem.Meta.Quantity} {moneyItem.Meta.DisplayName} and placed them in your purse.");
+                    Core.LogLine($"Picked up {moneyItem.Meta.Quantity} {moneyItem.Meta.Name} and placed them in your purse.");
                 }
             }
 
@@ -671,7 +661,7 @@ namespace Game.Engine
                 {
                     //TODO: We need to make sure that the player can even pick up this pack. It might be too heavy?
 
-                    Core.LogLine($"Picked up {underfootPack.Meta.DisplayName} and placed it on your back.");
+                    Core.LogLine($"Picked up {underfootPack.Meta.Name} and placed it on your back.");
                     pack.Tile = underfootPack.CloneIdentifier();
 
                     var inventoryItem = new CustodyItem()
@@ -716,14 +706,14 @@ namespace Game.Engine
                     var currentPackWeight = Core.State.Items.Where(o => o.ContainerId == containerId).Sum(o => (o.Tile.Meta.Weight ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                     if (item.Meta.Weight + currentPackWeight > maxWeight)
                     {
-                        Core.LogLine($"{item.Meta.DisplayName} is too bulky for your {pack.Tile.Meta.DisplayName}. Drop something or move to free hand?");
+                        Core.LogLine($"{item.Meta.Name} is too bulky for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                         break;
                     }
 
                     var currentPackBulk = Core.State.Items.Where(o => o.ContainerId == containerId).Sum(o => (o.Tile.Meta.Bulk ?? 0) * (o.Tile.Meta.Quantity ?? 1));
                     if (item.Meta.Bulk + currentPackBulk > maxBulk)
                     {
-                        Core.LogLine($"{item.Meta.DisplayName} is too heavy for your {pack.Tile.Meta.DisplayName}. Drop something or move to free hand?");
+                        Core.LogLine($"{item.Meta.Name} is too heavy for your {pack.Tile.Meta.Name}. Drop something or move to free hand?");
                         break;
                     }
 
@@ -732,12 +722,12 @@ namespace Game.Engine
                         var currentPackItems = Core.State.Items.Where(o => o.ContainerId == containerId).Count();
                         if (currentPackItems + 1 > (int)maxItems)
                         {
-                            Core.LogLine($"{pack.Tile.Meta.DisplayName} can only carry {maxItems} items. Drop something or move to free hand?");
+                            Core.LogLine($"{pack.Tile.Meta.Name} can only carry {maxItems} items. Drop something or move to free hand?");
                             break;
                         }
                     }
 
-                    Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.DisplayName}");
+                    Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.Name}");
 
                     if (item.Meta.CanStack == true)
                     {
@@ -791,7 +781,7 @@ namespace Game.Engine
                 if (actorsThatCanSeePlayer.Any())
                 {
                     var firstActor = actorsThatCanSeePlayer.First();
-                    Core.LogLine($"Your rest was interrupted by a {firstActor.Meta.DisplayName}!", Color.DarkRed);
+                    Core.LogLine($"Your rest was interrupted by a {firstActor.Meta.Name}!", Color.DarkRed);
                     return;
                 }
 
@@ -1181,7 +1171,7 @@ namespace Game.Engine
                 }
             }
 
-            string weaponDescription = weapon?.DisplayName;
+            string weaponDescription = weapon?.Name;
 
             if (projectile != null)
             {
@@ -1189,7 +1179,7 @@ namespace Game.Engine
                 {
                     projectile.Meta.Quantity--;
 
-                    weaponDescription += $" ({projectile.Meta.DisplayName})";
+                    weaponDescription += $" ({projectile.Meta.Name})";
 
                     if ((projectile.Meta.Quantity ?? 0) == 0)
                     {
@@ -1234,7 +1224,7 @@ namespace Game.Engine
                     }
                     else
                     {
-                        Core.LogLine($"{Core.State.Character.Name} casts {weapon.DisplayName} at {actorToAttack.Meta.DisplayName} but misses.", Color.DarkRed);
+                        Core.LogLine($"{Core.State.Character.Name} casts {weapon.Name} at {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
                     }
                 }
                 else
@@ -1341,12 +1331,12 @@ namespace Game.Engine
 
                                 if (weakness == weapon.DamageType)
                                 {
-                                    Core.LogLine($"{actorToAttack.Meta.DisplayName} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
+                                    Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
                                     damageToApply *= 2;
                                 }
                                 else if (actorTakingDamage.Actor.Meta.DamageType == weapon.DamageType)
                                 {
-                                    Core.LogLine($"{actorToAttack.Meta.DisplayName} is resistant to {weaponDescription}'s {weapon.DamageType} which does half damage.", Color.DarkRed);
+                                    Core.LogLine($"{actorToAttack.Meta.Name} is resistant to {weaponDescription}'s {weapon.DamageType} which does half damage.", Color.DarkRed);
                                     damageToApply = (damageToApply / 2);
                                 }
                             }
@@ -1359,18 +1349,18 @@ namespace Game.Engine
                                     {
                                         var state = Core.State.ActorStates.AddState((Guid)actorTakingDamage.Actor.Meta.UID, StateOfBeing.Poisoned);
                                         state.ExpireTime = 10;
-                                        Core.LogLine($"{actorToAttack.Meta.DisplayName} has been poisoned!", Color.DarkOliveGreen);
+                                        Core.LogLine($"{actorToAttack.Meta.Name} has been poisoned!", Color.DarkOliveGreen);
                                     }
                                 }
                             }
 
                             if (hitType == HitType.CriticalHit)
                             {
-                                Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.DisplayName} with {weaponDescription} for {damageToApply}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
+                                Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp {GetCriticalHitText()}", Color.DarkOliveGreen);
                             }
                             else
                             {
-                                Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.DisplayName} with {weaponDescription} for {damageToApply}hp and hits.", Color.DarkGreen);
+                                Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} with {weaponDescription} for {damageToApply}hp and hits.", Color.DarkGreen);
                             }
 
                             if (actorTakingDamage.Actor.ApplyDamage(playerHitsFor))
@@ -1382,7 +1372,7 @@ namespace Game.Engine
                                     experience = (int)actorTakingDamage.Actor.Meta.Experience;
                                 }
 
-                                Core.LogLine($"{Core.State.Character.Name} kills {actorTakingDamage.Actor.Meta.DisplayName} gaining {experience}xp!", Color.DarkGreen);
+                                Core.LogLine($"{Core.State.Character.Name} kills {actorTakingDamage.Actor.Meta.Name} gaining {experience}xp!", Color.DarkGreen);
 
                                 if (actorTakingDamage.Actor.Meta.IsContainer == true)
                                 {
@@ -1396,11 +1386,11 @@ namespace Game.Engine
                     }
                     else if (hitType == HitType.CriticalMiss)
                     {
-                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.DisplayName} {GetCriticalMissText()}", Color.DarkRed);
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} {GetCriticalMissText()}", Color.DarkRed);
                     }
                     else
                     {
-                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.DisplayName} but misses.", Color.DarkRed);
+                        Core.LogLine($"{Core.State.Character.Name} attacks {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
                     }
                 }
                 else
@@ -1409,29 +1399,19 @@ namespace Game.Engine
                 }
             }
 
-            var activePlayerStates = Core.State.ActorStates.States(Core.State.Character.UID);
-
-            var electricResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModElectricResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var fireResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModFireResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var earthResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModEarthResistance).Sum(o => o.ModificationAmount) ?? 0);
-            var iceResistance = (activePlayerStates.Where(o => o.State == StateOfBeing.ModIceResistance).Sum(o => o.ModificationAmount) ?? 0);
-
-            electricResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.ElectricResistance ?? 0);
-            fireResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.FireResistance ?? 0);
-            earthResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.EarthResistance ?? 0);
-            iceResistance += Core.State.Character.Equipment.Sum(o => o.Tile.Meta.IceResistance ?? 0);
+            //var activePlayerStates = Core.State.ActorStates.States(Core.State.Character.UID);
 
             //Hostiles attack player. Be sure to look at visible actors only because the player may have killed one before we get here.
             foreach (var hostile in hostileInteractions.Where(o => o.Visible))
             {
                 if (Core.State.ActorStates.HasState((Guid)hostile.Meta.UID, StateOfBeing.Held))
                 {
-                    Core.LogLine($"{hostile.Meta.DisplayName} is held, cannot attack.", Color.DarkGreen);
+                    Core.LogLine($"{hostile.Meta.Name} is held, cannot attack.", Color.DarkGreen);
                     continue;
                 }
 
                 //Monster hit player.
-                var hitType = CalculateHitType((int)hostile.Meta.Dexterity, Core.State.Character.AC);
+                var hitType = CalculateHitType((int)hostile.Meta.Dexterity, Core.State.Character.Armorclass);
                 if (hitType == HitType.Hit)
                 {
                     int hostileHitsFor = CalculateDealtDamage(hitType, (int)hostile.Meta.Strength,
@@ -1449,6 +1429,11 @@ namespace Game.Engine
                             }
                         }
                     }
+
+                    int iceResistance = Core.State.Character.IceResistance;
+                    int fireResistance = Core.State.Character.FireResistance;
+                    int earthResistance = Core.State.Character.EarthResistance;
+                    int electricResistance = Core.State.Character.ElectricResistance;
 
                     #region Damage resistance...
                     if (hostile.Meta.DamageType == DamageType.Fire && fireResistance > 0)
@@ -1584,11 +1569,11 @@ namespace Game.Engine
 
                     if (hitType == HitType.CriticalHit)
                     {
-                        Core.LogLine($"{hostile.Meta.DisplayName} attacks {Core.State.Character.Name} for {hostileHitsFor}hp{damageType} landing a critical hit!", Color.DarkRed);
+                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp{damageType} landing a critical hit!", Color.DarkRed);
                     }
                     else
                     {
-                        Core.LogLine($"{hostile.Meta.DisplayName} attacks {Core.State.Character.Name} for {hostileHitsFor}hp{damageType} and hits.", Color.DarkRed);
+                        Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} for {hostileHitsFor}hp{damageType} and hits.", Color.DarkRed);
                     }
 
                     Core.State.Character.AvailableHitpoints -= hostileHitsFor;
@@ -1601,11 +1586,11 @@ namespace Game.Engine
                 }
                 else if (hitType == HitType.CriticalMiss)
                 {
-                    Core.LogLine($"{hostile.Meta.DisplayName} attacks {Core.State.Character.Name} resulting in a critical miss!", Color.DarkGreen);
+                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} resulting in a critical miss!", Color.DarkGreen);
                 }
                 else
                 {
-                    Core.LogLine($"{hostile.Meta.DisplayName} attacks {Core.State.Character.Name} but missed.", Color.DarkGreen);
+                    Core.LogLine($"{hostile.Meta.Name} attacks {Core.State.Character.Name} but missed.", Color.DarkGreen);
                 }
             }
 
@@ -1617,7 +1602,7 @@ namespace Game.Engine
                 if (state.ActorUID != Core.State.Character.UID) //Other actor states expired.
                 {
                     var actor = Core.Actors.Tiles.Where(o => o.Meta.UID == state.ActorUID).First();
-                    Core.LogLine($"{state.State} state expired for {actor.Meta.DisplayName}.");
+                    Core.LogLine($"{state.State} state expired for {actor.Meta.Name}.");
                     Core.State.ActorStates.RemoveState(state);
                 }
                 else if (state.ActorUID == Core.State.Character.UID) //Player states expired.
@@ -1625,31 +1610,26 @@ namespace Game.Engine
                     if (state.State == StateOfBeing.ModDexterity)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.State.Character.AugmentedDexterity -= (int)state.ModificationAmount;
                         Core.LogLine($"Dexterity augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
                     else if (state.State == StateOfBeing.ModConstitution)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.State.Character.AugmentedConstitution -= (int)state.ModificationAmount;
                         Core.LogLine($"Constitution augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
                     else if (state.State == StateOfBeing.ModArmorClass)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.State.Character.AugmentedAC -= (int)state.ModificationAmount;
                         Core.LogLine($"AC augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
                     else if (state.State == StateOfBeing.ModIntelligence)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.State.Character.AugmentedIntelligence -= (int)state.ModificationAmount;
                         Core.LogLine($"Intelligence augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
                     else if (state.State == StateOfBeing.ModStrength)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.State.Character.AugmentedStrength -= (int)state.ModificationAmount;
                         Core.LogLine($"Strength augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
                     else if (state.State == StateOfBeing.Poisoned)
@@ -1724,7 +1704,7 @@ namespace Game.Engine
                 {
                     int damage = (int)((actor.Meta.HitPoints ?? 0) * 0.05); //5% of the remaining hit points.
                     if (damage == 0) damage = 1;
-                    Core.LogLine($"{actor.Meta.DisplayName} took {damage} poison damage!", Color.DarkGreen);
+                    Core.LogLine($"{actor.Meta.Name} took {damage} poison damage!", Color.DarkGreen);
 
                     if (actor.ApplyDamage(damage))
                     {
