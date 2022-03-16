@@ -63,6 +63,7 @@ namespace Library.Engine
             var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
             var json = Native.Compress.Unzip(compressedSaveFile);
             //string json = System.IO.File.ReadAllText(fileName);
+
             var saveFile = JsonConvert.DeserializeObject<SaveFile>(json);
 
             Collection = saveFile.Collection;

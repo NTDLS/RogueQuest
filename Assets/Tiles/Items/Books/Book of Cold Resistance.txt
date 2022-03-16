@@ -1,6 +1,6 @@
 {
-  "Name":"Book of Electric Resistance",
-  "SpellName":"Electric Resistance",
+  "Name":"Book of Cold Resistance",
+  "SpellName":"Cold Resistance",
   "SubType": "Book",
   "Animation":"Animations/Spells/Flash1_64_64",
   "Value": "6250",
@@ -9,6 +9,6 @@
   "Rarity":"3",
   "CanWalkOn":"True",
   "IsConsumable":"True",
-  "Level":"4",
+  "Level":"3",
   "Mana":"3"
 }

@@ -3,7 +3,7 @@
   "HitPoints": "25",
   "Experience": "25",
   "DamageType":"Fire",
-  "WeaknessType":"Ice",
+  "WeaknessType":"Cold",
   "AC":"5",
   "Dexterity":"10",
   "Strength":"10",

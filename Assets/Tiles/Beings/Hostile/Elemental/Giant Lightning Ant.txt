@@ -1,8 +1,8 @@
 {
-  "Name":"Giant Electric Ant",
+  "Name":"Giant Lightning Ant",
   "HitPoints": "10",
   "Experience": "5",
-  "DamageType":"Electric",
+  "DamageType":"Lightning",
   "WeaknessType":"Earth",
   "AC":"3",
   "Dexterity":"7",

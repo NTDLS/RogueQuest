@@ -37,48 +37,48 @@ namespace Library.Engine
         #region Starting + Augmented attributes.
 
         [JsonIgnore]
-        public int Armorclass => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModArmorClass).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModArmorClass).Sum(o => o.Value) ?? 0);
+        public int Armorclass => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ArmorClass).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ArmorClass).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
-        public int Speed => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModSpeed).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModSpeed).Sum(o => o.Value) ?? 0);
+        public int Speed => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.Speed).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.Speed).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
         public int Constitution => StartingConstitution
-            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModConstitution).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModConstitution).Sum(o => o.Value) ?? 0);
+            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.Constitution).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.Constitution).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
         public int Dexterity => StartingDexterity
-            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModDexterity).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModDexterity).Sum(o => o.Value) ?? 0);
+            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.Dexterity).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.Dexterity).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
         public int Intelligence => StartingIntelligence
-            + (_core?.State?.ActorStates?.States(UID)?.Where(o => o.State == StateOfBeing.ModIntelligence).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModIntelligence).Sum(o => o.Value) ?? 0);
+            + (_core?.State?.ActorStates?.States(UID)?.Where(o => o.State == StateOfBeing.Intelligence).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.Intelligence).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
         public int Strength => StartingStrength
-            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModStrength).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModStrength).Sum(o => o.Value) ?? 0);
+            + (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.Strength).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.Strength).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
-        public int EarthResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModEarthResistance).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModEarthResistance).Sum(o => o.Value) ?? 0);
+        public int EarthResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.EarthResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.EarthResistance).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
-        public int ElectricResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModElectricResistance).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModElectricResistance).Sum(o => o.Value) ?? 0);
+        public int LightningResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.LightningResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.LightningResistance).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
-        public int FireResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModFireResistance).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModFireResistance).Sum(o => o.Value) ?? 0);
+        public int FireResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.FireResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.FireResistance).Sum(o => o.Value) ?? 0);
 
         [JsonIgnore]
-        public int IceResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ModIceResistance).Sum(o => o.ModificationAmount) ?? 0)
-            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ModIceResistance).Sum(o => o.Value) ?? 0);
+        public int ColdResistance => (_core?.State?.ActorStates?.States(UID).Where(o => o.State == StateOfBeing.ColdResistance).Sum(o => o.ModificationAmount) ?? 0)
+            + (_core?.State?.Character?.Equipment?.Where(o => o.Tile != null && o.Tile.Meta.Effects != null).SelectMany(o => o.Tile.Meta?.Effects)?.Where(o => o.EffectType == ItemEffect.ColdResistance).Sum(o => o.Value) ?? 0);
 
         #endregion
 

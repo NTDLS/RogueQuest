@@ -82,19 +82,19 @@ namespace Library.Engine
 
                 while (bonusPointsApplied < targetBonusPoints)
                 {
-                    if (rand.Next() % 100 >= 50) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModArmorClass, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModConstitution, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModDexterity, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModIntelligence, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModStrength, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModEarthResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModElectricResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModFireResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModIceResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 50) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ArmorClass, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Constitution, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Dexterity, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Intelligence, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Strength, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.EarthResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.LightningResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.FireResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ColdResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
 
-                    if (Effects.Where(o => o.EffectType == ItemEffect.ModSpeed).Sum(o => o.Value) < 3)
+                    if (Effects.Where(o => o.EffectType == ItemEffect.Speed).Sum(o => o.Value) < 3)
                     {
-                        if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ModSpeed, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                        if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Speed, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
                     }
                 }
 

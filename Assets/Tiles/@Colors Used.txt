@@ -1,7 +1,7 @@
-   Earth: #a1591f
-Electric: #6530ff
-    Fire: #ce1f00
-     Ice: #65dace
+    Earth: #a1591f
+Lightning: #6530ff
+     Fire: #ce1f00
+     Cold: #65dace
 
 
 Enchanted: #44fef6

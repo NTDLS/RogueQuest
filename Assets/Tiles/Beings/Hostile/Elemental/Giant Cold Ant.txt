@@ -1,8 +1,8 @@
 {
-  "Name":"Giant Ice Ant",
+  "Name":"Giant Code Ant",
   "HitPoints": "10",
   "Experience": "5",
-  "DamageType":"Ice",
+  "DamageType":"Cold",
   "WeaknessType":"Fire",
   "AC":"3",
   "Dexterity":"7",

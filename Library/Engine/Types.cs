@@ -112,10 +112,10 @@
     public enum DamageType
     {
         Unspecified, //¯\_(ツ)_/¯
-        Ice,
+        Cold,
         Fire,
         Earth,
-        Electric,
+        Lightning,
         Poison
     }
     public enum ItemEffectType
@@ -132,16 +132,16 @@
         CurePoison,
         SummonMonster,
 
-        ModSpeed,
-        ModStrength,
-        ModDexterity,
-        ModConstitution,
-        ModArmorClass,
-        ModIntelligence,
-        ModIceResistance,
-        ModElectricResistance,
-        ModFireResistance,
-        ModEarthResistance,
+        Speed,
+        Strength,
+        Dexterity,
+        Constitution,
+        ArmorClass,
+        Intelligence,
+        ColdResistance,
+        LightningResistance,
+        FireResistance,
+        EarthResistance,
 
         MagicArrow,
         CastFireball,
@@ -154,19 +154,19 @@
     {
         Unspecified, //¯\_(ツ)_/¯
         Poisoned,
-        ModSpeed,
+        Speed,
         Held,
 
-        ModStrength,
-        ModDexterity,
-        ModConstitution,
-        ModArmorClass,
-        ModIntelligence, //Also increases mana.
+        Strength,
+        Dexterity,
+        Constitution,
+        ArmorClass,
+        Intelligence, //Also increases mana.
 
-        ModEarthResistance,
-        ModIceResistance,
-        ModElectricResistance,
-        ModFireResistance
+        EarthResistance,
+        ColdResistance,
+        LightningResistance,
+        FireResistance
     }
 
     public enum RotationMode

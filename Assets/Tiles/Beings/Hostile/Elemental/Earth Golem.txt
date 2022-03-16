@@ -3,7 +3,7 @@
   "HitPoints": "35",
   "Experience": "50",
   "DamageType":"Earth",
-  "WeaknessType":"Electric",
+  "WeaknessType":"Lightning",
   "AC":"2",
   "Dexterity":"4",
   "Strength":"25",

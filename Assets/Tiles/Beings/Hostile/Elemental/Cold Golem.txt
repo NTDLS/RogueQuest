@@ -1,12 +1,12 @@
 {
-  "Name":"Electric Golem",
+  "Name":"Code Golem",
   "HitPoints": "35",
   "Experience": "50",
-  "DamageType":"Electric",
-  "WeaknessType":"Earth",
+  "DamageType":"Cold",
+  "WeaknessType":"Fire",
   "AC":"2",
   "Dexterity":"4",
-  "Strength":"10",
+  "Strength":"16",
   "DamageDice":"1",
   "DamageDiceFaces":"7",
   "Level":"3"

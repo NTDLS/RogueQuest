@@ -1,11 +1,11 @@
 {
-  "Name":"Scroll of Earth Resistance",
-  "SpellName":"Earth Resistance",
+  "Name":"Scroll of Lightning Resistance",
+  "SpellName":"Lightning Resistance",
   "SubType": "Scroll",
   "Value": "125",
   "TargetType":"Self",
   "CastTime":"2",
-  "Effects":[ {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"1","Duration":"60"} ],
+  "Effects":[ {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"1","Duration":"60"} ],
   "IsConsumable":"True",
   "Animation":"Animations/Spells/Flash1_64_64",
   "Weight":"150",
@@ -13,5 +13,5 @@
   "Rarity":"65",
   "CanStack":"True",
   "CanWalkOn":"True",
-  "Level":"2"
+  "Level":"4"
 }

@@ -275,37 +275,37 @@ namespace Game.Engine
                 foreach (var effect in item.Tile.Meta.Effects)
                 {
                     #region Self target.
-                    #region ModIceResistance
-                    if (effect.EffectType == ItemEffect.ModIceResistance)
+                    #region ColdResistance
+                    if (effect.EffectType == ItemEffect.ColdResistance)
                     {
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModIceResistance);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ColdResistance);
                         state.ModificationAmount = effect.Value;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
                     }
                     #endregion
-                    #region ModElectricResistance
-                    else if (effect.EffectType == ItemEffect.ModElectricResistance)
+                    #region LightningResistance
+                    else if (effect.EffectType == ItemEffect.LightningResistance)
                     {
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModElectricResistance);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.LightningResistance);
                         state.ModificationAmount = effect.Value;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
                     }
                     #endregion
-                    #region ModFireResistance
-                    else if (effect.EffectType == ItemEffect.ModFireResistance)
+                    #region FireResistance
+                    else if (effect.EffectType == ItemEffect.FireResistance)
                     {
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModFireResistance);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.FireResistance);
                         state.ModificationAmount = effect.Value;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
                     }
                     #endregion
-                    #region ModEarthResistance
-                    else if (effect.EffectType == ItemEffect.ModEarthResistance)
+                    #region EarthResistance
+                    else if (effect.EffectType == ItemEffect.EarthResistance)
                     {
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModEarthResistance);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.EarthResistance);
                         state.ModificationAmount = effect.Value;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
@@ -337,8 +337,8 @@ namespace Game.Engine
                         Core.LogLine($"Healed {totalHealing} hitpoints.");
                     }
                     #endregion
-                    #region ModDexterity
-                    else if (effect.EffectType == ItemEffect.ModDexterity)
+                    #region Dexterity
+                    else if (effect.EffectType == ItemEffect.Dexterity)
                     {
                         int toAdd = 0;
 
@@ -352,14 +352,14 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModDexterity);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Dexterity);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
                     }
                     #endregion
-                    #region ModConstitution
-                    else if (effect.EffectType == ItemEffect.ModConstitution)
+                    #region Constitution
+                    else if (effect.EffectType == ItemEffect.Constitution)
                     {
                         int toAdd = 0;
 
@@ -373,14 +373,14 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModConstitution);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Constitution);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
                     }
                     #endregion
-                    #region ModArmorClass
-                    else if (effect.EffectType == ItemEffect.ModArmorClass)
+                    #region ArmorClass
+                    else if (effect.EffectType == ItemEffect.ArmorClass)
                     {
                         int toAdd = 0;
 
@@ -394,14 +394,14 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModArmorClass);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ArmorClass);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
                     }
                     #endregion
-                    #region ModIntelligence
-                    else if (effect.EffectType == ItemEffect.ModIntelligence)
+                    #region Intelligence
+                    else if (effect.EffectType == ItemEffect.Intelligence)
                     {
                         int toAdd = 0;
 
@@ -415,14 +415,14 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModIntelligence);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Intelligence);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
                     }
                     #endregion
-                    #region ModStrength
-                    else if (effect.EffectType == ItemEffect.ModStrength)
+                    #region Strength
+                    else if (effect.EffectType == ItemEffect.Strength)
                     {
                         int toAdd = 0;
 
@@ -436,7 +436,7 @@ namespace Game.Engine
                         }
                         else throw new Exception($"Value type {effect.ValueType} is not implemented.");
 
-                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.ModStrength);
+                        var state = Core.State.ActorStates.AddState(Core.State.Character.UID, StateOfBeing.Strength);
                         state.ModificationAmount = toAdd;
                         state.ExpireTime = Core.State.TimePassed + effect.Duration;
                         Core.LogLine(GetAugmentationText(effect));
@@ -512,7 +512,7 @@ namespace Game.Engine
 
         private string GetAugmentationText(MetaEffect effect)
         {
-            string text = effect.EffectType.ToString().Replace("Mod", "");
+            string text = effect.EffectType.ToString();
 
             if (effect.Duration == null)
             {
@@ -1430,10 +1430,10 @@ namespace Game.Engine
                         }
                     }
 
-                    int iceResistance = Core.State.Character.IceResistance;
+                    int coldResistance = Core.State.Character.ColdResistance;
                     int fireResistance = Core.State.Character.FireResistance;
                     int earthResistance = Core.State.Character.EarthResistance;
-                    int electricResistance = Core.State.Character.ElectricResistance;
+                    int electricResistance = Core.State.Character.LightningResistance;
 
                     #region Damage resistance...
                     if (hostile.Meta.DamageType == DamageType.Fire && fireResistance > 0)
@@ -1451,18 +1451,18 @@ namespace Game.Engine
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
-                    else if (hostile.Meta.DamageType == DamageType.Ice && iceResistance > 0)
+                    else if (hostile.Meta.DamageType == DamageType.Cold && coldResistance > 0)
                     {
                         double resistanceFactor = hostileHitsFor;
 
-                        for (int i = 0; i < iceResistance; i++)
+                        for (int i = 0; i < coldResistance; i++)
                         {
                             resistanceFactor = resistanceFactor / 2.0;
                         }
 
                         int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
 
-                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp ice damage.", Color.DarkGreen);
+                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp cold damage.", Color.DarkGreen);
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
@@ -1481,7 +1481,7 @@ namespace Game.Engine
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
-                    else if (hostile.Meta.DamageType == DamageType.Electric && electricResistance > 0)
+                    else if (hostile.Meta.DamageType == DamageType.Lightning && electricResistance > 0)
                     {
                         double resistanceFactor = hostileHitsFor;
 
@@ -1492,7 +1492,7 @@ namespace Game.Engine
 
                         int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
 
-                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp electric damage.", Color.DarkGreen);
+                        Core.LogLine($"{Core.State.Character.Name} resists {resistedDamage:N0}hp lightning damage.", Color.DarkGreen);
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
@@ -1514,18 +1514,18 @@ namespace Game.Engine
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
-                    else if (hostile.Meta.DamageType == DamageType.Ice && iceResistance < 0)
+                    else if (hostile.Meta.DamageType == DamageType.Cold && coldResistance < 0)
                     {
                         double resistanceFactor = hostileHitsFor;
 
-                        for (int i = 0; i < (iceResistance * -1); i++)
+                        for (int i = 0; i < (coldResistance * -1); i++)
                         {
                             resistanceFactor = resistanceFactor * 2.0;
                         }
 
                         int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
 
-                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp ice damage.", Color.DarkGreen);
+                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp cold damage.", Color.DarkGreen);
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
@@ -1544,7 +1544,7 @@ namespace Game.Engine
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
-                    else if (hostile.Meta.DamageType == DamageType.Electric && electricResistance < 0)
+                    else if (hostile.Meta.DamageType == DamageType.Lightning && electricResistance < 0)
                     {
                         double resistanceFactor = hostileHitsFor;
 
@@ -1555,7 +1555,7 @@ namespace Game.Engine
 
                         int resistedDamage = (hostileHitsFor - (int)resistanceFactor);
 
-                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp electric damage.", Color.DarkGreen);
+                        Core.LogLine($"{Core.State.Character.Name} is weak to {resistedDamage:N0}hp lightning damage.", Color.DarkGreen);
 
                         hostileHitsFor = hostileHitsFor - resistedDamage;
                     }
@@ -1607,27 +1607,27 @@ namespace Game.Engine
                 }
                 else if (state.ActorUID == Core.State.Character.UID) //Player states expired.
                 {
-                    if (state.State == StateOfBeing.ModDexterity)
+                    if (state.State == StateOfBeing.Dexterity)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"Dexterity augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.ModConstitution)
+                    else if (state.State == StateOfBeing.Constitution)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"Constitution augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.ModArmorClass)
+                    else if (state.State == StateOfBeing.ArmorClass)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"AC augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.ModIntelligence)
+                    else if (state.State == StateOfBeing.Intelligence)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"Intelligence augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.ModStrength)
+                    else if (state.State == StateOfBeing.Strength)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"Strength augmentation expired, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
@@ -1637,22 +1637,22 @@ namespace Game.Engine
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"With time, your poison has been cured.", Color.DarkGreen);
                     }
-                    else if (state.State == StateOfBeing.ModEarthResistance)
+                    else if (state.State == StateOfBeing.EarthResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"Earth resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.ModFireResistance)
+                    else if (state.State == StateOfBeing.FireResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"Fire resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.ModIceResistance)
+                    else if (state.State == StateOfBeing.ColdResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
-                        Core.LogLine($"Ice resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
+                        Core.LogLine($"Code resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");
                     }
-                    else if (state.State == StateOfBeing.ModElectricResistance)
+                    else if (state.State == StateOfBeing.LightningResistance)
                     {
                         Core.State.ActorStates.RemoveState(state);
                         Core.LogLine($"Earth resistance has worn off, {(state.ModificationAmount > 0 ? "decreased" : "increased")} by {state.ModificationAmount}.");

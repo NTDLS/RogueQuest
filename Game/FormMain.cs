@@ -974,6 +974,7 @@ namespace Game
 
             labelPlayer.ForeColor = Color.Black;
 
+            /*
             string modifier = "";
 
             if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.Poisoned))
@@ -981,23 +982,23 @@ namespace Game
                 modifier += $"POISON,";
                 labelPlayer.ForeColor = Color.Red;
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModStrength))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.Strength))
             {
                 modifier += "STR+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModIntelligence))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.Intelligence))
             {
                 modifier += "INT+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModConstitution))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.Constitution))
             {
                 modifier += "CON+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModDexterity))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.Dexterity))
             {
                 modifier += "DEX+,";
             }
-            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ModArmorClass))
+            if (core.State.ActorStates.HasState(core.State.Character.UID, StateOfBeing.ArmorClass))
             {
                 modifier += "AC+,";
             }
@@ -1008,6 +1009,7 @@ namespace Game
             {
                 labelPlayer.Text += $" ({modifier})";
             }
+            */
         }
 
         private void _core_OnStart(EngineCoreBase sender)

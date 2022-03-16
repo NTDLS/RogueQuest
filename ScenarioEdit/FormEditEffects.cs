@@ -37,16 +37,16 @@ namespace ScenarioEdit
             this.AcceptButton = buttonSave;
             this.CancelButton = buttonCancel;
 
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Speed", Effects.Where(o => o.EffectType == ItemEffect.ModSpeed).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModSpeed });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Strength", Effects.Where(o => o.EffectType == ItemEffect.ModStrength).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModStrength });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Dexterity", Effects.Where(o => o.EffectType == ItemEffect.ModDexterity).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModDexterity });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Constitution", Effects.Where(o => o.EffectType == ItemEffect.ModConstitution).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModConstitution });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Armor Class", Effects.Where(o => o.EffectType == ItemEffect.ModArmorClass).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModArmorClass });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Intelligence", Effects.Where(o => o.EffectType == ItemEffect.ModIntelligence).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModIntelligence });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Ice Resistance", Effects.Where(o => o.EffectType == ItemEffect.ModIceResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModIceResistance });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Electric Resistance", Effects.Where(o => o.EffectType == ItemEffect.ModElectricResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModElectricResistance });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Fire Resistance", Effects.Where(o => o.EffectType == ItemEffect.ModFireResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModFireResistance });
-            listViewContainer.Items.Add(new ListViewItem(new string[] { "Earth Resistance", Effects.Where(o => o.EffectType == ItemEffect.ModEarthResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ModEarthResistance });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Speed", Effects.Where(o => o.EffectType == ItemEffect.Speed).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.Speed });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Strength", Effects.Where(o => o.EffectType == ItemEffect.Strength).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.Strength });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Dexterity", Effects.Where(o => o.EffectType == ItemEffect.Dexterity).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.Dexterity });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Constitution", Effects.Where(o => o.EffectType == ItemEffect.Constitution).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.Constitution });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Armor Class", Effects.Where(o => o.EffectType == ItemEffect.ArmorClass).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ArmorClass });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Intelligence", Effects.Where(o => o.EffectType == ItemEffect.Intelligence).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.Intelligence });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Code Resistance", Effects.Where(o => o.EffectType == ItemEffect.ColdResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.ColdResistance });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Lightning Resistance", Effects.Where(o => o.EffectType == ItemEffect.LightningResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.LightningResistance });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Fire Resistance", Effects.Where(o => o.EffectType == ItemEffect.FireResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.FireResistance });
+            listViewContainer.Items.Add(new ListViewItem(new string[] { "Earth Resistance", Effects.Where(o => o.EffectType == ItemEffect.EarthResistance).Sum(o => o.Value).ToString() }) { Tag = ItemEffect.EarthResistance });
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
