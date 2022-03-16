@@ -1,7 +1,7 @@
 ﻿
 namespace ScenarioEdit
 {
-    partial class FormTilePropertiesMultiLine
+    partial class FormEditText
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace ScenarioEdit
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTilePropertiesMultiLine));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditText));
             this.label1 = new System.Windows.Forms.Label();
             this.labelPropertyName = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -99,7 +99,7 @@ namespace ScenarioEdit
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // FormTilePropertiesMultiLine
+            // FormEditText
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -116,10 +116,10 @@ namespace ScenarioEdit
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormTilePropertiesMultiLine";
+            this.Name = "FormEditText";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Property";
-            this.Load += new System.EventHandler(this.FormTilePropertiesMultiLine_Load);
+            this.Load += new System.EventHandler(this.FormEditText_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -1,6 +1,6 @@
 ﻿using Game.Properties;
 using Library.Engine;
-using Library.Utility;
+using Library.Native;
 using System;
 using System.Drawing;
 using System.IO;
@@ -177,7 +177,7 @@ namespace Game
 
             foreach (var f in Directory.GetFiles(Path.Combine(spellsPath, partialPath), "*.txt"))
             {
-                if (Path.GetFileName(f).StartsWith("@"))
+                if (Utility.IgnoreFileName(f))
                 {
                     continue;
                 }
@@ -202,7 +202,7 @@ namespace Game
 
             foreach (var d in Directory.GetDirectories(Path.Combine(spellsPath, partialPath)))
             {
-                if (Path.GetFileName(d).StartsWith("@") || Path.GetFileName(d).StartsWith("."))
+                if (Utility.IgnoreFileName(d))
                 {
                     continue;
                 }

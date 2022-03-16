@@ -134,7 +134,7 @@ namespace ScenarioEdit
             // 
             this.splitContainerBody.Panel2.Controls.Add(this.splitContainerTools1);
             this.splitContainerBody.Size = new System.Drawing.Size(896, 641);
-            this.splitContainerBody.SplitterDistance = 607;
+            this.splitContainerBody.SplitterDistance = 606;
             this.splitContainerBody.SplitterWidth = 5;
             this.splitContainerBody.TabIndex = 0;
             this.splitContainerBody.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainerBody_SplitterMoved);
@@ -155,7 +155,7 @@ namespace ScenarioEdit
             // splitContainerTools1.Panel2
             // 
             this.splitContainerTools1.Panel2.Controls.Add(this.groupBoxProperties);
-            this.splitContainerTools1.Size = new System.Drawing.Size(284, 641);
+            this.splitContainerTools1.Size = new System.Drawing.Size(285, 641);
             this.splitContainerTools1.SplitterDistance = 319;
             this.splitContainerTools1.SplitterWidth = 5;
             this.splitContainerTools1.TabIndex = 1;
@@ -167,7 +167,7 @@ namespace ScenarioEdit
             this.treeViewTiles.Location = new System.Drawing.Point(0, 27);
             this.treeViewTiles.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.treeViewTiles.Name = "treeViewTiles";
-            this.treeViewTiles.Size = new System.Drawing.Size(284, 292);
+            this.treeViewTiles.Size = new System.Drawing.Size(285, 292);
             this.treeViewTiles.TabIndex = 0;
             // 
             // toolStrip1
@@ -178,7 +178,7 @@ namespace ScenarioEdit
             this.toolStripButtonCollapseAll});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(284, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(285, 27);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -210,7 +210,7 @@ namespace ScenarioEdit
             this.groupBoxProperties.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBoxProperties.Name = "groupBoxProperties";
             this.groupBoxProperties.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBoxProperties.Size = new System.Drawing.Size(284, 317);
+            this.groupBoxProperties.Size = new System.Drawing.Size(285, 317);
             this.groupBoxProperties.TabIndex = 1;
             this.groupBoxProperties.TabStop = false;
             this.groupBoxProperties.Text = "Properties";
@@ -224,12 +224,11 @@ namespace ScenarioEdit
             this.listViewProperties.FullRowSelect = true;
             this.listViewProperties.GridLines = true;
             this.listViewProperties.HideSelection = false;
-            this.listViewProperties.LabelEdit = true;
             this.listViewProperties.Location = new System.Drawing.Point(3, 24);
             this.listViewProperties.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listViewProperties.MultiSelect = false;
             this.listViewProperties.Name = "listViewProperties";
-            this.listViewProperties.Size = new System.Drawing.Size(278, 289);
+            this.listViewProperties.Size = new System.Drawing.Size(279, 289);
             this.listViewProperties.TabIndex = 0;
             this.listViewProperties.UseCompatibleStateImageBehavior = false;
             this.listViewProperties.View = System.Windows.Forms.View.Details;

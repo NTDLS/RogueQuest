@@ -1,7 +1,7 @@
 ﻿
 namespace ScenarioEdit
 {
-    partial class FormEditQuantity
+    partial class FormEditString
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,7 @@ namespace ScenarioEdit
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditString));
             this.label1 = new System.Windows.Forms.Label();
             this.labelPropertyName = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -91,7 +92,7 @@ namespace ScenarioEdit
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // FormEditQuantity
+            // FormEditString
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -104,12 +105,13 @@ namespace ScenarioEdit
             this.Controls.Add(this.label1);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormEditQuantity";
+            this.Name = "FormEditString";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Property";
-            this.Load += new System.EventHandler(this.FormEditQuantity_Load);
+            this.Load += new System.EventHandler(this.FormEditString_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

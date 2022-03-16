@@ -2,6 +2,7 @@
 using Game.Engine;
 using Library.Engine;
 using Library.Engine.Types;
+using Library.Native;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -975,7 +976,7 @@ namespace Game
                         && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified) //Only show the items that this store type sells.
                         && o.Meta.Enchantment != EnchantmentType.Cursed //We dont sell cursed items.
                         && (o.Meta.Rarity ?? 0) > 0 //Items with a Rarity of 0 are impossible to find or buy. They have to be placed by the map creator.
-                        && (o.Meta.Rarity == 100 || Library.Utility.MathUtility.ChanceIn(100 - (int)o.Meta.Rarity)) //Apply the rarity lottery.
+                        && (o.Meta.Rarity == 100 || MathUtility.ChanceIn(100 - (int)o.Meta.Rarity)) //Apply the rarity lottery.
                         && o.Meta.Level <= Core.State.Character.Level //Only show items that are appropriate for the character level.
                     ).Cast<TileIdentifier>();
 
@@ -994,11 +995,11 @@ namespace Game
 
                     if (newItem.Meta.CanStack == true)
                     {
-                        newItem.Meta.Quantity = Library.Utility.MathUtility.RandomNumber(4, max);
+                        newItem.Meta.Quantity = MathUtility.RandomNumber(4, max);
                     }
                     else if (newItem.Meta.SubType == ActorSubType.Wand)
                     {
-                        newItem.Meta.Charges = Library.Utility.MathUtility.RandomNumber(4, max);
+                        newItem.Meta.Charges = MathUtility.RandomNumber(4, max);
                     }
 
                     persistentStore.Items.Add(newItem);

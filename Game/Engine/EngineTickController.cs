@@ -4,7 +4,7 @@ using Game.Classes;
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
-using Library.Utility;
+using Library.Native;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -209,9 +209,9 @@ namespace Game.Engine
                         else throw new NotImplementedException();
                     }
 
-                    if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
+                    if (string.IsNullOrEmpty(item.Tile.Meta.Animation) == false)
                     {
-                        AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target);
+                        AnimateAtAsync(item.Tile.Meta.Animation, target);
                     }
                 }
                 #endregion
@@ -264,9 +264,9 @@ namespace Game.Engine
                     else throw new NotImplementedException();
                 }
 
-                if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
+                if (string.IsNullOrEmpty(item.Tile.Meta.Animation) == false)
                 {
-                    AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, target);
+                    AnimateAtAsync(item.Tile.Meta.Animation, target);
                 }
                 #endregion
             }
@@ -500,9 +500,9 @@ namespace Game.Engine
                     else throw new NotImplementedException();
                 }
 
-                if (string.IsNullOrEmpty(item.Tile.Meta.UsageAnimationTilePath) == false)
+                if (string.IsNullOrEmpty(item.Tile.Meta.Animation) == false)
                 {
-                    AnimateAtAsync(item.Tile.Meta.UsageAnimationTilePath, Core.Player);
+                    AnimateAtAsync(item.Tile.Meta.Animation, Core.Player);
                 }
                 #endregion
             }
@@ -1207,16 +1207,16 @@ namespace Game.Engine
                     {
                         if (projectile != null)
                         {
-                            if (string.IsNullOrEmpty(projectile.Meta.UsageAnimationTilePath) == false)
+                            if (string.IsNullOrEmpty(projectile.Meta.Animation) == false)
                             {
-                                AnimateAt(projectile.Meta.UsageAnimationTilePath, actorToAttack);
+                                AnimateAt(projectile.Meta.Animation, actorToAttack);
                             }
                         }
                         else
                         {
-                            if (string.IsNullOrEmpty(weapon.UsageAnimationTilePath) == false)
+                            if (string.IsNullOrEmpty(weapon.Animation) == false)
                             {
-                                AnimateAt(weapon.UsageAnimationTilePath, actorToAttack);
+                                AnimateAt(weapon.Animation, actorToAttack);
                             }
                         }
 
@@ -1303,16 +1303,16 @@ namespace Game.Engine
                         //Hit animation:
                         if (projectile != null)
                         {
-                            if (string.IsNullOrEmpty(projectile.Meta.UsageAnimationTilePath) == false)
+                            if (string.IsNullOrEmpty(projectile.Meta.Animation) == false)
                             {
-                                AnimateAt(projectile.Meta.UsageAnimationTilePath, actorToAttack);
+                                AnimateAt(projectile.Meta.Animation, actorToAttack);
                             }
                         }
                         else
                         {
-                            if (string.IsNullOrEmpty(weapon.UsageAnimationTilePath) == false)
+                            if (string.IsNullOrEmpty(weapon.Animation) == false)
                             {
-                                AnimateAt(weapon.UsageAnimationTilePath, actorToAttack);
+                                AnimateAt(weapon.Animation, actorToAttack);
                             }
                         }
 

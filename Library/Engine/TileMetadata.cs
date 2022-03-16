@@ -1,7 +1,7 @@
 ﻿using Assets;
 using Library.Engine.Types;
 using Library.Types;
-using Library.Utility;
+using Library.Native;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -17,7 +17,7 @@ namespace Library.Engine
 
         private Guid? _UID;
         private string _ProjectileTilePath;
-        private string _UsageAnimationTilePath;
+        private string _Animation;
         private string _Name;
         private int? _Quantity;
         private int? _Experience;
@@ -62,12 +62,14 @@ namespace Library.Engine
 
         public void Identify()
         {
+            //We use the UID hash here to make sure that the enchantments are always the same of this item even if the player reloads.
             Random rand = new Random(UIDHash);
 
             IsIdentified = true;
 
             if (rand.Next() % 100 >= 80) //20% chance or being enchanted or cursed.
             {
+                //We have to get this early so that the random number will not be affected by the loop below it.
                 bool willBeCursed = rand.Next() % 100 < 50;
 
                 int targetBonusPoints = MathUtility.RandomNumber(1, 6); //Add some enchantment.
@@ -199,7 +201,7 @@ namespace Library.Engine
         /// <summary>
         /// The path to the animation frames that will be used on a successful hit with this tile. Such as an explosion.
         /// </summary>
-        public string UsageAnimationTilePath { get { return _UsageAnimationTilePath == string.Empty ? null : _UsageAnimationTilePath; } set { _UsageAnimationTilePath = value; } }
+        public string Animation { get { return _Animation == string.Empty ? null : _Animation; } set { _Animation = value; } }
         /// <summary>
         /// The name of the item.
         /// </summary>
@@ -369,7 +371,7 @@ namespace Library.Engine
         {
             get
             {
-                return Types.Utility.RarityText(Rarity ?? -1);
+                return Utility.RarityText(Rarity ?? -1);
             }
         }
 
@@ -379,7 +381,7 @@ namespace Library.Engine
             get
             {
 
-                return Types.Utility.GetEffectsText(this.Effects).Replace("|","\r\n");
+                return Utility.GetEffectsText(this.Effects).Replace("|","\r\n");
             }
         }
 
@@ -401,7 +403,7 @@ namespace Library.Engine
             this.ActorClass = with.ActorClass ?? this.ActorClass;
             this.Name = with.Name ?? this.Name;
             this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
-            this.UsageAnimationTilePath = with.UsageAnimationTilePath ?? this.UsageAnimationTilePath;
+            this.Animation = with.Animation ?? this.Animation;
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
             this.IsMemoriziedSpell = with.IsMemoriziedSpell ?? this.IsMemoriziedSpell;
             this.Enchantment = with.Enchantment ?? this.Enchantment;
@@ -467,9 +469,8 @@ namespace Library.Engine
         /// </summary>
         public static TileMetadata GetFreshMetadata(string tilePath)
         {
-            string fileSystemPath = Path.GetDirectoryName(Constants.GetAssetPath($"{tilePath}"));
-            string exactMetaFileName = Constants.GetAssetPath($"{tilePath}.txt");
-
+            var fileSystemPath = Path.GetDirectoryName(Constants.GetAssetPath($"{tilePath}"));
+            var exactMetaFileName = Constants.GetAssetPath($"{tilePath}.txt");
             var meta = FindFirstMetafile(fileSystemPath, "_GlobalMeta.txt") ?? new TileMetadata();
 
             var localMeta = FindFirstMetafile(fileSystemPath, "_LocalMeta.txt");
@@ -494,6 +495,78 @@ namespace Library.Engine
             }
 
             meta.OriginalHitPoints = meta.HitPoints;
+
+
+            if (meta.ActorClass == ActorClassName.ActorItem)
+            {
+                var fileCheck = $"{Constants.GetAssetPath(tilePath)}.Enchanted.png";
+                if (File.Exists(fileCheck))
+                {
+                    meta.EnchantedImagePath = fileCheck;
+                }
+                fileCheck = $"{Constants.GetAssetPath(tilePath)}.Cursed.png";
+                if (File.Exists(fileCheck))
+                {
+                    meta.CursedImagePath = fileCheck;
+                }
+
+                fileCheck = $"{Constants.GetAssetPath(tilePath)}.Projectile.png";
+                if (File.Exists(fileCheck))
+                {
+                    meta.ProjectileTilePath = fileCheck;
+                }
+                fileCheck = $"{Constants.GetAssetPath(tilePath)}.Animation.png";
+                if (File.Exists(fileCheck))
+                {
+                    meta.Animation = fileCheck;
+                }
+
+                if (meta.Enchantment == null) //Pick a good default for the enchantment type.
+                {
+                    if (!string.IsNullOrWhiteSpace(meta.EnchantedImagePath) && string.IsNullOrWhiteSpace(meta.CursedImagePath))
+                        meta.Enchantment = EnchantmentType.Enchanted;
+                    else if (string.IsNullOrWhiteSpace(meta.EnchantedImagePath) && !string.IsNullOrWhiteSpace(meta.CursedImagePath))
+                        meta.Enchantment = EnchantmentType.Cursed;
+                    else if (!string.IsNullOrWhiteSpace(meta.EnchantedImagePath) || !string.IsNullOrWhiteSpace(meta.CursedImagePath))
+                        meta.Enchantment = EnchantmentType.Undecided;
+                    else
+                        meta.Enchantment = EnchantmentType.Normal;
+                }
+
+                if (meta.Enchantment != EnchantmentType.Undecided && meta.IsIdentified == null)
+                {
+                    //If the enchantment is not explicitly set, then the item is already identified.
+                    meta.IsIdentified = true;
+                }
+            }
+
+            #region Sanity checks...
+
+            if (meta.ActorClass == ActorClassName.ActorItem
+                  && (meta._AC != null || meta._Dexterity != null || meta._Strength != null || meta._HitPoints != null || meta._Experience != null))
+                throw new Exception("Items cannot have AC, Dexterity, Strength, HitPoints or Experience. Use [Effects] instead?");
+
+            if (meta.ActorClass == ActorClassName.ActorHostileBeing
+                  && ((meta._HitPoints ?? 0) == 0 || (meta._Experience ?? 0) == 0 || (meta._Dexterity ?? 0) == 0
+                  || (meta._Strength ?? 0) == 0 || (meta.DamageDice ?? 0) == 0 || (meta.DamageDiceFaces ?? 0) == 0))
+                throw new Exception("Hostile actors must have HitPoints, Experience, Dexterity, Strength, DamageDice and DamageDiceFaces.");
+
+            if (((meta.DamageDice ?? 0) != 0 && (meta.DamageDiceFaces ?? 0) == 0) || ((meta.DamageDice ?? 0) == 0 && (meta.DamageDiceFaces ?? 0) != 0))
+                throw new Exception("If either DamageDice or DamageDiceFaces is specified, then both must be non-zero.");
+
+            if (meta._Charges > 0 && meta.CanStack == true)
+                throw new Exception("Stackable items cannot have Charges.");
+
+            if (meta.Enchantment == EnchantmentType.Undecided && (string.IsNullOrWhiteSpace(meta.EnchantedImagePath) || string.IsNullOrWhiteSpace(meta.CursedImagePath)))
+                throw new Exception("If enchantment is Undecided, the EnchantedImagePath and CursedImagePath must be set.");
+
+            if (meta.Enchantment == EnchantmentType.Enchanted && string.IsNullOrWhiteSpace(meta.EnchantedImagePath))
+                throw new Exception("If enchantment is Enchanted, the EnchantedImagePath must be set.");
+
+            if (meta.Enchantment == EnchantmentType.Cursed && string.IsNullOrWhiteSpace(meta.CursedImagePath))
+                throw new Exception("If enchantment is Cursed, the CursedImagePath must be set.");
+
+            #endregion
 
             return meta;
         }

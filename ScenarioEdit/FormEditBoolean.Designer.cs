@@ -1,7 +1,7 @@
 ﻿
 namespace ScenarioEdit
 {
-    partial class FormTilePropertiesBoolean
+    partial class FormEditBoolean
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace ScenarioEdit
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTilePropertiesBoolean));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditBoolean));
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.checkBoxValue = new System.Windows.Forms.CheckBox();
@@ -67,7 +67,7 @@ namespace ScenarioEdit
             this.checkBoxValue.Text = "checkBoxValue";
             this.checkBoxValue.UseVisualStyleBackColor = true;
             // 
-            // FormTilePropertiesBoolean
+            // FormEditBoolean
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -81,10 +81,10 @@ namespace ScenarioEdit
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormTilePropertiesBoolean";
+            this.Name = "FormEditBoolean";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Property";
-            this.Load += new System.EventHandler(this.FormTilePropertiesBoolean_Load);
+            this.Load += new System.EventHandler(this.FormEditBoolean_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

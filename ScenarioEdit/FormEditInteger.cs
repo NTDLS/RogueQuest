@@ -3,20 +3,20 @@ using System.Windows.Forms;
 
 namespace ScenarioEdit
 {
-    public partial class FormTileProperties : Form
+    public partial class FormEditInteger : Form
     {
-        public FormTileProperties()
+        public FormEditInteger()
         {
             InitializeComponent();
         }
 
-        private void FormTileProperties_Load(object sender, EventArgs e)
+        private void FormEditInteger_Load(object sender, EventArgs e)
         {
             this.AcceptButton = buttonSave;
             this.CancelButton = buttonCancel;
         }
 
-        public FormTileProperties(string propertyName, string propertyValue)
+        public FormEditInteger(string propertyName, string propertyValue)
         {
             InitializeComponent();
             labelPropertyName.Text = propertyName;

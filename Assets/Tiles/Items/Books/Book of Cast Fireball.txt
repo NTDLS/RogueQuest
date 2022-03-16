@@ -2,7 +2,7 @@
   "Name":"Book of Cast Fireball",
   "SpellName":"Cast Fireball",
   "SubType": "Book",
-  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Animation":"Animations/Spells/Flash1_64_64",
   "Value": "10000",
   "Weight":"300",
   "Bulk":"300",

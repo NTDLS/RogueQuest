@@ -3,31 +3,31 @@ using System.Windows.Forms;
 
 namespace ScenarioEdit
 {
-    public partial class FormTilePropertiesMultiLine : Form
+    public partial class FormEditBoolean : Form
     {
-        public FormTilePropertiesMultiLine()
+        public FormEditBoolean()
         {
             InitializeComponent();
         }
 
-        private void FormTilePropertiesMultiLine_Load(object sender, EventArgs e)
+        private void FormEditBoolean_Load(object sender, EventArgs e)
         {
             this.AcceptButton = buttonSave;
             this.CancelButton = buttonCancel;
         }
 
-        public FormTilePropertiesMultiLine(string propertyName, string propertyValue)
+        public FormEditBoolean(string propertyName, bool propertyValue)
         {
             InitializeComponent();
-            labelPropertyName.Text = propertyName;
-            textBoxPropertyValue.Text = propertyValue;
+            checkBoxValue.Text = propertyName;
+            checkBoxValue.Checked = propertyValue;
         }
 
-        public string PropertyValue
+        public bool PropertyValue
         {
             get
             {
-                return textBoxPropertyValue.Text;
+                return checkBoxValue.Checked;
             }
         }
 

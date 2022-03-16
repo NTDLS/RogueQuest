@@ -1,13 +1,13 @@
 {
-  "Name":"2 Slot Belt",
+  "Name":"1 Slot Belt",
   "SubType":"Belt",
   "Weight":"300",
   "Bulk":"300",
-  "Rarity":"30",
-  "Value":"80",
-  "ItemCapacity":"2",
+  "Rarity":"100",
+  "Value":"10",
+  "ItemCapacity":"1",
   "BulkCapacity":"100000",
   "WeightCapacity":"35000",
   "Level":"1",
-  "Enchantment":"Normal"
+  "Enchantment":"Undecided"
 }

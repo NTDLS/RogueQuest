@@ -2,7 +2,7 @@
 using System.IO.Compression;
 using System.Text;
 
-namespace Library.Utility
+namespace Library.Native
 {
     public static class Compress
     {

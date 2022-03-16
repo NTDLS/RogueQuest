@@ -127,7 +127,7 @@ namespace Library.Engine
                         || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog
                         || obj.Meta.ActorClass == Types.ActorClassName.ActorAnimation)
                     {
-                        Utility.Types.DynamicCast(obj, obj.GetType()).Render(screenDc);
+                        Native.Types.DynamicCast(obj, obj.GetType()).Render(screenDc);
                     }
                 }
 
@@ -149,7 +149,7 @@ namespace Library.Engine
 
                         foreach (var obj in miniMapTiles)
                         {
-                            Utility.Types.DynamicCast(obj, obj.GetType()).RenderMiniMap(_miniMapDC, _miniMapScale, _miniMapOffset);
+                            Native.Types.DynamicCast(obj, obj.GetType()).RenderMiniMap(_miniMapDC, _miniMapScale, _miniMapOffset);
                         }
 
                         screenDc.DrawImage(_miniMapBitmap, new Rectangle(0, 0, _miniMapBitmap.Width, _miniMapBitmap.Height));

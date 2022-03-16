@@ -2,7 +2,7 @@
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
-using Library.Utility;
+using Library.Native;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using ScenarioEdit.Engine;
@@ -262,11 +262,11 @@ namespace ScenarioEdit
 
             foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath))
             {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                if (Utility.IgnoreFileName(d))
                 {
                     continue;
                 }
+                var directory = Path.GetFileName(d);
 
                 var directoryNode = treeViewTiles.Nodes.Add(_partialTilesPath + directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
@@ -278,7 +278,7 @@ namespace ScenarioEdit
             foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath + partialPath))
             {
                 var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                if (Utility.IgnoreFileName(directory) || directory.ToLower() == "player")
                 {
                     continue;
                 }
@@ -289,7 +289,7 @@ namespace ScenarioEdit
 
             foreach (var f in Directory.GetFiles(Constants.BaseAssetPath + _partialTilesPath + partialPath, "*.png"))
             {
-                if (Path.GetFileName(f).StartsWith("@"))
+                if (Utility.IgnoreFileName(f))
                 {
                     continue;
                 }
@@ -510,13 +510,12 @@ namespace ScenarioEdit
 
             foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath))
             {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                if (Utility.IgnoreFileName(d))
                 {
                     continue;
                 }
 
-                materials.AddRange(EnumFlatMaterials(directory));
+                materials.AddRange(EnumFlatMaterials(Path.GetFileName(d)));
             }
 
             return materials;
@@ -528,18 +527,17 @@ namespace ScenarioEdit
 
             foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath + partialPath))
             {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                if (Utility.IgnoreFileName(d))
                 {
                     continue;
                 }
 
-                materials.AddRange(EnumFlatMaterials(partialPath + "\\" + directory));
+                materials.AddRange(EnumFlatMaterials(partialPath + "\\" + Path.GetFileName(d)));
             }
 
             foreach (var f in Directory.GetFiles(Constants.BaseAssetPath + _partialTilesPath + partialPath, "*.png"))
             {
-                if (Path.GetFileName(f).StartsWith("@"))
+                if (Utility.IgnoreFileName(f))
                 {
                     continue;
                 }
@@ -1711,6 +1709,24 @@ namespace ScenarioEdit
                             selectedTile.Meta.SpawnSubTypes = form.SelectedSubTypes.ToArray();
                         }
                     }
+
+                    else if (selectedRow.Text == "Enchantment" && selectedItems.Count == 1)
+                    {
+                        var items = new List<ComboItem<EnchantmentType>>();
+
+                        foreach (var item in Enum.GetValues<EnchantmentType>())
+                        {
+                            items.Add(new ComboItem<EnchantmentType>(item));
+                        }
+
+                        using (var form = new FormEditComboBox("Enchantment"))
+                        {
+                            if (form.ShowDialog(items, selectedTile.Meta.Enchantment?.ToString()) == DialogResult.OK)
+                            {
+                                selectedTile.Meta.Enchantment = form.GetSelection<EnchantmentType>();
+                            }
+                        }
+                    }
                     else if (selectedRow.Text == "Effects" && selectedItems.Count == 1)
                     {
                         using var form = new FormEditEffects(_core, selectedTile.Meta.Effects);
@@ -1726,7 +1742,7 @@ namespace ScenarioEdit
                     {
                         if (selectedRow.Text == "Dialog")
                         {
-                            using (var dialog = new FormTilePropertiesMultiLine(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
+                            using (var dialog = new FormEditText(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
                             {
                                 if (selectedRow.Text == "Dialog" && selectedItems.Count == 1)
                                 {
@@ -1751,7 +1767,7 @@ namespace ScenarioEdit
                                 return;
                             }
 
-                            using (var dialog = new FormTilePropertiesBoolean(selectedRow.Text, inputValue))
+                            using (var dialog = new FormEditBoolean(selectedRow.Text, inputValue))
                             {
                                 if (dialog.ShowDialog() == DialogResult.OK)
                                 {
@@ -1788,7 +1804,7 @@ namespace ScenarioEdit
                         }
                         else
                         {
-                            using (var dialog = new FormTileProperties(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
+                            using (var dialog = new FormEditString(selectedRow.Text, selectedRow.SubItems[1].Text.ToString()))
                             {
                                 if (dialog.ShowDialog() == DialogResult.OK)
                                 {
@@ -1964,8 +1980,9 @@ namespace ScenarioEdit
                     tile.Invalidate();
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
 

@@ -83,7 +83,7 @@ namespace ScenarioEdit
         {
             var item = listViewContainer.GetItemAt(e.X, e.Y);
 
-            using (var form = new FormEditQuantity(item.Text, item.SubItems[1].Text))
+            using (var form = new FormEditInteger(item.Text, item.SubItems[1].Text))
             {
                 if (form.ShowDialog() == DialogResult.OK)
                 {

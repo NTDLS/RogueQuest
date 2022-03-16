@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Utility
+namespace Library.Native
 {
     public class Win32
     {

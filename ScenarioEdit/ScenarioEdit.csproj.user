@@ -16,7 +16,7 @@
     <Compile Update="FormSelectSwatch.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormTileProperties.cs">
+    <Compile Update="FormEditString.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

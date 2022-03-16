@@ -2,7 +2,7 @@
   "Name":"Book of Defense",
   "SpellName":"Defense",
   "SubType": "Book",
-  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Animation":"Animations/Spells/Flash1_64_64",
   "Value": "5000",
   "Weight":"300",
   "Bulk":"300",

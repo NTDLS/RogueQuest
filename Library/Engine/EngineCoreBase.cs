@@ -1,4 +1,5 @@
 ﻿using Assets;
+using Library.Native;
 using Library.Types;
 using System;
 using System.Collections.Generic;
@@ -368,7 +369,7 @@ namespace Library.Engine
         {
             object[] param = { this };
 
-            int rarity = Utility.MathUtility.RandomNumber(1, 100);
+            int rarity = MathUtility.RandomNumber(1, 100);
 
             var randos = Materials.Where(o => o.Meta.ActorClass == spawnerMeta.SpawnType
                 && ((spawnerMeta.SpawnSubTypes?.Length ?? 0) == 0 || spawnerMeta.SpawnSubTypes.Contains(o.Meta.SubType ?? Types.ActorSubType.Unspecified))
@@ -378,7 +379,7 @@ namespace Library.Engine
 
             if (randos.Count > 0)
             {
-                int rand = Utility.MathUtility.RandomNumber(0, randos.Count);
+                int rand = MathUtility.RandomNumber(0, randos.Count);
                 var tile = randos[rand];
 
                 tile.Meta = TileMetadata.GetFreshMetadata(tile.TilePath);
@@ -386,7 +387,7 @@ namespace Library.Engine
                 if (tile.Meta.SubType == Types.ActorSubType.Money)
                 {
                     double divisor = (100.0 * (tile.Meta.Value ?? 1.0));
-                    tile.Meta.Quantity = Utility.MathUtility.RandomNumber(1, 1000);
+                    tile.Meta.Quantity = MathUtility.RandomNumber(1, 1000);
                     tile.Meta.Quantity = (int)(tile.Meta.Quantity / divisor);
                     if ((tile.Meta.Quantity ?? 0) <= 0)
                     {

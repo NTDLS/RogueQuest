@@ -2,7 +2,7 @@
   "Name":"Book of Heal Major Woulds",
   "SpellName":"Heal Major Woulds",
   "SubType": "Book",
-  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Animation":"Animations/Spells/Flash1_64_64",
   "Value": "5500",
   "Weight":"300",
   "Bulk":"300",

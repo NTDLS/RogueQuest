@@ -133,7 +133,7 @@ namespace ScenarioEdit
             {
                 if (item.Meta.SubType == ActorSubType.Wand)
                 {
-                    using var form = new FormEditQuantity("Charges", selectedItem.SubItems[DATA_COLUMN].Text);
+                    using var form = new FormEditInteger("Charges", selectedItem.SubItems[DATA_COLUMN].Text);
                     if (form.ShowDialog() == DialogResult.OK)
                     {
                         selectedItem.SubItems[DATA_COLUMN].Text = form.PropertyValue;
@@ -141,7 +141,7 @@ namespace ScenarioEdit
                 }
                 else
                 {
-                    using var form = new FormEditQuantity("Quantity", selectedItem.SubItems[DATA_COLUMN].Text);
+                    using var form = new FormEditInteger("Quantity", selectedItem.SubItems[DATA_COLUMN].Text);
                     if (form.ShowDialog() == DialogResult.OK)
                     {
                         selectedItem.SubItems[DATA_COLUMN].Text = form.PropertyValue;
@@ -249,20 +249,19 @@ namespace ScenarioEdit
 
             foreach (string d in Directory.GetDirectories(basePath + partialPath))
             {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@"))
+                if (Utility.IgnoreFileName(d))
                 {
                     continue;
                 }
 
-                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + directory);
+                var addedNode = CreateImageListAndAssets(imageList, node, basePath, partialPath + "\\" + Path.GetFileName(d));
                 addedNode.ImageKey = "<Folder>";
                 addedNode.SelectedImageKey = "<Folder>";
             }
 
             foreach (var f in Directory.GetFiles(basePath + partialPath, "*.png"))
             {
-                if (Path.GetFileName(f).StartsWith("@"))
+                if (Utility.IgnoreFileName(f))
                 {
                     continue;
                 }

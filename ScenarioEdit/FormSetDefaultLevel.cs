@@ -67,7 +67,7 @@ namespace ScenarioEdit
 
             string oldName = (listBoxLevels.SelectedItem as Level).Name;
 
-            using (var dialog = new FormTileProperties("Level Name", oldName))
+            using (var dialog = new FormEditString("Level Name", oldName))
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {

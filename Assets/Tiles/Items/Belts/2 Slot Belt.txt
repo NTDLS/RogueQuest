@@ -9,7 +9,5 @@
   "BulkCapacity":"100000",
   "WeightCapacity":"35000",
   "Level":"1",
-  "EnchantedImagePath":"Tiles\\Items\\Belts\\@Enchanted\\2 Slot Belt",
-  "CursedImagePath":"Tiles\\Items\\Belts\\@Cursed\\2 Slot Belt",
   "Enchantment":"Undecided"
 }

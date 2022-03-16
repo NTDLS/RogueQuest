@@ -1,4 +1,5 @@
-﻿using Library.Types;
+﻿using Library.Engine;
+using Library.Types;
 using ScenarioEdit.Engine;
 using ScenarioEdit.Properties;
 using System;
@@ -146,12 +147,12 @@ namespace ScenarioEdit
 
             foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialSwatchPath))
             {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                if (Utility.IgnoreFileName(d))
                 {
                     continue;
                 }
 
+                var directory = Path.GetFileName(d);
                 var directoryNode = treeViewSwatches.Nodes.Add(PartialSwatchPath + directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
             }
@@ -161,19 +162,19 @@ namespace ScenarioEdit
         {
             foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialSwatchPath + partialPath))
             {
-                var directory = Path.GetFileName(d);
-                if (directory.StartsWith("@") || directory.ToLower() == "player")
+                if (Utility.IgnoreFileName(d))
                 {
                     continue;
                 }
 
+                var directory = Path.GetFileName(d);
                 var directoryNode = parent.Nodes.Add(PartialSwatchPath + directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
             }
 
             foreach (var f in Directory.GetFiles(BaseAssetPath + PartialSwatchPath + partialPath, "*.rqs"))
             {
-                if (Path.GetFileName(f).StartsWith("@"))
+                if (Utility.IgnoreFileName(f))
                 {
                     continue;
                 }

@@ -22,6 +22,9 @@
     <Compile Update="FormEditEffects.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormEditComboBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormEditSelection.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -31,10 +34,10 @@
     <Compile Update="FormSelectLevelTile.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormTilePropertiesBoolean.cs">
+    <Compile Update="FormEditBoolean.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormTilePropertiesMultiLine.cs">
+    <Compile Update="FormEditText.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormWelcome.cs">
@@ -52,7 +55,7 @@
     <Compile Update="FormSelectLevel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormEditQuantity.cs">
+    <Compile Update="FormEditInteger.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">

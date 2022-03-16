@@ -2,7 +2,7 @@
   "Name":"Book of Ice Resistance",
   "SpellName":"Ice Resistance",
   "SubType": "Book",
-  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
+  "Animation":"Animations/Spells/Flash1_64_64",
   "Value": "6250",
   "Weight":"300",
   "Bulk":"300",
