@@ -1,9 +1,15 @@
 
 {
   "Name":"Iron Gauntlets",
-  "SubType": "Gauntlets",
   "Value": "30",
-  "AC":"5",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"4"},
+    {"EffectType":"Dexterity","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"-1"}
+  ],
   "Weight":"500",
   "Bulk":"2000",
   "Rarity":"60",

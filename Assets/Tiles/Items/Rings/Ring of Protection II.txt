@@ -1,10 +1,14 @@
 {
   "Name":"Ring of Protection II",
-  "SubType": "Ring",
-  "Value": "20",
-  "AC":"2",
-  "Weight":"30",
-  "Bulk":"50",
-  "Rarity":"70",
-  "Level":"1"
+  "Value": "30",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"3"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
+  "Rarity":"80",
+  "Level":"1",
+  "Enchantment":"Undecided"
 }

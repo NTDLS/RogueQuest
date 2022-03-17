@@ -1,21 +1,18 @@
 {
   "Name":"Studded Leather Armor",
-  "SubType": "Armor",
   "Value": "63",
-  "AC":"12",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"12"},
+    {"EffectType":"Dexterity","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"1"}
+  ],
   "Weight":"7000",
   "Bulk":"25000",
   "Rarity":"95",
   "Level":"1",
-  "ModSpeed":"",
-  "ModConstitution":"",
-  "ModDexterity":"",
-  "ModIntelligence":"",
-  "ModStrength":"",
-  "Enchantment":"Normal",
-  "ElectricResistance":"0",
-  "FireResistance":"0",
-  "EarthResistance":"0",
-  "IceResistance":"1",
+  "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Studded Leather Armor"
 }

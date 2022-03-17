@@ -1,15 +1,8 @@
 {
   "Name":"Poison",
-  "SubType": "Potion",
   "Value": "1",
-  "TargetType":"Self",
   "Effects":[{"EffectType":"Poison","ValueType":"Fixed","Duration":"10"}],
-  "IsConsumable":"True",
-  "UsageAnimationTilePath":"Animations/Spells/SkullSmoke1_192_256",
-  "Weight":"200",
-  "Bulk":"200",
+  "AnimationImagePath":"Animations/Spells/SkullSmoke1_192_256",
   "Rarity":"40",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"1",
 }

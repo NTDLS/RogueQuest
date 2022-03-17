@@ -1,21 +1,18 @@
 {
   "Name":"Leather Armor",
-  "SubType": "Armor",
   "Value": "21",
-  "AC":"6",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"21"},
+    {"EffectType":"Dexterity","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"1"}
+  ],
   "Weight":"5000",
   "Bulk":"24000",
   "Rarity":"95",
   "Level":"1",
-  "ModSpeed":"",
-  "ModConstitution":"",
-  "ModDexterity":"",
-  "ModIntelligence":"",
-  "ModStrength":"",
-  "Enchantment":"Normal",
-  "ElectricResistance":"0",
-  "FireResistance":"0",
-  "EarthResistance":"0",
-  "IceResistance":"1",
+  "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Leather Armor"
 }

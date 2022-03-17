@@ -1,8 +1,7 @@
 {
   "Name":"5 Slot Belt",
-  "SubType":"Belt",
-  "Weight":"300",
-  "Bulk":"300",
+  "Weight":"500",
+  "Bulk":"400",
   "Rarity":"5",
   "Value":"640",
   "ItemCapacity":"5",

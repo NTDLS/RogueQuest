@@ -1,0 +1,5 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "Armor",
+  "CanWalkOn":"True"
+}

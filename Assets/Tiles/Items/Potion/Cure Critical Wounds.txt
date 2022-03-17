@@ -1,15 +1,8 @@
 {
   "Name":"Cure Critical Wounds",
-  "SubType": "Potion",
   "Value": "100",
-  "TargetType":"Self",
   "Effects":[{"EffectType":"Heal","ValueType":"Percent","Value":90},{"EffectType":"Heal","ValueType":"Fixed","Value":"25"}],  
-  "IsConsumable":"True",
-  "UsageAnimationTilePath":"Animations/Spells/Flash1_64_64",
-  "Weight":"200",
-  "Bulk":"200",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"80",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"2"
 }

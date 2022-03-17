@@ -1,8 +1,7 @@
 {
   "Name":"1 Slot Belt",
-  "SubType":"Belt",
   "Weight":"300",
-  "Bulk":"300",
+  "Bulk":"320",
   "Rarity":"100",
   "Value":"10",
   "ItemCapacity":"1",

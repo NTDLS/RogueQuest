@@ -1,0 +1,14 @@
+{
+  "Name":"Broach of Adornment",
+  "Value": "5",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
+  "Rarity":"100",
+  "Level":"1",
+  "Enchantment":"Undecided"
+}

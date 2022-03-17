@@ -1,14 +1,16 @@
 {
   "Name":"Crested Shield",
-  "SubType": "Shield",
   "Value": "600",
   "Weight":"5000",
   "Bulk":"39000",
   "Rarity":"10",
-  "AC":"22",
-  "CanStack":"False",
-  "CanWalkOn":"True",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"22"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
   "Level":"6",
-  "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Crested Shield"
+  "Enchantment":"Undecided"
 }

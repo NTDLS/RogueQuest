@@ -1,0 +1,17 @@
+
+{
+  "Name":"Steel Gauntlets",
+  "Value": "80",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"6"},
+    {"EffectType":"Dexterity","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"-1"}
+  ],
+  "Weight":"600",
+  "Bulk":"2000",
+  "Rarity":"50",
+  "Level":"2"
+}

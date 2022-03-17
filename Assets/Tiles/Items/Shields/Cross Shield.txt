@@ -1,14 +1,16 @@
 {
   "Name":"Cross Shield",
-  "SubType": "Shield",
   "Value": "300",
   "Weight":"4800",
   "Bulk":"38000",
   "Rarity":"20",
-  "AC":"19",
-  "CanStack":"False",
-  "CanWalkOn":"True",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"19"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
   "Level":"5",
-  "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Cross Shield"
+  "Enchantment":"Undecided"
 }

@@ -3,8 +3,8 @@ using Game.Actors;
 using Game.Classes;
 using Library.Engine;
 using Library.Engine.Types;
-using Library.Types;
 using Library.Native;
+using Library.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +13,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using static Game.Engine.Types;
-using static Library.Engine.TileMetadata;
 
 namespace Game.Engine
 {
@@ -1819,6 +1818,14 @@ namespace Game.Engine
             Core.State.RemoveThreadReference();
         }
 
+        /// <summary>
+        /// This method is stupid, it spawns a thread to perform the animation but blocks in a loop to update the UI.
+        /// </summary>
+        /// <param name="imagePath"></param>
+        /// <param name="at"></param>
+        /// <param name="callback"></param>
+        /// <param name="callbackParam"></param>
+        /// <returns></returns>
         private Thread AnimateAtAsync(string imagePath, ActorBase at, GameThreadCallback callback = null, object callbackParam = null)
         {
             var param = new AnimateAtAsyncParam()

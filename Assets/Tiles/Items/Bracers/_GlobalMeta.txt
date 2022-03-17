@@ -1,0 +1,6 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "Bracers",
+  "CanStack":"False",
+  "CanWalkOn":"True"
+}

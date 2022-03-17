@@ -1,0 +1,7 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "Necklace",
+  "Weight":"200",
+  "Bulk":"350",  
+  "CanWalkOn":"True"
+}

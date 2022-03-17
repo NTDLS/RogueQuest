@@ -1,0 +1,7 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "Ring",
+  "CanWalkOn":"True",
+  "Weight":"30",
+  "Bulk":"50" 
+}

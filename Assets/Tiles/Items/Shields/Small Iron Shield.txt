@@ -1,12 +1,16 @@
 {
   "Name":"Small Iron Shield",
-  "SubType": "Shield",
   "Value": "25",
   "Weight":"4000",
   "Bulk":"15000",
   "Rarity":"90",
-  "AC":"6",
-  "CanStack":"False",
-  "CanWalkOn":"True",
-  "Level":"1"
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"6"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
+  "Level":"1",
+  "Enchantment":"Undecided"
 }

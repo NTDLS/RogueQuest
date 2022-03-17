@@ -1,21 +1,18 @@
 {
   "Name":"Meteoric Armor",
-  "SubType": "Armor",
   "Value": "8620",
-  "AC":"54",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"54"},
+    {"EffectType":"Dexterity","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"-1"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"-1"}
+  ],
   "Weight":"5000",
   "Bulk":"30000",
   "Rarity":"50",
   "Level":"7",
-  "ModSpeed":"",
-  "ModConstitution":"",
-  "ModDexterity":"",
-  "ModIntelligence":"",
-  "ModStrength":"",
-  "ElectricResistance":"-1",
-  "FireResistance":"1",
-  "EarthResistance":"1",
-  "IceResistance":"-1",
-  "Enchantment":"Normal",
+  "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Meteoric Armor"
 }

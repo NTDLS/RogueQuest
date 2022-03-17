@@ -1,14 +1,16 @@
 {
   "Name":"Valors Shield",
-  "SubType": "Shield",
   "Value": "500",
   "Weight":"5200",
   "Bulk":"36000",
   "Rarity":"12",
-  "AC":"21",
-  "CanStack":"False",
-  "CanWalkOn":"True",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"21"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
   "Level":"6",
-  "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Valors Shield"
+  "Enchantment":"Undecided"
 }

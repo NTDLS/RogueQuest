@@ -1,14 +1,16 @@
 {
   "Name":"Dark Lord Shield",
-  "SubType": "Shield",
   "Value": "700",
   "Weight":"5500",
   "Bulk":"40000",
   "Rarity":"8",
-  "AC":"23",
-  "CanStack":"False",
-  "CanWalkOn":"True",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"23"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
   "Level":"7",
-  "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Dark Lord Shield"
+  "Enchantment":"Undecided"
 }

@@ -1,13 +1,12 @@
 {
   "Name":"Bracers of Defense",
-  "SubType": "Bracers",
   "Value": "30",
   "Effects":[
-    {"EffectType":"ArmorClass,","ValueType":"Fixed","Value":"2"},
-    {"EffectType":"ElectricResistance,","ValueType":"Fixed","Value":"1"},
-    {"EffectType":"FireResistance,","ValueType":"Fixed","Value":"1"},
-    {"EffectType":"EarthResistance,","ValueType":"Fixed","Value":"1"},
-    {"EffectType":"IceResistance,","ValueType":"Fixed","Value":"1"}
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"1"}
   ],
   "Weight":"250",
   "Bulk":"2000",

@@ -1,0 +1,6 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "Shield",
+  "CanStack":"False",
+  "CanWalkOn":"True"
+}

@@ -1,12 +1,16 @@
 {
   "Name":"Large Steel Shield",
-  "SubType": "Shield",
   "Value": "84",
   "Weight":"6000",
   "Bulk":"50000",
   "Rarity":"50",
-  "AC":"15",
-  "CanStack":"False",
-  "CanWalkOn":"True",
-  "Level":"4"
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"15"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
+  "Level":"4",
+  "Enchantment":"Undecided"
 }

@@ -1,4 +1,5 @@
 {
+  "SubType":"Belt",
   "CanWalkOn":"True",
   "ActorClass": "ActorItem",
   "IsContainer": "True"

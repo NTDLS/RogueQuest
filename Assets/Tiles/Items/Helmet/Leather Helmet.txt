@@ -1,10 +1,17 @@
 {
   "Name":"Leather Helment",
-  "SubType": "Helment",
   "Value": "5",
-  "AC":"3",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"3"},
+    {"EffectType":"Dexterity","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"1"}
+  ],
   "Weight":"500",
   "Bulk":"500",
   "Rarity":"100",
-  "Level":"1"
+  "Level":"1",
+  "Enchantment":"Undecided"
 }

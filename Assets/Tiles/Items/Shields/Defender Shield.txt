@@ -1,15 +1,16 @@
 {
   "Name":"Defender Shield",
-  "SubType": "Shield",
   "Value": "400",
   "Weight":"5000",
   "Bulk":"39000",
   "Rarity":"15",
-  "AC":"20",
-  "CanStack":"False",
-  "CanWalkOn":"True",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"20"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
   "Level":"6",
-  "Enchantment":"Normal",
-  "UnidentifiedTilePath":"Tiles\\Items\\Shields\\Defender Shield"
+  "Enchantment":"Undecided"
 }
-

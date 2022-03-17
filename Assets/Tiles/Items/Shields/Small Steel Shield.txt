@@ -1,12 +1,16 @@
 {
   "Name":"Small Steel Shield",
-  "SubType": "Shield",
   "Value": "55",
   "Weight":"4000",
   "Bulk":"15000",
   "Rarity":"70",
-  "AC":"11",
-  "CanStack":"False",
-  "CanWalkOn":"True",
-  "Level":"3"
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"11"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
+  "Level":"3",
+  "Enchantment":"Undecided"
 }

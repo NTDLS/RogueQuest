@@ -1,0 +1,10 @@
+{
+  "SubType": "Potion",
+  "ActorClass": "ActorItem",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "IsConsumable":"True",
+  "TargetType":"Self",
+  "Weight":"200",
+  "Bulk":"200"
+}
