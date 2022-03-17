@@ -2,7 +2,7 @@
   "Name":"Leviathans Bane",
   "SubType": "MeleeWeapon",
   "Value": "2400",
-  "DamageType":"Ice",
+  "DamageType":"Cold",
   "DamageDice":"3",
   "DamageDiceFaces":"10",
   "DamageAdditional":"2",

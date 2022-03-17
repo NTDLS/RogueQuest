@@ -1,17 +1,11 @@
 {
   "Name":"Summon Monster II",
-  "SubType": "Wand",
   "TargetType":"Terrain",
-  "Effect": "SummonMonster",
-  "Value": "1.5",
+  "Effects":[ {"EffectType":"SummonMonster"} ],
+  "Value": "6",
   "CastTime":"3",
-  "IsConsumable":"True",
   "Charges":"10",
-  "UsageAnimationTilePath":"Animations/Spells/SkullSmoke2_192_256",
-  "Weight":"200",
-  "Bulk":"350",
+  "AnimationImagePath":"Animations/Spells/SkullSmoke2_192_256",
   "Rarity":"8",
-  "CanStack":"False",
-  "CanWalkOn":"True",
   "Level":"4"
 }

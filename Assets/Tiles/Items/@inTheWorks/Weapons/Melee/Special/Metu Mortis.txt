@@ -2,7 +2,7 @@
   "Name":"Metu Mortis",
   "SubType": "MeleeWeapon",
   "Value": "2400",
-  "DamageType":"Electric",
+  "DamageType":"Lightning",
   "DamageDice":"1",
   "DamageDiceFaces":"20",
   "DamageAdditional":"3",

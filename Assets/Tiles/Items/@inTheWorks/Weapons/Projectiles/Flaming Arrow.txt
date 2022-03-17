@@ -7,7 +7,7 @@
   "DamageDice":"2",
   "DamageDiceFaces":"6",
   "DamageAdditional":"1",
-  "UsageAnimationTilePath":"Animations\\Hits\\Smoke (1)",
+  "AnimationImagePath":"Animations\\Hits\\Smoke (1)",
   "Weight":"0.01",
   "Bulk":"0.05",
   "Rarity":"40",

@@ -1,7 +1,7 @@
 {
   "Name":"Potion of Constitution",
   "Value": "20",
-  "Effects":[{"EffectType":"Constitution","ValueType":"Fixed","Value"5","Duration":"60"}],
+  "Effects":[{"EffectType":"Constitution","ValueType":"Fixed","Value":"5","Duration":"60"}],
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"75",
   "Level":"1"

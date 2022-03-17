@@ -1,18 +1,10 @@
 {
   "Name":"Cast Poison",
-  "SubType": "Wand",
+  "TargetType":"HostileBeing",
+  "Effects":[ {"EffectType":"CastPoison"} ],
   "Value": "5",
   "CastTime":"2",
-  "ExpireTime": "20",
-  "TargetType":"HostileBeing",
-  "Effect": "Poison",
-  "IsConsumable":"True",
-  "ProjectileTilePath":"Tiles\\Items\\Equipment\\Scrolls\\@Generic Magic Projectile",
-  "UsageAnimationTilePath":"Animations/Spells/SkullSmoke1_192_256",
-  "Weight":"200",
-  "Bulk":"350",
+  "AnimationImagePath":"Animations/Spells/SkullSmoke1_192_256",
   "Rarity":"40",
-  "CanStack":"False",
-  "CanWalkOn":"True",
-  "Level":"2",
+  "Level":"2"
 }

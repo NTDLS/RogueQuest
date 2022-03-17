@@ -1,0 +1,9 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "Wand",
+  "IsConsumable":"True",
+  "Weight":"200",
+  "Bulk":"350",
+  "CanStack":"False",
+  "CanWalkOn":"True"
+}
