@@ -300,8 +300,8 @@ namespace Game.Engine
             if (input != null)
             {
                 BeforeTick?.Invoke(this, input);
-                var offsetApplied = Tick.Advance(input);
-                AfterTick?.Invoke(this, input, offsetApplied);
+                var appliedOffset = Tick.Advance(input);
+                AfterTick?.Invoke(this, input, appliedOffset);
             }
         }
     }

@@ -35,8 +35,8 @@ namespace Library.Engine
         public EngineDisplay Display { get; private set; }
         public object CollectionSemaphore { get; private set; } = new object();
         public object DrawingSemaphore { get; private set; } = new object();
-        public ActorController Actors { get; private set; }
         public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
+        public ActorController Actors { get; private set; }
 
         #endregion
 

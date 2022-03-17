@@ -21,7 +21,6 @@ namespace Game.Engine
     {
         private int _avatarAnimationFrame = 1;
         public delegate void GameThreadCallback(object param);
-        AutoResetEvent GameLogicThreadStarted = new AutoResetEvent(false);
 
         public EngineCore Core { get; private set; }
         public EngineTickController(EngineCore core)
@@ -175,8 +174,6 @@ namespace Game.Engine
         /// <returns>Return true is spell was cast, return false for cancel.</returns>
         private bool CastNonWeaponMagic(CustodyItem item, ActorBase target)
         {
-            WaitOnIdleEngine();
-
             if (item.Tile.Meta.TargetType == TargetType.HostileBeing)
             {
                 #region Target: HostileBeing
@@ -212,6 +209,7 @@ namespace Game.Engine
                     if (string.IsNullOrEmpty(item.Tile.Meta.AnimationImagePath) == false)
                     {
                         AnimateAtAsync(item.Tile.Meta.AnimationImagePath, target);
+
                     }
                 }
                 #endregion
@@ -606,8 +604,6 @@ namespace Game.Engine
                 {
                     return false;
                 }
-
-                WaitOnIdleEngine();
             }
             else
             {
@@ -615,7 +611,6 @@ namespace Game.Engine
             }
 
             PassTime(((item.Tile.Meta.CastTime ?? 0) - (Core.State.TimePassed - startTime)) - Core.State.Character.Speed);
-            WaitOnIdleEngine();
 
             if (item.Tile.Meta.Charges > 0) //Remember that items with charges are NOT stackable.
             {
@@ -800,7 +795,6 @@ namespace Game.Engine
             {
                 Core.LogLine($"Feeling no need to rest you press on.", Color.DarkGreen);
                 Advance(input);
-                WaitOnIdleEngine();
                 return;
             }
 
@@ -810,7 +804,6 @@ namespace Game.Engine
                 || Core.State.Character.AvailableMana < Core.State.Character.Mana)
             {
                 Advance(input);
-                WaitOnIdleEngine();
 
                 var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 250)
                     .Where(o => o.Meta.CanTakeDamage == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing);
@@ -846,10 +839,7 @@ namespace Game.Engine
 
                 while (Core.State.TimePassed - startGameTime < timeToPass)
                 {
-                    if (Core.State.ActiveThreadCount == 0)
-                    {
-                        Advance(input);
-                    }
+                    Advance(input);
                     Application.DoEvents(); //The UI thread is a bitch.
                 }
                 Thread.Sleep(500);
@@ -866,16 +856,8 @@ namespace Game.Engine
 
                 while (Core.State.TimePassed - startGameTime < timeToPass)
                 {
-                    lock (this)
-                    {
-                        if (Core.State.ActiveThreadCount == 0)
-                        {
-                            Advance(input);
-                            GameLogicThreadStarted.WaitOne();
-                        }
-
-                        Application.DoEvents(); //The UI thread is a bitch.
-                    }
+                    Advance(input);
+                    Application.DoEvents(); //The UI thread is a bitch.
                     Thread.Sleep(250);
                 }
             }
@@ -883,7 +865,7 @@ namespace Game.Engine
 
         public Point<double> Advance(TickInput Input, GameThreadCallback callback = null, object callbackParam = null)
         {
-            Point<double> appliedOffset = new Point<double>();
+            var appliedOffset = new Point<double>();
 
             List<ActorBase> intersections = new List<ActorBase>();
 
@@ -947,23 +929,16 @@ namespace Game.Engine
                 }
             };
 
-            Thread thread = new Thread(starter) { IsBackground = true };
+            var thread = new Thread(starter) { IsBackground = true };
             thread.Start(new GameLogicParam()
             {
                 Intersections = intersections,
                 Input = Input
             });
 
-            return appliedOffset;
-        }
+            WaitOnThreadWithShamefulDoEvents(thread);
 
-        private void WaitOnIdleEngine()
-        {
-            while (Core.State.ActiveThreadCount > 0)
-            {
-                Thread.Sleep(1);
-                Application.DoEvents(); //The UI thread is a bitch.
-            }
+            return appliedOffset;
         }
 
         private HitType CalculateHitType(int agressorDexterity, int victimAC)
@@ -1056,14 +1031,10 @@ namespace Game.Engine
         /// <param name="intersections"></param>
         private void GameLogicThread(object param)
         {
-            lock (GameLogicThreadLock)
-            {
-                Core.State.AddThreadReference();
-                GameLogicThreadStarted.Set();
-                Thread.CurrentThread.Name = $"GameLogicThread_{Core.State.ActiveThreadCount}";
-                GameLogicThreadEx((GameLogicParam)param);
-                Core.State.RemoveThreadReference();
-            }
+            Core.State.AddThreadReference();
+            Thread.CurrentThread.Name = $"GameLogicThread_{Core.State.ActiveThreadCount}";
+            GameLogicThreadEx((GameLogicParam)param);
+            Core.State.RemoveThreadReference();
         }
 
         private void GameLogicThreadEx(GameLogicParam p)
@@ -1766,10 +1737,9 @@ namespace Game.Engine
             }
         }
 
-
         private void AnimateTo(string imagePath, ActorBase from, ActorBase to)
         {
-            var item = Core.Actors.AddNew<ActorPlayer>(from.X, from.Y, imagePath);
+            var item = Core.Actors.AddNew<ActorBase>(from.X, from.Y, imagePath);
             item.DrawOrder = 1000;
 
             item.Velocity.Angle.Degrees = item.AngleTo(to);
@@ -1849,7 +1819,7 @@ namespace Game.Engine
             Core.State.RemoveThreadReference();
         }
 
-        private void AnimateAtAsync(string imagePath, ActorBase at, GameThreadCallback callback = null, object callbackParam = null)
+        private Thread AnimateAtAsync(string imagePath, ActorBase at, GameThreadCallback callback = null, object callbackParam = null)
         {
             var param = new AnimateAtAsyncParam()
             {
@@ -1865,8 +1835,12 @@ namespace Game.Engine
                     callback(callbackParam);
                 }
             };
-            Thread thread = new Thread(starter) { IsBackground = true };
+            var thread = new Thread(starter) { IsBackground = true };
             thread.Start(param);
+
+            WaitOnThreadWithShamefulDoEvents(thread);
+
+            return thread;
         }
 
         private void EmptyContainerToGround(Guid? containerId, ActorBase at)
@@ -2128,5 +2102,14 @@ namespace Game.Engine
 
         #endregion
 
+        private Thread WaitOnThreadWithShamefulDoEvents(Thread thread)
+        {
+            while (thread.ThreadState != ThreadState.Stopped)
+            {
+                Application.DoEvents();
+                Thread.Sleep(1);
+            }
+            return thread;
+        }
     }
 }

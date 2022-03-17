@@ -10,6 +10,8 @@ namespace Library.Engine
 {
     public class ActorController
     {
+        public ScopedLock Lock { get; set; } = new ScopedLock();
+
         private Graphics _miniMapDC;
         private Bitmap _miniMapBitmap;
         private readonly int _miniMapWidth = 350;
