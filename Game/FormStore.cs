@@ -184,7 +184,7 @@ namespace Game
 
             if (draggedItemTag.Tile.Meta.Enchantment != null && (draggedItemTag.Tile.Meta.IsIdentified ?? false) == false)
             {
-                draggedItemTag.Tile.Meta.Identify();
+                draggedItemTag.Tile.Meta.Identify(Core);
 
                 if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
                 {
@@ -753,7 +753,7 @@ namespace Game
             {
                 if (draggedItemTag.Tile.Meta.Enchantment != null && (draggedItemTag.Tile.Meta.IsIdentified ?? false) == false)
                 {
-                    draggedItemTag.Tile.Meta.Identify();
+                    draggedItemTag.Tile.Meta.Identify(Core);
 
                     if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
                     {
@@ -986,7 +986,7 @@ namespace Game
 
                     if (newItem.Meta.Enchantment != null)
                     {
-                        newItem.Meta.Identify();
+                        newItem.Meta.Identify(Core);
                     }
 
                     int max = (int)newItem.Meta.Rarity / 4;

@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Constitution",
   "SpellName":"Constitution",
-  "SubType": "Scroll",
-  "Value": "100",
   "TargetType":"Self",
-  "CastTime":"2",
   "Effects":[ {"EffectType":"Constitution","ValueType":"Fixed","Value":"1","Duration":"60"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/Flash1_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "100",
+  "CastTime":"2",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"75",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"1"
 }
+  

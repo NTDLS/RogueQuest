@@ -255,12 +255,37 @@ namespace Library.Engine
             }
         }
 
-        public ActorBase AddDynamic(string actorClass, double x, double y, string TilePath)
+        public ActorBase AddDynamic(TileIdentifier tile, double x, double y)
+        {
+            object[] param = { this.Core };
+
+            var tileType = GameAssembly.GetType($"Game.Actors.{tile.Meta.ActorClass.ToString()}");
+            var obj = (ActorBase)Activator.CreateInstance(tileType, param);
+
+            obj.Meta = tile.Meta;
+            obj.TilePath = tile.TilePath;
+            obj.SetImage(SpriteCache.GetBitmapCached(obj.ImagePath));
+            obj.X = x;
+            obj.Y = y;
+
+            Tiles.Add(obj);
+
+            obj.Invalidate();
+
+            return obj;
+        }
+
+        public ActorBase AddDynamic(string actorClass, double x, double y, string TilePath, TileMetadata meta = null)
         {
             object[] param = { this.Core };
 
             var tileType = GameAssembly.GetType($"Game.Actors.{actorClass}");
             var obj = (ActorBase)Activator.CreateInstance(tileType, param);
+
+            if (meta != null)
+            {
+                obj.Meta = meta;
+            }
 
             obj.TilePath = TilePath;
             obj.SetImage(SpriteCache.GetBitmapCached(obj.ImagePath));

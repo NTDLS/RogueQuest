@@ -1,0 +1,14 @@
+{
+  "Name":"Cloak of Cold Resistance",
+  "Value": "80",
+  "Weight":"500",
+  "Bulk":"6000",
+  "Rarity":"50",
+  "Level":"2",
+
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"1"}
+  ],
+  "Enchantment":"Undecided"
+}

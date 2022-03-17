@@ -1,18 +1,12 @@
 {
   "Name":"Scroll of Remove Curse",
   "SpellName":"Remove Curse",
-  "SubType": "Scroll",
-  "Value": "250",
   "TargetType":"Self",
-  "CastTime":"5",
   "Effects":[ {"EffectType":"RemoveCurse"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/Flash1_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "250",
+  "CastTime":"5",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"95",
-  "CanStack":"True",
-  "CanWalkOn":"True",
-  "Level":"1",
-  "Mana":"6"
+  "Level":"1"
 }
+  

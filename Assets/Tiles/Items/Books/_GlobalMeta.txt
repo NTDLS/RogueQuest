@@ -1,0 +1,9 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "Book",
+  "Weight":"300",
+  "Bulk":"300",
+  "CanStack":"False",
+  "CanWalkOn":"True",
+  "IsConsumable":"True"
+}

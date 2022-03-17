@@ -1,0 +1,11 @@
+{
+  "Name":"Scroll of Cast Greater Light",
+  "SpellName":"Cast Greater Light",
+  "TargetType":"Any",
+  "Effects":[ {"EffectType":"CastLight","ValueType":"Fixed","Value":"200"} ],
+  "Value": "250",
+  "CastTime":"8",
+  "AnimationImagePath":"Animations/Spells/Flash4_64_64",
+  "Rarity":"10",
+  "Level":"4"
+}

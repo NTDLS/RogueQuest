@@ -1,14 +1,9 @@
 {
   "Name":"Book of Hold Monster",
   "SpellName":"Hold Monster",
-  "SubType": "Book",
-  "Animation":"Animations/Spells/Flash1_64_64",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Value": "7500",
-  "Weight":"300",
-  "Bulk":"300",
   "Rarity":"3",
-  "CanWalkOn":"True",
-  "IsConsumable":"True",
   "Level":"3",
   "Mana":"4"
 }

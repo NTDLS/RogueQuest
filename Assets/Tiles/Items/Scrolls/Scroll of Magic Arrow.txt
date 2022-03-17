@@ -1,7 +1,6 @@
 {
   "Name":"Scroll of Magic Arrow",
   "SpellName":"Magic Arrow",
-  "SubType": "Scroll",
   "TargetType":"HostileBeing",
   "Effects":[ {"EffectType":"MagicArrow"} ],
   "Value": "5",
@@ -10,11 +9,7 @@
   "DamageDiceFaces":"5",
   "DamageAdditional":"0",
   "IsConsumable":"True",
-  "Animation":"Animations\\Hits\\Smoke1_66_66",
-  "Weight":"150",
-  "Bulk":"200",
+  "AnimationImagePath":"Animations\\Hits\\Smoke1_66_66",
   "Rarity":"80",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"1"
 }

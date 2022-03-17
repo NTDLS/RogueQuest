@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Fire Resistance",
   "SpellName":"Fire Resistance",
-  "SubType": "Scroll",
-  "Value": "125",
   "TargetType":"Self",
-  "CastTime":"2",
   "Effects":[ {"EffectType":"FireResistance","ValueType":"Fixed","Value":"1","Duration":"60"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/Flash1_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "125",
+  "CastTime":"2",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"65",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"5"
 }
+  

@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Summon Monster I",
   "SpellName":"Summon Monster I",
-  "SubType": "Scroll",
   "TargetType":"Terrain",
   "Effects":[ {"EffectType":"SummonMonster"} ],
   "Value": "5",
   "CastTime":"3",
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/SkullSmoke2_192_256",
-  "Weight":"150",
-  "Bulk":"200",
+  "AnimationImagePath":"Animations/Spells/SkullSmoke2_192_256",
   "Rarity":"1",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"2"
 }
+  

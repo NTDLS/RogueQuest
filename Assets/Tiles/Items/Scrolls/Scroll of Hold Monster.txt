@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Hold Monster",
   "SpellName":"Hold Monster",
-  "SubType": "Scroll",
   "TargetType":"HostileBeing",
   "Effects":[ {"EffectType":"HoldMonster","Duration":"30"} ],
   "Value": "150",
   "CastTime":"5",
-  "IsConsumable":"True",
-  "Animation":"Animations\\Spells\\Flash4_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "AnimationImagePath":"Animations\\Spells\\Flash4_64_64",
   "Rarity":"40",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"3"
 }
+  

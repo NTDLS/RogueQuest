@@ -1,0 +1,9 @@
+{
+  "Name":"Book of Cast Greater Light",
+  "SpellName":"Cast Greater Light",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
+  "Value": "9000",
+  "Rarity":"3",
+  "Level":"4",
+  "Mana":"1"
+}

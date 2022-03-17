@@ -1,0 +1,10 @@
+{
+  "CanWalkOn":"True",
+  "ActorClass": "ActorItem",
+  "SubType": "Scroll",
+  "Weight":"150",
+  "Bulk":"200",
+  "CanStack":"True",
+  "CanWalkOn":"True",
+  "IsConsumable":"True"
+}

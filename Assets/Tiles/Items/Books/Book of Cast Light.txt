@@ -1,0 +1,9 @@
+{
+  "Name":"Book of Cast Light",
+  "SpellName":"Cast Light",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
+  "Value": "5000",
+  "Rarity":"3",
+  "Level":"1",
+  "Mana":"1"
+}

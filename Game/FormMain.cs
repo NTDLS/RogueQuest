@@ -194,7 +194,12 @@ namespace Game
 
                     ActorBase hoverTile = null;
 
-                    if (inventoryItem.Tile.Meta.TargetType == TargetType.HostileBeing)
+                    if (inventoryItem.Tile.Meta.TargetType == TargetType.Any)
+                    {
+                        hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
+                            .Where(o => o.Visible == true).OrderBy(o => o.DrawOrder).LastOrDefault();
+                    }
+                    else if (inventoryItem.Tile.Meta.TargetType == TargetType.HostileBeing)
                     {
                         hoverTile = _core.Actors.Intersections(new Point<double>(x, y), new Point<double>(1, 1))
                             .Where(o => o.Visible == true && o.Meta.ActorClass == ActorClassName.ActorHostileBeing)

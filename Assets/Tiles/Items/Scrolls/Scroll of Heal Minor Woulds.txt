@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Heal Minor Woulds",
   "SpellName":"Heal Minor Woulds",
-  "SubType": "Scroll",
-  "Value": "20",
   "TargetType":"Self",
-  "CastTime":"5",
   "Effects":[ {"EffectType":"Heal","ValueType":"Percent","Value":"25"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/Flash1_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "20",
+  "CastTime":"5",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"100",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"1"
 }
+  

@@ -1,18 +1,12 @@
 {
   "Name":"Scroll of Healing",
   "SpellName":"Healing",
-  "SubType": "Scroll",
-  "Value": "150",
   "TargetType":"Self",
-  "CastTime":"5",
   "Effects":[ {"EffectType":"Heal","ValueType":"Percent","Value":"90"}, {"EffectType":"Heal","ValueType":"Fixed","Value":"25"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/Flash1_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "150",
+  "CastTime":"5",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"70",
-  "CanStack":"True",
-  "CanWalkOn":"True",
-  "Level":"5",
-  "Mana":"6"
+  "Level":"5"
 }
+  

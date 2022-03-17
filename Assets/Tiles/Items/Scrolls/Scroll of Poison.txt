@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Poison",
   "SpellName":"Poison",
-  "SubType": "Scroll",
-  "Value": "1",
-  "CastTime":"5",
   "TargetType":"Self",
   "Effects":[ {"EffectType":"Poison","Duration":"20"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/SkullSmoke1_192_256",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "1",
+  "CastTime":"5",
+  "AnimationImagePath":"Animations/Spells/SkullSmoke1_192_256",
   "Rarity":"20",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"1"
 }
+  

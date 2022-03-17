@@ -1,0 +1,14 @@
+{
+  "Name":"Cloak of Fire Resistance",
+  "Value": "80",
+  "Weight":"500",
+  "Bulk":"6000",
+  "Rarity":"50",
+  "Level":"2",
+
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"1"}
+  ],
+  "Enchantment":"Undecided"
+}

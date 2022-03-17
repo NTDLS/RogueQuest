@@ -1,0 +1,13 @@
+{
+  "Name":"Cloak of Protection III",
+  "Value":"150",
+  "Weight":"500",
+  "Bulk":"6000",
+  "Rarity":"50",
+  "Level":"3",
+
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"5"}
+  ],
+  "Enchantment":"Undecided"
+}

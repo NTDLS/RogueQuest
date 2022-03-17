@@ -85,7 +85,7 @@ namespace Library.Engine
             if (modEarthResistance != 0) text += $"EARTH {PosNeg(modEarthResistance)}\r\n";
             if (modElectricResistance != 0) text += $"ELECTRIC {PosNeg(modElectricResistance)}\r\n";
             if (modFireResistance != 0) text += $"FIRE {PosNeg(modFireResistance)}\r\n";
-            if (modIceResistance != 0) text += $"ICE {PosNeg(modIceResistance)}\r\n";
+            if (modIceResistance != 0) text += $"COLD {PosNeg(modIceResistance)}\r\n";
 
             return text.Trim().Replace("\r\n", "|");
         }

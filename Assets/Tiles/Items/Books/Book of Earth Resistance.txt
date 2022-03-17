@@ -1,14 +1,9 @@
 {
   "Name":"Book of Earth Resistance",
   "SpellName":"Earth Resistance",
-  "SubType": "Book",
-  "Animation":"Animations/Spells/Flash1_64_64",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Value": "6250",
-  "Weight":"300",
-  "Bulk":"300",
   "Rarity":"3",
-  "CanWalkOn":"True",
-  "IsConsumable":"True",
   "Level":"2",
   "Mana":"3"
 }

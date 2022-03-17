@@ -89,6 +89,7 @@
     public enum TargetType
     {
         Unspecified, //¯\_(ツ)_/¯
+        Any, //Literally anything.
         Self, //Healing, etc.
         HostileBeing, //Attacking, etc.
         Terrain //Summon being, etc.
@@ -127,27 +128,30 @@
     public enum ItemEffect
     {
         Unspecified, //¯\_(ツ)_/¯
-        Heal,
-        Poison,
+
+        //Spells
+        CastFireball,
+        CastLight,
+        CastPoison,
         CurePoison,
+        Heal,
+        HoldMonster,
+        MagicArrow,
+        Poison,
+        RemoveCurse,
         SummonMonster,
 
-        Speed,
-        Strength,
-        Dexterity,
-        Constitution,
+        //Effects
         ArmorClass,
-        Intelligence,
         ColdResistance,
-        LightningResistance,
-        FireResistance,
+        Constitution,
+        Dexterity,
         EarthResistance,
-
-        MagicArrow,
-        CastFireball,
-        HoldMonster,
-        CastPoison,
-        RemoveCurse
+        FireResistance,
+        Intelligence,
+        LightningResistance,
+        Speed,
+        Strength
     }
 
     public enum StateOfBeing

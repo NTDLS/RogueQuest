@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Heal Medium Woulds",
   "SpellName":"Heal Medium Woulds",
-  "SubType": "Scroll",
-  "Value": "80",
   "TargetType":"Self",
-  "CastTime":"5",
   "Effects":[ {"EffectType":"Heal","ValueType":"Percent","Value":"50"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/Flash1_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "80",
+  "CastTime":"5",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"60",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"3"
 }
+  

@@ -216,10 +216,7 @@ namespace Game
 
             if (wasStacked == false)
             {
-                var droppedItem = Core.Actors.AddDynamic(inventoryItem.Tile.Meta.ActorClass.ToString(),
-                    Core.Player.X, Core.Player.Y, inventoryItem.Tile.TilePath);
-                droppedItem.Meta = inventoryItem.Tile.Meta;
-
+                var droppedItem = Core.Actors.AddDynamic(inventoryItem.Tile, Core.Player.X, Core.Player.Y);
                 StoreAndInventory.AddItemToListView(listViewGround, draggedItemTag.Tile);
             }
 
@@ -1024,7 +1021,7 @@ namespace Game
             {
                 if (((draggedItemTag.Tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (draggedItemTag.Tile.Meta.IsIdentified ?? false) == false))
                 {
-                    draggedItemTag.Tile.Meta.Identify();
+                    draggedItemTag.Tile.Meta.Identify(Core);
 
                     if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
                     {

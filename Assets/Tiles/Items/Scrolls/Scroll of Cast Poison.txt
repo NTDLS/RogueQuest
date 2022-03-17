@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Cast Poison",
   "SpellName":"Cast Poison",
-  "SubType": "Scroll",
-  "Value": "100",
-  "CastTime":"2",
   "TargetType":"HostileBeing",
   "Effects":[ {"EffectType":"CastPoison","Duration":"20"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/SkullSmoke1_192_256",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "100",
+  "CastTime":"2",
+  "AnimationImagePath":"Animations/Spells/SkullSmoke1_192_256",
   "Rarity":"40",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"5"
 }
+  

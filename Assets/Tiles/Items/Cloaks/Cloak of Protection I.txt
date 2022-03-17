@@ -1,10 +1,13 @@
 {
   "Name":"Cloak of Protection I",
-  "SubType": "Garment",
-  "Value": "5",
-  "AC":"1",
+  "Value":"10",
   "Weight":"500",
   "Bulk":"6000",
   "Rarity":"100",
-  "Level":"1"
+  "Level":"1",
+
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"1"}
+  ],
+  "Enchantment":"Undecided"
 }

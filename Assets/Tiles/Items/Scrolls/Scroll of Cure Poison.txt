@@ -1,17 +1,12 @@
 {
   "Name":"Scroll of Cure Poison",
   "SpellName":"Cure Poison",
-  "SubType": "Scroll",
-  "Value": "40",
-  "CastTime":"4",
   "TargetType":"Self",
   "Effects":[ {"EffectType":"CurePoison","ValueType":"Fixed","Value":"1"} ],
-  "IsConsumable":"True",
-  "Animation":"Animations/Spells/Flash1_64_64",
-  "Weight":"150",
-  "Bulk":"200",
+  "Value": "40",
+  "CastTime":"4",
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Rarity":"50",
-  "CanStack":"True",
-  "CanWalkOn":"True",
   "Level":"2"
 }
+  

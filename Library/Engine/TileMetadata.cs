@@ -16,8 +16,8 @@ namespace Library.Engine
         #region Backend fields.
 
         private Guid? _UID;
-        private string _ProjectileTilePath;
-        private string _Animation;
+        private string _ProjectileImagePath;
+        private string _AnimationImagePath;
         private string _Name;
         private int? _Quantity;
         private int? _Experience;
@@ -60,19 +60,24 @@ namespace Library.Engine
         /// 
         public bool? IsIdentified { get; set; }
 
-        public void Identify()
+        public void Identify(EngineCoreBase core)
         {
             //We use the UID hash here to make sure that the enchantments are always the same of this item even if the player reloads.
             Random rand = new Random(UIDHash);
 
             IsIdentified = true;
 
+            if ((Enchantment ?? EnchantmentType.Undecided) != EnchantmentType.Undecided)
+            {
+                return;
+            }
+
             if (rand.Next() % 100 >= 80) //20% chance or being enchanted or cursed.
             {
                 //We have to get this early so that the random number will not be affected by the loop below it.
                 bool willBeCursed = rand.Next() % 100 < 50;
 
-                int targetBonusPoints = MathUtility.RandomNumber(1, 6); //Add some enchantment.
+                int targetBonusPoints = MathUtility.RandomNumber(1, 4 + core.State.Character.Level); //Add some enchantment.
                 int bonusPointsApplied = 0;
 
                 if (Effects == null)
@@ -184,7 +189,7 @@ namespace Library.Engine
         /// <summary>
         /// The type of damage being done (fire, ice, earth, electrical, etc.)
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))] 
+        [JsonConverter(typeof(StringEnumConverter))]
         public DamageType? DamageType { get; set; }
         /// <summary>
         /// Whether the item (actor) can be attacked and take damage then be destroyed when HitPoints fall to 0.
@@ -197,11 +202,11 @@ namespace Library.Engine
         /// <summary>
         /// The path to the tile to use for "animating" a projectile. This is a single PNG, not an animation.
         /// </summary>
-        public string ProjectileTilePath { get { return _ProjectileTilePath == string.Empty ? null : _ProjectileTilePath; } set { _ProjectileTilePath = value; } }
+        public string ProjectileImagePath { get { return _ProjectileImagePath == string.Empty ? null : _ProjectileImagePath; } set { _ProjectileImagePath = value; } }
         /// <summary>
         /// The path to the animation frames that will be used on a successful hit with this tile. Such as an explosion.
         /// </summary>
-        public string Animation { get { return _Animation == string.Empty ? null : _Animation; } set { _Animation = value; } }
+        public string AnimationImagePath { get { return _AnimationImagePath == string.Empty ? null : _AnimationImagePath; } set { _AnimationImagePath = value; } }
         /// <summary>
         /// The name of the item.
         /// </summary>
@@ -221,12 +226,12 @@ namespace Library.Engine
         /// <summary>
         /// Whether the ranged weapon uses a bolt or an arrow. Used to search the quiver for an appropriate projectile.
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))] 
+        [JsonConverter(typeof(StringEnumConverter))]
         public ProjectileType? ProjectileType { get; set; }
         /// <summary>
         /// Used for magical items to determine what they affect (the player, terrain, or another actor)
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))] 
+        [JsonConverter(typeof(StringEnumConverter))]
         public TargetType? TargetType { get; set; }
         /// <summary>
         /// Whether the item is consumable. e.g. wands have a finite number of charges and scrolls can only be used once.
@@ -381,7 +386,7 @@ namespace Library.Engine
             get
             {
 
-                return Utility.GetEffectsText(this.Effects).Replace("|","\r\n");
+                return Utility.GetEffectsText(this.Effects).Replace("|", "\r\n");
             }
         }
 
@@ -402,8 +407,8 @@ namespace Library.Engine
             this.Experience = with.Experience ?? this.Experience;
             this.ActorClass = with.ActorClass ?? this.ActorClass;
             this.Name = with.Name ?? this.Name;
-            this.ProjectileTilePath = with.ProjectileTilePath ?? this.ProjectileTilePath;
-            this.Animation = with.Animation ?? this.Animation;
+            this.ProjectileImagePath = with.ProjectileImagePath ?? this.ProjectileImagePath;
+            this.AnimationImagePath = with.AnimationImagePath ?? this.AnimationImagePath;
             this.SplashDamageRange = with.SplashDamageRange ?? this.SplashDamageRange;
             this.IsMemoriziedSpell = with.IsMemoriziedSpell ?? this.IsMemoriziedSpell;
             this.Enchantment = with.Enchantment ?? this.Enchantment;
@@ -496,30 +501,19 @@ namespace Library.Engine
 
             meta.OriginalHitPoints = meta.HitPoints;
 
-
             if (meta.ActorClass == ActorClassName.ActorItem)
             {
                 var fileCheck = $"{Constants.GetAssetPath(tilePath)}.Enchanted.png";
-                if (File.Exists(fileCheck))
-                {
-                    meta.EnchantedImagePath = fileCheck;
-                }
+                if (File.Exists(fileCheck)) meta.EnchantedImagePath = $"{tilePath}.Enchanted";
+
                 fileCheck = $"{Constants.GetAssetPath(tilePath)}.Cursed.png";
-                if (File.Exists(fileCheck))
-                {
-                    meta.CursedImagePath = fileCheck;
-                }
+                if (File.Exists(fileCheck)) meta.CursedImagePath = $"{tilePath}.Cursed";
 
                 fileCheck = $"{Constants.GetAssetPath(tilePath)}.Projectile.png";
-                if (File.Exists(fileCheck))
-                {
-                    meta.ProjectileTilePath = fileCheck;
-                }
+                if (File.Exists(fileCheck)) meta.ProjectileImagePath = $"{tilePath}.Projectile";
+
                 fileCheck = $"{Constants.GetAssetPath(tilePath)}.Animation.png";
-                if (File.Exists(fileCheck))
-                {
-                    meta.Animation = fileCheck;
-                }
+                if (File.Exists(fileCheck)) meta.AnimationImagePath = $"{tilePath}.Animation";
 
                 if (meta.Enchantment == null) //Pick a good default for the enchantment type.
                 {

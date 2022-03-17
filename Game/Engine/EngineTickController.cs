@@ -179,7 +179,7 @@ namespace Game.Engine
 
             if (item.Tile.Meta.TargetType == TargetType.HostileBeing)
             {
-                #region Hostile target.
+                #region Target: HostileBeing
                 var hitType = CalculateHitType(Core.State.Character.Dexterity, target.Meta.AC ?? 0);
 
                 if (hitType == HitType.Miss || hitType == HitType.CriticalMiss)
@@ -209,18 +209,55 @@ namespace Game.Engine
                         else throw new NotImplementedException();
                     }
 
-                    if (string.IsNullOrEmpty(item.Tile.Meta.Animation) == false)
+                    if (string.IsNullOrEmpty(item.Tile.Meta.AnimationImagePath) == false)
                     {
-                        AnimateAtAsync(item.Tile.Meta.Animation, target);
+                        AnimateAtAsync(item.Tile.Meta.AnimationImagePath, target);
                     }
+                }
+                #endregion
+            }
+            else if (item.Tile.Meta.TargetType == TargetType.Any)
+            {
+                #region Target: Any
+                foreach (var effect in item.Tile.Meta.Effects)
+                {
+                    #region CastLight
+                    if (effect.EffectType == ItemEffect.CastLight)
+                    {
+                        target.Meta.HasBeenViewed = true;
+                        target.AlwaysRender = true;
+                        target.Invalidate();
+
+                        var intersections = Core.Actors.Intersections(target, effect.Value).ToList();
+
+                        foreach (var intersection in intersections)
+                        {
+                            if (intersection.DistanceTo(target) <= effect.Value)
+                            {
+                                intersection.Meta.HasBeenViewed = true;
+                                intersection.AlwaysRender = true;
+                                intersection.Invalidate();
+                            }
+                        }
+
+                        Core.LogLine($"Testing, testing, 1... 2... 3....", Color.DarkRed);
+                    }
+                    #endregion
+                    else throw new NotImplementedException();
+                }
+
+                if (string.IsNullOrEmpty(item.Tile.Meta.AnimationImagePath) == false)
+                {
+                    AnimateAtAsync(item.Tile.Meta.AnimationImagePath, target);
                 }
                 #endregion
             }
             else if (item.Tile.Meta.TargetType == TargetType.Terrain)
             {
+                #region Target: Terrain
+
                 foreach (var effect in item.Tile.Meta.Effects)
                 {
-                    #region Terrain target.
                     #region SummonMonster
                     if (effect.EffectType == ItemEffect.SummonMonster)
                     {
@@ -264,17 +301,18 @@ namespace Game.Engine
                     else throw new NotImplementedException();
                 }
 
-                if (string.IsNullOrEmpty(item.Tile.Meta.Animation) == false)
+                if (string.IsNullOrEmpty(item.Tile.Meta.AnimationImagePath) == false)
                 {
-                    AnimateAtAsync(item.Tile.Meta.Animation, target);
+                    AnimateAtAsync(item.Tile.Meta.AnimationImagePath, target);
                 }
                 #endregion
             }
             else if (item.Tile.Meta.TargetType == TargetType.Self)
             {
+                #region Target: Self
+
                 foreach (var effect in item.Tile.Meta.Effects)
                 {
-                    #region Self target.
                     #region ColdResistance
                     if (effect.EffectType == ItemEffect.ColdResistance)
                     {
@@ -485,11 +523,9 @@ namespace Game.Engine
                         var equip = Core.State.Character.FindEquipSlotByItemId(curseToRemove.Meta.UID);
 
                         //Place dropped item on the ground.
-                        var droppedItem = Core.Actors.AddDynamic(equip.Tile.Meta.ActorClass.ToString(), Core.Player.X, Core.Player.Y, equip.Tile.TilePath);
-                        droppedItem.Meta = equip.Tile.Meta;
+                        var droppedItem = Core.Actors.AddDynamic(equip.Tile, Core.Player.X, Core.Player.Y);
                         droppedItem.Meta.HasBeenViewed = true;
                         droppedItem.AlwaysRender = true;
-                        droppedItem.Invalidate();
 
                         //Clear the equip slot.
                         equip.Tile = null;
@@ -500,10 +536,11 @@ namespace Game.Engine
                     else throw new NotImplementedException();
                 }
 
-                if (string.IsNullOrEmpty(item.Tile.Meta.Animation) == false)
+                if (string.IsNullOrEmpty(item.Tile.Meta.AnimationImagePath) == false)
                 {
-                    AnimateAtAsync(item.Tile.Meta.Animation, Core.Player);
+                    AnimateAtAsync(item.Tile.Meta.AnimationImagePath, Core.Player);
                 }
+
                 #endregion
             }
 
@@ -1165,9 +1202,9 @@ namespace Game.Engine
                 {
                     AnimateTo(projectile.TilePath, Core.Player, actorToAttack);
                 }
-                else if (weapon != null && string.IsNullOrEmpty(weapon.ProjectileTilePath) == false)
+                else if (weapon != null && string.IsNullOrEmpty(weapon.ProjectileImagePath) == false)
                 {
-                    AnimateTo(weapon.ProjectileTilePath, Core.Player, actorToAttack);
+                    AnimateTo(weapon.ProjectileImagePath, Core.Player, actorToAttack);
                 }
             }
 
@@ -1303,16 +1340,16 @@ namespace Game.Engine
                         //Hit animation:
                         if (projectile != null)
                         {
-                            if (string.IsNullOrEmpty(projectile.Meta.Animation) == false)
+                            if (string.IsNullOrEmpty(projectile.Meta.AnimationImagePath) == false)
                             {
-                                AnimateAt(projectile.Meta.Animation, actorToAttack);
+                                AnimateAt(projectile.Meta.AnimationImagePath, actorToAttack);
                             }
                         }
                         else
                         {
-                            if (string.IsNullOrEmpty(weapon.Animation) == false)
+                            if (string.IsNullOrEmpty(weapon.AnimationImagePath) == false)
                             {
-                                AnimateAt(weapon.Animation, actorToAttack);
+                                AnimateAt(weapon.AnimationImagePath, actorToAttack);
                             }
                         }
 
@@ -1876,14 +1913,9 @@ namespace Game.Engine
 
                 if (wasStacked == false)
                 {
-                    var droppedItem = Core.Actors.AddDynamic(item.Tile.Meta.ActorClass.ToString(),
-                        at.X, at.Y, item.Tile.TilePath);
-
-                    droppedItem.Meta = item.Tile.Meta;
-
+                    var droppedItem = Core.Actors.AddDynamic(item.Tile, at.X, at.Y);
                     droppedItem.Meta.HasBeenViewed = true;
                     droppedItem.AlwaysRender = true;
-                    droppedItem.Invalidate();
                 }
 
                 Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == item.Tile.Meta.UID);

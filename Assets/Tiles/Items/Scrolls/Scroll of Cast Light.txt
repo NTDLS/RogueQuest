@@ -1,0 +1,11 @@
+{
+  "Name":"Scroll of Cast Light",
+  "SpellName":"Cast Light",
+  "TargetType":"Any",
+  "Effects":[ {"EffectType":"CastLight","ValueType":"Fixed","Value":"50"} ],
+  "Value": "35",
+  "CastTime":"3",
+  "AnimationImagePath":"Animations/Spells/Flash4_64_64",
+  "Rarity":"95",
+  "Level":"1"
+}

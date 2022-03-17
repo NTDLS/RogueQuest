@@ -1,0 +1,18 @@
+{
+  "Name":"Boots of Speed",
+  "Value": "5",
+  "Weight":"1500",
+  "Bulk":"4000",
+  "Rarity":"10",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"Speed","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"1"}
+  ],
+  "Level":"3",
+  "Enchantment":"Enchanted",
+  "IsIdentified":"False"
+}
