@@ -919,10 +919,18 @@ namespace ScenarioEdit
                     if (meta.SubType == ActorSubType.MeleeWeapon || meta.SubType == ActorSubType.RangedWeapon)
                     {
                         text += "\r\n" + $"Damage: {meta.DamageDice:N0}d{meta.DamageDiceFaces:N0}";
+
+                        if ((meta.DamageType ?? DamageType.Unspecified) != DamageType.Unspecified)
+                        {
+                            text += $" ({meta.DamageType})";
+                        }
+
                         if (meta.DamageAdditional > 0)
                         {
                             text += $" +{meta.DamageAdditional:N0}";
                         }
+
+                        if (meta?.Effects?.Count > 0) text += "\r\n" + $"Effects:\r\n    {meta.EffectText.Replace("\r\n", "\r\n    ")}";
                     }
                     else if (meta.SubType == ActorSubType.Armor || meta.SubType == ActorSubType.Boots
                         || meta.SubType == ActorSubType.Garment || meta.SubType == ActorSubType.Gauntlets

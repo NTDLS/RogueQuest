@@ -1,0 +1,19 @@
+{
+  "Name":"Apollyon",
+  "Value": "1600",
+  "DamageType":"Earth",
+  "DamageDice":"4",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"2",
+  "Weight":"5000",
+  "Bulk":"12000",
+  "Rarity":"0",
+  "Level":"30",
+  "Effects":[
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
+  "Enchantment":"Undecided"
+}

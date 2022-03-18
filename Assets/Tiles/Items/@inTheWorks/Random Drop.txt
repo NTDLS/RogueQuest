@@ -1,7 +1,0 @@
-{
-  "Name":"Random Drop",
-  "CanTakeDamage": "True",
-  "ActorClass": "ActorSpawner",
-  "SpawnType": "ActorItem",
-  "IsContainer":"False"
-}

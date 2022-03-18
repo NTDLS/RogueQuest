@@ -1,0 +1,12 @@
+{
+  "Name":"Bastard Sword",
+  "Value": "48",
+  "DamageDice":"2",
+  "DamageDiceFaces":"6",
+  "DamageAdditional":"0",
+  "Weight":"3000",
+  "Bulk":"10000",
+  "Rarity":"50",
+  "Level":"5",
+  "Enchantment":"Undecided"
+}

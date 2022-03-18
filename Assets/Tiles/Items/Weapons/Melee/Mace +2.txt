@@ -1,0 +1,12 @@
+{
+  "Name":"Mace +2",
+  "Value": "400",
+  "DamageDice":"1",
+  "DamageDiceFaces":"5",
+  "DamageAdditional":"2",
+  "Weight":"500",
+  "Bulk":"4375",
+  "Rarity":"40",
+  "Level":"2",
+  "Enchantment":"Undecided"
+}

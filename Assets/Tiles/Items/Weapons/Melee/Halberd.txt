@@ -1,0 +1,12 @@
+{
+  "Name":"Halberd",
+  "Value": "36",
+  "DamageDice":"1",
+  "DamageDiceFaces":"9",
+  "DamageAdditional":"0",
+  "Weight":"6000",
+  "Bulk":"4000",
+  "Rarity":"60",
+  "Level":"3",
+  "Enchantment":"Undecided"
+}

@@ -1,0 +1,7 @@
+{
+  "Name":"Random Drop",
+  "ActorClass": "ActorSpawner",
+  "SpawnType": "ActorItem",
+  "CanWalkOn": "True",
+  "IsContainer":"False"
+}

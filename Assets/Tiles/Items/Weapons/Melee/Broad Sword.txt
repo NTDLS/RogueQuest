@@ -1,0 +1,12 @@
+{
+  "Name":"Broad Sword",
+  "Value": "36",
+  "DamageDice":"1",
+  "DamageDiceFaces":"9",
+  "DamageAdditional":"0",
+  "Weight":"1600",
+  "Bulk":"9000",
+  "Rarity":"80",
+  "Level":"3",
+  "Enchantment":"Undecided"
+}

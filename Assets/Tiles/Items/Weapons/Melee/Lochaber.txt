@@ -1,0 +1,12 @@
+{
+  "Name":"Lochaber",
+  "Value": "40",
+  "DamageDice":"1",
+  "DamageDiceFaces":"10",
+  "DamageAdditional":"0",
+  "Weight":"2000",
+  "Bulk":"3250",
+  "Rarity":"50",
+  "Level":"6",
+  "Enchantment":"Undecided"
+}

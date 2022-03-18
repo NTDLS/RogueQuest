@@ -1265,6 +1265,8 @@ namespace Game.Engine
                     {
                         int playerHitsFor = 0;
 
+                        DamageType? damageType = weapon?.DamageType;
+
                         if (weapon?.DamageDice > 0)
                         {
                             playerHitsFor = CalculateDealtDamage(hitType, Core.State.Character.Strength,
@@ -1275,6 +1277,11 @@ namespace Game.Engine
                         {
                             playerHitsFor += CalculateDealtDamage(hitType, Core.State.Character.Strength,
                                 additionalDamage, projectile.Meta?.DamageDice ?? 0, projectile.Meta?.DamageDiceFaces ?? 0);
+
+                            if (projectile?.Meta.DamageType != null)
+                            {
+                                damageType = projectile?.Meta.DamageType;
+                            }
                         }
 
                         var actorsTakingDamage = new List<ActorToDamage>
@@ -1336,19 +1343,19 @@ namespace Game.Engine
                             {
                                 var weakness = Utility.GetOppositeOfDamageType((DamageType)actorTakingDamage.Actor.Meta.DamageType);
 
-                                if (weakness == weapon.DamageType)
+                                if (weakness == damageType)
                                 {
-                                    Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {weapon.DamageType} which does double damage.", Color.DarkOliveGreen);
+                                    Core.LogLine($"{actorToAttack.Meta.Name} is weak to {weaponDescription}'s {damageType} which does double damage.", Color.DarkOliveGreen);
                                     damageToApply *= 2;
                                 }
-                                else if (actorTakingDamage.Actor.Meta.DamageType == weapon.DamageType)
+                                else if (actorTakingDamage.Actor.Meta.DamageType == damageType)
                                 {
-                                    Core.LogLine($"{actorToAttack.Meta.Name} is resistant to {weaponDescription}'s {weapon.DamageType} which does half damage.", Color.DarkRed);
+                                    Core.LogLine($"{actorToAttack.Meta.Name} is resistant to {weaponDescription}'s {damageType} which does half damage.", Color.DarkRed);
                                     damageToApply = (damageToApply / 2);
                                 }
                             }
 
-                            if (weapon.DamageType == DamageType.Poison)
+                            if (damageType == DamageType.Poison)
                             {
                                 if (MathUtility.FlipCoin()) //50% chance
                                 {

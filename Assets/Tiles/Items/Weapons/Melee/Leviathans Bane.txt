@@ -1,0 +1,19 @@
+{
+  "Name":"Leviathans Bane",
+  "Value": "2400",
+  "DamageType":"Cold",
+  "DamageDice":"3",
+  "DamageDiceFaces":"10",
+  "DamageAdditional":"2",
+  "Weight":"5000",
+  "Bulk":"12000",
+  "Rarity":"0",
+  "Level":"28",
+  "Effects":[
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"1"}
+  ],
+  "Enchantment":"Undecided"
+}

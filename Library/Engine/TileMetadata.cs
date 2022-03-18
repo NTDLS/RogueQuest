@@ -78,47 +78,78 @@ namespace Library.Engine
                 bool willBeCursed = rand.Next() % 100 < 50;
 
                 int targetBonusPoints = MathUtility.RandomNumber(1, 4 + core.State.Character.Level); //Add some enchantment.
-                int bonusPointsApplied = 0;
 
                 if (Effects == null)
                 {
                     Effects = new List<MetaEffect>();
                 }
 
-                while (bonusPointsApplied < targetBonusPoints)
+                for (int i = 0; i < targetBonusPoints || EnchantmentBonus == 0; i++)
                 {
-                    if (rand.Next() % 100 >= 50) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ArmorClass, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Constitution, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Dexterity, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Intelligence, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Strength, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.EarthResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.LightningResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.FireResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ColdResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Constitution, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Dexterity, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Intelligence, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Strength, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+
+                    if (rand.Next() % 100 >= 70) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ArmorClass, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.EarthResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.LightningResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.FireResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ColdResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
 
                     if (Effects.Where(o => o.EffectType == ItemEffect.Speed).Sum(o => o.Value) < 3)
                     {
-                        if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Speed, ValueType = ItemEffectType.Fixed, Value = 1 }); bonusPointsApplied++; }
+                        if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Speed, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
                     }
                 }
 
-                EnchantmentBonus = bonusPointsApplied;
 
                 if (willBeCursed)
                 {
                     Enchantment = EnchantmentType.Cursed;
+                    Name = $"Cursed {Name}";
 
                     foreach (var effect in Effects)
                     {
                         effect.Value *= -1; //Make this item suck!
                     }
-                    Name = $"Cursed {Name}";
+
+                    //Maeke it really suck.
+                    if (SubType == ActorSubType.MeleeWeapon || SubType == ActorSubType.RangedWeapon || SubType == ActorSubType.Projectile)
+                    {
+                        int weaponBonusPoints = MathUtility.RandomNumber(1, core.State.Character.Level); //Add some enchantment.
+                        for (int i = 0; i < weaponBonusPoints || EnchantmentBonus == 0; i++)
+                        {
+                            if (rand.Next() % 100 >= 90) { DamageDice--; EnchantmentBonus++; }
+                            if (rand.Next() % 100 >= 80) { DamageDiceFaces--; EnchantmentBonus++; }
+                            if (rand.Next() % 100 >= 80) { DamageAdditional--; EnchantmentBonus++; }
+                        }
+                    }
                 }
                 else
                 {
                     Enchantment = EnchantmentType.Enchanted;
                     Name = $"Enchanted {Name}";
+
+                    //Apply some damage enchantments.
+                    if (SubType == ActorSubType.MeleeWeapon || SubType == ActorSubType.RangedWeapon || SubType == ActorSubType.Projectile)
+                    {
+                        int weaponBonusPoints = MathUtility.RandomNumber(1, core.State.Character.Level); //Add some enchantment.
+                        int weaponBonusPointsApplied = 0;
+                        for (int i = 0; i < weaponBonusPoints; i++)
+                        {
+                            if (rand.Next() % 100 >= 80) { DamageDice++; weaponBonusPointsApplied++; }
+                            if (rand.Next() % 100 >= 60) { DamageDiceFaces++; weaponBonusPointsApplied++; }
+                            if (rand.Next() % 100 >= 70) { DamageAdditional++; weaponBonusPointsApplied++; }
+                        }
+                        EnchantmentBonus += weaponBonusPointsApplied;
+                    }
+
+                    //Apply a damage type.
+                    if (rand.Next() % 100 >= 80 && (DamageType ?? Types.DamageType.Unspecified) == Types.DamageType.Unspecified)
+                    {
+                        DamageType = (DamageType)rand.Next(0, (int)Enum.GetValues<DamageType>().ToList().Max());
+                    }
                 }
             }
             else
@@ -354,6 +385,11 @@ namespace Library.Engine
                 if ((DamageDice ?? 0) > 0 && (DamageDiceFaces ?? 0) > 0)
                 {
                     var text = $"{DamageDice}d{DamageDiceFaces}";
+
+                    if ((DamageType ?? Types.DamageType.Unspecified) != Types.DamageType.Unspecified)
+                    {
+                        text += $" ({DamageType})";
+                    }
 
                     if (DamageAdditional > 0)
                     {

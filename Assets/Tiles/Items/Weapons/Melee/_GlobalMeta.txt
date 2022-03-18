@@ -1,0 +1,4 @@
+{
+  "ActorClass": "ActorItem",
+  "SubType": "MeleeWeapon"
+}
