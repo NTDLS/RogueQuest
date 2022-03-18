@@ -371,13 +371,11 @@ namespace Game
             double maxWeight = pack.Meta.WeightCapacity ?? 0;
             int? maxItems = pack.Meta.ItemCapacity;
 
-            int askingPrice = 0;
+            int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
             int quantityToMove = (draggedItemTag.Tile.Meta.Quantity ?? 1);
 
             if (draggedItem.ListView == listViewStore)
             {
-                askingPrice = 0; StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
-
                 if (draggedItemTag.Tile.Meta.CanStack == true && draggedItemTag.Tile.Meta.Quantity > 0)
                 {
                     using (var formQty = new FormStoreQuantity(Core, draggedItemTag.Tile))
@@ -710,15 +708,32 @@ namespace Game
             var draggedItemTag = draggedItem.Tag as EquipTag;
             var clonedItem = draggedItemTag.Tile.Clone(true);
             int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
+            int quantityToMove = (draggedItemTag.Tile.Meta.Quantity ?? 1);
 
             if (draggedItem.ListView == listViewStore)
             {
-                var result = MessageBox.Show($"Item will cost you {askingPrice:N0} gold.\r\nPay the store?",
-                    "Buy the item?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (result != DialogResult.Yes)
+                if (draggedItemTag.Tile.Meta.CanStack == true && draggedItemTag.Tile.Meta.Quantity > 0)
                 {
-                    return;
+                    using (var formQty = new FormStoreQuantity(Core, draggedItemTag.Tile))
+                    {
+                        if (formQty.ShowDialog() != DialogResult.OK)
+                        {
+                            return;
+                        }
+
+                        quantityToMove = formQty.QuantityToBuy;
+                        askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile, quantityToMove);
+                    }
+                }
+                else
+                {
+                    var result = MessageBox.Show($"Item will cost you {askingPrice:N0} gold.\r\nPay the store?",
+                        "Buy the item?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result != DialogResult.Yes)
+                    {
+                        return;
+                    }
                 }
 
                 if (askingPrice > Core.State.Character.Money)
@@ -743,8 +758,6 @@ namespace Game
             {
                 listViewPlayerPack.Items.Clear();
             }
-
-            _persistentStore.Items.RemoveAll(o => o.Meta.UID == draggedItemTag.Tile.Meta.UID);
 
             var destinationTag = destination.Items[0].Tag as EquipTag;
 
@@ -771,10 +784,11 @@ namespace Game
 
                 destination.Items[0].ImageKey = StoreAndInventory.GetImageKey(draggedItemTag.Tile.ImagePath);
                 destination.Items[0].Text = draggedItemTag.Tile.Meta.Name;
-                destinationTag.Tile = draggedItemTag.Tile;
+                destinationTag.Tile = draggedItemTag.Tile.Clone();
 
                 var equipSlot = Core.State.Character.GetEquipSlot(destinationTag.Slot);
-                equipSlot.Tile = draggedItemTag.Tile;
+                equipSlot.Tile = destinationTag.Tile;
+                equipSlot.Tile.Meta.Quantity = quantityToMove;
 
                 if (draggedItem.ListView == listViewStore)
                 {
@@ -793,7 +807,23 @@ namespace Game
 
                 if (draggedItem.ListView == listViewStore)
                 {
-                    draggedItem.ListView.Items.Remove(draggedItem);
+                    if (draggedItemTag.Tile.Meta.CanStack == true)
+                    {
+                        draggedItemTag.Tile.Meta.Quantity -= quantityToMove;
+                    }
+
+                    //If we moved all of the product from a store, then remove the item from the store.
+                    if ((draggedItemTag.Tile.Meta.Quantity ?? 0) == 0)
+                    {
+                        draggedItem.ListView.Items.Remove(draggedItem);
+                        _persistentStore.Items.RemoveAll(o => o.Meta.UID == draggedItemTag.Tile.Meta.UID);
+                    }
+                    else
+                    {
+                        string text = draggedItemTag.Tile.Meta.Name;
+                        text += $" ({draggedItemTag.Tile.Meta.Quantity})";
+                        draggedItem.Text = text;
+                    }
                 }
                 else if (draggedItem.ListView == listViewPlayerPack)
                 {
