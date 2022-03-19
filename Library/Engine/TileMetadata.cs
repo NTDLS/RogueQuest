@@ -60,8 +60,21 @@ namespace Library.Engine
         /// 
         public bool? IsIdentified { get; set; }
 
+
+        class WeightedLottery
+        {
+            public ItemEffect Effect { get; set; }
+            public int Chance { get; set; }
+            public int Max { get; set; }
+        }
+
         public void Identify(EngineCoreBase core)
         {
+            if (IsIdentified == true)
+            {
+                return;
+            }
+
             //We use the UID hash here to make sure that the enchantments are always the same of this item even if the player reloads.
             Random rand = new Random(UIDHash);
 
@@ -72,37 +85,55 @@ namespace Library.Engine
                 return;
             }
 
-            if (rand.Next() % 100 >= 80) //20% chance or being enchanted or cursed.
+            if (rand.NextDouble() * 100 >= 70) //30% chance or being enchanted or cursed.
             {
-                //We have to get this early so that the random number will not be affected by the loop below it.
-                bool willBeCursed = rand.Next() % 100 < 50;
+                if (Name.Contains("Hammer"))
+                {
+                }
 
-                int targetBonusPoints = MathUtility.RandomNumber(1, 4 + core.State.Character.Level); //Add some enchantment.
+                //We have to get this early so that the random number will not be affected by the loop below it.
+                bool willBeCursed = rand.NextDouble() * 100 < 50;
+
+                int bonusRolls = rand.Next(1, 4 + core.State.Character.Level); //Add some enchantment.
+                int bonusPointsApplied = 0;
 
                 if (Effects == null)
                 {
                     Effects = new List<MetaEffect>();
                 }
 
-                for (int i = 0; i < targetBonusPoints || EnchantmentBonus == 0; i++)
-                {
-                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Constitution, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Dexterity, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Intelligence, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-                    if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Strength, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-
-                    if (rand.Next() % 100 >= 70) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ArmorClass, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.EarthResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.LightningResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.FireResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-                    if (rand.Next() % 100 >= 80) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.ColdResistance, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
-
-                    if (Effects.Where(o => o.EffectType == ItemEffect.Speed).Sum(o => o.Value) < 3)
+                WeightedLottery[] effectLottery =
                     {
-                        if (rand.Next() % 100 >= 90) { Effects.Add(new MetaEffect() { EffectType = ItemEffect.Speed, ValueType = ItemEffectType.Fixed, Value = 1 }); EnchantmentBonus++; }
+                          new WeightedLottery() { Effect = ItemEffect.Constitution, Chance = 20, Max = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.Dexterity, Chance = 20, Max = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.Intelligence, Chance = 20, Max = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.Strength, Chance = 20, Max = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.EarthResistance, Chance = 30, Max = 5 },
+                          new WeightedLottery() { Effect = ItemEffect.LightningResistance, Chance = 30, Max = 5 },
+                          new WeightedLottery() { Effect = ItemEffect.FireResistance, Chance = 30, Max = 5 },
+                          new WeightedLottery() { Effect = ItemEffect.ArmorClass, Chance = 100, Max = 10 },
+                          new WeightedLottery() { Effect = ItemEffect.ColdResistance, Chance = 30, Max = 5 },
+                          new WeightedLottery() { Effect = ItemEffect.Speed, Chance = 10, Max = 2 },
+                    };
+
+                for (int i = 0; i < bonusRolls; i++)
+                {
+                    int itemIndex = rand.Next(0, effectLottery.Length - 1);
+
+                    effectLottery = effectLottery.OrderBy(x => rand.Next()).ToArray();
+
+                    var effect = effectLottery[itemIndex];
+                    if (rand.NextDouble() * 100 >= 100 - effect.Chance)
+                    {
+                        if (Effects.Where(o => o.EffectType == effect.Effect).Sum(o => o.Value) < effect.Max)
+                        {
+                            Effects.Add(new MetaEffect() { EffectType = effect.Effect, ValueType = ItemEffectType.Fixed, Value = 1 });
+                            bonusPointsApplied++;
+                        }
                     }
                 }
 
+                EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
 
                 if (willBeCursed)
                 {
@@ -114,41 +145,50 @@ namespace Library.Engine
                         effect.Value *= -1; //Make this item suck!
                     }
 
-                    //Maeke it really suck.
+                    //Make it really suck.
                     if (SubType == ActorSubType.MeleeWeapon || SubType == ActorSubType.RangedWeapon || SubType == ActorSubType.Projectile)
                     {
-                        int weaponBonusPoints = MathUtility.RandomNumber(1, core.State.Character.Level); //Add some enchantment.
-                        for (int i = 0; i < weaponBonusPoints || EnchantmentBonus == 0; i++)
+                        bonusRolls = rand.Next(1, 1 + core.State.Character.Level) * 3; //Add some de-enchantment.
+                        bonusPointsApplied = 0;
+
+                        for (int i = 0; i < bonusRolls; i++)
                         {
-                            if (rand.Next() % 100 >= 90) { DamageDice--; EnchantmentBonus++; }
-                            if (rand.Next() % 100 >= 80) { DamageDiceFaces--; EnchantmentBonus++; }
-                            if (rand.Next() % 100 >= 80) { DamageAdditional--; EnchantmentBonus++; }
+                            if (rand.NextDouble() * 100 >= 80) { DamageDice--; bonusPointsApplied++; }
+                            if (rand.NextDouble() * 100 >= 60) { DamageDiceFaces--; bonusPointsApplied++; }
+                            if (rand.NextDouble() * 100 >= 70) { DamageAdditional--; bonusPointsApplied++; }
                         }
+
+                        EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
                     }
+
+                    DamageDice ??= 1;
+                    DamageDiceFaces ??= 1;
                 }
                 else
                 {
                     Enchantment = EnchantmentType.Enchanted;
                     Name = $"Enchanted {Name}";
 
-                    //Apply some damage enchantments.
                     if (SubType == ActorSubType.MeleeWeapon || SubType == ActorSubType.RangedWeapon || SubType == ActorSubType.Projectile)
                     {
-                        int weaponBonusPoints = MathUtility.RandomNumber(1, core.State.Character.Level); //Add some enchantment.
-                        int weaponBonusPointsApplied = 0;
-                        for (int i = 0; i < weaponBonusPoints; i++)
+                        //Apply some damage enchantments.
+                        bonusRolls = rand.Next(1, core.State.Character.Level + 1); //Add some enchantment.
+                        bonusPointsApplied = 0;
+                        for (int i = 0; i < bonusRolls; i++)
                         {
-                            if (rand.Next() % 100 >= 80) { DamageDice++; weaponBonusPointsApplied++; }
-                            if (rand.Next() % 100 >= 60) { DamageDiceFaces++; weaponBonusPointsApplied++; }
-                            if (rand.Next() % 100 >= 70) { DamageAdditional++; weaponBonusPointsApplied++; }
+                            if (rand.NextDouble() * 100 >= 80) { DamageDice++; bonusPointsApplied++; }
+                            if (rand.NextDouble() * 100 >= 60) { DamageDiceFaces++; bonusPointsApplied++; }
+                            if (rand.NextDouble() * 100 >= 70) { DamageAdditional++; bonusPointsApplied++; }
                         }
-                        EnchantmentBonus += weaponBonusPointsApplied;
+
+                        EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
                     }
 
                     //Apply a damage type.
-                    if (rand.Next() % 100 >= 80 && (DamageType ?? Types.DamageType.Unspecified) == Types.DamageType.Unspecified)
+                    if (rand.NextDouble() * 100 >= 80 && (DamageType ?? Types.DamageType.Unspecified) == Types.DamageType.Unspecified)
                     {
                         DamageType = (DamageType)rand.Next(0, (int)Enum.GetValues<DamageType>().ToList().Max());
+                        EnchantmentBonus = (EnchantmentBonus ?? 0) + 1;
                     }
                 }
             }
