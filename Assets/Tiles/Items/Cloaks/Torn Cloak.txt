@@ -1,6 +1,6 @@
 {
   "Name":"Torn Cloak",
-  "Value": "1",
+  "Value": "0",
   "Weight":"500",
   "Bulk":"6000",
   "Rarity":"80",

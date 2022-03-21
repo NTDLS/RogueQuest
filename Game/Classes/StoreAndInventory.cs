@@ -92,8 +92,11 @@ namespace Game.Classes
                 if (tile.Meta.CanStack == false && tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {tile.Meta.Charges}";
                 if (tile.Meta.AC != null) text += "\r\n" + $"AC: {tile.Meta.AC:N0}";
-                if (tile.Meta.SubType == ActorSubType.MeleeWeapon || tile.Meta.SubType == ActorSubType.RangedWeapon)
-                    text += "\r\n" + $"Stats: {tile.Meta.DndDamageText}";
+                if (tile.Meta.SubType == ActorSubType.MeleeWeapon || tile.Meta.SubType == ActorSubType.RangedWeapon || tile.Meta.SubType == ActorSubType.Projectile)
+                {
+                    var dndText = tile.Meta.DndDamageText;
+                    if (!string.IsNullOrWhiteSpace(dndText)) text += "\r\n" + $"Stats: {dndText}";
+                }
 
                 if (tile.Meta?.Effects?.Count > 0) text += "\r\n" + $"Effects:\r\n    {tile.Meta.EffectText.Replace("\r\n", "\r\n    ")}";
             }
@@ -159,15 +162,15 @@ namespace Game.Classes
             double value = UnitPrice(core, tile);
             double qty = (double)(quantity ?? 0);
 
+            if (tile.Meta.Enchantment == EnchantmentType.Enchanted && tile.Meta.IsIdentified == true)
+            {
+                value += (tile.Meta.EnchantmentBonus ?? 0) * value;
+                value *= 3;
+            }
+
             if (qty > 0)
             {
                 value *= qty;
-            }
-
-            if (tile.Meta.Enchantment == EnchantmentType.Enchanted && tile.Meta.IsIdentified == true)
-            {
-                value *= 3;
-                value += (tile.Meta.EnchantmentBonus ?? 0) * 500;
             }
 
             if (value >= 1)

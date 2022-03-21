@@ -66,11 +66,12 @@ namespace Library.Engine
             public ItemEffect Effect { get; set; }
             public int Chance { get; set; }
             public int Max { get; set; }
+            public int MonitaryValue { get; set; }
         }
 
         public void Identify(EngineCoreBase core)
         {
-            if (IsIdentified == true)
+            if (IsIdentified == true || Enchantment != EnchantmentType.Undecided)
             {
                 return;
             }
@@ -87,10 +88,6 @@ namespace Library.Engine
 
             if (rand.NextDouble() * 100 >= 70) //30% chance or being enchanted or cursed.
             {
-                if (Name.Contains("Hammer"))
-                {
-                }
-
                 //We have to get this early so that the random number will not be affected by the loop below it.
                 bool willBeCursed = rand.NextDouble() * 100 < 50;
 
@@ -102,43 +99,46 @@ namespace Library.Engine
                     Effects = new List<MetaEffect>();
                 }
 
-                WeightedLottery[] effectLottery =
+                if (SubType != ActorSubType.Projectile)
+                {
+                    WeightedLottery[] effectLottery =
                     {
-                          new WeightedLottery() { Effect = ItemEffect.Constitution, Chance = 20, Max = 3 },
-                          new WeightedLottery() { Effect = ItemEffect.Dexterity, Chance = 20, Max = 3 },
-                          new WeightedLottery() { Effect = ItemEffect.Intelligence, Chance = 20, Max = 3 },
-                          new WeightedLottery() { Effect = ItemEffect.Strength, Chance = 20, Max = 3 },
-                          new WeightedLottery() { Effect = ItemEffect.EarthResistance, Chance = 30, Max = 5 },
-                          new WeightedLottery() { Effect = ItemEffect.LightningResistance, Chance = 30, Max = 5 },
-                          new WeightedLottery() { Effect = ItemEffect.FireResistance, Chance = 30, Max = 5 },
-                          new WeightedLottery() { Effect = ItemEffect.ArmorClass, Chance = 100, Max = 10 },
-                          new WeightedLottery() { Effect = ItemEffect.ColdResistance, Chance = 30, Max = 5 },
-                          new WeightedLottery() { Effect = ItemEffect.Speed, Chance = 10, Max = 2 },
+                          new WeightedLottery() { Effect = ItemEffect.Constitution, Chance = 20, Max = 3, MonitaryValue = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.Dexterity, Chance = 20, Max = 3, MonitaryValue = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.Intelligence, Chance = 20, Max = 3, MonitaryValue = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.Strength, Chance = 20, Max = 3, MonitaryValue = 3 },
+                          new WeightedLottery() { Effect = ItemEffect.EarthResistance, Chance = 30, Max = 5, MonitaryValue = 2 },
+                          new WeightedLottery() { Effect = ItemEffect.LightningResistance, Chance = 30, Max = 5, MonitaryValue = 2 },
+                          new WeightedLottery() { Effect = ItemEffect.FireResistance, Chance = 30, Max = 5, MonitaryValue = 2 },
+                          new WeightedLottery() { Effect = ItemEffect.ColdResistance, Chance = 30, Max = 5, MonitaryValue = 1 },
+                          new WeightedLottery() { Effect = ItemEffect.ArmorClass, Chance = 100, Max = 10, MonitaryValue = 1 },
+                          new WeightedLottery() { Effect = ItemEffect.Speed, Chance = 10, Max = 2, MonitaryValue = 5 },
                     };
 
-                for (int i = 0; i < bonusRolls; i++)
-                {
-                    int itemIndex = rand.Next(0, effectLottery.Length - 1);
-
-                    effectLottery = effectLottery.OrderBy(x => rand.Next()).ToArray();
-
-                    var effect = effectLottery[itemIndex];
-                    if (rand.NextDouble() * 100 >= 100 - effect.Chance)
+                    for (int i = 0; i < bonusRolls; i++)
                     {
-                        if (Effects.Where(o => o.EffectType == effect.Effect).Sum(o => o.Value) < effect.Max)
+                        int itemIndex = rand.Next(0, effectLottery.Length - 1);
+
+                        effectLottery = effectLottery.OrderBy(x => rand.Next()).ToArray();
+
+                        var effect = effectLottery[itemIndex];
+                        if (rand.NextDouble() * 100 >= 100 - effect.Chance)
                         {
-                            Effects.Add(new MetaEffect() { EffectType = effect.Effect, ValueType = ItemEffectType.Fixed, Value = 1 });
-                            bonusPointsApplied++;
+                            if (Effects.Where(o => o.EffectType == effect.Effect).Sum(o => o.Value) < effect.Max)
+                            {
+                                Effects.Add(new MetaEffect() { EffectType = effect.Effect, ValueType = ItemEffectType.Fixed, Value = 1 });
+                                bonusPointsApplied += effect.MonitaryValue;
+                            }
                         }
                     }
-                }
 
-                EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
+                    EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
+                }
 
                 if (willBeCursed)
                 {
                     Enchantment = EnchantmentType.Cursed;
-                    Name = $"Cursed {Name}";
+                    Name = $"{Name} (Cursed)";
 
                     foreach (var effect in Effects)
                     {
@@ -153,9 +153,9 @@ namespace Library.Engine
 
                         for (int i = 0; i < bonusRolls; i++)
                         {
-                            if (rand.NextDouble() * 100 >= 80) { DamageDice--; bonusPointsApplied++; }
-                            if (rand.NextDouble() * 100 >= 60) { DamageDiceFaces--; bonusPointsApplied++; }
-                            if (rand.NextDouble() * 100 >= 70) { DamageAdditional--; bonusPointsApplied++; }
+                            if (rand.NextDouble() * 100 >= 60) { DamageDiceFaces--; bonusPointsApplied += 1; }
+                            if (rand.NextDouble() * 100 >= 70) { DamageAdditional--; bonusPointsApplied += 2; }
+                            if (rand.NextDouble() * 100 >= 80) { DamageDice--; bonusPointsApplied += 3; }
                         }
 
                         EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
@@ -167,7 +167,7 @@ namespace Library.Engine
                 else
                 {
                     Enchantment = EnchantmentType.Enchanted;
-                    Name = $"Enchanted {Name}";
+                    Name = $"{Name} (Enchanted)";
 
                     if (SubType == ActorSubType.MeleeWeapon || SubType == ActorSubType.RangedWeapon || SubType == ActorSubType.Projectile)
                     {
@@ -176,9 +176,9 @@ namespace Library.Engine
                         bonusPointsApplied = 0;
                         for (int i = 0; i < bonusRolls; i++)
                         {
-                            if (rand.NextDouble() * 100 >= 80) { DamageDice++; bonusPointsApplied++; }
-                            if (rand.NextDouble() * 100 >= 60) { DamageDiceFaces++; bonusPointsApplied++; }
-                            if (rand.NextDouble() * 100 >= 70) { DamageAdditional++; bonusPointsApplied++; }
+                            if (rand.NextDouble() * 100 >= 60) { DamageDiceFaces++; bonusPointsApplied += 1; }
+                            if (rand.NextDouble() * 100 >= 70) { DamageAdditional++; bonusPointsApplied += 2; }
+                            if (rand.NextDouble() * 100 >= 80) { DamageDice++; bonusPointsApplied += 3; }
                         }
 
                         EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
@@ -468,12 +468,20 @@ namespace Library.Engine
 
         public void OverrideWith(TileMetadata with)
         {
+            if (with.Effects != null && (this.Effects?.Count ?? 0) == 0)
+            {
+                this.Effects = new List<MetaEffect>();
+                foreach (var effect in with.Effects)
+                {
+                    this.Effects.Add(new MetaEffect() { EffectType = effect.EffectType, ValueType = effect.ValueType, Value = effect.Value, Duration = effect.Duration });
+                }
+            }
+
             this.UID = with.UID ?? this.UID;
             this.CanWalkOn = with.CanWalkOn ?? this.CanWalkOn;
             this.CastTime = with.CastTime ?? this.CastTime;
             this.CanTakeDamage = with.CanTakeDamage ?? this.CanTakeDamage;
             this.ProjectileType = with.ProjectileType ?? this.ProjectileType;
-            this.Effects = with.Effects ?? this.Effects;
             this.TargetType = with.TargetType ?? this.TargetType;
             this.IsConsumable = with.IsConsumable ?? this.IsConsumable;
             this.Charges = with.Charges ?? this.Charges;

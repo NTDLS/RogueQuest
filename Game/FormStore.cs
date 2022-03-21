@@ -998,41 +998,49 @@ namespace Game
                     };
                 }
 
-                var itemsInStore = Core.Materials
-                    .Where(o =>
-                        o.Meta.ActorClass == ActorClassName.ActorItem //We don't sell terrain blocks or buildings. :D
-                        && o.Meta.Value > 0 //We don't sell free items.
-                        && persistentStore.Items.Where(i => i.TilePath == o.TilePath).FirstOrDefault() == null //Don't add duplicate items.
-                        && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified) //Only show the items that this store type sells.
-                        && o.Meta.Enchantment != EnchantmentType.Cursed //We dont sell cursed items.
-                        && (o.Meta.Rarity ?? 0) > 0 //Items with a Rarity of 0 are impossible to find or buy. They have to be placed by the map creator.
-                        && (o.Meta.Rarity == 100 || MathUtility.ChanceIn(100 - (int)o.Meta.Rarity)) //Apply the rarity lottery.
-                        && o.Meta.Level <= Core.State.Character.Level //Only show items that are appropriate for the character level.
-                    ).Cast<TileIdentifier>();
+                List<TileIdentifier> itemsInStore = new List<TileIdentifier>();
+
+                for (int i = 0; i < 2; i++)
+                {
+                    itemsInStore.AddRange(Core.Materials
+                        .Where(o =>
+                            o.Meta.ActorClass == ActorClassName.ActorItem //We don't sell terrain blocks or buildings. :D
+                            && o.Meta.Value > 0 //We don't sell free items.
+                            && (
+                                (persistentStore.Items.Where(i => i.TilePath == o.TilePath).Count() < 3 && (o.Meta.CanStack ?? false) == false) //Don't add too many duplicate items.
+                                || (persistentStore.Items.Where(i => i.TilePath == o.TilePath).Any() == false && o.Meta.CanStack == true) //Don't add duplicate stackable items.
+                            )
+                            && (
+                                (itemsInStore.Where(i => i.TilePath == o.TilePath).Count() < 3 && (o.Meta.CanStack ?? false) == false) //Don't add too many duplicate items.
+                                || (itemsInStore.Where(i => i.TilePath == o.TilePath).Any() == false && o.Meta.CanStack == true) //Don't add duplicate stackable items.
+                            )
+                            && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified) //Only show the items that this store type sells.
+                            && o.Meta.Enchantment != EnchantmentType.Cursed //We dont sell cursed items.
+                            && (o.Meta.Rarity ?? 0) > 0 //Items with a Rarity of 0 are impossible to find or buy. They have to be placed by the map creator.
+                            && (o.Meta.Rarity == 100 || MathUtility.Random.Next(1, 100) <= (int)o.Meta.Rarity) //Apply the rarity lottery.
+                            && o.Meta.Level <= Core.State.Character.Level //Only show items that are appropriate for the character level.
+                        ).Cast<TileIdentifier>().Select(o=>o.DeriveCopy()));
+
+                    itemsInStore.ForEach(o => o.Meta.Identify(Core));
+                    itemsInStore.RemoveAll(o => o.Meta.Enchantment == EnchantmentType.Cursed);
+                }
 
                 foreach (var item in itemsInStore)
                 {
-                    var newItem = item.DeriveCopy();
-
-                    if (newItem.Meta.Enchantment != null)
-                    {
-                        newItem.Meta.Identify(Core);
-                    }
-
-                    int max = (int)newItem.Meta.Rarity / 4;
+                    int max = (int)item.Meta.Rarity / 4;
                     if (max < 5) max = 5;
                     if (max > 20) max = 20;
 
-                    if (newItem.Meta.CanStack == true)
+                    if (item.Meta.CanStack == true)
                     {
-                        newItem.Meta.Quantity = MathUtility.RandomNumber(4, max);
+                        item.Meta.Quantity = MathUtility.RandomNumber(4, max);
                     }
-                    else if (newItem.Meta.SubType == ActorSubType.Wand)
+                    else if (item.Meta.SubType == ActorSubType.Wand)
                     {
-                        newItem.Meta.Charges = MathUtility.RandomNumber(4, max);
+                        item.Meta.Charges = MathUtility.RandomNumber(4, max);
                     }
 
-                    persistentStore.Items.Add(newItem);
+                    persistentStore.Items.Add(item);
                 }
 
                 Core.State.Stores.Add(persistentStore);
