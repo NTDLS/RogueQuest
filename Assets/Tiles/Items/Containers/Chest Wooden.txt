@@ -6,6 +6,6 @@
   "BulkCapacity":"10000",
   "WeightCapacity":"5000",
   "Value":"100",
-  "Rarity":"50",
+  "Rarity":"20",
   "Level":"1"
 }

@@ -1,5 +1,5 @@
 {
-  "Name":"Broach of Protection II",
+  "Name":"Broach of Fire Resistance",
   "Value": "85",
   "Effects":[
     {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"3"},
