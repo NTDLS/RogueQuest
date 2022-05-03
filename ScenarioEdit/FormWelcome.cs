@@ -116,6 +116,7 @@ namespace ScenarioEdit
         {
             using (var dialog = new OpenFileDialog())
             {
+                dialog.InitialDirectory = Constants.GetUserAssetPath("Scenario");
                 dialog.Filter = "Rogue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
 
                 if (dialog.ShowDialog() == DialogResult.OK)

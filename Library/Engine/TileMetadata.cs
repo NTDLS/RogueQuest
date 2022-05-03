@@ -558,8 +558,8 @@ namespace Library.Engine
         /// </summary>
         public static TileMetadata GetFreshMetadata(string tilePath)
         {
-            var fileSystemPath = Path.GetDirectoryName(Constants.GetAssetPath($"{tilePath}"));
-            var exactMetaFileName = Constants.GetAssetPath($"{tilePath}.txt");
+            var fileSystemPath = Path.GetDirectoryName(Constants.GetCommonAssetPath($"{tilePath}"));
+            var exactMetaFileName = Constants.GetCommonAssetPath($"{tilePath}.txt");
             var meta = FindFirstMetafile(fileSystemPath, "_GlobalMeta.txt") ?? new TileMetadata();
 
             var localMeta = FindFirstMetafile(fileSystemPath, "_LocalMeta.txt");
@@ -587,16 +587,16 @@ namespace Library.Engine
 
             if (meta.ActorClass == ActorClassName.ActorItem)
             {
-                var fileCheck = $"{Constants.GetAssetPath(tilePath)}.Enchanted.png";
+                var fileCheck = $"{Constants.GetCommonAssetPath(tilePath)}.Enchanted.png";
                 if (File.Exists(fileCheck)) meta.EnchantedImagePath = $"{tilePath}.Enchanted";
 
-                fileCheck = $"{Constants.GetAssetPath(tilePath)}.Cursed.png";
+                fileCheck = $"{Constants.GetCommonAssetPath(tilePath)}.Cursed.png";
                 if (File.Exists(fileCheck)) meta.CursedImagePath = $"{tilePath}.Cursed";
 
-                fileCheck = $"{Constants.GetAssetPath(tilePath)}.Projectile.png";
+                fileCheck = $"{Constants.GetCommonAssetPath(tilePath)}.Projectile.png";
                 if (File.Exists(fileCheck)) meta.ProjectileImagePath = $"{tilePath}.Projectile";
 
-                fileCheck = $"{Constants.GetAssetPath(tilePath)}.Animation.png";
+                fileCheck = $"{Constants.GetCommonAssetPath(tilePath)}.Animation.png";
                 if (File.Exists(fileCheck)) meta.AnimationImagePath = $"{tilePath}.Animation";
 
                 if (meta.Enchantment == null) //Pick a good default for the enchantment type.

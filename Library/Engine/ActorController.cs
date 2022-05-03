@@ -321,7 +321,7 @@ namespace Library.Engine
         {
             lock (Core.CollectionSemaphore)
             {
-                object[] param = { Core, Constants.GetAssetPath($"{imageFrames}.png"), frameSize, frameDelayMilliseconds, playMode };
+                object[] param = { Core, Constants.GetCommonAssetPath($"{imageFrames}.png"), frameSize, frameDelayMilliseconds, playMode };
                 var obj = (ActorBase)Activator.CreateInstance(typeof(T), param);
 
                 obj.TilePath = imageFrames;

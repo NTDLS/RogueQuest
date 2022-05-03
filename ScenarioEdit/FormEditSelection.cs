@@ -153,7 +153,7 @@ namespace ScenarioEdit
                 return tilePath;
             }
 
-            string imageFile = Constants.BaseAssetPath + @$"{tilePath}.png";
+            string imageFile = Constants.BaseCommonAssetPath + @$"{tilePath}.png";
 
             _imageList.Images.Add(tilePath, SpriteCache.GetBitmapCached(imageFile));
 

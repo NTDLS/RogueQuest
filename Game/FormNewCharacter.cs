@@ -61,13 +61,13 @@ namespace Game
 
             Image img;
 
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\1\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetCommonAssetPath(@"Tiles\Special\@Player\1\Front 1.png"));
             pictureBoxPlayer1.Image = img;
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\2\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetCommonAssetPath(@"Tiles\Special\@Player\2\Front 1.png"));
             pictureBoxPlayer2.Image = img;
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\3\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetCommonAssetPath(@"Tiles\Special\@Player\3\Front 1.png"));
             pictureBoxPlayer3.Image = img;
-            img = Bitmap.FromFile(Assets.Constants.GetAssetPath(@"Tiles\Special\@Player\4\Front 1.png"));
+            img = Bitmap.FromFile(Assets.Constants.GetCommonAssetPath(@"Tiles\Special\@Player\4\Front 1.png"));
             pictureBoxPlayer4.Image = img;
 
             pictureBoxPlayer1.MouseClick += PictureBoxPlayer_MouseClick;
@@ -137,7 +137,7 @@ namespace Game
 
             comboBoxScenario.DropDownClosed += (s, e) => toolTip.Hide(comboBoxScenario);
 
-            string scenariosPath = Assets.Constants.GetAssetPath(@"Scenario");
+            string scenariosPath = Assets.Constants.GetUserAssetPath(@"Scenario");
 
             var files = Directory.GetFiles(scenariosPath, "*.rqs");
 
@@ -172,7 +172,7 @@ namespace Game
 
         private void PopulateSpellsEx(string childFolder)
         {
-            string spellsPath = Assets.Constants.GetAssetPath();
+            string spellsPath = Assets.Constants.GetCommonAssetPath();
             string partialPath = @$"Tiles\Items\Books\{childFolder}".Replace(@"\\", @"\");
 
             foreach (var f in Directory.GetFiles(Path.Combine(spellsPath, partialPath), "*.txt"))

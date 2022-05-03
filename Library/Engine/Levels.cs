@@ -64,6 +64,9 @@ namespace Library.Engine
             var json = Native.Compress.Unzip(compressedSaveFile);
             //string json = System.IO.File.ReadAllText(fileName);
 
+            //json = json.Replace("\"Weapon\"", "\"MeleeWeapon\"");
+
+
             var saveFile = JsonConvert.DeserializeObject<SaveFile>(json);
 
             Collection = saveFile.Collection;
@@ -277,7 +280,7 @@ namespace Library.Engine
                         ActorBase tile = null;
                         object[] param = { Core };
 
-                        tilePath = Constants.GetAssetPath($"{chunk.TilePath}.png");
+                        tilePath = Constants.GetCommonAssetPath($"{chunk.TilePath}.png");
 
                         //If the game assembly is loaded them create the actual tile class.
                         if (_gameAssembly != null)

@@ -14,8 +14,6 @@ namespace ScenarioEdit
         private Point<double> dragStartOffset = new Point<double>();
         private Point<double> dragStartMouse = new Point<double>();
 
-        private string BaseAssetPath => Assets.Constants.BaseAssetPath;
-        private string PartialSwatchPath => "Swatches\\";
         private Control drawingsurface = new Control();
         private EngineCore _core;
         private bool _firstShown = true;
@@ -99,7 +97,7 @@ namespace ScenarioEdit
         {
             if (e.Node != null && e.Node.ImageKey == "<swatch>")
             {
-                string fileName = $"{BaseAssetPath}{PartialSwatchPath}\\{e.Node.FullPath}.rqs";
+                string fileName = Assets.Constants.GetUserAssetPath($"Swatches\\{e.Node.FullPath}.rqs");
 
                 SelectedSwatchFileName = fileName;
 
@@ -121,7 +119,7 @@ namespace ScenarioEdit
         {
             if (string.IsNullOrWhiteSpace(SelectedSwatchFileName) == false && treeViewSwatches.SelectedNode != null)
             {
-                if (treeViewSwatches.SelectedNode.ImageKey != "<folder>")
+                if (treeViewSwatches.SelectedNode.ImageKey != " <folder>")
                 {
                     this.DialogResult = DialogResult.OK;
                     this.Close();
@@ -145,7 +143,7 @@ namespace ScenarioEdit
 
             treeViewSwatches.ImageList = _assetBrowserImageList;
 
-            foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialSwatchPath))
+            foreach (string d in Directory.GetDirectories(Assets.Constants.GetUserAssetPath($"Swatches")))
             {
                 if (Utility.IgnoreFileName(d))
                 {
@@ -153,14 +151,14 @@ namespace ScenarioEdit
                 }
 
                 var directory = Path.GetFileName(d);
-                var directoryNode = treeViewSwatches.Nodes.Add(PartialSwatchPath + directory, directory, "<folder>");
+                var directoryNode = treeViewSwatches.Nodes.Add(directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
             }
         }
 
         public void PopChildNodes(TreeNode parent, string partialPath)
         {
-            foreach (string d in Directory.GetDirectories(BaseAssetPath + PartialSwatchPath + partialPath))
+            foreach (string d in Directory.GetDirectories(Assets.Constants.GetUserAssetPath($"Swatches\\{partialPath}")))
             {
                 if (Utility.IgnoreFileName(d))
                 {
@@ -168,11 +166,11 @@ namespace ScenarioEdit
                 }
 
                 var directory = Path.GetFileName(d);
-                var directoryNode = parent.Nodes.Add(PartialSwatchPath + directory, directory, "<folder>");
+                var directoryNode = parent.Nodes.Add(directory, directory, "<folder>");
                 directoryNode.Nodes.Add("<dummy>");
             }
 
-            foreach (var f in Directory.GetFiles(BaseAssetPath + PartialSwatchPath + partialPath, "*.rqs"))
+            foreach (var f in Directory.GetFiles(Assets.Constants.GetUserAssetPath($"Swatches\\{partialPath}"), "*.rqs"))
             {
                 if (Utility.IgnoreFileName(f))
                 {
@@ -180,7 +178,7 @@ namespace ScenarioEdit
                 }
                 var file = new FileInfo(f);
 
-                string fileKey = $"{PartialSwatchPath}{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
+                string fileKey = $"{partialPath}\\{Path.GetFileNameWithoutExtension(file.Name)}";
 
                 parent.Nodes.Add(fileKey, Path.GetFileNameWithoutExtension(file.Name), "<swatch>", "<swatch>");
             }

@@ -72,7 +72,7 @@ namespace ScenarioEdit
                     {
                         if (_imageList.Images.ContainsKey(chunk.TilePath) == false)
                         {
-                            var fullTilePath = Path.Combine(Constants.BaseAssetPath, $"{chunk.TilePath}.png");
+                            var fullTilePath = Path.Combine(Constants.BaseCommonAssetPath, $"{chunk.TilePath}.png");
                             _imageList.Images.Add(chunk.TilePath, SpriteCache.GetBitmapCached(fullTilePath));
                         }
 

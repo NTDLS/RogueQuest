@@ -370,6 +370,7 @@ namespace Game
 
             using (var dialog = new OpenFileDialog())
             {
+                dialog.InitialDirectory = Constants.SaveFolder;
                 dialog.Filter = "RogueQuest Games (*.rqg)|*.rqg|All files (*.*)|*.*";
 
                 if (dialog.ShowDialog() == DialogResult.OK)
@@ -598,7 +599,7 @@ namespace Game
                 return tilePath;
             }
 
-            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetAssetPath($"{tilePath}.png"));
+            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetCommonAssetPath($"{tilePath}.png"));
             _imageList.Images.Add(tilePath, bitmap);
 
             return tilePath;
@@ -611,7 +612,7 @@ namespace Game
                 return _imageList.Images[tilePath];
             }
 
-            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetAssetPath($"{tilePath}.png"));
+            var bitmap = SpriteCache.GetBitmapCached(Assets.Constants.GetCommonAssetPath($"{tilePath}.png"));
             _imageList.Images.Add(tilePath, bitmap);
 
             return bitmap;

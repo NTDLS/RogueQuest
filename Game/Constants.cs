@@ -18,7 +18,7 @@ namespace Game
         {
             get
             {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RougeQuest\\Saves";
+                string path = Assets.Constants.GetUserAssetPath("Saves");
 
                 if (System.IO.Directory.Exists(path) == false)
                 {

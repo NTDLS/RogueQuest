@@ -260,7 +260,7 @@ namespace ScenarioEdit
 
             treeViewTiles.ImageList = _assetBrowserImageList;
 
-            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath))
+            foreach (string d in Directory.GetDirectories(Constants.BaseCommonAssetPath + _partialTilesPath))
             {
                 if (Utility.IgnoreFileName(d))
                 {
@@ -275,7 +275,7 @@ namespace ScenarioEdit
 
         public void PopChildNodes(TreeNode parent, string partialPath)
         {
-            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath + partialPath))
+            foreach (string d in Directory.GetDirectories(Constants.BaseCommonAssetPath + _partialTilesPath + partialPath))
             {
                 var directory = Path.GetFileName(d);
                 if (Utility.IgnoreFileName(directory) || directory.ToLower() == "player")
@@ -287,7 +287,7 @@ namespace ScenarioEdit
                 directoryNode.Nodes.Add("<dummy>");
             }
 
-            foreach (var f in Directory.GetFiles(Constants.BaseAssetPath + _partialTilesPath + partialPath, "*.png"))
+            foreach (var f in Directory.GetFiles(Constants.BaseCommonAssetPath + _partialTilesPath + partialPath, "*.png"))
             {
                 if (Utility.IgnoreFileName(f))
                 {
@@ -487,6 +487,7 @@ namespace ScenarioEdit
         {
             using (var dialog = new SaveFileDialog())
             {
+                dialog.InitialDirectory = Constants.GetUserAssetPath("Scenario");
                 dialog.FileName = $"Newfile {_newFilenameIncrement++}";
                 dialog.Filter = "Rougue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
 
@@ -508,7 +509,7 @@ namespace ScenarioEdit
         {
             List<TileIdentifier> materials = new List<TileIdentifier>();
 
-            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath))
+            foreach (string d in Directory.GetDirectories(Constants.BaseCommonAssetPath + _partialTilesPath))
             {
                 if (Utility.IgnoreFileName(d))
                 {
@@ -525,7 +526,7 @@ namespace ScenarioEdit
         {
             List<TileIdentifier> materials = new List<TileIdentifier>();
 
-            foreach (string d in Directory.GetDirectories(Constants.BaseAssetPath + _partialTilesPath + partialPath))
+            foreach (string d in Directory.GetDirectories(Constants.BaseCommonAssetPath + _partialTilesPath + partialPath))
             {
                 if (Utility.IgnoreFileName(d))
                 {
@@ -535,7 +536,7 @@ namespace ScenarioEdit
                 materials.AddRange(EnumFlatMaterials(partialPath + "\\" + Path.GetFileName(d)));
             }
 
-            foreach (var f in Directory.GetFiles(Constants.BaseAssetPath + _partialTilesPath + partialPath, "*.png"))
+            foreach (var f in Directory.GetFiles(Constants.BaseCommonAssetPath + _partialTilesPath + partialPath, "*.png"))
             {
                 if (Utility.IgnoreFileName(f))
                 {
@@ -794,6 +795,8 @@ namespace ScenarioEdit
             using (var dialog = new OpenFileDialog())
             {
                 dialog.Filter = "Rogue Quest Scenario (*.rqs)|*.rqs|All files (*.*)|*.*";
+
+                dialog.InitialDirectory = Constants.GetUserAssetPath("Scenario");
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
@@ -2252,7 +2255,7 @@ namespace ScenarioEdit
                         };
 
                         tile.Velocity.Angle.Degrees = chunk.Angle ?? 0;
-                        tile.SetImage(Constants.GetAssetPath($"{chunk.TilePath}.png"));
+                        tile.SetImage(Constants.GetCommonAssetPath($"{chunk.TilePath}.png"));
 
                         tile.SelectedHighlight = true;
                         _mostRecentlySelectedTile = tile;

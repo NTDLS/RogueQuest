@@ -271,7 +271,7 @@ namespace Game.Engine
 
                             if (randomTile != null)
                             {
-                                tile.SetImage(Assets.Constants.GetAssetPath($"{randomTile.TilePath}.png"));
+                                tile.SetImage(Assets.Constants.GetCommonAssetPath($"{randomTile.TilePath}.png"));
                                 tile.X = target.X;
                                 tile.Y = target.Y;
                                 tile.TilePath = randomTile.TilePath;
@@ -893,7 +893,7 @@ namespace Game.Engine
                     playerAngle = "Left";
                 }
 
-                string assetPath = Assets.Constants.GetAssetPath(@$"Tiles\Special\@Player\{Core.State.Character.Avatar}\{playerAngle} {_avatarAnimationFrame}.png");
+                string assetPath = Assets.Constants.GetCommonAssetPath(@$"Tiles\Special\@Player\{Core.State.Character.Avatar}\{playerAngle} {_avatarAnimationFrame}.png");
                 Core.Player.SetImage(SpriteCache.GetBitmapCached(assetPath));
                 if (_avatarAnimationFrame++ == 2)
                 {

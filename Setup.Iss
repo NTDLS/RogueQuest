@@ -27,16 +27,18 @@
  Name: "ScenarioEdit"; Description: "Scenario Editor";  Types: Full Custom;
 
 [Files]
- Source: "Game\bin\Release\net5.0-windows\*.exe";          DestDir: "{app}\Bin";     Components: Game;          Flags: IgnoreVersion; 
- Source: "Game\bin\Release\net5.0-windows\*.dll";          DestDir: "{app}\Bin";     Components: Game;          Flags: IgnoreVersion;
- Source: "Game\bin\Release\net5.0-windows\*.json";         DestDir: "{app}\Bin";     Components: Game;          Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Release\net5.0-windows\*.exe";  DestDir: "{app}\Bin";     Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Release\net5.0-windows\*.json"; DestDir: "{app}\Bin";     Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Release\net5.0-windows\*.dll";  DestDir: "{app}\Bin";     Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "Assets\*.*";                                     DestDir: "{app}\Assets";  Components: Assets;        Flags: IgnoreVersion recursesubdirs;
+ Source: "Game\bin\Release\net5.0-windows\*.exe";          DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion; 
+ Source: "Game\bin\Release\net5.0-windows\*.dll";          DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion;
+ Source: "Game\bin\Release\net5.0-windows\*.json";         DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net5.0-windows\*.exe";  DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net5.0-windows\*.json"; DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net5.0-windows\*.dll";  DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "Assets\CommonAssets\*.*";                        DestDir: "{app}\Assets";                       Components: Assets;        Flags: IgnoreVersion recursesubdirs;
+ Source: "Assets\UserAssets\*.*";                          DestDir: "{userappdata}\Rougue Quest";         Components: Assets;        Flags: IgnoreVersion recursesubdirs;
 
 [Registry]
- Root: HKLM; Subkey: "Software\NetworkDLS\Rogue Quest"; ValueType: STRING;ValueName: "AssetPath"; ValueData:"{app}\Assets"; Flags: CreateValueIfDoesntExist;
+ Root: HKLM; Subkey: "Software\NetworkDLS\Rogue Quest"; ValueType: STRING;ValueName: "CommonAssetPath"; ValueData:"{app}\Assets";               Flags: CreateValueIfDoesntExist;
+ Root: HKLM; Subkey: "Software\NetworkDLS\Rogue Quest"; ValueType: STRING;ValueName: "UserAssetPath";   ValueData:"{userappdata}\Rougue Quest"; Flags: CreateValueIfDoesntExist;
 
 [Icons]
  Name: "{group}\Rougue Quest";    Filename: "{app}\Bin\Game.exe";         Components: Game;

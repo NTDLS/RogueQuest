@@ -227,7 +227,7 @@ namespace ScenarioEdit
 
             imageList.Images.Add("<Folder>", Resources.SwatchTreeView_Folder);
 
-            CreateImageListAndAssets(imageList, null, Constants.BaseAssetPath, "Tiles\\Items");
+            CreateImageListAndAssets(imageList, null, Constants.BaseCommonAssetPath, "Tiles\\Items");
             if (treeViewTiles.Nodes.Count > 0)
             {
                 treeViewTiles.Nodes[0].Expand();

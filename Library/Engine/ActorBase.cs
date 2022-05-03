@@ -45,7 +45,7 @@ namespace Library.Engine
                     || (Meta.Enchantment ?? EnchantmentType.Normal) == EnchantmentType.Undecided
                     || Meta.IsIdentified == false)
                 {
-                    return Constants.GetAssetPath($"{TilePath}.png");
+                    return Constants.GetCommonAssetPath($"{TilePath}.png");
                 }
 
                 if (Meta.Enchantment == EnchantmentType.Cursed && Meta.IsIdentified == true)
@@ -54,7 +54,7 @@ namespace Library.Engine
                     {
                         throw new Exception("Cursed tile must have an [CursedImagePath] specified.");
                     }
-                    return Constants.GetAssetPath($"{Meta.CursedImagePath}.png");
+                    return Constants.GetCommonAssetPath($"{Meta.CursedImagePath}.png");
                 }
 
                 if (Meta.Enchantment == EnchantmentType.Enchanted && Meta.IsIdentified == true)
@@ -63,10 +63,10 @@ namespace Library.Engine
                     {
                         throw new Exception("Cursed tile must have an [EnchantedImagePath] specified.");
                     }
-                    return Constants.GetAssetPath($"{Meta.EnchantedImagePath}.png");
+                    return Constants.GetCommonAssetPath($"{Meta.EnchantedImagePath}.png");
                 }
 
-                return Constants.GetAssetPath($"{TilePath}.png");
+                return Constants.GetCommonAssetPath($"{TilePath}.png");
             }
         }
 

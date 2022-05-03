@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,24 +11,44 @@ namespace Assets
     public class Constants
     {
         public const String RegistryKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\NetworkDLS\\Rougue Quest";
-        public static string _BaseAssetPath = null;
+        public static string _BaseCommonAssetPath = null;
+        public static string _BaseUserAssetPath = null;
 
-        public static string BaseAssetPath
+        public static string BaseCommonAssetPath
         {
             get
             {
-                if (_BaseAssetPath == null)
+                if (_BaseCommonAssetPath == null)
                 {
                     RegistryKey hklm = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\NetworkDLS\Rogue Quest", false);
-                    _BaseAssetPath = (string)hklm.GetValue("AssetPath", "");
+                    _BaseCommonAssetPath = (string)hklm.GetValue("CommonAssetPath", "");
 
-                    if (_BaseAssetPath.EndsWith("\\") == false)
+                    if (_BaseCommonAssetPath.EndsWith("\\") == false)
                     {
-                        _BaseAssetPath += "\\";
+                        _BaseCommonAssetPath += "\\";
                     }
                 }
 
-                return _BaseAssetPath;
+                return _BaseCommonAssetPath;
+            }
+        }
+
+        public static string BaseUserAssetPath
+        {
+            get
+            {
+                if (_BaseUserAssetPath == null)
+                {
+                    RegistryKey hklm = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\NetworkDLS\Rogue Quest", false);
+                    _BaseUserAssetPath = (string)hklm.GetValue("UserAssetPath", "");
+
+                    if (_BaseUserAssetPath.EndsWith("\\") == false)
+                    {
+                        _BaseUserAssetPath += "\\";
+                    }
+                }
+
+                return _BaseUserAssetPath;
             }
         }
 
@@ -35,32 +56,42 @@ namespace Assets
         {
             get
             {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RougeQuest\\Saves";
+                string path = System.IO.Path.Combine(BaseUserAssetPath, "Saves");
 
-                if (System.IO.Directory.Exists(path) == false)
+                if (Directory.Exists(path) == false)
                 {
-                    System.IO.Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path);
                 }
 
                 path += "\\RecentScenarios.txt";
 
-                if (System.IO.File.Exists(path) == false)
+                if (File.Exists(path) == false)
                 {
-                    System.IO.File.WriteAllText(path, string.Empty);
+                    File.WriteAllText(path, string.Empty);
                 }
 
                 return path;
             }
         }
 
-        public static string GetAssetPath(string partialAssetPath)
+        public static string GetUserAssetPath(string partialAssetPath)
         {
-            return BaseAssetPath + partialAssetPath;
+            return Path.Combine(BaseUserAssetPath, partialAssetPath);
         }
 
-        public static string GetAssetPath()
+        public static string GetUserAssetPath()
         {
-            return BaseAssetPath;
+            return BaseUserAssetPath;
+        }
+
+        public static string GetCommonAssetPath(string partialAssetPath)
+        {
+            return Path.Combine(BaseCommonAssetPath, partialAssetPath);
+        }
+
+        public static string GetCommonAssetPath()
+        {
+            return BaseCommonAssetPath;
         }
     }
 }

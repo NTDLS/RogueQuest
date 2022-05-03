@@ -212,7 +212,7 @@ namespace Library.Engine
                     }
                 }
 
-                if (File.Exists(Constants.GetAssetPath($"{obj.Tile.TilePath}.png")) == false)
+                if (File.Exists(Constants.GetCommonAssetPath($"{obj.Tile.TilePath}.png")) == false)
                 {
                     orphanedItems.Add(obj);
                 }
@@ -421,7 +421,7 @@ namespace Library.Engine
                 var tileType = GameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
                 var actor = (ActorBase)Activator.CreateInstance(tileType, param);
 
-                actor.SetImage(Constants.GetAssetPath($"{randomTile.TilePath}.png"));
+                actor.SetImage(Constants.GetCommonAssetPath($"{randomTile.TilePath}.png"));
                 actor.X = spawner.X;
                 actor.Y = spawner.Y;
                 actor.TilePath = randomTile.TilePath;
