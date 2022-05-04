@@ -3,6 +3,6 @@
   "Value": "20",
   "Effects":[{"EffectType":"Heal","ValueType":"Fixed","Value":"10"}],
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
-  "Rarity":"100",
+  "Prevalence":"100",
   "Level":"1"
 }

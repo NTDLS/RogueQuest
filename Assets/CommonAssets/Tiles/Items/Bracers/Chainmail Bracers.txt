@@ -10,6 +10,6 @@
   ],
   "Weight":"450",
   "Bulk":"2000",
-  "Rarity":"60",
+  "Prevalence":"60",
   "Level":"2"
 }

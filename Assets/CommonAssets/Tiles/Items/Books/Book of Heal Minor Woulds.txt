@@ -3,7 +3,7 @@
   "SpellName":"Heal Minor Woulds",
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Value": "1000",
-  "Rarity":"3",
+  "Prevalence":"3",
   "Level":"1",
   "Mana":"3"
 }

@@ -3,7 +3,7 @@
   "SpellName":"Cure Poison",
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Value": "2000",
-  "Rarity":"3",
+  "Prevalence":"3",
   "Level":"2",
   "Mana":"3"
 }

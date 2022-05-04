@@ -6,6 +6,6 @@
   "Value": "35",
   "CastTime":"3",
   "AnimationImagePath":"Animations/Spells/Flash4_64_64",
-  "Rarity":"95",
+  "Prevalence":"95",
   "Level":"1"
 }

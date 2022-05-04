@@ -38,9 +38,10 @@ namespace Game
             // 
             // buttonOk
             // 
-            this.buttonOk.Location = new System.Drawing.Point(344, 227);
+            this.buttonOk.Location = new System.Drawing.Point(301, 170);
+            this.buttonOk.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(94, 29);
+            this.buttonOk.Size = new System.Drawing.Size(82, 22);
             this.buttonOk.TabIndex = 32;
             this.buttonOk.Text = "Ok";
             this.buttonOk.UseVisualStyleBackColor = true;
@@ -55,11 +56,11 @@ namespace Game
             this.listViewSpells.FullRowSelect = true;
             this.listViewSpells.GridLines = true;
             this.listViewSpells.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewSpells.HideSelection = false;
-            this.listViewSpells.Location = new System.Drawing.Point(12, 12);
+            this.listViewSpells.Location = new System.Drawing.Point(10, 9);
+            this.listViewSpells.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listViewSpells.MultiSelect = false;
             this.listViewSpells.Name = "listViewSpells";
-            this.listViewSpells.Size = new System.Drawing.Size(426, 209);
+            this.listViewSpells.Size = new System.Drawing.Size(373, 158);
             this.listViewSpells.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewSpells.TabIndex = 33;
             this.listViewSpells.UseCompatibleStateImageBehavior = false;
@@ -68,7 +69,7 @@ namespace Game
             // columnHeaderName
             // 
             this.columnHeaderName.Text = "Name";
-            this.columnHeaderName.Width = 280;
+            this.columnHeaderName.Width = 230;
             // 
             // columnHeaderLevel
             // 
@@ -80,12 +81,13 @@ namespace Game
             // 
             // FormPickNewSpell
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 262);
+            this.ClientSize = new System.Drawing.Size(394, 196);
             this.Controls.Add(this.listViewSpells);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormPickNewSpell";

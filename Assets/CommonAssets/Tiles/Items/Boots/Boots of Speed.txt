@@ -3,7 +3,7 @@
   "Value": "5",
   "Weight":"1500",
   "Bulk":"4000",
-  "Rarity":"10",
+  "Prevalence":"10",
   "Effects":[
     {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"1"},
     {"EffectType":"Speed","ValueType":"Fixed","Value":"2"},

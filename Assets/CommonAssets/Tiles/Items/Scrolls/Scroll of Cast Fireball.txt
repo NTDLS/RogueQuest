@@ -11,7 +11,7 @@
   "DamageAdditional":"0",
   "SplashDamageRange":"60",
   "AnimationImagePath":"Animations\\Hits\\Explosion1_256_256",
-  "Rarity":"40",
+  "Prevalence":"40",
   "Level":"4"
 }
   

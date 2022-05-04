@@ -11,7 +11,7 @@
   ],
   "Weight":"7000",
   "Bulk":"25000",
-  "Rarity":"95",
+  "Prevalence":"95",
   "Level":"1",
   "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Studded Leather Armor"

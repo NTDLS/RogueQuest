@@ -11,7 +11,7 @@
   ],
   "Weight":"5000",
   "Bulk":"24000",
-  "Rarity":"50",
+  "Prevalence":"50",
   "Level":"6",
   "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Elvin Armor"

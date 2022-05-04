@@ -369,11 +369,11 @@ namespace Library.Engine
         {
             object[] param = { this };
 
-            int rarity = MathUtility.RandomNumber(1, 100);
+            int prevalence = MathUtility.RandomNumber(1, 100);
 
             var randos = Materials.Where(o => o.Meta.ActorClass == spawnerMeta.SpawnType
                 && ((spawnerMeta.SpawnSubTypes?.Length ?? 0) == 0 || spawnerMeta.SpawnSubTypes.Contains(o.Meta.SubType ?? Types.ActorSubType.Unspecified))
-                && o.Meta.Rarity >= rarity
+                && o.Meta.Prevalence >= prevalence
                 && (o.Meta.Level ?? 1) >= (o.Meta.MinLevel ?? 1)
                 && (o.Meta.Level ?? 1) <= (o.Meta.MaxLevel ?? 1)).ToList();
 

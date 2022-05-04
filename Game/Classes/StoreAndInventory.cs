@@ -4,10 +4,6 @@ using Game.Engine;
 using Library.Engine;
 using Library.Engine.Types;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Game.Classes
@@ -67,7 +63,7 @@ namespace Game.Classes
 
             if (((tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (tile.Meta.IsIdentified ?? false) == false) == false)
             {
-                text += $" ({tile.Meta.RarityText})";
+                text += $" ({tile.Meta.PrevalenceText})";
             }
             else
             {

@@ -3,7 +3,7 @@
   "SpellName":"Lightning Resistance",
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Value": "6250",
-  "Rarity":"3",
+  "Prevalence":"3",
   "Level":"4",
   "Mana":"3"
 }

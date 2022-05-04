@@ -11,7 +11,7 @@
   ],
   "Weight":"9000",
   "Bulk":"30000",
-  "Rarity":"50",
+  "Prevalence":"50",
   "Level":"2",
   "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Chainmail Armor"

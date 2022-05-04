@@ -2,7 +2,7 @@
   "Name":"5 Slot Belt",
   "Weight":"500",
   "Bulk":"400",
-  "Rarity":"5",
+  "Prevalence":"5",
   "Value":"640",
   "ItemCapacity":"5",
   "BulkCapacity":"100000",

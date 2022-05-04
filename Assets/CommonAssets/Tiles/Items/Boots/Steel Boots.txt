@@ -1,11 +1,11 @@
 {
-  "Name":"Metal Boots",
-  "Value": "40",
+  "Name":"Steel Boots",
+  "Value": "70",
   "Weight":"2500",
   "Bulk":"4000",
-  "Rarity":"80",
+  "Prevalence":"80",
   "Effects":[
-    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"1"},
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"2"},
     {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"-1"},
     {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"1"},
     {"EffectType":"FireResistance","ValueType":"Fixed","Value":"1"},

@@ -1016,8 +1016,8 @@ namespace Game
                             )
                             && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified) //Only show the items that this store type sells.
                             && o.Meta.Enchantment != EnchantmentType.Cursed //We dont sell cursed items.
-                            && (o.Meta.Rarity ?? 0) > 0 //Items with a Rarity of 0 are impossible to find or buy. They have to be placed by the map creator.
-                            && (o.Meta.Rarity == 100 || MathUtility.Random.Next(1, 100) <= (int)o.Meta.Rarity) //Apply the rarity lottery.
+                            && (o.Meta.Prevalence ?? 0) > 0 //Items with a prevalence of 0 are impossible to find or buy. They have to be placed by the map creator.
+                            && (o.Meta.Prevalence == 100 || MathUtility.Random.Next(1, 100) <= (int)o.Meta.Prevalence) //Apply the prevalence lottery.
                             && o.Meta.Level <= Core.State.Character.Level //Only show items that are appropriate for the character level.
                         ).Cast<TileIdentifier>().Select(o=>o.DeriveCopy()));
 
@@ -1027,7 +1027,7 @@ namespace Game
 
                 foreach (var item in itemsInStore)
                 {
-                    int max = (int)item.Meta.Rarity / 4;
+                    int max = (int)item.Meta.Prevalence / 4;
                     if (max < 5) max = 5;
                     if (max > 20) max = 20;
 

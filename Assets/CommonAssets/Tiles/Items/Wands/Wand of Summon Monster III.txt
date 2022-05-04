@@ -6,6 +6,6 @@
   "CastTime":"3",
   "Charges":"10",
   "AnimationImagePath":"Animations/Spells/SkullSmoke2_192_256",
-  "Rarity":"8",
+  "Prevalence":"8",
   "Level":"6"
 }

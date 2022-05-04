@@ -6,7 +6,7 @@
   "TargetType":"Self",
   "CastTime":"2",
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
-  "Rarity":"65",
+  "Prevalence":"65",
   "Level":"2"
 }
   

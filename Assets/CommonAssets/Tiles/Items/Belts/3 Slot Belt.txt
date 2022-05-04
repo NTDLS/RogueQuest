@@ -2,7 +2,7 @@
   "Name":"3 Slot Belt",
   "Weight":"400",
   "Bulk":"360",
-  "Rarity":"20",
+  "Prevalence":"20",
   "Value":"160",
   "ItemCapacity":"3",
   "BulkCapacity":"100000",

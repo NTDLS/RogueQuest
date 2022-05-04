@@ -11,7 +11,7 @@
   ],
   "Weight":"5000",
   "Bulk":"30000",
-  "Rarity":"50",
+  "Prevalence":"50",
   "Level":"7",
   "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Meteoric Armor"

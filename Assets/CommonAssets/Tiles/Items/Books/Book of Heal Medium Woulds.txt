@@ -3,7 +3,7 @@
   "SpellName":"Heal Medium Woulds",
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Value": "4000",
-  "Rarity":"3",
+  "Prevalence":"3",
   "Level":"3",
   "Mana":"3"
 }

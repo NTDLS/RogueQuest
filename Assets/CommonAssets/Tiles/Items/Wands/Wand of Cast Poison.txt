@@ -5,6 +5,6 @@
   "Value": "5",
   "CastTime":"2",
   "AnimationImagePath":"Animations/Spells/SkullSmoke1_192_256",
-  "Rarity":"40",
+  "Prevalence":"40",
   "Level":"2"
 }

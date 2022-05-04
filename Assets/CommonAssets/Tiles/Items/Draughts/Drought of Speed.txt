@@ -3,6 +3,6 @@
   "Value": "3000",
   "Effects":[ {"EffectType":"Speed","ValueType":"Fixed","Value":"1"} ],
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
-  "Rarity":"2",
+  "Prevalence":"2",
   "Level":"3"
 }

@@ -11,7 +11,7 @@
   ],
   "Weight":"5000",
   "Bulk":"24000",
-  "Rarity":"95",
+  "Prevalence":"95",
   "Level":"1",
   "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Leather Armor"

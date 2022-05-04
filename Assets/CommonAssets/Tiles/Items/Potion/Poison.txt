@@ -3,6 +3,6 @@
   "Value": "1",
   "Effects":[{"EffectType":"Poison","ValueType":"Fixed","Duration":"10"}],
   "AnimationImagePath":"Animations/Spells/SkullSmoke1_192_256",
-  "Rarity":"40",
+  "Prevalence":"40",
   "Level":"1",
 }

@@ -6,5 +6,5 @@
   "Weight":"0",
   "Bulk":"0",
   "Value": "10",
-  "Rarity":"5"
+  "Prevalence":"5"
 }

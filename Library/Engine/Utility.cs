@@ -46,13 +46,13 @@ namespace Library.Engine
             return DamageType.Unspecified;
         }
 
-        public static string RarityText(int rarity)
+        public static string PrevalenceText(int prevalence)
         {
-            if (rarity >= 40) return "Common";
-            else if (rarity >= 20) return "Uncommon";
-            else if (rarity >= 10) return "Rare";
-            else if (rarity >= 1) return "Ultra Rare";
-            else if (rarity >= 0) return "Legendary";
+            if (prevalence >= 40) return "Common";
+            else if (prevalence >= 20) return "Uncommon";
+            else if (prevalence >= 10) return "Rare";
+            else if (prevalence >= 1) return "Ultra Rare";
+            else if (prevalence >= 0) return "Legendary";
             return "n/a";
         }
 

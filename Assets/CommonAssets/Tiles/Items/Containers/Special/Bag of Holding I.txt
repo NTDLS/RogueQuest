@@ -8,6 +8,6 @@
   "Weight":"7500",
   "Bulk":"100000",
   "Value":"2500",
-  "Rarity":"0",
+  "Prevalence":"0",
   "Level":"6"
 }

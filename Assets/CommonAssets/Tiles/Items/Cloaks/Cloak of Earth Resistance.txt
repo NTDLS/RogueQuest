@@ -3,7 +3,7 @@
   "Value": "80",
   "Weight":"500",
   "Bulk":"6000",
-  "Rarity":"50",
+  "Prevalence":"50",
   "Level":"2",
 
   "Effects":[

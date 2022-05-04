@@ -7,7 +7,7 @@
   "DamageAdditional":"3",
   "Weight":"5200",
   "Bulk":"12350",
-  "Rarity":"0",
+  "Prevalence":"0",
   "Level":"18",
   "Effects":[
     {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},

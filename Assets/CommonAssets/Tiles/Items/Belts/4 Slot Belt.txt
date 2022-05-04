@@ -2,7 +2,7 @@
   "Name":"4 Slot Belt",
   "Weight":"450",
   "Bulk":"380",
-  "Rarity":"10",
+  "Prevalence":"10",
   "Value":"320",
   "ItemCapacity":"4",
   "BulkCapacity":"100000",

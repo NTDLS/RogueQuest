@@ -11,7 +11,7 @@
   ],
   "Weight":"10000",
   "Bulk":"30000",
-  "Rarity":"60",
+  "Prevalence":"60",
   "Level":"3",
   "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Chainmail Bar Armor"

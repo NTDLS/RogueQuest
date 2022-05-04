@@ -3,7 +3,7 @@
   "SpellName":"Magic Arrow",
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Value": "500",
-  "Rarity":"3",
+  "Prevalence":"3",
   "Level":"1",
   "Mana":"1"
 }

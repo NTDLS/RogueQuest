@@ -3,7 +3,7 @@
   "Value": "200",
   "Weight":"4500",
   "Bulk":"35000",
-  "Rarity":"25",
+  "Prevalence":"25",
   "Effects":[
     {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"18"},
     {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},

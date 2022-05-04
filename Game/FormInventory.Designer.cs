@@ -79,8 +79,7 @@ namespace Game
             // pictureBoxCharacter
             // 
             this.pictureBoxCharacter.Image = global::Game.Properties.Resources.claudius_battle_sprite_animated;
-            this.pictureBoxCharacter.Location = new System.Drawing.Point(174, 361);
-            this.pictureBoxCharacter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pictureBoxCharacter.Location = new System.Drawing.Point(152, 271);
             this.pictureBoxCharacter.Name = "pictureBoxCharacter";
             this.pictureBoxCharacter.Size = new System.Drawing.Size(64, 128);
             this.pictureBoxCharacter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -89,11 +88,9 @@ namespace Game
             // 
             // listViewArmor
             // 
-            this.listViewArmor.HideSelection = false;
-            this.listViewArmor.Location = new System.Drawing.Point(16, 159);
-            this.listViewArmor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewArmor.Location = new System.Drawing.Point(14, 119);
             this.listViewArmor.Name = "listViewArmor";
-            this.listViewArmor.Size = new System.Drawing.Size(72, 72);
+            this.listViewArmor.Size = new System.Drawing.Size(64, 55);
             this.listViewArmor.TabIndex = 3;
             this.listViewArmor.TabStop = false;
             this.listViewArmor.UseCompatibleStateImageBehavior = false;
@@ -101,28 +98,26 @@ namespace Game
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 135);
+            this.label1.Location = new System.Drawing.Point(21, 101);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 20);
+            this.label1.Size = new System.Drawing.Size(41, 15);
             this.label1.TabIndex = 4;
             this.label1.Text = "Armor";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(21, 236);
+            this.label2.Location = new System.Drawing.Point(18, 177);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 20);
+            this.label2.Size = new System.Drawing.Size(45, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "Bracers";
             // 
             // listViewBracers
             // 
-            this.listViewBracers.HideSelection = false;
-            this.listViewBracers.Location = new System.Drawing.Point(18, 260);
-            this.listViewBracers.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewBracers.Location = new System.Drawing.Point(16, 195);
             this.listViewBracers.Name = "listViewBracers";
-            this.listViewBracers.Size = new System.Drawing.Size(72, 72);
+            this.listViewBracers.Size = new System.Drawing.Size(64, 55);
             this.listViewBracers.TabIndex = 5;
             this.listViewBracers.TabStop = false;
             this.listViewBracers.UseCompatibleStateImageBehavior = false;
@@ -130,19 +125,17 @@ namespace Game
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 337);
+            this.label3.Location = new System.Drawing.Point(16, 253);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 20);
+            this.label3.Size = new System.Drawing.Size(51, 15);
             this.label3.TabIndex = 8;
             this.label3.Text = "Weapon";
             // 
             // listViewWeapon
             // 
-            this.listViewWeapon.HideSelection = false;
-            this.listViewWeapon.Location = new System.Drawing.Point(16, 361);
-            this.listViewWeapon.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewWeapon.Location = new System.Drawing.Point(14, 271);
             this.listViewWeapon.Name = "listViewWeapon";
-            this.listViewWeapon.Size = new System.Drawing.Size(72, 72);
+            this.listViewWeapon.Size = new System.Drawing.Size(64, 55);
             this.listViewWeapon.TabIndex = 7;
             this.listViewWeapon.TabStop = false;
             this.listViewWeapon.UseCompatibleStateImageBehavior = false;
@@ -150,19 +143,17 @@ namespace Game
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(28, 641);
+            this.label4.Location = new System.Drawing.Point(24, 481);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(38, 20);
+            this.label4.Size = new System.Drawing.Size(32, 15);
             this.label4.TabIndex = 14;
             this.label4.Text = "Pack";
             // 
             // listViewPack
             // 
-            this.listViewPack.HideSelection = false;
-            this.listViewPack.Location = new System.Drawing.Point(16, 665);
-            this.listViewPack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewPack.Location = new System.Drawing.Point(14, 499);
             this.listViewPack.Name = "listViewPack";
-            this.listViewPack.Size = new System.Drawing.Size(72, 72);
+            this.listViewPack.Size = new System.Drawing.Size(64, 55);
             this.listViewPack.TabIndex = 13;
             this.listViewPack.TabStop = false;
             this.listViewPack.UseCompatibleStateImageBehavior = false;
@@ -170,19 +161,17 @@ namespace Game
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(32, 540);
+            this.label5.Location = new System.Drawing.Point(28, 405);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 20);
+            this.label5.Size = new System.Drawing.Size(27, 15);
             this.label5.TabIndex = 12;
             this.label5.Text = "Belt";
             // 
             // listViewBelt
             // 
-            this.listViewBelt.HideSelection = false;
-            this.listViewBelt.Location = new System.Drawing.Point(16, 564);
-            this.listViewBelt.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewBelt.Location = new System.Drawing.Point(14, 423);
             this.listViewBelt.Name = "listViewBelt";
-            this.listViewBelt.Size = new System.Drawing.Size(72, 72);
+            this.listViewBelt.Size = new System.Drawing.Size(64, 55);
             this.listViewBelt.TabIndex = 11;
             this.listViewBelt.TabStop = false;
             this.listViewBelt.UseCompatibleStateImageBehavior = false;
@@ -190,19 +179,17 @@ namespace Game
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(322, 440);
+            this.label6.Location = new System.Drawing.Point(282, 330);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(78, 20);
+            this.label6.Size = new System.Drawing.Size(62, 15);
             this.label6.TabIndex = 10;
             this.label6.Text = "Right Ring";
             // 
             // listViewRightRing
             // 
-            this.listViewRightRing.HideSelection = false;
-            this.listViewRightRing.Location = new System.Drawing.Point(327, 464);
-            this.listViewRightRing.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewRightRing.Location = new System.Drawing.Point(286, 348);
             this.listViewRightRing.Name = "listViewRightRing";
-            this.listViewRightRing.Size = new System.Drawing.Size(72, 72);
+            this.listViewRightRing.Size = new System.Drawing.Size(64, 55);
             this.listViewRightRing.TabIndex = 9;
             this.listViewRightRing.TabStop = false;
             this.listViewRightRing.UseCompatibleStateImageBehavior = false;
@@ -210,19 +197,17 @@ namespace Game
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(94, 135);
+            this.label8.Location = new System.Drawing.Point(82, 101);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(69, 20);
+            this.label8.Size = new System.Drawing.Size(55, 15);
             this.label8.TabIndex = 16;
             this.label8.Text = "Necklace";
             // 
             // listViewNecklace
             // 
-            this.listViewNecklace.HideSelection = false;
-            this.listViewNecklace.Location = new System.Drawing.Point(94, 159);
-            this.listViewNecklace.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewNecklace.Location = new System.Drawing.Point(82, 119);
             this.listViewNecklace.Name = "listViewNecklace";
-            this.listViewNecklace.Size = new System.Drawing.Size(72, 72);
+            this.listViewNecklace.Size = new System.Drawing.Size(64, 55);
             this.listViewNecklace.TabIndex = 15;
             this.listViewNecklace.TabStop = false;
             this.listViewNecklace.UseCompatibleStateImageBehavior = false;
@@ -230,19 +215,17 @@ namespace Game
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(250, 135);
+            this.label7.Location = new System.Drawing.Point(219, 101);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(66, 20);
+            this.label7.Size = new System.Drawing.Size(53, 15);
             this.label7.TabIndex = 20;
             this.label7.Text = "Helment";
             // 
             // listViewHelment
             // 
-            this.listViewHelment.HideSelection = false;
-            this.listViewHelment.Location = new System.Drawing.Point(250, 160);
-            this.listViewHelment.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewHelment.Location = new System.Drawing.Point(219, 120);
             this.listViewHelment.Name = "listViewHelment";
-            this.listViewHelment.Size = new System.Drawing.Size(72, 72);
+            this.listViewHelment.Size = new System.Drawing.Size(64, 55);
             this.listViewHelment.TabIndex = 19;
             this.listViewHelment.TabStop = false;
             this.listViewHelment.UseCompatibleStateImageBehavior = false;
@@ -250,19 +233,17 @@ namespace Game
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(174, 135);
+            this.label9.Location = new System.Drawing.Point(152, 101);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(66, 20);
+            this.label9.Size = new System.Drawing.Size(53, 15);
             this.label9.TabIndex = 18;
             this.label9.Text = "Garment";
             // 
             // listViewGarment
             // 
-            this.listViewGarment.HideSelection = false;
-            this.listViewGarment.Location = new System.Drawing.Point(172, 159);
-            this.listViewGarment.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewGarment.Location = new System.Drawing.Point(150, 119);
             this.listViewGarment.Name = "listViewGarment";
-            this.listViewGarment.Size = new System.Drawing.Size(72, 72);
+            this.listViewGarment.Size = new System.Drawing.Size(64, 55);
             this.listViewGarment.TabIndex = 17;
             this.listViewGarment.TabStop = false;
             this.listViewGarment.UseCompatibleStateImageBehavior = false;
@@ -270,19 +251,17 @@ namespace Game
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(338, 641);
+            this.label11.Location = new System.Drawing.Point(296, 481);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(44, 20);
+            this.label11.Size = new System.Drawing.Size(36, 15);
             this.label11.TabIndex = 32;
             this.label11.Text = "Purse";
             // 
             // listViewPurse
             // 
-            this.listViewPurse.HideSelection = false;
-            this.listViewPurse.Location = new System.Drawing.Point(328, 665);
-            this.listViewPurse.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewPurse.Location = new System.Drawing.Point(287, 499);
             this.listViewPurse.Name = "listViewPurse";
-            this.listViewPurse.Size = new System.Drawing.Size(72, 72);
+            this.listViewPurse.Size = new System.Drawing.Size(64, 55);
             this.listViewPurse.TabIndex = 31;
             this.listViewPurse.TabStop = false;
             this.listViewPurse.UseCompatibleStateImageBehavior = false;
@@ -290,19 +269,17 @@ namespace Game
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(338, 540);
+            this.label12.Location = new System.Drawing.Point(296, 405);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(47, 20);
+            this.label12.Size = new System.Drawing.Size(37, 15);
             this.label12.TabIndex = 30;
             this.label12.Text = "Boots";
             // 
             // listViewBoots
             // 
-            this.listViewBoots.HideSelection = false;
-            this.listViewBoots.Location = new System.Drawing.Point(328, 564);
-            this.listViewBoots.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewBoots.Location = new System.Drawing.Point(287, 423);
             this.listViewBoots.Name = "listViewBoots";
-            this.listViewBoots.Size = new System.Drawing.Size(72, 72);
+            this.listViewBoots.Size = new System.Drawing.Size(64, 55);
             this.listViewBoots.TabIndex = 29;
             this.listViewBoots.TabStop = false;
             this.listViewBoots.UseCompatibleStateImageBehavior = false;
@@ -310,19 +287,17 @@ namespace Game
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(16, 440);
+            this.label13.Location = new System.Drawing.Point(14, 330);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(68, 20);
+            this.label13.Size = new System.Drawing.Size(54, 15);
             this.label13.TabIndex = 28;
             this.label13.Text = "Left Ring";
             // 
             // listViewLeftRing
             // 
-            this.listViewLeftRing.HideSelection = false;
-            this.listViewLeftRing.Location = new System.Drawing.Point(16, 464);
-            this.listViewLeftRing.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewLeftRing.Location = new System.Drawing.Point(14, 348);
             this.listViewLeftRing.Name = "listViewLeftRing";
-            this.listViewLeftRing.Size = new System.Drawing.Size(72, 72);
+            this.listViewLeftRing.Size = new System.Drawing.Size(64, 55);
             this.listViewLeftRing.TabIndex = 27;
             this.listViewLeftRing.TabStop = false;
             this.listViewLeftRing.UseCompatibleStateImageBehavior = false;
@@ -330,19 +305,17 @@ namespace Game
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(324, 337);
+            this.label14.Location = new System.Drawing.Point(284, 253);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(77, 20);
+            this.label14.Size = new System.Drawing.Size(61, 15);
             this.label14.TabIndex = 26;
             this.label14.Text = "Free Hand";
             // 
             // listViewFreeHand
             // 
-            this.listViewFreeHand.HideSelection = false;
-            this.listViewFreeHand.Location = new System.Drawing.Point(328, 361);
-            this.listViewFreeHand.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewFreeHand.Location = new System.Drawing.Point(287, 271);
             this.listViewFreeHand.Name = "listViewFreeHand";
-            this.listViewFreeHand.Size = new System.Drawing.Size(72, 72);
+            this.listViewFreeHand.Size = new System.Drawing.Size(64, 55);
             this.listViewFreeHand.TabIndex = 25;
             this.listViewFreeHand.TabStop = false;
             this.listViewFreeHand.UseCompatibleStateImageBehavior = false;
@@ -350,19 +323,17 @@ namespace Game
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(327, 236);
+            this.label15.Location = new System.Drawing.Point(286, 177);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(71, 20);
+            this.label15.Size = new System.Drawing.Size(57, 15);
             this.label15.TabIndex = 24;
             this.label15.Text = "Gauntlets";
             // 
             // listViewGauntlets
             // 
-            this.listViewGauntlets.HideSelection = false;
-            this.listViewGauntlets.Location = new System.Drawing.Point(328, 260);
-            this.listViewGauntlets.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewGauntlets.Location = new System.Drawing.Point(287, 195);
             this.listViewGauntlets.Name = "listViewGauntlets";
-            this.listViewGauntlets.Size = new System.Drawing.Size(72, 72);
+            this.listViewGauntlets.Size = new System.Drawing.Size(64, 55);
             this.listViewGauntlets.TabIndex = 23;
             this.listViewGauntlets.TabStop = false;
             this.listViewGauntlets.UseCompatibleStateImageBehavior = false;
@@ -370,41 +341,35 @@ namespace Game
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(338, 136);
+            this.label16.Location = new System.Drawing.Point(296, 102);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(50, 20);
+            this.label16.Size = new System.Drawing.Size(39, 15);
             this.label16.TabIndex = 22;
             this.label16.Text = "Shield";
             // 
             // listViewShield
             // 
-            this.listViewShield.HideSelection = false;
-            this.listViewShield.Location = new System.Drawing.Point(328, 160);
-            this.listViewShield.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewShield.Location = new System.Drawing.Point(287, 120);
             this.listViewShield.Name = "listViewShield";
-            this.listViewShield.Size = new System.Drawing.Size(72, 72);
+            this.listViewShield.Size = new System.Drawing.Size(64, 55);
             this.listViewShield.TabIndex = 21;
             this.listViewShield.TabStop = false;
             this.listViewShield.UseCompatibleStateImageBehavior = false;
             // 
             // listViewGround
             // 
-            this.listViewGround.HideSelection = false;
-            this.listViewGround.Location = new System.Drawing.Point(420, 45);
-            this.listViewGround.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewGround.Location = new System.Drawing.Point(368, 34);
             this.listViewGround.Name = "listViewGround";
-            this.listViewGround.Size = new System.Drawing.Size(391, 133);
+            this.listViewGround.Size = new System.Drawing.Size(343, 101);
             this.listViewGround.TabIndex = 33;
             this.listViewGround.UseCompatibleStateImageBehavior = false;
             this.listViewGround.View = System.Windows.Forms.View.SmallIcon;
             // 
             // listViewPlayerPack
             // 
-            this.listViewPlayerPack.HideSelection = false;
-            this.listViewPlayerPack.Location = new System.Drawing.Point(420, 206);
-            this.listViewPlayerPack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewPlayerPack.Location = new System.Drawing.Point(368, 165);
             this.listViewPlayerPack.Name = "listViewPlayerPack";
-            this.listViewPlayerPack.Size = new System.Drawing.Size(391, 368);
+            this.listViewPlayerPack.Size = new System.Drawing.Size(343, 255);
             this.listViewPlayerPack.TabIndex = 34;
             this.listViewPlayerPack.UseCompatibleStateImageBehavior = false;
             this.listViewPlayerPack.View = System.Windows.Forms.View.SmallIcon;
@@ -412,37 +377,35 @@ namespace Game
             // labelPack
             // 
             this.labelPack.AutoSize = true;
-            this.labelPack.Location = new System.Drawing.Point(420, 182);
+            this.labelPack.Location = new System.Drawing.Point(368, 147);
             this.labelPack.Name = "labelPack";
-            this.labelPack.Size = new System.Drawing.Size(38, 20);
+            this.labelPack.Size = new System.Drawing.Size(32, 15);
             this.labelPack.TabIndex = 35;
             this.labelPack.Text = "Pack";
             // 
             // labelGround
             // 
             this.labelGround.AutoSize = true;
-            this.labelGround.Location = new System.Drawing.Point(420, 21);
+            this.labelGround.Location = new System.Drawing.Point(368, 16);
             this.labelGround.Name = "labelGround";
-            this.labelGround.Size = new System.Drawing.Size(58, 20);
+            this.labelGround.Size = new System.Drawing.Size(47, 15);
             this.labelGround.TabIndex = 36;
             this.labelGround.Text = "Ground";
             // 
             // labelSelectedContainer
             // 
             this.labelSelectedContainer.AutoSize = true;
-            this.labelSelectedContainer.Location = new System.Drawing.Point(420, 579);
+            this.labelSelectedContainer.Location = new System.Drawing.Point(368, 434);
             this.labelSelectedContainer.Name = "labelSelectedContainer";
-            this.labelSelectedContainer.Size = new System.Drawing.Size(134, 20);
+            this.labelSelectedContainer.Size = new System.Drawing.Size(106, 15);
             this.labelSelectedContainer.TabIndex = 38;
             this.labelSelectedContainer.Text = "Selected Container";
             // 
             // listViewSelectedContainer
             // 
-            this.listViewSelectedContainer.HideSelection = false;
-            this.listViewSelectedContainer.Location = new System.Drawing.Point(420, 603);
-            this.listViewSelectedContainer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewSelectedContainer.Location = new System.Drawing.Point(368, 452);
             this.listViewSelectedContainer.Name = "listViewSelectedContainer";
-            this.listViewSelectedContainer.Size = new System.Drawing.Size(391, 133);
+            this.listViewSelectedContainer.Size = new System.Drawing.Size(343, 101);
             this.listViewSelectedContainer.TabIndex = 37;
             this.listViewSelectedContainer.UseCompatibleStateImageBehavior = false;
             this.listViewSelectedContainer.View = System.Windows.Forms.View.SmallIcon;
@@ -450,71 +413,61 @@ namespace Game
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(23, 21);
+            this.label10.Location = new System.Drawing.Point(20, 16);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(134, 20);
+            this.label10.Size = new System.Drawing.Size(107, 15);
             this.label10.TabIndex = 40;
             this.label10.Text = "Quiver / Projectiles";
             // 
             // listViewQuiver1
             // 
-            this.listViewQuiver1.HideSelection = false;
-            this.listViewQuiver1.Location = new System.Drawing.Point(16, 45);
-            this.listViewQuiver1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewQuiver1.Location = new System.Drawing.Point(14, 34);
             this.listViewQuiver1.Name = "listViewQuiver1";
-            this.listViewQuiver1.Size = new System.Drawing.Size(72, 72);
+            this.listViewQuiver1.Size = new System.Drawing.Size(64, 55);
             this.listViewQuiver1.TabIndex = 39;
             this.listViewQuiver1.UseCompatibleStateImageBehavior = false;
             // 
             // listViewQuiver2
             // 
-            this.listViewQuiver2.HideSelection = false;
-            this.listViewQuiver2.Location = new System.Drawing.Point(94, 45);
-            this.listViewQuiver2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewQuiver2.Location = new System.Drawing.Point(82, 34);
             this.listViewQuiver2.Name = "listViewQuiver2";
-            this.listViewQuiver2.Size = new System.Drawing.Size(72, 72);
+            this.listViewQuiver2.Size = new System.Drawing.Size(64, 55);
             this.listViewQuiver2.TabIndex = 41;
             this.listViewQuiver2.TabStop = false;
             this.listViewQuiver2.UseCompatibleStateImageBehavior = false;
             // 
             // listViewQuiver3
             // 
-            this.listViewQuiver3.HideSelection = false;
-            this.listViewQuiver3.Location = new System.Drawing.Point(172, 45);
-            this.listViewQuiver3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewQuiver3.Location = new System.Drawing.Point(150, 34);
             this.listViewQuiver3.Name = "listViewQuiver3";
-            this.listViewQuiver3.Size = new System.Drawing.Size(72, 72);
+            this.listViewQuiver3.Size = new System.Drawing.Size(64, 55);
             this.listViewQuiver3.TabIndex = 42;
             this.listViewQuiver3.TabStop = false;
             this.listViewQuiver3.UseCompatibleStateImageBehavior = false;
             // 
             // listViewQuiver4
             // 
-            this.listViewQuiver4.HideSelection = false;
-            this.listViewQuiver4.Location = new System.Drawing.Point(250, 45);
-            this.listViewQuiver4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewQuiver4.Location = new System.Drawing.Point(219, 34);
             this.listViewQuiver4.Name = "listViewQuiver4";
-            this.listViewQuiver4.Size = new System.Drawing.Size(72, 72);
+            this.listViewQuiver4.Size = new System.Drawing.Size(64, 55);
             this.listViewQuiver4.TabIndex = 43;
             this.listViewQuiver4.TabStop = false;
             this.listViewQuiver4.UseCompatibleStateImageBehavior = false;
             // 
             // listViewQuiver5
             // 
-            this.listViewQuiver5.HideSelection = false;
-            this.listViewQuiver5.Location = new System.Drawing.Point(327, 45);
-            this.listViewQuiver5.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listViewQuiver5.Location = new System.Drawing.Point(286, 34);
             this.listViewQuiver5.Name = "listViewQuiver5";
-            this.listViewQuiver5.Size = new System.Drawing.Size(72, 72);
+            this.listViewQuiver5.Size = new System.Drawing.Size(64, 55);
             this.listViewQuiver5.TabIndex = 44;
             this.listViewQuiver5.TabStop = false;
             this.listViewQuiver5.UseCompatibleStateImageBehavior = false;
             // 
             // FormInventory
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(833, 765);
+            this.ClientSize = new System.Drawing.Size(729, 574);
             this.Controls.Add(this.listViewQuiver5);
             this.Controls.Add(this.listViewQuiver4);
             this.Controls.Add(this.listViewQuiver3);
@@ -560,7 +513,6 @@ namespace Game
             this.Controls.Add(this.pictureBoxCharacter);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormInventory";

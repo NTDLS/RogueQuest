@@ -2,7 +2,7 @@
   "Name":"1 Slot Belt",
   "Weight":"300",
   "Bulk":"320",
-  "Rarity":"100",
+  "Prevalence":"100",
   "Value":"10",
   "ItemCapacity":"1",
   "BulkCapacity":"100000",

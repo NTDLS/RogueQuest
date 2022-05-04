@@ -1,7 +1,6 @@
 ﻿using Assets;
 using Library.Engine.Types;
 using Library.Types;
-using Library.Native;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -227,7 +226,7 @@ namespace Library.Engine
         /// Liklihood in drops and stores.
         /// 100 being common and 0 being literally impossible (not in stores or dropped randomly).
         /// </summary>
-        public int? Rarity { get; set; }
+        public int? Prevalence { get; set; }
         /// <summary>
         /// Whether an item with a dialog text attribute will only show the text once.
         /// </summary>
@@ -448,11 +447,11 @@ namespace Library.Engine
         }
 
         [JsonIgnore]
-        public string RarityText
+        public string PrevalenceText
         {
             get
             {
-                return Utility.RarityText(Rarity ?? -1);
+                return Utility.PrevalenceText(Prevalence ?? -1);
             }
         }
 
@@ -499,7 +498,7 @@ namespace Library.Engine
             this.IsIdentified = with.IsIdentified ?? this.IsIdentified;
             this.EnchantedImagePath = with.EnchantedImagePath ?? this.EnchantedImagePath;
             this.CursedImagePath = with.CursedImagePath ?? this.CursedImagePath;
-            this.Rarity = with.Rarity ?? this.Rarity;
+            this.Prevalence = with.Prevalence ?? this.Prevalence;
             this.DamageType = with.DamageType ?? this.DamageType;
             this.Dialog = with.Dialog ?? this.Dialog;
             this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;

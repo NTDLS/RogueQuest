@@ -8,7 +8,7 @@
   "DamageAdditional":"0",
   "Weight":"0.01",
   "Bulk":"0.05",
-  "Rarity":"90",
+  "Prevalence":"90",
   "CanStack":"True",
   "CanWalkOn":"True",
   "IsConsumable":"True",

@@ -10,7 +10,7 @@
   "AnimationImagePath":"Animations\\Hits\\Smoke (1)",
   "Weight":"0.01",
   "Bulk":"0.05",
-  "Rarity":"40",
+  "Prevalence":"40",
   "CanStack":"True",
   "CanWalkOn":"True",
   "IsConsumable":"True",

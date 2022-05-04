@@ -11,7 +11,7 @@
   ],
   "Weight":"12000",
   "Bulk":"40000",
-  "Rarity":"50",
+  "Prevalence":"50",
   "Level":"4",
   "Enchantment":"Undecided",
   "UnidentifiedTilePath":"Tiles\\Items\\Armor\\Splintmail Armor"

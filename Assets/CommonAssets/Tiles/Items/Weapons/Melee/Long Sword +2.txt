@@ -6,7 +6,7 @@
   "DamageAdditional":"2",
   "Weight":"1000",
   "Bulk":"5000",
-  "Rarity":"20",
+  "Prevalence":"20",
   "Level":"5",
   "Enchantment":"Undecided"
 }

@@ -66,7 +66,6 @@ namespace Library.Engine
 
             //json = json.Replace("\"Weapon\"", "\"MeleeWeapon\"");
 
-
             var saveFile = JsonConvert.DeserializeObject<SaveFile>(json);
 
             Collection = saveFile.Collection;
