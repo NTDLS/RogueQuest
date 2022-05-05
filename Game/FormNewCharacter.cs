@@ -212,7 +212,7 @@ namespace Game
 
         private void buttonRandom_Click(object sender, EventArgs e)
         {
-            var names = Resources.Names.Split("\r\n").ToList();
+            var names = Resources.Names.Split("\n").ToList();
             textBoxName.Text = names[MathUtility.RandomNumber(0, names.Count)];
 
             switch (MathUtility.RandomNumber(1, 5))

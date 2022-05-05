@@ -114,22 +114,25 @@ namespace Library.Engine
                           new WeightedLottery() { Effect = ItemEffect.Speed, Chance = 10, Max = 2, MonitaryValue = 5 },
                     };
 
-                    for (int i = 0; i < bonusRolls; i++)
+                    do
                     {
-                        int itemIndex = rand.Next(0, effectLottery.Length - 1);
-
-                        effectLottery = effectLottery.OrderBy(x => rand.Next()).ToArray();
-
-                        var effect = effectLottery[itemIndex];
-                        if (rand.NextDouble() * 100 >= 100 - effect.Chance)
+                        for (int i = 0; i < bonusRolls; i++)
                         {
-                            if (Effects.Where(o => o.EffectType == effect.Effect).Sum(o => o.Value) < effect.Max)
+                            int itemIndex = rand.Next(0, effectLottery.Length - 1);
+
+                            effectLottery = effectLottery.OrderBy(x => rand.Next()).ToArray();
+
+                            var effect = effectLottery[itemIndex];
+                            if (rand.NextDouble() * 100 >= 100 - effect.Chance)
                             {
-                                Effects.Add(new MetaEffect() { EffectType = effect.Effect, ValueType = ItemEffectType.Fixed, Value = 1 });
-                                bonusPointsApplied += effect.MonitaryValue;
+                                if (Effects.Where(o => o.EffectType == effect.Effect).Sum(o => o.Value) < effect.Max)
+                                {
+                                    Effects.Add(new MetaEffect() { EffectType = effect.Effect, ValueType = ItemEffectType.Fixed, Value = 1 });
+                                    bonusPointsApplied += effect.MonitaryValue;
+                                }
                             }
                         }
-                    }
+                    } while (bonusPointsApplied == 0);
 
                     EnchantmentBonus = (EnchantmentBonus ?? 0) + bonusPointsApplied;
                 }

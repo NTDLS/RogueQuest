@@ -88,6 +88,8 @@ namespace Game.Engine
 
                 putItemsIntoContainerId = (Guid)nestedPack.Tile.Meta.UID; //Put items into the new container we just added to inventory.
 
+                Core.LogLine($"Picked up {packOnGround.Meta.Name}.");
+
                 Core.State.Items.Add(nestedPack);
             }
 
