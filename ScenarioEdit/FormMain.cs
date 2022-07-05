@@ -400,7 +400,7 @@ namespace ScenarioEdit
 
                 if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawner)
                 {
-                    //We do not default thses in the meta data files becaue a refresh of meta data would wipe them out. :(
+                    //We do not default thses in the meta data files because a refresh of meta data would wipe them out. :(
                     if (insertedTile.Meta.MinLevel == null)
                     {
                         insertedTile.Meta.MinLevel = 0;
@@ -1649,6 +1649,15 @@ namespace ScenarioEdit
                         }
                     }
                 }
+                else if (hoverTile.Meta?.ActorClass == ActorClassName.ActorSpawner
+                    && hoverTile.Meta?.SpawnType == ActorClassName.ActorItem)
+                {
+                    using var form = new FormEditItemSpawner(_core, hoverTile.Meta.SpawnSubTypes?.ToList());
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        hoverTile.Meta.SpawnSubTypes = form.SelectedSubTypes.ToArray();
+                    }
+                }
             }
         }
 
@@ -2041,7 +2050,10 @@ namespace ScenarioEdit
                         subTypes = String.Join(',', selectedTile.Meta.SpawnSubTypes);
                     }
 
-                    listViewProperties.Items.Add("Spawn Sub-Types").SubItems.Add(subTypes);
+                    if (selectedTile.Meta.SpawnType == ActorClassName.ActorItem)
+                    {
+                        listViewProperties.Items.Add("Spawn Sub-Types").SubItems.Add(subTypes);
+                    }
                 }
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorFriendyBeing
