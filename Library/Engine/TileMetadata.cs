@@ -526,6 +526,8 @@ namespace Library.Engine
             this.MaxLevel = with.MaxLevel ?? this.MaxLevel;
             this.Level = with.Level ?? this.Level;
             this.Value = with.Value ?? this.Value;
+
+            this.OriginalHitPoints = with.OriginalHitPoints ?? this.OriginalHitPoints;
         }
 
         /// <summary>

@@ -3,5 +3,6 @@
   "HitPoints": "100",
   "ActorClass": "ActorHostileBeing",
   "CanWalkOn": "False",
-  "IsContainer": "True"
+  "IsContainer": "True",
+  "Prevalence":"100"
 }

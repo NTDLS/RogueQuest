@@ -2,5 +2,6 @@
   "CanTakeDamage": "False",
   "HitPoints": "100",
   "CanWalkOn": "False",
-  "ActorClass": "ActorFriendyBeing"
+  "ActorClass": "ActorFriendyBeing",
+  "Prevalence":"100"
 }

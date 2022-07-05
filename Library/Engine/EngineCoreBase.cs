@@ -374,8 +374,8 @@ namespace Library.Engine
             var randos = Materials.Where(o => o.Meta.ActorClass == spawnerMeta.SpawnType
                 && ((spawnerMeta.SpawnSubTypes?.Length ?? 0) == 0 || spawnerMeta.SpawnSubTypes.Contains(o.Meta.SubType ?? Types.ActorSubType.Unspecified))
                 && o.Meta.Prevalence >= prevalence
-                && (o.Meta.Level ?? 1) >= (o.Meta.MinLevel ?? 1)
-                && (o.Meta.Level ?? 1) <= (o.Meta.MaxLevel ?? 1)).ToList();
+                && (o.Meta.Level ?? 1) >= (spawnerMeta.MinLevel ?? 1)
+                && (o.Meta.Level ?? 1) <= (spawnerMeta.MaxLevel ?? 1)).ToList();
 
             if (randos.Count > 0)
             {
