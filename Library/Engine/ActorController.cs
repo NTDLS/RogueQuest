@@ -54,10 +54,14 @@ namespace Library.Engine
             return Tiles.Where(o => o.AlwaysRender || window.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false);
         }
 
+        public int RenderCount = 0;
+
         public void Render(Graphics screenDc)
         {
             lock (Core.CollectionSemaphore)
             {
+                RenderCount++;
+
                 if (Core.DrawMinimap)
                 {
                     if (_miniMapBitmap == null && Core.Display.VisibleBounds.Width > 0 && Core.Display.VisibleBounds.Height > 0)
@@ -121,7 +125,7 @@ namespace Library.Engine
                     if (obj.Meta.HasBeenViewed == false
                         && Core.BlindPlay == true && player != null && obj.DistanceTo(player) < Core.BlindPlayDistance)
                     {
-                        obj.Invalidate();
+                        obj.Invalidate(); //This causes a double redraw. :(
                         obj.Meta.HasBeenViewed = true;
                     }
 
@@ -146,7 +150,6 @@ namespace Library.Engine
 
                         var miniMapTiles = Tiles.Where(o => o.Visible == true && o.DoNotDraw == false && o.ReadyForDeletion == false
                             && miniMapVision.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false
-                        
                         );
 
                         foreach (var obj in miniMapTiles)

@@ -167,6 +167,9 @@ namespace Game
         private void Timer_Tick(object sender, EventArgs e)
         {
             UpdatePlayerStatLabels(_core);
+
+            toolStripStatusLabelDebug.Text = _core.Actors.RenderCount.ToString();
+
         }
 
         private void Drawingsurface_MouseClick(object sender, MouseEventArgs e)
@@ -258,7 +261,8 @@ namespace Game
             double x = e.X + _core.Display.BackgroundOffset.X;
             double y = e.Y + _core.Display.BackgroundOffset.Y;
 
-            toolStripStatusLabelDebug.Text = $"Mouse: {e.X:N0}x,{e.Y:N0}y, Screen: {x:N0}x,{y:N0}y, Offset: {_core.Display.BackgroundOffset.X:N0}x,{_core.Display.BackgroundOffset.Y:N0}y";
+            //toolStripStatusLabelDebug.Text = $"Mouse: {e.X:N0}x,{e.Y:N0}y, Screen: {x:N0}x,{y:N0}y, Offset: {_core.Display.BackgroundOffset.X:N0}x,{_core.Display.BackgroundOffset.Y:N0}y";
+
 
             if (e.Button == MouseButtons.Middle)
             {
@@ -320,6 +324,12 @@ namespace Game
                     {
                         var hostile = (hoverTile as ActorHostileBeing);
                         text += $" ({hostile.DamageText})";
+                    }
+                    else if (hoverTile.Meta.ActorClass == ActorClassName.ActorPlayer)
+                    {
+                        var player = (hoverTile as ActorPlayer);
+
+                        text = $"{_core.State.Character.Name}, Level {_core.State.Character.Level}, {player.DamageText(_core)}";
                     }
                     else if (hoverTile.Meta.ActorClass == ActorClassName.ActorItem)
                     {

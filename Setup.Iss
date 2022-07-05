@@ -7,7 +7,7 @@
  DefaultGroupName                = NetworkDLS\Rougue Quest
  UninstallDisplayIcon            = {app}\Bin\Game.exe
  SetupIconFile                   = RougueQuest.ico
- PrivilegesRequired              = PowerUser
+ PrivilegesRequired              = admin
  Uninstallable                   = Yes
  Compression                     = bZIP/9
  ChangesAssociations             = Yes
@@ -27,12 +27,12 @@
  Name: "ScenarioEdit"; Description: "Scenario Editor";  Types: Full Custom;
 
 [Files]
- Source: "Game\bin\Release\net5.0-windows\*.exe";          DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion; 
- Source: "Game\bin\Release\net5.0-windows\*.dll";          DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion;
- Source: "Game\bin\Release\net5.0-windows\*.json";         DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Release\net5.0-windows\*.exe";  DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Release\net5.0-windows\*.json"; DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
- Source: "ScenarioEdit\bin\Release\net5.0-windows\*.dll";  DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "Game\bin\Release\net6.0-windows\*.exe";          DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion; 
+ Source: "Game\bin\Release\net6.0-windows\*.dll";          DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion;
+ Source: "Game\bin\Release\net6.0-windows\*.json";         DestDir: "{app}\Bin";                          Components: Game;          Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net6.0-windows\*.exe";  DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net6.0-windows\*.json"; DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
+ Source: "ScenarioEdit\bin\Release\net6.0-windows\*.dll";  DestDir: "{app}\Bin";                          Components: ScenarioEdit;  Flags: IgnoreVersion;
  Source: "Assets\CommonAssets\*.*";                        DestDir: "{app}\Assets";                       Components: Assets;        Flags: IgnoreVersion recursesubdirs;
  Source: "Assets\UserAssets\*.*";                          DestDir: "{userappdata}\Rougue Quest";         Components: Assets;        Flags: IgnoreVersion recursesubdirs;
 
