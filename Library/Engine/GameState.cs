@@ -20,6 +20,10 @@ namespace Library.Engine
             ActiveThreadCount = 0;
         }
 
+        /// <summary>
+        /// A list of recently attacked enemies or ones that have seen the player.
+        /// </summary>
+        public List<RecentlyEngagedHostile> RecentlyEngagedHostiles = new List<RecentlyEngagedHostile>();
         public ActorStates ActorStates { get; set; } = new ActorStates();
         public PlayerState Character { get; set; }
         public List<CustodyItem> Items { get; private set; } = new List<CustodyItem>();

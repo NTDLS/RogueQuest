@@ -1,6 +1,7 @@
 {
   "Name":"Composite Bow",
   "SubType": "RangedWeapon",
+  "TargetType":"HostileBeing",
   "ProjectileType":"Arrow",
   "Value": "200",
   "DamageDice":"0",

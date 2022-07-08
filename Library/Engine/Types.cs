@@ -86,8 +86,8 @@
         GeneralStore, //A place to spend your hard earned cash.
         WeaponSmithStore, //A place to spend your hard earned cash.
         RuinsStore, //Once a to spend your hard earned cash, now in ruins.
-        KeyedEntry,
-        Key
+        KeyedEntry, //A door/cage that must be unlocked with a key.
+        Key //A key that wull unlock a door/cage.
     }
 
     public enum TargetType

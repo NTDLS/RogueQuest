@@ -22,7 +22,6 @@ namespace Library.Engine
         public bool BlindPlay { get; set; } = false;
         public int BlindPlayDistance { get; set; } = 200;
         public bool DrawMinimap { get; set; } = false;
-
         public Levels Levels { get; set; }
         public GameState State { get; set; }
         /// <summary>

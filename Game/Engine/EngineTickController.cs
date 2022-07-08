@@ -577,7 +577,7 @@ namespace Game.Engine
 
             int startTime = Core.State.TimePassed;
 
-            if (item.Tile.Meta.DamageDice > 0) //Bow and arrow, crossbow, etc.
+            if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon) //Bow and arrow, crossbow, etc.
             {
                 //Items with damage dice are counted as weapons and need to call Advance to apply damage to actors. Cast fireball, cast magic arrow, etc.
 
@@ -589,6 +589,8 @@ namespace Game.Engine
                 };
 
                 Advance(input);
+
+                return true; //Removal of projectiles is handled by Advance().
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Scroll
                 || item.Tile.Meta.SubType == ActorSubType.Wand
@@ -1109,8 +1111,15 @@ namespace Game.Engine
                 ActOnActiveState(activeState);
             }
 
+            List<ActorBase> recentlyEngagedHostiles = new List<ActorBase>();
+
             var actorsThatCanSeePlayer = Core.Actors.Intersections(Core.Player, 250)
-                .Where(o => o.Meta.CanTakeDamage == true);
+                .Where(o => o.Meta.CanTakeDamage == true).ToList();
+
+            //The recently wngaged hostiles will remain hostile until 2*their dexterity seconds have passed.
+            Core.State.RecentlyEngagedHostiles.RemoveAll(o => (Core.State.TimePassed - o.InteractionTime) > o.Hostile.Meta.Dexterity * 2);
+
+            actorsThatCanSeePlayer.AddRange(Core.State.RecentlyEngagedHostiles.Select(o => o.Hostile));
 
             var hostileInteractions = new List<ActorHostileBeing>();
 
@@ -1130,8 +1139,15 @@ namespace Game.Engine
             {
                 var actor = obj as ActorHostileBeing;
                 double distance = Core.Player.DistanceTo(obj);
+                double maxFollowDistance = actor.MaxFollowDistance;
 
-                if (distance < actor.MaxFollowDistance)
+                //If you have recently hit this actor, he is going to be much more compelled to follow you.
+                if (Core.State.RecentlyEngagedHostiles.Where(o => o.Hostile == obj).Any())
+                {
+                    maxFollowDistance *= 2;
+                }
+
+                if (distance < maxFollowDistance)
                 {
                     var appliedOtherOffset = new Point<double>();
                     obj.Velocity.Angle.Degrees = actor.AngleTo(Core.Player);
@@ -1231,36 +1247,7 @@ namespace Game.Engine
             {
                 var hitType = CalculateHitType(Core.State.Character.Dexterity, (int)actorToAttack.Meta.AC);
 
-                /*
-                if ((weapon.DamageDice ?? 0) == 0 && weapon.SubType == ActorSubType.Scroll)
-                {
-                    if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
-                    {
-                        if (projectile != null)
-                        {
-                            if (string.IsNullOrEmpty(projectile.Meta.Animation) == false)
-                            {
-                                AnimateAt(projectile.Meta.Animation, actorToAttack);
-                            }
-                        }
-                        else
-                        {
-                            if (string.IsNullOrEmpty(weapon.Animation) == false)
-                            {
-                                AnimateAt(weapon.Animation, actorToAttack);
-                            }
-                        }
-
-                        ApplyScrollEffectToTarget(weapon, actorToAttack);
-                    }
-                    else
-                    {
-                        Core.LogLine($"{Core.State.Character.Name} casts {weapon.Name} at {actorToAttack.Meta.Name} but misses.", Color.DarkRed);
-                    }
-                }
-                else
-                */
-                if (weapon.DamageDice > 0)
+                if ((weapon.DamageDice ?? 0) + (projectile?.Meta?.DamageDice ?? 0) > 0)
                 {
                     //Get the additional damage added by all equipped items (basically looking for enchanted items that add damage, like rings, cloaks, etc).
                     EquipSlot[] additionalDamageSearchSlots = new EquipSlot[]
@@ -1283,7 +1270,7 @@ namespace Game.Engine
                         .Sum(o => o.Tile.Meta.DamageAdditional) ?? 0;
 
                     //This also gets the additional damage for the equipped weapon. For example, for a +3 Enchanted Long Sword, this is the 3.
-                    additionalDamage += (weapon.DamageAdditional ?? 0);
+                    additionalDamage += (weapon.DamageAdditional ?? 0) + (projectile?.Meta?.DamageAdditional ?? 0);
 
                     if (hitType == HitType.Hit || hitType == HitType.CriticalHit)
                     {
@@ -1291,10 +1278,16 @@ namespace Game.Engine
 
                         DamageType? damageType = weapon?.DamageType;
 
-                        if (weapon?.DamageDice > 0)
+                        //If we have a projectile, we want to use its damage type. (like a bow shooting a fire arrow).
+                        if (projectile != null && projectile.Meta?.DamageType != null)
+                        {
+                            damageType = projectile.Meta?.DamageType;
+                        }
+
+                        if ((weapon?.DamageDice ?? 0) + (projectile?.Meta?.DamageDice ?? 0) > 0)
                         {
                             playerHitsFor = CalculateDealtDamage(hitType, Core.State.Character.Strength,
-                                additionalDamage, weapon?.DamageDice ?? 0, weapon?.DamageDiceFaces ?? 0);
+                                additionalDamage, (weapon?.DamageDice ?? 0) + (projectile?.Meta?.DamageDice ?? 0), (weapon?.DamageDiceFaces ?? 0) + (projectile?.Meta?.DamageDiceFaces ?? 0));
                         }
 
                         if (projectile != null && projectile.Meta?.DamageDice > 0)
@@ -1317,15 +1310,15 @@ namespace Game.Engine
                             }
                         };
 
-                        if (weapon?.SplashDamageRange > 0)
+                        if ((weapon?.SplashDamageRange ?? 0) + (projectile?.Meta?.SplashDamageRange ?? 0) > 0)
                         {
-                            var splashActors = Core.Actors.Intersections(actorToAttack, (int)weapon?.SplashDamageRange)
+                            var splashActors = Core.Actors.Intersections(actorToAttack, (int)(weapon?.SplashDamageRange ?? 0) + (projectile?.Meta?.SplashDamageRange ?? 0))
                                 .Where(o => o.Meta.CanTakeDamage == true);
 
                             foreach (var splashActor in splashActors)
                             {
                                 double distanceFromPrimary = splashActor.DistanceTo(actorToAttack);
-                                if (distanceFromPrimary < (int)weapon?.SplashDamageRange)
+                                if (distanceFromPrimary < (int)(weapon?.SplashDamageRange ?? 0) + (projectile?.Meta?.SplashDamageRange ?? 0))
                                 {
                                     actorsTakingDamage.Add(new ActorToDamage()
                                     {
@@ -1356,11 +1349,26 @@ namespace Game.Engine
 
                         foreach (var actorTakingDamage in actorsTakingDamage)
                         {
+                            //If we hit an enemy, they are going to fight back.
+                            var recentInteraction = Core.State.RecentlyEngagedHostiles.Where(o => o.Hostile == actorTakingDamage.Actor).FirstOrDefault();
+                            if (recentInteraction == null)
+                            {
+                                Core.State.RecentlyEngagedHostiles.Add(new RecentlyEngagedHostile()
+                                {
+                                    Hostile = actorTakingDamage.Actor,
+                                    InteractionTime = Core.State.TimePassed
+                                });
+                            }
+                            else
+                            {
+                                recentInteraction.InteractionTime = Core.State.TimePassed;
+                            }
+
                             int damageToApply = playerHitsFor;
 
                             if (actorTakingDamage.IsSplashDamage)
                             {
-                                damageToApply = (int)(damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)weapon?.SplashDamageRange));
+                                damageToApply = (int)(damageToApply * (actorTakingDamage.DistanceFromPrimary / (double)(weapon?.SplashDamageRange ?? 0) + (projectile?.Meta?.SplashDamageRange ?? 0)));
                             }
 
                             if (actorTakingDamage.Actor.Meta.DamageType != null)
@@ -1419,6 +1427,9 @@ namespace Game.Engine
                                 }
 
                                 Core.State.Character.Experience += experience;
+
+                                //No need to keep this guy around, hes been killed.
+                                Core.State.RecentlyEngagedHostiles.RemoveAll(o => o.Hostile == actorTakingDamage.Actor);
                             }
                         }
                     }

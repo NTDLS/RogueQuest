@@ -1,6 +1,7 @@
 {
   "Name":"Wooden Bow",
   "SubType": "RangedWeapon",
+  "TargetType":"HostileBeing",
   "ProjectileType":"Arrow",
   "Value": "40",
   "DamageDice":"0",
