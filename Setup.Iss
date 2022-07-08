@@ -1,8 +1,8 @@
 [Setup]
 ;-- Main Setup Information
  AppName                         = Rougue Quest
- AppVerName                      = Rougue Quest 1.0.0.0
- AppCopyright                    = Copyright © 1995-2021 NetworkDLS.
+ AppVerName                      = Rougue Quest 1.0.0.1
+ AppCopyright                    = Copyright © 1995-2022 NetworkDLS.
  DefaultDirName                  = {commonpf}\NetworkDLS\Rougue Quest
  DefaultGroupName                = NetworkDLS\Rougue Quest
  UninstallDisplayIcon            = {app}\Bin\Game.exe
@@ -19,7 +19,7 @@
  AppPublisher    = NetworkDLS
  AppPublisherURL = http://www.NetworkDLS.com/
  AppUpdatesURL   = http://www.NetworkDLS.com/
- AppVersion      = 1.0.0.0
+ AppVersion      = 1.0.0.1
  
 [Components]
  Name: "Game";         Description: "Game";             Types: Full Compact Custom; Flags: Fixed;
