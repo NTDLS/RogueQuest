@@ -577,9 +577,9 @@ namespace Game.Engine
 
             int startTime = Core.State.TimePassed;
 
-            if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon) //Bow and arrow, crossbow, etc.
+            if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon || item.Tile.Meta.DamageDice > 0) //Bow and arrow, crossbow, etc.
             {
-                //Items with damage dice are counted as weapons and need to call Advance to apply damage to actors. Cast fireball, cast magic arrow, etc.
+                //Items (and spells) with damage dice are counted as weapons and need to call Advance to apply damage to actors. Cast fireball, cast magic arrow, etc.
 
                 var input = new Types.TickInput()
                 {
@@ -589,8 +589,6 @@ namespace Game.Engine
                 };
 
                 Advance(input);
-
-                return true; //Removal of projectiles is handled by Advance().
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Scroll
                 || item.Tile.Meta.SubType == ActorSubType.Wand
@@ -608,10 +606,7 @@ namespace Game.Engine
                     return false;
                 }
             }
-            else
-            {
-                throw new Exception(@"This scenario was not implemented ¯\_(ツ)_/¯");
-            }
+            else throw new Exception(@"This scenario was not implemented ¯\_(ツ)_/¯");
 
             PassTime(((item.Tile.Meta.CastTime ?? 0) - (Core.State.TimePassed - startTime)) - Core.State.Character.Speed);
 
@@ -646,6 +641,33 @@ namespace Game.Engine
             else if (item.Tile.Meta.IsMemoriziedSpell ?? false)
             {
                 Core.State.Character.AvailableMana -= (item.Tile.Meta.Mana ?? 0);
+            }
+            else if (item.Tile.Meta.SubType == ActorSubType.RangedWeapon)
+            {
+                var projectile = Core.State.Character.GetQuiverSlotOfType((ProjectileType)item.Tile.Meta.ProjectileType);
+
+                if (projectile != null)
+                {
+                    if (projectile.Tile?.Meta?.IsConsumable == true)
+                    {
+                        projectile.Tile.Meta.Quantity--;
+
+                        if ((projectile.Tile?.Meta?.Quantity ?? 0) == 0)
+                        {
+                            Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == projectile.Tile?.Meta?.UID);
+
+                            var slotToVacate = Core.State.Character.FindEquipSlotByItemId(projectile.Tile?.Meta?.UID);
+                            if (slotToVacate != null)
+                            {
+                                slotToVacate.Tile = null;
+                            }
+                        }
+
+                        Core.State.Character.PushFreshInventoryItemsToEquipSlots();
+                    }
+                    else throw new Exception(@"A non-consumable projectile is not possible ¯\_(ツ)_/¯");
+                }
+                else throw new Exception(@"A ranged weapon with no projectile is not possible ¯\_(ツ)_/¯");
             }
             else
             {
@@ -1222,25 +1244,7 @@ namespace Game.Engine
 
             if (projectile != null)
             {
-                if (projectile.Meta.IsConsumable == true)
-                {
-                    projectile.Meta.Quantity--;
-
-                    weaponDescription += $" ({projectile.Meta.Name})";
-
-                    if ((projectile.Meta.Quantity ?? 0) == 0)
-                    {
-                        Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == projectile.Meta.UID);
-
-                        var slotToVacate = Core.State.Character.FindEquipSlotByItemId(projectile.Meta.UID);
-                        if (slotToVacate != null)
-                        {
-                            slotToVacate.Tile = null;
-                        }
-                    }
-
-                    Core.State.Character.PushFreshInventoryItemsToEquipSlots();
-                }
+                weaponDescription += $" ({projectile.Meta.Name})";
             }
 
             if (actorToAttack != null && weapon != null)
