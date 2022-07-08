@@ -51,7 +51,9 @@
         ActorSpawner, //This is used to spawn random actors.
         ActorBlockaid, //This is like a wall. It cannot be intersected at all.
         ActorWarpTarget,
-        ActorAnimation
+        ActorAnimation,
+        ActorKeyedEntry,
+        ActorKey
     }
 
     public enum ActorSubType
@@ -83,7 +85,9 @@
         ArmorSmithStore, //A place to spend your hard earned cash.
         GeneralStore, //A place to spend your hard earned cash.
         WeaponSmithStore, //A place to spend your hard earned cash.
-        RuinsStore //Once a to spend your hard earned cash, now in ruins.
+        RuinsStore, //Once a to spend your hard earned cash, now in ruins.
+        KeyedEntry,
+        Key
     }
 
     public enum TargetType

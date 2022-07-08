@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Dagger)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Dagger",
+  "CanWalkOn": "False"
+}

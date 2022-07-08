@@ -1,0 +1,5 @@
+{
+  "Name":"Skull Key",
+  "Special":"Skull",
+  "CanWalkOn": "True"
+}

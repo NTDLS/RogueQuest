@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Ice)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Ice",
+  "CanWalkOn": "False"
+}

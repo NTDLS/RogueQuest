@@ -1,0 +1,5 @@
+{
+  "Name":"Troll Key",
+  "Special":"Troll",
+  "CanWalkOn": "True"
+}

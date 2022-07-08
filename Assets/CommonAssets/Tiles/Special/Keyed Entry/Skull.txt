@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Skull)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Skull",
+  "CanWalkOn": "False"
+}

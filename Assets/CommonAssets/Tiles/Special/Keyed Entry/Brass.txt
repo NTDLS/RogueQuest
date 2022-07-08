@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Brass)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Brass",
+  "CanWalkOn": "False"
+}

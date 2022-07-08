@@ -1,0 +1,5 @@
+ {
+  "Name":"Royal Key",
+  "Special":"Royal",
+  "CanWalkOn": "True"
+}

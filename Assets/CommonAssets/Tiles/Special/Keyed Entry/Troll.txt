@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Troll)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Troll",
+  "CanWalkOn": "False"
+}

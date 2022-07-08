@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Moon)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Moon",
+  "CanWalkOn": "False"
+}

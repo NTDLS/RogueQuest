@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Bone)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Bone",
+  "CanWalkOn": "False"
+}

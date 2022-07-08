@@ -35,6 +35,7 @@ namespace Library.Engine
         private int? _Charges;
         private int? _Strength;
         private string _Dialog;
+        private string _Special;
         private int? _MinLevel;
         private int? _MaxLevel;
         private int? _Level;
@@ -419,6 +420,11 @@ namespace Library.Engine
         /// </summary>
         public string Dialog { get { return _Dialog == string.Empty ? null : _Dialog; } set { _Dialog = value; } }
 
+        /// <summary>
+        /// Used like a user data object. Like, which key opens this door.
+        /// </summary>
+        public string Special { get { return _Special == string.Empty ? null : _Special; } set { _Special = value; } }
+
         [JsonIgnore]
         public string DndDamageText
         {
@@ -503,6 +509,7 @@ namespace Library.Engine
             this.CursedImagePath = with.CursedImagePath ?? this.CursedImagePath;
             this.Prevalence = with.Prevalence ?? this.Prevalence;
             this.DamageType = with.DamageType ?? this.DamageType;
+            this.Special = with.Special ?? this.Special;
             this.Dialog = with.Dialog ?? this.Dialog;
             this.OnlyDialogOnce = with.OnlyDialogOnce ?? this.OnlyDialogOnce;
             this.Mana = with.Mana ?? this.Mana;

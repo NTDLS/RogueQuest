@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Sun)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Sun",
+  "CanWalkOn": "False"
+}

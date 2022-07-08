@@ -1,0 +1,5 @@
+{
+  "Name":"Druid Key",
+  "Special":"Druid",
+  "CanWalkOn": "True"
+}

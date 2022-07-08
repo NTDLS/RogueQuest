@@ -1,0 +1,6 @@
+{
+  "SubType":"Key",
+  "CanWalkOn":"True",
+  "ActorClass": "ActorItem",
+  "IsContainer": "False"
+}

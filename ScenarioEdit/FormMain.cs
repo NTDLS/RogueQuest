@@ -400,7 +400,7 @@ namespace ScenarioEdit
 
                 if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawner)
                 {
-                    //We do not default thses in the meta data files because a refresh of meta data would wipe them out. :(
+                    //We do not default these in the meta data files because a refresh of meta data would wipe them out. :(
                     if (insertedTile.Meta.MinLevel == null)
                     {
                         insertedTile.Meta.MinLevel = 0;
@@ -1699,6 +1699,13 @@ namespace ScenarioEdit
                 {
                     var selectedRow = listViewProperties.SelectedItems[0];
 
+                    var blackList = new string[] { "Actor Class", "Sub Type", "Spawn Type", "Tile" };
+
+                    if (blackList.Contains(selectedRow.Text))
+                    {
+                        return;
+                    }
+
                     if (selectedRow.Text == "Contents" && selectedItems.Count == 1)
                     {
                         if (selectedTile.Meta?.IsContainer == true)
@@ -1716,6 +1723,7 @@ namespace ScenarioEdit
                                 selectedTile.Meta.LevelWarpTargetTileUID = (Guid)form.SelectedTile.Meta.UID;
                                 PopulateSelectedItemProperties();
                             }
+                            else return;
                         }
                     }
                     else if (selectedRow.Text == "Spawn Type" && selectedItems.Count == 1)
@@ -1728,6 +1736,7 @@ namespace ScenarioEdit
                         {
                             selectedTile.Meta.SpawnSubTypes = form.SelectedSubTypes.ToArray();
                         }
+                        else return;
                     }
 
                     else if (selectedRow.Text == "Enchantment" && selectedItems.Count == 1)
@@ -1745,6 +1754,7 @@ namespace ScenarioEdit
                             {
                                 selectedTile.Meta.Enchantment = form.GetSelection<EnchantmentType>();
                             }
+                            else return;
                         }
                     }
                     else if (selectedRow.Text == "Effects" && selectedItems.Count == 1)
@@ -1754,6 +1764,7 @@ namespace ScenarioEdit
                         {
                             selectedTile.Meta.Effects = form.Effects;
                         }
+                        else return;
                     }
                     //listViewProperties.Items.Add("Is Identified").SubItems.Add(selectedTile.Meta.IsIdentified.ToString());
                     //listViewProperties.Items.Add("Enchantment").SubItems.Add(selectedTile.Meta.Enchantment.ToString());
@@ -1774,6 +1785,7 @@ namespace ScenarioEdit
                                             selectedTile.Meta.OnlyDialogOnce = true;
                                         }
                                     }
+                                    else return;
                                 }
                             }
                         }
@@ -1820,6 +1832,7 @@ namespace ScenarioEdit
                                         }
                                     }
                                 }
+                                else return;
                             }
                         }
                         else
@@ -1988,6 +2001,7 @@ namespace ScenarioEdit
                                         }
                                     }
                                 }
+                                else return;
                             }
                         }
                     }
@@ -2039,8 +2053,8 @@ namespace ScenarioEdit
 
                 if (selectedTile.Meta.ActorClass == ActorClassName.ActorSpawner)
                 {
-                    listViewProperties.Items.Add("Min level").SubItems.Add(selectedTile.Meta?.MinLevel.ToString());
-                    listViewProperties.Items.Add("Max level").SubItems.Add(selectedTile.Meta?.MaxLevel.ToString());
+                    listViewProperties.Items.Add("Min level").SubItems.Add((selectedTile.Meta?.MinLevel ?? 0).ToString());
+                    listViewProperties.Items.Add("Max level").SubItems.Add((selectedTile.Meta?.MaxLevel ?? 0).ToString());
                     listViewProperties.Items.Add("Spawn Type").SubItems.Add(selectedTile.Meta.SpawnType.ToString());
 
                     string subTypes = string.Empty;

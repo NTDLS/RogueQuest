@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Royal)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Royal",
+  "CanWalkOn": "False"
+}

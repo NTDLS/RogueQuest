@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Fire)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Fire",
+  "CanWalkOn": "False"
+}

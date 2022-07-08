@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Ankh)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Ankh",
+  "CanWalkOn": "False"
+}

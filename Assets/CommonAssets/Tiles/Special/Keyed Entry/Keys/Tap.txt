@@ -1,0 +1,5 @@
+{
+  "Name":"Tap Key",
+  "Special":"Tap",
+  "CanWalkOn": "True"
+}

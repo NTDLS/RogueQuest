@@ -1,0 +1,5 @@
+{
+  "Name":"Copper Key",
+  "Special":"Copper",
+  "CanWalkOn": "True"
+}

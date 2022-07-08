@@ -1,0 +1,5 @@
+{
+  "Name":"Brass Key",
+  "Special":"Brass",
+  "CanWalkOn": "True"
+}

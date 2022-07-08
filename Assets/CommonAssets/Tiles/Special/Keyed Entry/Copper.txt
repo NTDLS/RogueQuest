@@ -1,0 +1,6 @@
+{
+  "Name":"Locked (Copper)",
+  "ActorClass": "ActorKeyedEntry",
+  "Special":"Copper",
+  "CanWalkOn": "False"
+}

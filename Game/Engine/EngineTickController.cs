@@ -1045,6 +1045,28 @@ namespace Game.Engine
 
             bool warpped = false;
 
+            if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorKeyedEntry).Any())
+            {
+                bool unlocked = false;
+                var entry = intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorKeyedEntry).First();
+                var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack); //The default container to add items to.
+                if (pack != null)
+                {
+                    var existingItem = Core.State.Items
+                        .Where(o => o.ContainerId == pack.Tile.Meta.UID && o.Tile.Meta?.SubType == ActorSubType.Key
+                        && o.Tile?.Meta.Special == entry.Meta?.Special).FirstOrDefault();
+                    if (existingItem != null)
+                    {
+                        Core.LogLine($"With a turn of the {existingItem.Tile.Meta.Name}, the obstacle has been removed - the key vanished with it....", Color.Green);
+                        Core.State.Items.Remove(existingItem);
+                        entry.QueueForDelete();
+                        unlocked = true;
+                    }
+                }
+
+                if(!unlocked) Core.LogLine($"You will need a {entry.Meta.Name} key to gain access.", Color.Red);
+            }
+
             if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden
                 || o.Meta.ActorClass == ActorClassName.ActorLevelWarpVisible).Any())
             {
