@@ -18,6 +18,7 @@ namespace Library.Engine
         private string _ProjectileImagePath;
         private string _AnimationImagePath;
         private string _Name;
+        private string _SpellName;
         private int? _Quantity;
         private int? _Experience;
         private int? _HitPoints;
@@ -141,7 +142,6 @@ namespace Library.Engine
                 if (willBeCursed)
                 {
                     Enchantment = EnchantmentType.Cursed;
-                    Name = $"{Name} (Cursed)";
 
                     foreach (var effect in Effects)
                     {
@@ -170,7 +170,6 @@ namespace Library.Engine
                 else
                 {
                     Enchantment = EnchantmentType.Enchanted;
-                    Name = $"{Name} (Enchanted)";
 
                     if (SubType == ActorSubType.MeleeWeapon || SubType == ActorSubType.RangedWeapon || SubType == ActorSubType.Projectile)
                     {
@@ -285,10 +284,35 @@ namespace Library.Engine
         /// The name of the item.
         /// </summary>
         public string Name { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
+
+        public string DisplayName
+        {
+            get
+            {
+                if (_Name == string.Empty)
+                {
+                    return null;
+                }
+                else
+                {
+                    switch (Enchantment)
+                    {
+                        case EnchantmentType.Enchanted:
+                            return $"{_Name} (Enchanted)";
+                        case EnchantmentType.Cursed:
+                            return $"{_Name} (Cursed)";
+                        case EnchantmentType.Undecided:
+                            return $"{_Name} (Unidentified)";
+                    }
+                    return _Name;
+                }
+            }
+        }
+
         /// <summary>
         /// For scrolls, this is the name of the spell when it is learned and cast. This is also what spell a book will teach.
         /// </summary>
-        public string SpellName { get { return _Name == string.Empty ? null : _Name; } set { _Name = value; } }
+        public string SpellName { get { return _SpellName == string.Empty ? null : _SpellName; } set { _SpellName = value; } }
         /// <summary>
         /// Used to track the number in a stack when CanStack=true because things like money, arrows, etc only matter in multiples.
         /// </summary>
@@ -327,7 +351,6 @@ namespace Library.Engine
         /// The armor class of this tile (also the AC modifier of this tile when equipped).
         /// </summary>
         public int? AC { get { return _AC == 0 ? null : _AC; } set { _AC = value; } }
-
         /// <summary>
         /// The number of dice used when calcuating damage.
         /// </summary>

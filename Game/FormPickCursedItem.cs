@@ -37,7 +37,7 @@ namespace Game
 
             foreach (var cursedEquip in cursedEquipment)
             {
-                var lvItem = new ListViewItem(cursedEquip.Tile.Meta.Name)
+                var lvItem = new ListViewItem(cursedEquip.Tile.Meta.DisplayName)
                 {
                     Tag = cursedEquip.Tile
                 };

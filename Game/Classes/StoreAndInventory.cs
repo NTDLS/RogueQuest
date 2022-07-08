@@ -59,7 +59,7 @@ namespace Game.Classes
 
         public static string GetItemTip(EngineCore core, TileIdentifier tile, bool includeOfferPrice = false, bool includeAskingPrice = false)
         {
-            string text = tile.Meta.Name;
+            string text = tile.Meta.DisplayName;
 
             if (((tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (tile.Meta.IsIdentified ?? false) == false) == false)
             {
@@ -113,7 +113,7 @@ namespace Game.Classes
 
         public static void AddItemToListView(ListView listView, TileIdentifier tile)
         {
-            string text = tile.Meta.Name;
+            string text = tile.Meta.DisplayName;
 
             if (tile.Meta.CanStack == true && tile.Meta.Quantity > 0)
             {

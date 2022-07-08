@@ -33,7 +33,7 @@ namespace Game
             _core = core;
             _tile = tile;
 
-            labelItem.Text = $"{tile.Meta.Name}";
+            labelItem.Text = $"{tile.Meta.DisplayName}";
             textBoxBuyAmount.Minimum = 1;
             textBoxBuyAmount.Maximum = (int)tile.Meta.Quantity;
             textBoxBuyAmount.Text = tile.Meta.Quantity.ToString();

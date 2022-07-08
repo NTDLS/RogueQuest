@@ -58,7 +58,7 @@ namespace Game
                 {
                     var lvItem = new ListViewItem(new string[]
                     {
-                        tile.Meta.Name,
+                        tile.Meta.DisplayName,
                         tile.Meta.Level.ToString(),
                         tile.Meta.Mana.ToString()
                     });

@@ -29,7 +29,7 @@ namespace Game
 
             _tile = tile;
 
-            labelItem.Text = $"{tile.Meta.Name}";
+            labelItem.Text = $"{tile.Meta.DisplayName}";
 
             if (tile.Meta.Quantity > 0)
             {
