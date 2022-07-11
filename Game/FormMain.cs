@@ -679,6 +679,8 @@ namespace Game
 
         private void KnownSpellItem_Click(object sender, EventArgs e)
         {
+            if (_core.Tick.IsEngineBusy) return;
+
             PendingQuickItemMouseOperation = null;
             CurrentMouseMode = MouseMode.None;
             splitContainerHoriz.Cursor = Cursors.Default;
@@ -856,6 +858,8 @@ namespace Game
 
         private void Button_Click(object sender, EventArgs e)
         {
+            if (_core.Tick.IsEngineBusy) return;
+
             PendingQuickItemMouseOperation = null;
             CurrentMouseMode = MouseMode.None;
             splitContainerHoriz.Cursor = Cursors.Default;

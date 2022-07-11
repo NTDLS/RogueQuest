@@ -18,6 +18,8 @@ namespace Game.Engine
 {
     public class EngineTickController
     {
+        public bool IsEngineBusy { get; set; } = false;
+
         private int _avatarAnimationFrame = 1;
         public delegate void GameThreadCallback(object param);
 
@@ -355,7 +357,7 @@ namespace Game.Engine
 
                         if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            int hpToAdd = (int)((double)Core.State.Character.Hitpoints * (double)effect.Value);
+                            int hpToAdd = (int)((double)(Core.State.Character.Hitpoints) * (double)(effect.Value / 100.0));
                             totalHealing += hpToAdd;
                             Core.State.Character.AvailableHitpoints += hpToAdd;
                         }
@@ -381,7 +383,7 @@ namespace Game.Engine
 
                         if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            toAdd = (int)((double)Core.State.Character.Dexterity * (double)effect.Value);
+                            toAdd = (int)((double)(Core.State.Character.Dexterity) * (double)(effect.Value / 100.0));
                         }
                         else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
@@ -402,7 +404,7 @@ namespace Game.Engine
 
                         if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            toAdd = (int)((double)Core.State.Character.Hitpoints * (double)effect.Value);
+                            toAdd = (int)((double)(Core.State.Character.Hitpoints) * (double)(effect.Value / 100.0));
                         }
                         else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
@@ -423,7 +425,7 @@ namespace Game.Engine
 
                         if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            toAdd = (int)((double)Core.State.Character.Armorclass * (double)effect.Value);
+                            toAdd = (int)((double)(Core.State.Character.Armorclass) * (double)(effect.Value / 100.0));
                         }
                         else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
@@ -444,7 +446,7 @@ namespace Game.Engine
 
                         if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            toAdd = (int)((double)Core.State.Character.Strength * (double)effect.Value);
+                            toAdd = (int)((double)(Core.State.Character.Intelligence) * (double)(effect.Value / 100.0));
                         }
                         else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
@@ -465,7 +467,7 @@ namespace Game.Engine
 
                         if (effect.ValueType == ItemEffectType.Percent) //Raise the hitpoints by a percentage.
                         {
-                            toAdd = (int)((double)Core.State.Character.Strength * (double)effect.Value);
+                            toAdd = (int)((double)(Core.State.Character.Strength) * (double)(effect.Value / 100.0));
                         }
                         else if (effect.ValueType == ItemEffectType.Fixed) //Raise the hitpoints by a fixed ammount.
                         {
@@ -945,6 +947,8 @@ namespace Game.Engine
                 }
             }
 
+            IsEngineBusy = true;
+
             ParameterizedThreadStart starter = GameLogicThread;
             starter += (param) =>
             {
@@ -962,6 +966,8 @@ namespace Game.Engine
             });
 
             WaitOnThreadWithShamefulDoEvents(thread);
+
+            IsEngineBusy = false;
 
             return appliedOffset;
         }
@@ -1880,6 +1886,8 @@ namespace Game.Engine
                 At = at
             };
 
+            IsEngineBusy = true;
+
             ParameterizedThreadStart starter = AnimateAtAsyncThread;
             starter += (param) =>
             {
@@ -1892,6 +1900,8 @@ namespace Game.Engine
             thread.Start(param);
 
             WaitOnThreadWithShamefulDoEvents(thread);
+
+            IsEngineBusy = false;
 
             return thread;
         }

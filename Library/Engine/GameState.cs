@@ -61,6 +61,11 @@ namespace Library.Engine
 
         public CustodyItem GetOrCreateInventoryItem(TileIdentifier tile)
         {
+            if (tile == null)
+            {
+                return null;
+            }
+
             var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tile.Meta.UID).FirstOrDefault();
             if (inventoryItem == null)
             {

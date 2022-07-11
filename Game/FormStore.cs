@@ -108,6 +108,8 @@ namespace Game
 
         private void ListViewStore_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (listViewStore.SelectedItems?.Count != 1)
             {
                 return;
@@ -124,6 +126,8 @@ namespace Game
 
         private void ListViewStore_DragDrop(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             var draggedItemTag = draggedItem.Tag as EquipTag;
@@ -244,6 +248,8 @@ namespace Game
 
         private void ListViewStore_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (e.Button == MouseButtons.Left)
             {
                 DoDragDrop(e.Item, DragDropEffects.Move);
@@ -260,6 +266,8 @@ namespace Game
 
         private void Generic_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var listView = sender as ListView;
 
             TileIdentifier pack = _currentlySelectedPack;
@@ -327,6 +335,8 @@ namespace Game
 
         private void Generic_DragDrop(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             TileIdentifier pack;
 
             if (sender == listViewSelectedContainer)
@@ -562,6 +572,8 @@ namespace Game
 
         private void Generic_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (e.Button == MouseButtons.Left)
             {
                 DoDragDrop(e.Item, DragDropEffects.Move);
@@ -657,6 +669,7 @@ namespace Game
 
         private void ListView_EquipSlot_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
             var listView = sender as ListView;
 
             if (listView.SelectedItems?.Count != 1)
@@ -687,6 +700,8 @@ namespace Game
 
         private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var destination = sender as ListView;
             var destinationTag = destination.Items[0].Tag as EquipTag;
 
@@ -707,6 +722,8 @@ namespace Game
 
         private void ListView_EquipSlot_DragDrop(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
 
@@ -944,6 +961,7 @@ namespace Game
 
         private void _buttonClose_Click(object sender, EventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
             this.Close();
         }
 

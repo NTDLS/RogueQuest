@@ -138,6 +138,8 @@ namespace Game
 
         private void ListViewGround_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (listViewGround.SelectedItems?.Count != 1)
             {
                 return;
@@ -163,6 +165,8 @@ namespace Game
 
         private void ListViewGround_DragDrop(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             var draggedItemTag = draggedItem.Tag as EquipTag;
@@ -180,6 +184,10 @@ namespace Game
 
             //Find the item in the players inventory and change its container id to that of the selected open pack.
             var inventoryItem = Core.State.GetOrCreateInventoryItem(draggedItemTag.Tile);
+            if (inventoryItem == null)
+            {
+                return;
+            }
 
             bool wasStacked = false;
 
@@ -249,6 +257,8 @@ namespace Game
 
         private void ListViewGround_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (e.Button == MouseButtons.Left)
             {
                 DoDragDrop(e.Item, DragDropEffects.Move);
@@ -265,6 +275,8 @@ namespace Game
 
         private void ListViewSelectedContainer_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (listViewSelectedContainer.SelectedItems?.Count != 1)
             {
                 return;
@@ -363,6 +375,8 @@ namespace Game
 
         private void ListViewSelectedContainer_DragDrop(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             TileIdentifier pack = _currentlySelectedPack;
 
             if (pack == null)
@@ -386,6 +400,10 @@ namespace Game
             }
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
+            if (draggedItemTag.Tile == null)
+            {
+                return;
+            }
 
             if (pack.Meta.SubType == ActorSubType.Purse && draggedItemTag.Tile.Meta.SubType != ActorSubType.Money)
             {
@@ -520,6 +538,8 @@ namespace Game
 
         private void ListViewSelectedContainer_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (e.Button == MouseButtons.Left)
             {
                 DoDragDrop(e.Item, DragDropEffects.Move);
@@ -536,6 +556,8 @@ namespace Game
 
         private void ListViewPlayerPack_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (listViewPlayerPack.SelectedItems?.Count != 1)
             {
                 return;
@@ -640,6 +662,8 @@ namespace Game
 
         private void ListViewPlayerPack_DragDrop(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var pack = Core.State.Character.GetEquipSlot(EquipSlot.Pack)?.Tile;
             if (pack == null)
             {
@@ -650,6 +674,11 @@ namespace Game
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             var draggedItemTag = draggedItem.Tag as EquipTag;
+
+            if (draggedItemTag.Tile == null)
+            {
+                return;
+            }
 
             if (destination == draggedItem.ListView)
             {
@@ -790,6 +819,8 @@ namespace Game
 
         private void ListViewPlayerPack_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (e.Button == MouseButtons.Left)
             {
                 DoDragDrop(e.Item, DragDropEffects.Move);
@@ -892,6 +923,7 @@ namespace Game
                 //We dont remove the items from equip slots, we just clear their text and image.
                 listViewItem.ImageKey = null;
                 listViewItem.Text = "";
+                (listViewItem.Tag as EquipTag).Tile = null;
             }
 
         }
@@ -917,6 +949,8 @@ namespace Game
 
         private void ListView_EquipSlot_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var listView = sender as ListView;
 
             if (listView.SelectedItems?.Count != 1)
@@ -933,10 +967,16 @@ namespace Game
                     PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
                 }
             }
-            else
+            else    
             {
                 var selectedItem = listView.SelectedItems[0];
                 var item = selectedItem.Tag as EquipTag;
+
+                if (item.Tile == null)
+                {
+                    return;
+                }
+
                 if (item.Tile.Meta.SubType == ActorSubType.Pack
                     || item.Tile.Meta.SubType == ActorSubType.Belt
                     || item.Tile.Meta.SubType == ActorSubType.Chest
@@ -949,19 +989,9 @@ namespace Game
                 {
                     if (item.Tile.Meta.IsConsumable == true)
                     {
-                        var slotToVacate = Core.State.Character.FindEquipSlotByItem(item.Tile);
-
                         if (UseItem(item.Tile, true))
                         {
-                            if ((item.Tile.Meta.Quantity ?? 0) == 0)
-                            {
-                                slotToVacate.Tile = null;
-
-                                //We dont remove the items from equip slots, we just clear their text and image.
-                                selectedItem.ImageKey = null;
-                                selectedItem.Text = "";
-                            }
-                            else
+                            if (item.Tile != null)
                             {
                                 string text = item.Tile.Meta.DisplayName;
                                 if (item.Tile.Meta.CanStack == true && item.Tile.Meta.Quantity > 0)
@@ -978,6 +1008,8 @@ namespace Game
 
         private void ListView_EquipSlot_DragEnter(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var destination = sender as ListView;
             var destinationTag = destination.Items[0].Tag as EquipTag;
 
@@ -998,6 +1030,8 @@ namespace Game
 
         private void ListView_EquipSlot_DragDrop(object sender, DragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             var destination = sender as ListView;
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
 
@@ -1113,6 +1147,8 @@ namespace Game
 
         private void ListView_EquipSlot_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
             {
                 var draggedItem = e.Item as ListViewItem;
@@ -1160,6 +1196,8 @@ namespace Game
 
         private void _buttonClose_Click(object sender, EventArgs e)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             this.Close();
         }
 
@@ -1169,6 +1207,8 @@ namespace Game
 
         void PopulateContainerFromGround(ListView listView)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             listView.Items.Clear();
 
             var itemUnderfoot = Core.Actors.Intersections(Core.Player)
@@ -1186,6 +1226,8 @@ namespace Game
 
         void PopulateContainerFromPack(ListView listView, TileIdentifier containerTile)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             listView.Items.Clear();
 
             if (listView == listViewPlayerPack)
@@ -1204,6 +1246,8 @@ namespace Game
 
         private void OpenPack(EquipTag item)
         {
+            if (Core.Tick.IsEngineBusy) return;
+
             if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Belt
                 || item.Tile.Meta.SubType == ActorSubType.Chest
