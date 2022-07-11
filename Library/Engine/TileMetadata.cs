@@ -72,7 +72,13 @@ namespace Library.Engine
 
         public void Identify(EngineCoreBase core)
         {
-            if (IsIdentified == true || Enchantment != EnchantmentType.Undecided)
+            if (Enchantment == EnchantmentType.Normal)
+            {
+                IsIdentified = true;
+                return;
+            }
+
+            if (IsIdentified == true)
             {
                 return;
             }
@@ -82,15 +88,19 @@ namespace Library.Engine
 
             IsIdentified = true;
 
-            if ((Enchantment ?? EnchantmentType.Undecided) != EnchantmentType.Undecided)
-            {
-                return;
-            }
-
-            if (rand.NextDouble() * 100 >= 70) //30% chance or being enchanted or cursed.
+            if (rand.NextDouble() * 100 >= 70 || Enchantment == EnchantmentType.Enchanted || Enchantment == EnchantmentType.Cursed) //30% chance or being enchanted or cursed.
             {
                 //We have to get this early so that the random number will not be affected by the loop below it.
                 bool willBeCursed = rand.NextDouble() * 100 < 50;
+
+                if (Enchantment == EnchantmentType.Cursed)
+                {
+                    willBeCursed = true;
+                }
+                else if (Enchantment == EnchantmentType.Enchanted)
+                {
+                    willBeCursed = false;
+                }
 
                 int bonusRolls = rand.Next(1, 4 + core.State.Character.Level); //Add some enchantment.
                 int bonusPointsApplied = 0;
@@ -200,6 +210,28 @@ namespace Library.Engine
             }
         }
 
+        public bool CanBeEnchanted
+        {
+            get
+            {
+                return SubType == ActorSubType.MeleeWeapon
+                    || SubType == ActorSubType.RangedWeapon
+                    || SubType == ActorSubType.Projectile
+                    || SubType == ActorSubType.Armor
+                    || SubType == ActorSubType.Helment
+                    || SubType == ActorSubType.Bracers
+                    || SubType == ActorSubType.Gauntlets
+                    || SubType == ActorSubType.Shield
+                    || SubType == ActorSubType.Boots
+                    || SubType == ActorSubType.Belt
+                    || SubType == ActorSubType.Garment
+                    || SubType == ActorSubType.Chest
+                    || SubType == ActorSubType.Pack
+                    || SubType == ActorSubType.Necklace
+                    || SubType == ActorSubType.Ring;
+            }
+        }
+
         /// <summary>
         /// The extra amount that one or more stats were randomly increased to.
         /// </summary>
@@ -295,14 +327,23 @@ namespace Library.Engine
                 }
                 else
                 {
-                    switch (Enchantment)
+                    if (ActorClass == ActorClassName.ActorItem)
                     {
-                        case EnchantmentType.Enchanted:
-                            return $"{_Name} (Enchanted)";
-                        case EnchantmentType.Cursed:
-                            return $"{_Name} (Cursed)";
-                        case EnchantmentType.Undecided:
-                            return $"{_Name} (Unidentified)";
+                        if (IsIdentified == true)
+                        {
+                            switch (Enchantment)
+                            {
+                                case EnchantmentType.Enchanted:
+                                    return $"{_Name} (Enchanted)";
+                                case EnchantmentType.Cursed:
+                                    return $"{_Name} (Cursed)";
+                            }
+                            return _Name;
+                        }
+                        else
+                        {
+                            return $"{SubType} (Unidentified)";
+                        }
                     }
                     return _Name;
                 }
@@ -645,11 +686,7 @@ namespace Library.Engine
                         meta.Enchantment = EnchantmentType.Normal;
                 }
 
-                if (meta.Enchantment != EnchantmentType.Undecided && meta.IsIdentified == null)
-                {
-                    //If the enchantment is not explicitly set, then the item is already identified.
-                    meta.IsIdentified = true;
-                }
+                meta.IsIdentified = false;
             }
 
             #region Sanity checks...

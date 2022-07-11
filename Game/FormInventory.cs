@@ -989,7 +989,7 @@ namespace Game
                 return;
             }
 
-            if ((draggedItemTag.Tile.Meta.SubType != null && destinationTag.AcceptTypes.Contains((ActorSubType)draggedItemTag.Tile.Meta.SubType))
+            if ((draggedItemTag?.Tile?.Meta?.SubType != null && destinationTag.AcceptTypes.Contains((ActorSubType)draggedItemTag.Tile.Meta.SubType))
                 || destinationTag.AcceptTypes.Contains(ActorSubType.Unspecified))
             {
                 e.Effect = e.AllowedEffect;
@@ -1019,21 +1019,27 @@ namespace Game
             if ((draggedItemTag.Tile.Meta.SubType != null && destinationTag.AcceptTypes.Contains((ActorSubType)draggedItemTag.Tile.Meta.SubType))
                 || destinationTag.AcceptTypes.Contains(ActorSubType.Unspecified))
             {
-                if (((draggedItemTag.Tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (draggedItemTag.Tile.Meta.IsIdentified ?? false) == false))
+                if (draggedItemTag.Tile.Meta.SubType != ActorSubType.Wand
+                    && draggedItemTag.Tile.Meta.SubType != ActorSubType.Potion
+                    && draggedItemTag.Tile.Meta.SubType != ActorSubType.Scroll
+                    && draggedItemTag.Tile.Meta.SubType != ActorSubType.Book)
                 {
-                    draggedItemTag.Tile.Meta.Identify(Core);
+                    if ((draggedItemTag.Tile.Meta.IsIdentified ?? false) == false)
+                    {
+                        draggedItemTag.Tile.Meta.Identify(Core);
 
-                    if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
-                    {
-                        MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed and cannot be removed by conventional means!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Enchanted)
-                    {
-                        MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} has been enchanted!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Normal)
-                    {
-                        MessageBox.Show($"This is just a normal {draggedItemTag.Tile.Meta.SubType}!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
+                        {
+                            MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed and cannot be removed by conventional means!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Enchanted)
+                        {
+                            MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} has been enchanted!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Normal)
+                        {
+                            MessageBox.Show($"This is just a normal {draggedItemTag.Tile.Meta.SubType}!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
                 }
 
@@ -1112,7 +1118,7 @@ namespace Game
                 var draggedItem = e.Item as ListViewItem;
                 var draggedItemTag = draggedItem.Tag as EquipTag;
 
-                if (draggedItemTag.Tile.Meta.Enchantment == EnchantmentType.Cursed)
+                if (draggedItemTag?.Tile?.Meta?.Enchantment == EnchantmentType.Cursed)
                 {
                     MessageBox.Show($"This {draggedItemTag.Tile.Meta.SubType} is cursed and cannot be removed by conventional means!", $"RougeQuest", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;

@@ -20,6 +20,8 @@ namespace ScenarioEdit
 {
     public partial class FormMain : Form
     {
+        private Random Rand = new Random();
+
         /// <summary>"
         /// The action that will be performed when clicking the left mouse button.
         /// </summary>
@@ -354,7 +356,6 @@ namespace ScenarioEdit
             tile.QueueForDelete();
         }
 
-
         TreeNode GetRandomChildNode(TreeNode node)
         {
             if (node.Nodes.Count > 0)
@@ -433,23 +434,41 @@ namespace ScenarioEdit
                 {
                     if (insertedTile.Meta.HitPoints == null)
                     {
-                        insertedTile.Meta.HitPoints = 10;
+                        insertedTile.Meta.HitPoints = Rand.Next(5, 20);
                     }
 
                     if (insertedTile.Meta.Experience == null)
                     {
-                        insertedTile.Meta.Experience = 10;
+                        insertedTile.Meta.Experience = Rand.Next(5, 15);
                     }
                 }
 
                 if (insertedTile.Meta.ActorClass == ActorClassName.ActorSpawner && insertedTile.Meta.SpawnType == ActorClassName.ActorItem)
                 {
                     insertedTile.Meta.SpawnSubTypes = (ActorSubType[])Utility.RandomDropSubTypes.Clone();
+                    insertedTile.Meta.Enchantment = EnchantmentType.Undecided;
+                    insertedTile.Meta.IsIdentified = false;
                 }
 
                 if (insertedTile.Meta.CanStack == true && (insertedTile.Meta.Quantity ?? 0) == 0)
                 {
-                    insertedTile.Meta.Quantity = 1;
+                    if (insertedTile.Meta.SubType == ActorSubType.Money)
+                    {
+                        insertedTile.Meta.Quantity = Rand.Next(1, 10); //Gold, Silver, Copper.
+                    }
+                    else if (insertedTile.Meta.SubType == ActorSubType.Projectile)
+                    {
+                        insertedTile.Meta.Quantity = Rand.Next(1, 10); //Arrows, bolts, etc
+                    }
+                    else
+                    {
+                        insertedTile.Meta.Quantity = 1; //Potions, scrolls, etc.
+                    }
+                }
+
+                if (insertedTile.Meta.IsConsumable == true && insertedTile.Meta.SubType == ActorSubType.Wand)
+                {
+                    insertedTile.Meta.Charges = Rand.Next(1, 10);
                 }
 
                 lastPlacedItemSize = insertedTile.Size;
@@ -1738,7 +1757,6 @@ namespace ScenarioEdit
                         }
                         else return;
                     }
-
                     else if (selectedRow.Text == "Enchantment" && selectedItems.Count == 1)
                     {
                         var items = new List<ComboItem<EnchantmentType>>();
@@ -1766,9 +1784,6 @@ namespace ScenarioEdit
                         }
                         else return;
                     }
-                    //listViewProperties.Items.Add("Is Identified").SubItems.Add(selectedTile.Meta.IsIdentified.ToString());
-                    //listViewProperties.Items.Add("Enchantment").SubItems.Add(selectedTile.Meta.Enchantment.ToString());
-                    //listViewProperties.Items.Add("Effects").SubItems.Add(Utility.GetEffectsText(selectedTile.Meta.Effects));
                     else
                     {
                         if (selectedRow.Text == "Dialog")
@@ -1796,7 +1811,7 @@ namespace ScenarioEdit
                         {
                             if (bool.TryParse(selectedRow.SubItems[1].Text.ToString(), out bool inputValue) == false)
                             {
-                                return;
+                                inputValue = false;
                             }
 
                             using (var dialog = new FormEditBoolean(selectedRow.Text, inputValue))
@@ -2085,7 +2100,8 @@ namespace ScenarioEdit
                     listViewProperties.Items.Add("Only Dialog Once").SubItems.Add(selectedTile.Meta.OnlyDialogOnce.ToString());
                 }
 
-                if (selectedTile.Meta.ActorClass == ActorClassName.ActorItem)
+                if (selectedTile.Meta.ActorClass == ActorClassName.ActorItem
+                        || (selectedTile.Meta.ActorClass == ActorClassName.ActorSpawner && selectedTile.Meta.SpawnType == ActorClassName.ActorItem))
                 {
                     listViewProperties.Items.Add("Is Identified").SubItems.Add(selectedTile.Meta.IsIdentified.ToString());
                     listViewProperties.Items.Add("Enchantment").SubItems.Add(selectedTile.Meta.Enchantment.ToString());

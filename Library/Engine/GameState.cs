@@ -26,6 +26,10 @@ namespace Library.Engine
         public List<RecentlyEngagedHostile> RecentlyEngagedHostiles = new List<RecentlyEngagedHostile>();
         public ActorStates ActorStates { get; set; } = new ActorStates();
         public PlayerState Character { get; set; }
+
+        /// <summary>
+        /// Items in the world and who/what they belong to. This is items in chests, in bags, in your inventory and belonging to creatures.
+        /// </summary>
         public List<CustodyItem> Items { get; private set; } = new List<CustodyItem>();
 
         /// <summary>

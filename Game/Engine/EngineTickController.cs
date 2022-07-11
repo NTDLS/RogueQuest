@@ -1909,6 +1909,7 @@ namespace Game.Engine
             {
                 CustodyItem item = continerItem;
 
+                //I don't think this is needed now that ActorSpawner is handled on new game creation.
                 if (item.Tile.Meta.ActorClass == ActorClassName.ActorSpawner)
                 {
                     var spawnedItem = Core.GetWeightedLotteryTile(item.Tile.Meta);

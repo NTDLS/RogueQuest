@@ -362,7 +362,6 @@ namespace Library.Engine
             }
         }
 
-
         /// <summary>
         /// Inserts a spawn tile. (e.g. a random tile of the type specified by the spawn tile).
         /// </summary>
@@ -386,6 +385,16 @@ namespace Library.Engine
                 var tile = randos[rand];
 
                 tile.Meta = TileMetadata.GetFreshMetadata(tile.TilePath);
+
+                if (spawnerMeta.SpawnType == Types.ActorClassName.ActorItem && tile.Meta.CanBeEnchanted)
+                {
+                    tile.Meta.Enchantment = spawnerMeta.Enchantment;
+
+                    if (spawnerMeta.IsIdentified == true)
+                    {
+                        tile.Meta.Identify(this);
+                    }                    
+                }
 
                 if (tile.Meta.SubType == Types.ActorSubType.Money)
                 {
@@ -424,7 +433,7 @@ namespace Library.Engine
                 var tileType = GameAssembly.GetType($"Game.Actors.{randomTile.Meta.ActorClass}");
                 var actor = (ActorBase)Activator.CreateInstance(tileType, param);
 
-                actor.SetImage(Constants.GetCommonAssetPath($"{randomTile.TilePath}.png"));
+                actor.SetImage(Constants.GetCommonAssetPath($"{randomTile.ImagePath}"));
                 actor.X = spawner.X;
                 actor.Y = spawner.Y;
                 actor.TilePath = randomTile.TilePath;

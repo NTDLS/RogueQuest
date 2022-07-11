@@ -154,6 +154,14 @@ namespace Game.Engine
 
             var equipSlot = this.State.Character.GetEquipSlot(EquipSlot.Purse);
             equipSlot.Tile = purseTile;
+
+            foreach (var item in this.State.Items)
+            {
+                if (item.Tile.Meta.ActorClass == ActorClassName.ActorSpawner)
+                {
+                    item.Tile = GetWeightedLotteryTile(item.Tile.Meta);
+                }
+            }
         }
 
         /// <summary>

@@ -61,13 +61,10 @@ namespace Game.Classes
         {
             string text = tile.Meta.DisplayName;
 
-            if (((tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (tile.Meta.IsIdentified ?? false) == false) == false)
+
+            if ((tile.Meta.IsIdentified ?? false) == true)
             {
                 text += $" ({tile.Meta.PrevalenceText})";
-            }
-            else
-            {
-                text += $" (UNIDENTIFIED)";
             }
 
             text += "\r\n" + $"Type: {tile.Meta.SubType}";
@@ -83,7 +80,7 @@ namespace Game.Classes
             if (tile.Meta.CanStack == true && tile.Meta.Quantity > 0)
                 text += "\r\n" + $"Quantity: {tile.Meta.Quantity}";
 
-            if ((tile.Meta.Enchantment ?? EnchantmentType.Normal) == EnchantmentType.Normal || tile.Meta.IsIdentified == true)
+            if (tile.Meta.IsIdentified == true)
             {
                 if (tile.Meta.CanStack == false && tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {tile.Meta.Charges}";
@@ -206,7 +203,7 @@ namespace Game.Classes
             }
 
             //If the item is unidentified, then we will waaaaaaay undercut the offer price.
-            if ((tile.Meta.Enchantment ?? EnchantmentType.Normal) != EnchantmentType.Normal && (tile.Meta.IsIdentified ?? false) == false)
+            if ((tile.Meta.IsIdentified ?? false) == false)
             {
                 value /= 3;
             }

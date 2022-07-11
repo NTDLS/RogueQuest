@@ -43,7 +43,8 @@ namespace Library.Engine
             {
                 if ((Meta.Enchantment ?? EnchantmentType.Normal) == EnchantmentType.Normal
                     || (Meta.Enchantment ?? EnchantmentType.Normal) == EnchantmentType.Undecided
-                    || Meta.IsIdentified == false)
+                    || Meta.IsIdentified == false
+                    || Meta.ActorClass == Types.ActorClassName.ActorSpawner)
                 {
                     return Constants.GetCommonAssetPath($"{TilePath}.png");
                 }
