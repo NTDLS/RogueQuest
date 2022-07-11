@@ -189,6 +189,7 @@ namespace Library.Engine
 
             foreach (var obj in this.State.Items)
             {
+                //Keep track of items that are in containers that do not exist so that we can remove them later.
                 if (obj.ContainerId != null)
                 {
                     bool found = false;
@@ -211,6 +212,7 @@ namespace Library.Engine
                     }
                 }
 
+                //Keep track of items for which no tiles exist so that we can remove them later.
                 if (File.Exists(Constants.GetCommonAssetPath($"{obj.Tile.TilePath}.png")) == false)
                 {
                     orphanedItems.Add(obj);
@@ -219,7 +221,9 @@ namespace Library.Engine
                 {
                     Guid? uid = obj.Tile.Meta.UID;
 
-                    obj.Tile.Meta = TileMetadata.GetFreshMetadata(obj.Tile.TilePath);
+                    var freshMeta = TileMetadata.GetFreshMetadata(obj.Tile.TilePath);
+
+                    obj.Tile.Meta.OverrideWith(freshMeta);
 
                     if (uid != null)
                     {

@@ -29,7 +29,7 @@ namespace Game
         private string _currentMapFilename = string.Empty;
         private int _newFilenameIncrement = 1;
         /// <summary>
-        /// What the background offset was then the user started dragging the map.
+        /// What the background offset was when the user started dragging the map.
         /// </summary>
         private Point<double> dragStartOffset = new Point<double>();
         /// <summary>

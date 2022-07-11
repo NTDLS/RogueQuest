@@ -323,7 +323,14 @@ namespace ScenarioEdit
                     }
                     else
                     {
-                        tile.Meta.Quantity = Int32.Parse(obj.SubItems[DATA_COLUMN].Text);
+                        if (Int32.TryParse(obj.SubItems[DATA_COLUMN].Text, out int value))
+                        {
+                            tile.Meta.Quantity = value;
+                        }
+                        else
+                        {
+                            tile.Meta.Quantity = 1;
+                        }
                     }
                 }
 
