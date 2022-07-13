@@ -70,6 +70,40 @@ namespace Library.Engine
             public int MonitaryValue { get; set; }
         }
 
+        public EnchantmentType EventualEnchantmentType
+        {
+            get
+            {
+                if (IsIdentified == true)
+                {
+                    return Enchantment ?? EnchantmentType.Undecided;
+                }
+                else if ((Enchantment ?? EnchantmentType.Undecided) != EnchantmentType.Undecided)
+                {
+                    return Enchantment ?? EnchantmentType.Undecided;
+                }
+
+                Random rand = new Random(UIDHash);
+
+                if (rand.NextDouble() * 100 >= 70 || Enchantment == EnchantmentType.Enchanted || Enchantment == EnchantmentType.Cursed) //30% chance or being enchanted or cursed.
+                {
+                    //We have to get this early so that the random number will not be affected by the loop below it.
+                    bool willBeCursed = rand.NextDouble() * 100 < 50;
+
+                    if (willBeCursed)
+                    {
+                        return EnchantmentType.Cursed;
+                    }
+                    else if (Enchantment == EnchantmentType.Enchanted)
+                    {
+                        return EnchantmentType.Enchanted;
+                    }
+                }
+
+                return EnchantmentType.Normal;
+            }
+        }
+
         public void Identify(EngineCoreBase core)
         {
             if (Enchantment == EnchantmentType.Normal)

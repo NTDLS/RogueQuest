@@ -33,6 +33,13 @@ namespace Library.Engine
         public List<CustodyItem> Items { get; private set; } = new List<CustodyItem>();
 
         /// <summary>
+        /// A list of items that the player has identified via spell or store so they will be auto-identified when picked up later.
+        /// For items with special traits such as armor, rings, weapons, etc. this will only auto-identify when the item enchantment is "normal".
+        /// We use string instead of TileIdentifier because we want to key on Name and not TilePath so that we can auto-identify like items like "Ring of Adornment".
+        /// </summary>
+        public List<string> IdentifiedItems { get; private set; } = new List<string>();
+
+        /// <summary>
         /// The level/map-number that the player is currently on.
         /// </summary>
         public int CurrentLevel { get; set; }

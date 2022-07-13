@@ -1,0 +1,144 @@
+from PSPApp import *
+
+def ScriptProperties():
+    return {
+        'Author': u'',
+        'Copyright': u'',
+        'Description': u'',
+        'Host': u'PaintShop Pro',
+        'Host Version': u'22.00'
+        }
+
+def Do(Environment):
+    # EnableOptimizedScriptUndo
+    App.Do( Environment, 'EnableOptimizedScriptUndo', {
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # ResizeCanvas
+    App.Do( Environment, 'ResizeCanvas', {
+            'AspectRatio': 1.10526, 
+            'FillColor': (11,11,11), 
+            'HoriPlace': App.Constants.HorizontalType.Center, 
+            'MaintainAspect': False, 
+            'NewDimUnits': App.Constants.UnitsOfMeasure.Pixels, 
+            'NewHeight': 100, 
+            'NewWidth': 100, 
+            'PlaceBottom': 41, 
+            'PlaceLeft': 39, 
+            'PlaceRight': 40, 
+            'PlaceTop': 40, 
+            'VertPlace': App.Constants.VerticalType.Center, 
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # Magic Wand
+    App.Do( Environment, 'MagicWand', {
+            'General': {
+                'Mode': App.Constants.SelectionOperation.Replace, 
+                'Antialias': False, 
+                'Feather': 0, 
+                'SampleMerged': False
+                }, 
+            'MatchMode': App.Constants.MatchMode.RGBValue, 
+            'Contiguous': False, 
+            'Point': (4.58333,10.0833), 
+            'Tolerance': 0, 
+            'AntialiasType': App.Constants.AntialiasType.Outside, 
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # SelectInvert
+    App.Do( Environment, 'SelectInvert', {
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # Cut
+    App.Do( Environment, 'Cut', {
+            'PerformCopy': True, 
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # Expand Selection
+    App.Do( Environment, 'SelectExpand', {
+            'ExpandAmount': 2, 
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # Feather Selection
+    App.Do( Environment, 'SelectFeather', {
+            'FeatherAmount': 3, 
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # Fill
+    App.Do( Environment, 'Fill', {
+            'BlendMode': App.Constants.BlendMode.Normal, 
+            'MatchMode': App.Constants.MatchMode.RGBValue, 
+            'Material': {
+                'Color': (6,214,175), 
+                'Pattern': None, 
+                'Gradient': None, 
+                'Texture': None, 
+                'Art': None
+                }, 
+            'UseForeground': True, 
+            'Opacity': 100, 
+            'Point': (49.25,49.4167), 
+            'SampleMerged': False, 
+            'Tolerance': 20, 
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # PasteAsNewLayer
+    App.Do( Environment, 'PasteAsNewLayer', {
+            'CreateFromDropData': False, 
+            'InsertPos': -1, 
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+
+    # CropToSelection
+    App.Do( Environment, 'CropToSelection', {
+            'GeneralSettings': {
+                'ExecutionMode': App.Constants.ExecutionMode.Default, 
+                'AutoActionMode': App.Constants.AutoActionMode.Match, 
+                'Version': ((22,0,0),1)
+                }
+            })
+

@@ -111,6 +111,12 @@ namespace Game.Engine
             //Add all the items in the pack on the ground to the pack in the players inventory pack (nested). :(
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == groundContainer.Meta.UID))
             {
+                if ((item.Tile.Meta.IsIdentified ?? false) == false && Core.State.IdentifiedItems.Contains(item.Tile.Meta.Name)
+                    && item.Tile.Meta.EventualEnchantmentType == EnchantmentType.Normal)
+                {
+                    item.Tile.Meta.Identify(Core);
+                }
+
                 Core.LogLine($"Picked up" + ((item.Tile.Meta.CanStack == true) ? $" {item.Tile.Meta.Quantity:N0}" : "") + $" {item.Tile.Meta.DisplayName}");
 
                 if (item.Tile.Meta.CanStack == true)
@@ -158,6 +164,12 @@ namespace Game.Engine
                 {
                     Core.LogLine($"{item.Tile.Meta.DisplayName} is too heavy for your {pack.Tile.Meta.DisplayName}. Drop something or move to free hand?");
                     break;
+                }
+
+                if ((item.Tile.Meta.IsIdentified ?? false) == false && Core.State.IdentifiedItems.Contains(item.Tile.Meta.Name)
+                    && item.Tile.Meta.EventualEnchantmentType == EnchantmentType.Normal)
+                {
+                    item.Tile.Meta.Identify(Core);
                 }
 
                 Core.LogLine($"Picked up" + ((item.Tile.Meta.CanStack == true) ? $" {item.Tile.Meta.Quantity:N0}" : "") + $" {item.Tile.Meta.DisplayName}");
@@ -236,6 +248,9 @@ namespace Game.Engine
                     {
                         var selectedItem = form.SelectedItem;
                         selectedItem.Meta.Identify(Core);
+
+                        Core.State.IdentifiedItems.Add(selectedItem.Meta.Name);
+
                         Constants.Alert($"You have identifed this as {selectedItem.Meta.DisplayName}!", "Identified");
                         Core.LogLine($"You have identifed {selectedItem.Meta.DisplayName}!");
                     }
@@ -748,6 +763,12 @@ namespace Game.Engine
                 {
                     //TODO: We need to make sure that the player can even pick up this pack. It might be too heavy?
 
+                    if ((underfootPack.Meta.IsIdentified ?? false) == false && Core.State.IdentifiedItems.Contains(underfootPack.Meta.Name)
+                        && underfootPack.Meta.EventualEnchantmentType == EnchantmentType.Normal)
+                    {
+                        underfootPack.Meta.Identify(Core);
+                    }
+
                     Core.LogLine($"Picked up {underfootPack.Meta.DisplayName} and placed it on your back.");
                     pack.Tile = underfootPack.CloneIdentifier();
 
@@ -812,6 +833,12 @@ namespace Game.Engine
                             Core.LogLine($"{pack.Tile.Meta.DisplayName} can only carry {maxItems} items. Drop something or move to free hand?");
                             break;
                         }
+                    }
+
+                    if ((item.Meta.IsIdentified ?? false) == false && Core.State.IdentifiedItems.Contains(item.Meta.Name)
+                        && item.Meta.EventualEnchantmentType == EnchantmentType.Normal)
+                    {
+                        item.Meta.Identify(Core);
                     }
 
                     Core.LogLine($"Picked up" + ((item.Meta.CanStack == true) ? $" {item.Meta.Quantity:N0}" : "") + $" {item.Meta.DisplayName}");

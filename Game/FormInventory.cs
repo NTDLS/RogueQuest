@@ -227,7 +227,7 @@ namespace Game
             if (wasStacked == false)
             {
                 var droppedItem = Core.Actors.AddDynamic(inventoryItem.Tile, Core.Player.X, Core.Player.Y);
-                StoreAndInventory.AddItemToListView(listViewGround, draggedItemTag.Tile);
+                StoreAndInventory.AddItemToListView(Core, listViewGround, draggedItemTag.Tile);
             }
 
             Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
@@ -509,7 +509,7 @@ namespace Game
 
             if (wasStacked == false)
             {
-                StoreAndInventory.AddItemToListView(listViewSelectedContainer, draggedItemTag.Tile);
+                StoreAndInventory.AddItemToListView(Core, listViewSelectedContainer, draggedItemTag.Tile);
                 inventoryItem.ContainerId = (Guid)pack.Meta.UID;
             }
 
@@ -791,7 +791,7 @@ namespace Game
 
             if (wasStacked == false)
             {
-                StoreAndInventory.AddItemToListView(listViewPlayerPack, draggedItemTag.Tile);
+                StoreAndInventory.AddItemToListView(Core, listViewPlayerPack, draggedItemTag.Tile);
                 inventoryItem.ContainerId = (Guid)pack.Meta.UID;
             }
 
@@ -1221,7 +1221,7 @@ namespace Game
 
             foreach (var item in itemUnderfoot)
             {
-                StoreAndInventory.AddItemToListView(listView, item);
+                StoreAndInventory.AddItemToListView(Core, listView, item);
             }
 
             listView.Sorting = SortOrder.Ascending;
@@ -1241,7 +1241,7 @@ namespace Game
 
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
-                StoreAndInventory.AddItemToListView(listView, item.Tile);
+                StoreAndInventory.AddItemToListView(Core, listView, item.Tile);
             }
 
             listView.Sorting = SortOrder.Ascending;

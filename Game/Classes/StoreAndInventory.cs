@@ -117,13 +117,18 @@ namespace Game.Classes
             return text;
         }
 
-        public static void AddItemToListView(ListView listView, ActorItem item)
+        public static void AddItemToListView(EngineCore core, ListView listView, ActorItem item)
         {
-            AddItemToListView(listView, new TileIdentifier(item.TilePath, item.Meta));
+            AddItemToListView(core, listView, new TileIdentifier(item.TilePath, item.Meta));
         }
 
-        public static void AddItemToListView(ListView listView, TileIdentifier tile)
+        public static void AddItemToListView(EngineCore core, ListView listView, TileIdentifier tile)
         {
+            if ((tile.Meta.IsIdentified ?? false) == false && core.State.IdentifiedItems.Contains(tile.Meta.Name) && tile.Meta.EventualEnchantmentType == EnchantmentType.Normal)
+            {
+                tile.Meta.Identify(core);
+            }
+
             string text = tile.Meta.DisplayName;
 
             if (tile.Meta.CanStack == true && tile.Meta.Quantity > 0)
@@ -227,8 +232,8 @@ namespace Game.Classes
             }
             else if (tile.Meta.Enchantment == EnchantmentType.Enchanted && tile.Meta.IsIdentified == true)
             {
-                value *= 3;
-                value += (tile.Meta.EnchantmentBonus ?? 0) * 500;
+                value *= 1.5;
+                value += (tile.Meta.EnchantmentBonus ?? 0) * 100;
             }
 
             if (value >= 1)

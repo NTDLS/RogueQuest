@@ -216,7 +216,7 @@ namespace Game
 
             //We do not stack items when sold to the store.
 
-            StoreAndInventory.AddItemToListView(listViewStore, draggedItemTag.Tile);
+            StoreAndInventory.AddItemToListView(Core, listViewStore, draggedItemTag.Tile);
             _persistentStore.Items.Add(draggedItemTag.Tile);
 
             Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == draggedItemTag.Tile.Meta.UID);
@@ -519,7 +519,7 @@ namespace Game
                     //Move part of the stack.
                     var clonedItem = draggedItemTag.Tile.DeriveCopy(); //Create a copy of the item with a new ID
                     clonedItem.Meta.Quantity = quantityToMove;
-                    StoreAndInventory.AddItemToListView((ListView)sender, clonedItem);
+                    StoreAndInventory.AddItemToListView(Core, (ListView)sender, clonedItem);
 
                     var newInventoryItem = Core.State.GetOrCreateInventoryItem(clonedItem);
                     newInventoryItem.ContainerId = (Guid)pack.Meta.UID;
@@ -530,7 +530,7 @@ namespace Game
                 {
                     //Move the whole stack.
                     var itemInPlayerInventory = Core.State.GetInventoryItem(draggedItemTag.Tile);
-                    StoreAndInventory.AddItemToListView((ListView)sender, draggedItemTag.Tile);
+                    StoreAndInventory.AddItemToListView(Core, (ListView)sender, draggedItemTag.Tile);
                     itemInPlayerInventory.ContainerId = (Guid)pack.Meta.UID;
                 }
             }
@@ -1083,7 +1083,7 @@ namespace Game
 
             foreach (var item in persistentStore.Items)
             {
-                StoreAndInventory.AddItemToListView(listView, item);
+                StoreAndInventory.AddItemToListView(Core, listView, item);
             }
 
             listView.Sorting = SortOrder.Ascending;
@@ -1100,7 +1100,7 @@ namespace Game
 
             foreach (var item in Core.State.Items.Where(o => o.ContainerId == containerTile.Meta.UID))
             {
-                StoreAndInventory.AddItemToListView(listView, item.Tile);
+                StoreAndInventory.AddItemToListView(Core, listView, item.Tile);
             }
 
             listView.Sorting = SortOrder.Ascending;
