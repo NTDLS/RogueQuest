@@ -174,10 +174,7 @@ namespace Game
 
         private void Drawingsurface_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_core.State.ActiveThreadCount > 0)
-            {
-                return;
-            }
+            if (_core.Tick.IsEngineBusy) return;
 
             if (CurrentMouseMode == MouseMode.RangedTargetSelction)
             {
@@ -701,7 +698,14 @@ namespace Game
                     return;
                 }
 
-                if ((inventoryItem.Tile.Meta.SubType == ActorSubType.Wand && inventoryItem.Tile.Meta.TargetType != TargetType.Self)
+                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType == TargetType.UnidentifiedItem)
+                {
+                    if (inventoryItem.Tile.Meta.IsConsumable == true)
+                    {
+                        UseSelfPotionOrScroll(inventoryItem.Tile);
+                    }
+                }
+                else if ((inventoryItem.Tile.Meta.SubType == ActorSubType.Wand && inventoryItem.Tile.Meta.TargetType != TargetType.Self)
                     || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType != TargetType.Self))
                 {
                     splitContainerHoriz.Cursor = Cursors.Cross;
@@ -713,10 +717,7 @@ namespace Game
                 {
                     if (inventoryItem.Tile.Meta.IsConsumable == true)
                     {
-                        if (UseSelfPotionOrScroll(inventoryItem.Tile))
-                        {
-
-                        }
+                        UseSelfPotionOrScroll(inventoryItem.Tile);
                     }
                 }
             }
@@ -1076,10 +1077,7 @@ namespace Game
 
         private void drawingsurface_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_core.State.ActiveThreadCount > 0)
-            {
-                return;
-            }
+            if (_core.Tick.IsEngineBusy) return;
 
             if (_core.Player == null || _core.Player.Visible == false)
             {

@@ -18,7 +18,18 @@ namespace Game.Engine
 {
     public class EngineTickController
     {
-        public bool IsEngineBusy { get; set; } = false;
+        private bool _isEngineBusy = false;
+        public bool IsEngineBusy
+        {
+            set
+            {
+                _isEngineBusy = value;
+            }
+            get
+            {
+                return Core.State.ActiveThreadCount > 0 || _isEngineBusy;
+            }
+        }
 
         private int _avatarAnimationFrame = 1;
         public delegate void GameThreadCallback(object param);
