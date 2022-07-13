@@ -1,0 +1,11 @@
+{
+  "Name":"Scroll of Identify",
+  "SpellName":"Identify",
+  "TargetType":"UnidentifiedItem",
+  "Effects":[ {"EffectType":"Identify"} ],
+  "AnimationImagePath":"Animations/Spells/Flash1_64_64",
+  "Value": "60",
+  "CastTime":"5",
+  "Prevalence":"40",
+  "Level":"1"
+}

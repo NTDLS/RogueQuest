@@ -386,7 +386,7 @@ namespace Library.Engine
 
                 tile.Meta = TileMetadata.GetFreshMetadata(tile.TilePath);
 
-                if (spawnerMeta.SpawnType == Types.ActorClassName.ActorItem && tile.Meta.CanBeEnchanted)
+                if (spawnerMeta.SpawnType == Types.ActorClassName.ActorItem)
                 {
                     tile.Meta.Enchantment = spawnerMeta.Enchantment;
 

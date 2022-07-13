@@ -37,9 +37,10 @@ namespace Game
             // 
             // buttonOk
             // 
-            this.buttonOk.Location = new System.Drawing.Point(244, 227);
+            this.buttonOk.Location = new System.Drawing.Point(214, 170);
+            this.buttonOk.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(94, 29);
+            this.buttonOk.Size = new System.Drawing.Size(82, 22);
             this.buttonOk.TabIndex = 32;
             this.buttonOk.Text = "Ok";
             this.buttonOk.UseVisualStyleBackColor = true;
@@ -52,11 +53,11 @@ namespace Game
             this.listViewEquip.FullRowSelect = true;
             this.listViewEquip.GridLines = true;
             this.listViewEquip.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewEquip.HideSelection = false;
-            this.listViewEquip.Location = new System.Drawing.Point(12, 12);
+            this.listViewEquip.Location = new System.Drawing.Point(10, 9);
+            this.listViewEquip.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listViewEquip.MultiSelect = false;
             this.listViewEquip.Name = "listViewEquip";
-            this.listViewEquip.Size = new System.Drawing.Size(426, 209);
+            this.listViewEquip.Size = new System.Drawing.Size(373, 158);
             this.listViewEquip.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewEquip.TabIndex = 33;
             this.listViewEquip.UseCompatibleStateImageBehavior = false;
@@ -69,9 +70,10 @@ namespace Game
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(344, 227);
+            this.buttonCancel.Location = new System.Drawing.Point(301, 170);
+            this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(94, 29);
+            this.buttonCancel.Size = new System.Drawing.Size(82, 22);
             this.buttonCancel.TabIndex = 34;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -79,19 +81,21 @@ namespace Game
             // 
             // FormPickCursedItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 262);
+            this.ClientSize = new System.Drawing.Size(394, 196);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.listViewEquip);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormPickCursedItem";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Pick a Cursed Item";
+            this.Load += new System.EventHandler(this.FormPickCursedItem_Load);
             this.ResumeLayout(false);
 
         }

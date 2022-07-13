@@ -1,0 +1,7 @@
+{
+  "Name":"Ring of Adornment",
+  "Value": "8",
+  "Prevalence":"100",
+  "Level":"1",
+  "Enchantment":"Normal"
+}

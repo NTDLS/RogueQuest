@@ -157,7 +157,7 @@ namespace Game
             {
                 if (item.Tile.Meta.IsConsumable == true)
                 {
-                    //We cant use items on the ground because they dont exist in the world inventory collection.
+                    //We cant use items on the ground because they dont exist in Core.State.Items
                     //UseItem(item.Tile);
                 }
             }
@@ -194,8 +194,9 @@ namespace Game
             if (inventoryItem.Tile.Meta.CanStack == true)
             {
                 var itemUnderfoot = Core.Actors.Intersections(Core.Player)
-                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem && o.TilePath == draggedItemTag.Tile.TilePath)
-                    .Cast<ActorItem>().FirstOrDefault();
+                    .Where(o => o.Meta.ActorClass == ActorClassName.ActorItem
+                    && StoreAndInventory.IsStackMatch(((ActorItem)o), draggedItemTag.Tile)
+                    ).Cast<ActorItem>().FirstOrDefault();
 
                 if (itemUnderfoot != null)
                 {
@@ -215,6 +216,7 @@ namespace Game
                             text += $" ({itemUnderfoot.Meta.Charges})";
                         }
 
+                        (listViewItem.Tag as EquipTag).Tile.Meta.Quantity = itemUnderfoot.Meta.Quantity;
                         listViewItem.Text = text;
                     }
 
@@ -301,7 +303,7 @@ namespace Game
                     }
 
                     listViewSelectedContainer.Items.Remove(selectedItem);
-                    Core.LogLine($"You learned a new spell,  {item.Tile.Meta.SpellName}!");
+                    Core.LogLine($"You learned a new spell, {item.Tile.Meta.SpellName}!");
                 }
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Pack
@@ -475,7 +477,7 @@ namespace Game
             {
                 //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
                 var existingInventoryItem = Core.State.Items
-                    .Where(o => o.Tile.TilePath == draggedItemTag.Tile.TilePath
+                    .Where(o => StoreAndInventory.IsStackMatch(o.Tile, draggedItemTag.Tile)
                     && o.ContainerId == pack.Meta.UID).FirstOrDefault();
 
                 if (existingInventoryItem != null)
@@ -497,6 +499,7 @@ namespace Game
                             text += $" ({existingInventoryItem.Tile.Meta.Charges})";
                         }
 
+                        (listViewItem.Tag as EquipTag).Tile.Meta.Quantity = existingInventoryItem.Tile.Meta.Quantity;
                         listViewItem.Text = text;
                     }
 
@@ -582,7 +585,7 @@ namespace Game
                     }
 
                     listViewPlayerPack.Items.Remove(selectedItem);
-                    Core.LogLine($"You learned a new spell,  {item.Tile.Meta.SpellName}!");
+                    Core.LogLine($"You learned a new spell, {item.Tile.Meta.SpellName}!");
                 }
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Pack
@@ -675,7 +678,7 @@ namespace Game
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             var draggedItemTag = draggedItem.Tag as EquipTag;
 
-            if (draggedItemTag.Tile == null)
+            if (draggedItemTag?.Tile == null)
             {
                 return;
             }
@@ -756,7 +759,7 @@ namespace Game
             {
                 //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
                 var existingInventoryItem = Core.State.Items
-                    .Where(o => o.Tile.TilePath == draggedItemTag.Tile.TilePath
+                    .Where(o => StoreAndInventory.IsStackMatch(o.Tile, draggedItemTag.Tile)
                     && o.ContainerId == pack.Meta.UID).FirstOrDefault();
 
                 if (existingInventoryItem != null)
@@ -778,6 +781,7 @@ namespace Game
                             text += $" ({existingInventoryItem.Tile.Meta.Charges})";
                         }
 
+                        (listViewItem.Tag as EquipTag).Tile.Meta.Quantity = existingInventoryItem.Tile.Meta.Quantity;
                         listViewItem.Text = text;
                     }
 

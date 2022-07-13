@@ -302,7 +302,7 @@ namespace Game
                 {
                     slotToVacate.Tile = null;
                 }
-                Core.LogLine($"You learned a new spell,  {item.Tile.Meta.SpellName}!");
+                Core.LogLine($"You learned a new spell, {item.Tile.Meta.SpellName}!");
             }
             else if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Chest
@@ -477,7 +477,7 @@ namespace Game
             {
                 //If we are dragging to a container and the container already contains some of the stackable stuff, then stack!
                 var existingItemInDestinationContainer = Core.State.Items
-                    .Where(o => o.Tile.TilePath == draggedItemTag.Tile.TilePath
+                    .Where(o => StoreAndInventory.IsStackMatch(o, draggedItemTag.Tile)
                     && o.ContainerId == pack.Meta.UID).FirstOrDefault();
 
                 if (existingItemInDestinationContainer != null)
@@ -503,6 +503,7 @@ namespace Game
                             text += $" ({existingItemInDestinationContainer.Tile.Meta.Charges})";
                         }
 
+                        (listViewItem.Tag as EquipTag).Tile.Meta.Quantity = existingItemInDestinationContainer.Tile.Meta.Quantity;
                         listViewItem.Text = text;
                     }
 

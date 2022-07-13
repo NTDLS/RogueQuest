@@ -61,5 +61,10 @@ namespace Game
             this.Close();
             this.DialogResult = DialogResult.Cancel;
         }
+
+        private void FormPickCursedItem_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

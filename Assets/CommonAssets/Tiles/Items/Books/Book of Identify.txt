@@ -1,0 +1,8 @@
+{
+  "Name":"Book of Identify",
+  "SpellName":"Identify",
+  "Value": "1600",
+  "Prevalence":"10",
+  "Level":"3",
+  "Mana":"2"
+}

@@ -158,7 +158,7 @@ namespace Game
                     if (spellForm.ShowDialog() == DialogResult.OK)
                     {
                         _core.State.Character.AddKnownSpell(spellForm.SelectedSpell);
-                        _core.LogLine($"You learned a new spell,  {spellForm.SelectedSpell.Meta.SpellName}!");
+                        _core.LogLine($"You learned a new spell, {spellForm.SelectedSpell.Meta.SpellName}!");
                     }
                 }
             }
@@ -662,9 +662,9 @@ namespace Game
                         UID = (Guid)spell.Meta.UID
                     };
 
-                    var item = toolStripDropDownButtonSpells.DropDownItems.Add(spell.Meta.DisplayName);
+                    var item = toolStripDropDownButtonSpells.DropDownItems.Add(spell.Meta.SpellName);
                     item.Tag = info;
-                    item.ToolTipText = $"{spell.Meta.DisplayName} ({spell.Meta.Mana} mana)";
+                    item.ToolTipText = $"{spell.Meta.SpellName} ({spell.Meta.Mana} mana)";
                     item.Image = GetImage(spell.TilePath);
                     item.Click += KnownSpellItem_Click;
 
@@ -874,7 +874,29 @@ namespace Game
                     return;
                 }
 
-                if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon
+                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll   && inventoryItem.Tile.Meta.TargetType == TargetType.UnidentifiedItem)
+                {
+                    if (inventoryItem.Tile.Meta.IsConsumable == true)
+                    {
+                        if (UseSelfPotionOrScroll(inventoryItem.Tile))
+                        {
+                            if ((inventoryItem.Tile.Meta.Quantity ?? 0) == 0)
+                            {
+                                toolStripQuick.Items.Remove(tag.Button);
+                            }
+                            else
+                            {
+                                string text = inventoryItem.Tile.Meta.DisplayName;
+                                if (inventoryItem.Tile.Meta.CanStack == true && inventoryItem.Tile.Meta.Quantity > 0)
+                                {
+                                    text += $" ({inventoryItem.Tile.Meta.Quantity})";
+                                }
+                                tag.Button.ToolTipText = text;
+                            }
+                        }
+                    }
+                }
+                else if (inventoryItem.Tile.Meta.SubType == ActorSubType.RangedWeapon
                     || (inventoryItem.Tile.Meta.SubType == ActorSubType.Wand && inventoryItem.Tile.Meta.TargetType != TargetType.Self)
                     || (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType != TargetType.Self))
                 {
@@ -890,6 +912,7 @@ namespace Game
                     if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
                         _core.State.Character.AddKnownSpell(inventoryItem.Tile);
+                        _core.LogLine($"You learned a new spell, {inventoryItem.Tile.Meta.SpellName}!");
                         _core.State.Items.RemoveAll(o => o.Tile.Meta.UID == inventoryItem.Tile.Meta.UID);
                         toolStripQuick.Items.Remove(tag.Button);
 

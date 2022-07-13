@@ -96,7 +96,8 @@
         Any, //Literally anything.
         Self, //Healing, etc.
         HostileBeing, //Attacking, etc.
-        Terrain //Summon being, etc.
+        Terrain, //Summon being, etc.
+        UnidentifiedItem
     }
 
     public enum EnchantmentType
@@ -142,6 +143,7 @@
         HoldMonster,
         MagicArrow,
         Poison,
+        Identify,
         RemoveCurse,
         SummonMonster,
 

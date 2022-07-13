@@ -217,6 +217,23 @@ namespace Game.Engine
                 }
                 #endregion
             }
+            else if (item.Tile.Meta.TargetType == TargetType.UnidentifiedItem)
+            {
+                using (var form = new FormSelectUnidentifiedItem(Core))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        var selectedItem = form.SelectedItem;
+                        selectedItem.Meta.Identify(Core);
+                        Constants.Alert($"You have identifed this as {selectedItem.Meta.DisplayName}!", "Identified");
+                        Core.LogLine($"You have identifed {selectedItem.Meta.DisplayName}!");
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
             else if (item.Tile.Meta.TargetType == TargetType.Any)
             {
                 #region Target: Any

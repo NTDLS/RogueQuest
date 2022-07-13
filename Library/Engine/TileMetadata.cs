@@ -210,28 +210,6 @@ namespace Library.Engine
             }
         }
 
-        public bool CanBeEnchanted
-        {
-            get
-            {
-                return SubType == ActorSubType.MeleeWeapon
-                    || SubType == ActorSubType.RangedWeapon
-                    || SubType == ActorSubType.Projectile
-                    || SubType == ActorSubType.Armor
-                    || SubType == ActorSubType.Helment
-                    || SubType == ActorSubType.Bracers
-                    || SubType == ActorSubType.Gauntlets
-                    || SubType == ActorSubType.Shield
-                    || SubType == ActorSubType.Boots
-                    || SubType == ActorSubType.Belt
-                    || SubType == ActorSubType.Garment
-                    || SubType == ActorSubType.Chest
-                    || SubType == ActorSubType.Pack
-                    || SubType == ActorSubType.Necklace
-                    || SubType == ActorSubType.Ring;
-            }
-        }
-
         /// <summary>
         /// The extra amount that one or more stats were randomly increased to.
         /// </summary>

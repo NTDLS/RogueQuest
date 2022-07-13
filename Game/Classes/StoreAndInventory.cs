@@ -24,6 +24,20 @@ namespace Game.Classes
             }
         }
 
+        public static bool IsStackMatch(ActorItem left, TileIdentifier right)
+        {
+            return left.TilePath == right.TilePath && (left.Meta.IsIdentified ?? false) == (right.Meta.IsIdentified ?? false);
+        }
+
+        public static bool IsStackMatch(TileIdentifier left, TileIdentifier right)
+        {
+            return left.TilePath == right.TilePath && (left.Meta.IsIdentified ?? false) == (right.Meta.IsIdentified ?? false);
+        }
+        public static bool IsStackMatch(CustodyItem left, TileIdentifier right)
+        {
+            return left.Tile.TilePath == right.TilePath && (left.Tile.Meta.IsIdentified ?? false) == (right.Meta.IsIdentified ?? false);
+        }
+
         public static string GetImageKey(string imagePath)
         {
             if (ImageList.Images.Keys.Contains(imagePath))

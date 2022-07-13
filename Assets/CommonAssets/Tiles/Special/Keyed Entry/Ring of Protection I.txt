@@ -1,0 +1,14 @@
+{
+  "Name":"Ring of Protection I",
+  "Value": "10",
+  "Effects":[
+    {"EffectType":"ArmorClass","ValueType":"Fixed","Value":"2"},
+    {"EffectType":"LightningResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"FireResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"EarthResistance","ValueType":"Fixed","Value":"0"},
+    {"EffectType":"ColdResistance","ValueType":"Fixed","Value":"0"}
+  ],
+  "Prevalence":"100",
+  "Level":"1",
+  "Enchantment":"Undecided"
+}
