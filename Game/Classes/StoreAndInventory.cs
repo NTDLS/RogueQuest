@@ -127,6 +127,8 @@ namespace Game.Classes
             if ((tile.Meta.IsIdentified ?? false) == false && core.State.IdentifiedItems.Contains(tile.Meta.Name) && tile.Meta.EventualEnchantmentType == EnchantmentType.Normal)
             {
                 tile.Meta.Identify(core);
+
+                core.LogLine($"You have identifed {tile.Meta.DisplayName} from memory!");
             }
 
             string text = tile.Meta.DisplayName;
@@ -153,44 +155,9 @@ namespace Game.Classes
             listView.Items.Add(item);
         }
 
-        private static double UnitPrice(EngineCoreBase core, TileIdentifier tile)
+        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile, int quantity)
         {
-            if (tile.Meta.Value == null)
-            {
-                return 0;
-            }
-
-            double intelligenceDiscount = (core.State.Character.Intelligence / 100.0);
-            return ((tile.Meta.Value ?? 0.0) - ((tile.Meta.Value ?? 0.0) * intelligenceDiscount));
-        }
-
-        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile, int? quantity)
-        {
-            if (tile.Meta.Value == null)
-            {
-                return 0;
-            }
-
-            double value = UnitPrice(core, tile);
-            double qty = (double)(quantity ?? 0);
-
-            if (tile.Meta.Enchantment == EnchantmentType.Enchanted && tile.Meta.IsIdentified == true)
-            {
-                value += (tile.Meta.EnchantmentBonus ?? 0) * value;
-                value *= 3;
-            }
-
-            if (qty > 0)
-            {
-                value *= qty;
-            }
-
-            if (value >= 1)
-            {
-                return (int)value;
-            }
-
-            return 1;
+            return (int)((double)(OfferPrice(core, tile) * quantity) * 1.25);
         }
 
 
