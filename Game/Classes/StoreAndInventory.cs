@@ -111,8 +111,8 @@ namespace Game.Classes
             if (tile.Meta.SubType == ActorSubType.Money)
                 text += "\r\n" + $"Value: {((int)((tile.Meta.Quantity ?? 0) * tile.Meta.Value)):N0} gold";
 
-            if (includeOfferPrice) text += "\r\n" + $"Offer: {StoreAndInventory.OfferPrice(core, tile):N0}";
-            if (includeAskingPrice) text += "\r\n" + $"Asking Price: {StoreAndInventory.AskingPrice(core, tile):N0}";
+            if (includeOfferPrice) text += "\r\n" + $"Offer: {OfferPrice(core, tile):N0}";
+            if (includeAskingPrice) text += "\r\n" + $"Asking Price: {AskingPrice(core, tile):N0}";
 
             return text;
         }
