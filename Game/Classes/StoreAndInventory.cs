@@ -155,37 +155,42 @@ namespace Game.Classes
             listView.Items.Add(item);
         }
 
-        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile, int quantity)
-        {
-            return (int)((double)(OfferPrice(core, tile) * quantity) * 1.25);
-        }
-
 
         public static int AskingPrice(EngineCoreBase core, TileIdentifier tile)
         {
-            if (tile.Meta.Value == null)
-            {
-                return 0;
-            }
-
             return AskingPrice(core, tile, (tile.Meta.Charges ?? 0) + (tile.Meta.Quantity ?? 0));
+        }
+
+        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile, int quantity)
+        {
+            double basePrice = BasePrice(core, tile, quantity);
+            double intelligenceBonus = (core.State.Character.Intelligence / 100.0);
+            double fractionValue = (basePrice / 10);
+            double finalValue = ((basePrice + (fractionValue / intelligenceBonus)));
+            return (int)finalValue;
         }
 
         public static int OfferPrice(EngineCoreBase core, TileIdentifier tile)
         {
+            double basePrice = BasePrice(core, tile, (tile.Meta.Charges ?? 0) + (tile.Meta.Quantity ?? 0));
+            double intelligenceBonus = (core.State.Character.Intelligence / 100.0);
+            double fractionValue = (basePrice / 10);
+            double finalValue = ((basePrice + (fractionValue * intelligenceBonus)));
+            return (int)finalValue;
+        }
+
+        private static int BasePrice(EngineCoreBase core, TileIdentifier tile, int quantity)
+        {
             if (tile.Meta.Value == null)
             {
                 return 0;
             }
 
-            double intelligenceBonus = (core.State.Character.Intelligence / 100.0);
-            double halfValue = ((tile.Meta.Value ?? 0.0) / 2.0);
-            double value = (halfValue + (halfValue * intelligenceBonus));
-            int qty = (tile.Meta.Charges ?? 0) + (tile.Meta.Quantity ?? 0);
+            double value = (tile.Meta.Value ?? 0.0);
 
-            if (qty > 0)
+            if (quantity > 0)
             {
-                value *= qty;
+                value *= quantity;
             }
 
             //If the item is unidentified, then we will waaaaaaay undercut the offer price.
