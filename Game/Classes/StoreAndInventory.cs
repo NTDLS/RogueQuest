@@ -155,7 +155,6 @@ namespace Game.Classes
             listView.Items.Add(item);
         }
 
-
         public static int AskingPrice(EngineCoreBase core, TileIdentifier tile)
         {
             return AskingPrice(core, tile, (tile.Meta.Charges ?? 0) + (tile.Meta.Quantity ?? 0));

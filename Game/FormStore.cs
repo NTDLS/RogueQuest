@@ -124,6 +124,11 @@ namespace Game
             }
         }
 
+        private bool DoesStoreAcceptItem(TileIdentifier tile)
+        {
+            return GetStoreItemTypes().Contains(tile.Meta.SubType ?? ActorSubType.Unspecified);
+        }
+
         private void ListViewStore_DragDrop(object sender, DragEventArgs e)
         {
             if (Core.Tick.IsEngineBusy) return;
@@ -145,9 +150,7 @@ namespace Game
                 return;
             }
 
-            List<ActorSubType> subtypes = GetStoreItemTypes();
-
-            if (subtypes.Contains(inventoryItem.Tile.Meta.SubType ?? ActorSubType.Unspecified) == false)
+            if (DoesStoreAcceptItem(inventoryItem.Tile) == false)
             {
                 Constants.Alert("I'm sorry, we don't buy those.");
                 return;
@@ -656,7 +659,9 @@ namespace Game
                 var lv = sender as ListView;
                 var item = lv.Items[0].Tag as EquipTag;
                 var location = new Point(e.X + 10, e.Y - 25);
-                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, true), lv, location, 5000);
+
+                bool includePrice = DoesStoreAcceptItem(item.Tile);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, includePrice), lv, location, 5000);
             }
         }
 
@@ -929,7 +934,9 @@ namespace Game
 
                 var item = selection.Tag as EquipTag;
                 var location = new Point(e.X + 10, e.Y - 25);
-                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, true), lv, location, 5000);
+
+                bool includePrice = DoesStoreAcceptItem(item.Tile);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, includePrice), lv, location, 5000);
             }
         }
 
@@ -946,9 +953,10 @@ namespace Game
                 }
 
                 var item = selection.Tag as EquipTag;
-
                 var location = new Point(e.X + 10, e.Y - 25);
-                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, false, true), lv, location, 5000);
+
+                bool includePrice = DoesStoreAcceptItem(item.Tile);
+                _interrogationTip.Show(StoreAndInventory.GetItemTip(Core, item.Tile, false, includePrice), lv, location, 5000);
             }
         }
 
