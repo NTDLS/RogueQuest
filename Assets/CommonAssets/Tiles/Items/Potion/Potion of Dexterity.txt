@@ -1,7 +1,7 @@
 {
   "Name":"Potion of Dexterity",
   "Value": "20",
-  "Effects":[{"EffectType":"Dexterity","ValueType":"Fixed","Value:":"5","Duration":"60"}],
+  "Effects":[{"EffectType":"Dexterity","ValueType":"Fixed","Value":"5","Duration":"60"}],
   "AnimationImagePath":"Animations/Spells/Flash1_64_64",
   "Prevalence":"75",
   "Level":"1"
