@@ -65,27 +65,119 @@ namespace Library.Engine
 
             string text = string.Empty;
 
-            var modArmorClass = effects.Where(o => o.EffectType == ItemEffect.ArmorClass).Sum(o => o.Value);
-            var modConstitution = effects.Where(o => o.EffectType == ItemEffect.Constitution).Sum(o => o.Value);
-            var modDexterity = effects.Where(o => o.EffectType == ItemEffect.Dexterity).Sum(o => o.Value);
-            var modIntelligence = effects.Where(o => o.EffectType == ItemEffect.Intelligence).Sum(o => o.Value);
-            var modStrength = effects.Where(o => o.EffectType == ItemEffect.Strength).Sum(o => o.Value);
-            var modSpeed = effects.Where(o => o.EffectType == ItemEffect.Speed).Sum(o => o.Value);
-            var modEarthResistance = effects.Where(o => o.EffectType == ItemEffect.EarthResistance).Sum(o => o.Value);
-            var modElectricResistance = effects.Where(o => o.EffectType == ItemEffect.LightningResistance).Sum(o => o.Value);
-            var modFireResistance = effects.Where(o => o.EffectType == ItemEffect.FireResistance).Sum(o => o.Value);
-            var modIceResistance = effects.Where(o => o.EffectType == ItemEffect.ColdResistance).Sum(o => o.Value);
+            foreach (var effect in effects)
+            {
+                int mod = 0;
 
-            if (modArmorClass != 0) text += $"AC {PosNeg(modArmorClass)}\r\n";
-            if (modConstitution != 0) text += $"CON {PosNeg(modConstitution)}\r\n";
-            if (modDexterity != 0) text += $"DEX {PosNeg(modDexterity)}\r\n";
-            if (modIntelligence != 0) text += $"INT {PosNeg(modIntelligence)}\r\n";
-            if (modStrength != 0) text += $"STR {PosNeg(modStrength)}\r\n";
-            if (modSpeed != 0) text += $"SPD {PosNeg(modSpeed)}\r\n";
-            if (modEarthResistance != 0) text += $"EARTH {PosNeg(modEarthResistance)}\r\n";
-            if (modElectricResistance != 0) text += $"ELECTRIC {PosNeg(modElectricResistance)}\r\n";
-            if (modFireResistance != 0) text += $"FIRE {PosNeg(modFireResistance)}\r\n";
-            if (modIceResistance != 0) text += $"COLD {PosNeg(modIceResistance)}\r\n";
+                switch (effect.EffectType)
+                {
+                    case ItemEffect.CastFireball:
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            //TODO: Add spalsh damage info.
+                            text += $"Cast Fireball\r\n";
+                        break;
+                    case ItemEffect.CastLight:
+                        //TODO: Add seconds
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Cast Light\r\n";
+                        break;
+                    case ItemEffect.CastPoison:
+                        //TODO: Add seconds
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Cast Poison\r\n";
+                        break;
+                    case ItemEffect.CurePoison:
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Cure Poison\r\n";
+                        break;
+                    case ItemEffect.Heal:
+                        {
+                             mod = effects.Where(o => o.EffectType == effect.EffectType && o.ValueType == ItemEffectType.Fixed).Sum(o => o.Value);
+                            if (mod > 0) text += $"Heal {mod}\r\n";
+
+                            mod = effects.Where(o => o.EffectType == effect.EffectType && o.ValueType == ItemEffectType.Percent).Sum(o => o.Value);
+                            if (mod > 0) text += $"Heal {mod}%\r\n";
+                        }
+                        break;
+                    case ItemEffect.HoldMonster:
+                        //TODO: Add seconds
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Hold Monster\r\n";
+                        break;
+                    case ItemEffect.MagicArrow:
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Magic Arrow\r\n";
+                        break;
+                    case ItemEffect.Poison:
+                        //TODO: Add seconds
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Poison\r\n";
+                        break;
+                    case ItemEffect.Identify:
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Identify\r\n";
+                        break;
+                    case ItemEffect.RemoveCurse:
+                        if (effects.Where(o => o.EffectType == effect.EffectType).Any())
+                            text += $"Remove Curse\r\n";
+                        break;
+                    case ItemEffect.SummonMonster:
+                        if(effects.Where(o => o.EffectType == effect.EffectType).Any())
+                        text += $"Summon Monster\r\n";
+                        break;
+                    case ItemEffect.ArmorClass:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"AC {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.ColdResistance:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Cold Resistance {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.Constitution:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Constitution {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.Dexterity:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Dexterity {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.EarthResistance:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Earth Resistance {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.FireResistance:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Fire Resistance {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.Intelligence:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Intelligence {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.LightningResistance:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Lightning Resistance {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.Speed:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Speed {PosNeg(mod)}\r\n";
+                        break;
+                    case ItemEffect.Strength:
+                        //TODO: Add seconds
+                        mod = effects.Where(o => o.EffectType == effect.EffectType).Sum(o => o.Value);
+                        if (mod != 0) text += $"Strength {PosNeg(mod)}\r\n";
+                        break;
+                }
+
+            }
 
             return text.Trim().Replace("\r\n", "|");
         }

@@ -99,7 +99,7 @@ namespace Game.Classes
                 if (tile.Meta.CanStack == false && tile.Meta.Charges > 0)
                     text += "\r\n" + $"Charges: {tile.Meta.Charges}";
                 if (tile.Meta.AC != null) text += "\r\n" + $"AC: {tile.Meta.AC:N0}";
-                if (tile.Meta.SubType == ActorSubType.MeleeWeapon || tile.Meta.SubType == ActorSubType.RangedWeapon || tile.Meta.SubType == ActorSubType.Projectile)
+                if (tile.Meta.DamageDice > 0)
                 {
                     var dndText = tile.Meta.DndDamageText;
                     if (!string.IsNullOrWhiteSpace(dndText)) text += "\r\n" + $"Stats: {dndText}";
