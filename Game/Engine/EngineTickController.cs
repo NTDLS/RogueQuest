@@ -282,8 +282,6 @@ namespace Game.Engine
                                 intersection.Invalidate();
                             }
                         }
-
-                        Core.LogLine($"Testing, testing, 1... 2... 3....", Color.DarkRed);
                     }
                     #endregion
                     else throw new NotImplementedException();
@@ -761,11 +759,14 @@ namespace Game.Engine
                 if (underfootPack != null)
                 {
                     //TODO: We need to make sure that the player can even pick up this pack. It might be too heavy?
-
-                    if ((underfootPack.Meta.IsIdentified ?? false) == false && Core.State.IdentifiedItems.Contains(underfootPack.Meta.Name)
-                        && underfootPack.Meta.EventualEnchantmentType == EnchantmentType.Normal)
+                    if ((underfootPack.Meta.IsIdentified ?? false) == false)
                     {
                         underfootPack.Meta.Identify(Core);
+                    }
+
+                    if (underfootPack.Meta.Enchantment == EnchantmentType.Cursed)
+                    {
+                        Core.LogLine($"Well this is unfortunate....", Color.DarkRed);
                     }
 
                     Core.LogLine($"Picked up {underfootPack.Meta.DisplayName} and placed it on your back.");
