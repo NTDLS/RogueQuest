@@ -354,7 +354,7 @@ namespace Library.Engine
                         }
                         else
                         {
-                            return $"{SubType} (Unidentified)";
+                            return $"{Utility.SplitCamelCase(SubType.ToString())} (Unidentified)";
                         }
                     }
                     return _Name;
