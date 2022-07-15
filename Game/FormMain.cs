@@ -772,7 +772,7 @@ namespace Game
             var belt = _core.State.Character.GetEquipSlot(EquipSlot.Belt);
             if (belt.Tile != null)
             {
-                var items = _core.State.Items.Where(o => o.ContainerId == belt.Tile.Meta.UID).ToList();
+                var items = _core.State.Items.Where(o => o.ContainerId == belt.Tile.Meta.UID && o.Tile.Meta.IsIdentified == true).ToList();
 
                 foreach (var item in items)
                 {
@@ -875,6 +875,12 @@ namespace Game
             {
                 var tag = (QuickItemButtonInfo)(((ToolStripButton)sender).Tag);
                 var inventoryItem = _core.State.Items.Where(o => o.Tile.Meta.UID == tag.UID).FirstOrDefault();
+
+                if ((inventoryItem.Tile.Meta.IsIdentified ?? false) == false)
+                {
+                    Constants.Alert("You don't know how to use this item because you cant identify it. Identify it using a spell or find a shop.", "Use Item");
+                    return;
+                }
 
                 if (inventoryItem == null)
                 {

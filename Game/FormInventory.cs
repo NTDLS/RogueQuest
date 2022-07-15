@@ -113,6 +113,12 @@ namespace Game
 
         private bool UseItem(TileIdentifier item, bool promptForUse)
         {
+            if ((item.Meta.IsIdentified ?? false) == false)
+            {
+                Constants.Alert("You don't know how to use this item because you cant identify it. Identify it using a spell or find a shop.", "Use Item");
+                return false;
+            }
+
             if (promptForUse)
             {
                 string text = $"Use {item.Meta.DisplayName}?";
