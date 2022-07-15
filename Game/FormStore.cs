@@ -292,22 +292,7 @@ namespace Game
             var selectedListviewItem = listView.SelectedItems[0];
             var item = selectedListviewItem.Tag as EquipTag;
 
-            string message = $"Read {item.Tile.Meta.DisplayName} to learn new spell?";
-
-            if (MessageBox.Show(message, $"RougeQuest :: Use Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                Core.State.Character.AddKnownSpell(item.Tile);
-                Core.State.Items.RemoveAll(o => o.Tile.Meta.UID == item.Tile.Meta.UID);
-                listView.Items.Remove(selectedListviewItem);
-
-                var slotToVacate = Core.State.Character.FindEquipSlotByItemId(item.Tile.Meta.UID);
-                if (slotToVacate != null)
-                {
-                    slotToVacate.Tile = null;
-                }
-                Core.LogLine($"You learned a new spell, {item.Tile.Meta.SpellName}!");
-            }
-            else if (item.Tile.Meta.SubType == ActorSubType.Pack
+            if (item.Tile.Meta.SubType == ActorSubType.Pack
                 || item.Tile.Meta.SubType == ActorSubType.Chest
                 || item.Tile.Meta.SubType == ActorSubType.Purse)
             {
@@ -1054,8 +1039,8 @@ namespace Game
                                 || (persistentStore.Items.Where(i => i.TilePath == o.TilePath).Any() == false && o.Meta.CanStack == true) //Don't add duplicate stackable items.
                             )
                             && (
-                                (itemsInStore.Where(i => i.TilePath == o.TilePath).Count() < 3 && (o.Meta.CanStack ?? false) == false) //Don't add too many duplicate items.
-                                || (itemsInStore.Where(i => i.TilePath == o.TilePath).Any() == false && o.Meta.CanStack == true) //Don't add duplicate stackable items.
+                                (itemsInStore.Where(i => i.Meta.Name == o.Meta.Name).Count() < 3 && (o.Meta.CanStack ?? false) == false) //Don't add too many duplicate items.
+                                || (itemsInStore.Where(i => i.Meta.Name == o.Meta.Name).Any() == false && o.Meta.CanStack == true) //Don't add duplicate stackable items.
                             )
                             && subtypes.Contains(o.Meta.SubType ?? ActorSubType.Unspecified) //Only show the items that this store type sells.
                             && o.Meta.Enchantment != EnchantmentType.Cursed //We dont sell cursed items.
@@ -1067,6 +1052,11 @@ namespace Game
                     itemsInStore.ForEach(o => o.Meta.Identify(Core));
                     itemsInStore.RemoveAll(o => o.Meta.Enchantment == EnchantmentType.Cursed);
                 }
+
+                //Limit the number of items in the store to some variation of the characters level.
+                int maxItems = MathUtility.Random.Next(5, 10);
+                if (Core.State.Character.Level * 5 > maxItems) maxItems = Core.State.Character.Level * 5;
+                itemsInStore = itemsInStore.OrderBy(arg => Guid.NewGuid()).Take(maxItems).ToList();
 
                 foreach (var item in itemsInStore)
                 {
