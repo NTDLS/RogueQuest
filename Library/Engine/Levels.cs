@@ -321,6 +321,15 @@ namespace Library.Engine
                                 //We really shouldn't have UIDs for terrain tiles. They just take up space.
                                 tile.Meta.UID = null;
                             }
+                            else if (tile.Meta.ActorClass == Types.ActorClassName.ActorItem)
+                            {
+                                //Auto-identify some items.
+                                if (tile.Meta.SubType == Types.ActorSubType.Money || tile.Meta.SubType == Types.ActorSubType.Key)
+                                {
+                                    tile.Meta.Enchantment = Types.EnchantmentType.Normal;
+                                    tile.Meta.IsIdentified = true;
+                                }
+                            }
 
                             Core.Actors.Add(tile);
                         }
