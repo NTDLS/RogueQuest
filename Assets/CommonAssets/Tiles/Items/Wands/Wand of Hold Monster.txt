@@ -1,0 +1,10 @@
+{
+  "Name":"Wand of Hold Monster",
+  "TargetType":"HostileBeing",
+  "Effects":[ {"EffectType":"HoldMonster","Duration":"30"} ],
+  "Value": "150",
+  "AnimationImagePath":"Animations\\Spells\\Flash4_64_64",
+  "Prevalence":"35",
+  "Level":"3"
+}
+  

@@ -1,0 +1,15 @@
+{
+  "Name":"Wand of Cast Fireball",
+  "TargetType":"HostileBeing",
+  "Effects":[ {"EffectType":"CastFireball"} ],
+  "Value": "200",
+  "DamageType":"Fire",
+  "DamageDice":"2",
+  "DamageDiceFaces":"6",
+  "DamageAdditional":"0",
+  "SplashDamageRange":"60",
+  "AnimationImagePath":"Animations\\Hits\\Explosion1_256_256",
+  "Prevalence":"35",
+  "Level":"4"
+}
+  

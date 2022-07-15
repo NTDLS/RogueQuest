@@ -1,0 +1,9 @@
+{
+  "Name":"Wand of Cast Light",
+  "TargetType":"Any",
+  "Effects":[ {"EffectType":"CastLight","ValueType":"Fixed","Value":"50"} ],
+  "Value": "35",
+  "AnimationImagePath":"Animations/Spells/Flash4_64_64",
+  "Prevalence":"80",
+  "Level":"1"
+}

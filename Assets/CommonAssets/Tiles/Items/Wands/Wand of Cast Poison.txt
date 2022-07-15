@@ -1,10 +1,10 @@
 {
-  "Name":"Cast Poison",
+  "Name":"Wand of Cast Poison",
   "TargetType":"HostileBeing",
-  "Effects":[ {"EffectType":"CastPoison"} ],
-  "Value": "5",
-  "CastTime":"2",
+  "Effects":[ {"EffectType":"CastPoison","Duration":"20"} ],
+  "Value": "100",
   "AnimationImagePath":"Animations/Spells/SkullSmoke1_192_256",
-  "Prevalence":"40",
-  "Level":"2"
+  "Prevalence":"35",
+  "Level":"5"
 }
+  

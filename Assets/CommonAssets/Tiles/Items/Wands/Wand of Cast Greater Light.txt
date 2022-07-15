@@ -1,0 +1,9 @@
+{
+  "Name":"Wand of Cast Greater Light",
+  "TargetType":"Any",
+  "Effects":[ {"EffectType":"CastLight","ValueType":"Fixed","Value":"200"} ],
+  "Value": "250",
+  "AnimationImagePath":"Animations/Spells/Flash4_64_64",
+  "Prevalence":"8",
+  "Level":"4"
+}
