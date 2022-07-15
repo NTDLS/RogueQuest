@@ -105,14 +105,18 @@ namespace Game.Classes
                     if (!string.IsNullOrWhiteSpace(dndText)) text += "\r\n" + $"Stats: {dndText}";
                 }
 
-                if (tile.Meta?.Effects?.Count > 0) text += "\r\n" + $"Effects:\r\n    {tile.Meta.EffectText.Replace("\r\n", "\r\n    ")}";
+                if (tile.Meta?.Effects?.Count > 0)
+                {
+                    string effects = tile.Meta.EffectText.Replace("\r\n", "\r\n    ");
+                    if (!String.IsNullOrWhiteSpace(effects?.Trim())) text += "\r\n" + $"Effects:\r\n    {effects}";
+                }
             }
 
             if (tile.Meta.SubType == ActorSubType.Money)
                 text += "\r\n" + $"Value: {((int)((tile.Meta.Quantity ?? 0) * tile.Meta.Value)):N0} gold";
 
             if (includeOfferPrice) text += "\r\n" + $"Offer: {OfferPrice(core, tile):N0}";
-            if (includeAskingPrice) text += "\r\n" + $"Asking Price: {AskingPrice(core, tile):N0}";
+            if (includeAskingPrice) text += "\r\n" + $"Asking Price: {AskingUnitPrice(core, tile):N0}";
 
             return text;
         }
@@ -155,7 +159,12 @@ namespace Game.Classes
             listView.Items.Add(item);
         }
 
-        public static int AskingPrice(EngineCoreBase core, TileIdentifier tile)
+        public static int AskingUnitPrice(EngineCoreBase core, TileIdentifier tile)
+        {
+            return AskingPrice(core, tile, 1);
+        }
+
+        public static int AskingExtendedPrice(EngineCoreBase core, TileIdentifier tile)
         {
             return AskingPrice(core, tile, (tile.Meta.Charges ?? 0) + (tile.Meta.Quantity ?? 0));
         }

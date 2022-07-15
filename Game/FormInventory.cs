@@ -89,6 +89,11 @@ namespace Game
             InitEquipSlot(listViewQuiver4, ActorSubType.Projectile, EquipSlot.Projectile4);
             InitEquipSlot(listViewQuiver5, ActorSubType.Projectile, EquipSlot.Projectile5);
 
+            RefreshInventory();
+        }
+
+        private void RefreshInventory()
+        {
             RefreshDialogEquipmentSlots();
 
             //If we are wearing a pack, go ahead and show its contents.
@@ -99,6 +104,11 @@ namespace Game
             }
 
             PopulateContainerFromGround(listViewGround);
+
+            if (_currentlySelectedPack != null)
+            {
+                PopulateContainerFromPack(listViewSelectedContainer, _currentlySelectedPack);
+            }
         }
 
         private bool UseItem(TileIdentifier item, bool promptForUse)
@@ -127,7 +137,13 @@ namespace Game
             if (inventoryItem != null && inventoryItem.Tile.Meta.UID != null)
             {
                 var result = Core.Tick.UseConsumableItem((Guid)inventoryItem.Tile.Meta.UID, null);
-                RefreshDialogEquipmentSlots();
+
+                if (result == true && inventoryItem.Tile.Meta?.EffectText == "Identify")
+                {
+                    RefreshInventory();
+                }
+                else RefreshDialogEquipmentSlots();
+
                 return result;
             }
 

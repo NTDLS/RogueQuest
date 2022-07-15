@@ -394,7 +394,7 @@ namespace Game
             double maxWeight = pack.Meta.WeightCapacity ?? 0;
             int? maxItems = pack.Meta.ItemCapacity;
 
-            int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
+            int askingPrice = StoreAndInventory.AskingUnitPrice(Core, draggedItemTag.Tile);
             int quantityToMove = (draggedItemTag.Tile.Meta.Quantity ?? 1);
 
             if (draggedItem.ListView == listViewStore)
@@ -740,7 +740,7 @@ namespace Game
 
             var draggedItemTag = draggedItem.Tag as EquipTag;
             var clonedItem = draggedItemTag.Tile.Clone(true);
-            int askingPrice = StoreAndInventory.AskingPrice(Core, draggedItemTag.Tile);
+            int askingPrice = StoreAndInventory.AskingExtendedPrice(Core, draggedItemTag.Tile);
             int quantityToMove = (draggedItemTag.Tile.Meta.Quantity ?? 1);
 
             if (draggedItem.ListView == listViewStore)

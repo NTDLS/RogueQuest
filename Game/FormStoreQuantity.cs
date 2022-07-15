@@ -40,9 +40,20 @@ namespace Game
             labelStoreQuantity.Text = $"{tile.Meta.Quantity:N0}";
 
             textBoxBuyAmount.Focus();
+
+            var timer = new Timer()
+            {
+                 Interval = 500,
+            };
+
+            timer.Tick += Timer_Tick;
+
+            timer.Start();
+
+            Timer_Tick(this, null);
         }
 
-        private void textBoxBuyAmount_ValueChanged(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             labelTotalPrice.Text = $"{StoreAndInventory.AskingPrice(_core, _tile, QuantityToBuy):N0}";
         }

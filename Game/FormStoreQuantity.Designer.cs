@@ -146,7 +146,6 @@ namespace Game
             0,
             0,
             0});
-            this.textBoxBuyAmount.ValueChanged += new System.EventHandler(this.textBoxBuyAmount_ValueChanged);
             // 
             // FormStoreQuantity
             // 

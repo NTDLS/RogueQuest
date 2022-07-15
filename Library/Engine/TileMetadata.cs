@@ -85,7 +85,7 @@ namespace Library.Engine
 
                 Random rand = new Random(UIDHash);
 
-                if (rand.NextDouble() * 100 >= 70 || Enchantment == EnchantmentType.Enchanted || Enchantment == EnchantmentType.Cursed) //30% chance or being enchanted or cursed.
+                if (rand.NextDouble() * 100 >= 85 || Enchantment == EnchantmentType.Enchanted || Enchantment == EnchantmentType.Cursed) //15% chance or being enchanted or cursed.
                 {
                     //We have to get this early so that the random number will not be affected by the loop below it.
                     bool willBeCursed = rand.NextDouble() * 100 < 50;
@@ -122,7 +122,7 @@ namespace Library.Engine
 
             IsIdentified = true;
 
-            if (rand.NextDouble() * 100 >= 70 || Enchantment == EnchantmentType.Enchanted || Enchantment == EnchantmentType.Cursed) //30% chance or being enchanted or cursed.
+            if (rand.NextDouble() * 100 >= 85 || Enchantment == EnchantmentType.Enchanted || Enchantment == EnchantmentType.Cursed) //15% chance or being enchanted or cursed.
             {
                 //We have to get this early so that the random number will not be affected by the loop below it.
                 bool willBeCursed = rand.NextDouble() * 100 < 50;

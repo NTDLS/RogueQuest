@@ -99,6 +99,7 @@ namespace Game
             newToolStripMenuItem.Click += NewToolStripMenuItem_Click;
             saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
             openToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
+            exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
 
             //Yea, this is stupid but the richtextbox steals the keyboard focus from the form. :(
             System.Reflection.PropertyInfo controlProperty = typeof(Control)
@@ -139,6 +140,11 @@ namespace Game
 
             timer.Tick += Timer_Tick;
             timer.Start();
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void _core_OnLevelUp(EngineCore core)

@@ -142,10 +142,13 @@ namespace Game.Engine
 
             var goldTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Money && o.Meta.Name.Contains("Gold")).First().Clone(true);
             goldTile.Meta.Quantity = 8;
+            goldTile.Meta.IsIdentified = true;
             var silverTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Money && o.Meta.Name.Contains("Silver")).First().Clone(true);
             silverTile.Meta.Quantity = 22;
+            silverTile.Meta.IsIdentified = true;
             var copperTile = this.Materials.Where(o => o.Meta.SubType == ActorSubType.Money && o.Meta.Name.Contains("Copper")).First().Clone(true);
             copperTile.Meta.Quantity = 142;
+            copperTile.Meta.IsIdentified = true;
 
             this.State.Items.Add(new CustodyItem() { Tile = purseTile });
             this.State.Items.Add(new CustodyItem() { Tile = goldTile, ContainerId = purseTile.Meta.UID });
