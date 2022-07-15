@@ -154,6 +154,25 @@ namespace Library.Engine
             }
         }
 
+        /// <summary>
+        /// Some items dont make sense to be unidentified, set them here - they will be identified at level load.
+        /// </summary>
+        /// <param name="meta"></param>
+        /// <returns></returns>
+        public TileMetadata AutoIdentifyItem(TileMetadata meta)
+        {
+            if (meta.ActorClass == Types.ActorClassName.ActorItem)
+            {
+                //Auto-identify some items.
+                if (meta.SubType == Types.ActorSubType.Money || meta.SubType == Types.ActorSubType.Key)
+                {
+                    meta.Enchantment = Types.EnchantmentType.Normal;
+                    meta.IsIdentified = true;
+                }
+            }
+            return meta;
+        }
+
         public void Start()
         {
             OnStart?.Invoke(this);
