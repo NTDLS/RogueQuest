@@ -4,48 +4,31 @@ using System.Text;
 
 namespace Library.Native
 {
-    public static class Compress
+    public static class Compression
     {
-        public static void CopyTo(Stream src, Stream dest)
+        public static byte[] Compress(byte[] bytes)
         {
-            byte[] bytes = new byte[4096];
-
-            int cnt;
-
-            while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0)
+            using var msi = new MemoryStream(bytes);
+            using var mso = new MemoryStream();
+            using (var gs = new GZipStream(mso, CompressionMode.Compress))
             {
-                dest.Write(bytes, 0, cnt);
+                msi.CopyTo(gs);
             }
+            return mso.ToArray();
         }
 
-        public static byte[] Zip(string str)
+        public static byte[] Decompress(byte[] bytes)
         {
-            var bytes = Encoding.UTF8.GetBytes(str);
-
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
+            using var msi = new MemoryStream(bytes);
+            using var mso = new MemoryStream();
+            using (var gs = new GZipStream(msi, CompressionMode.Decompress))
             {
-                using (var gs = new GZipStream(mso, CompressionLevel.Optimal))
-                {
-                    CopyTo(msi, gs);
-                }
-
-                return mso.ToArray();
+                gs.CopyTo(mso);
             }
+            return mso.ToArray();
         }
 
-        public static string Unzip(byte[] bytes)
-        {
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
-            {
-                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
-                {
-                    CopyTo(gs, mso);
-                }
-
-                return Encoding.UTF8.GetString(mso.ToArray());
-            }
-        }
+        public static byte[] Compress(string str) => Compress(Encoding.UTF8.GetBytes(str));
+        public static string DecompressString(byte []bytes) => Encoding.UTF8.GetString(Decompress(bytes));
     }
 }

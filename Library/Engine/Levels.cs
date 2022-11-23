@@ -36,7 +36,7 @@ namespace Library.Engine
             var json = JsonConvert.SerializeObject(saveFile,
                 Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
-            var compressed = Native.Compress.Zip(json);
+            var compressed = Native.Compression.Compress(json);
             System.IO.File.WriteAllBytes(fileName, compressed);
             //System.IO.File.WriteAllText(fileName, json);
         }
@@ -49,7 +49,7 @@ namespace Library.Engine
         public static ScenarioMetaData GetMetadata(string fileName)
         {
             var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
-            var json = Native.Compress.Unzip(compressedSaveFile);
+            var json = Native.Compression.DecompressString(compressedSaveFile);
             var saveFile = JsonConvert.DeserializeObject<ScenarioMetaEnumerator>(json);
             return saveFile.Meta;
         }
@@ -61,7 +61,7 @@ namespace Library.Engine
         public void Load(string fileName)
         {
             var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
-            var json = Native.Compress.Unzip(compressedSaveFile);
+            var json = Native.Compression.DecompressString(compressedSaveFile);
             //string json = System.IO.File.ReadAllText(fileName);
 
             //json = json.Replace("\"Weapon\"", "\"MeleeWeapon\"");
@@ -99,7 +99,7 @@ namespace Library.Engine
         {
             var compressedSaveFile = System.IO.File.ReadAllBytes(fileName);
 
-            var fileJson = Native.Compress.Unzip(compressedSaveFile);
+            var fileJson = Native.Compression.DecompressString(compressedSaveFile);
 
             var saveFile = JsonConvert.DeserializeObject<SaveFile>(fileJson);
 
@@ -107,7 +107,7 @@ namespace Library.Engine
 
             if (bytes.Length > 0)
             {
-                var levelJson = Native.Compress.Unzip(bytes);
+                var levelJson = Native.Compression.DecompressString(bytes);
                 var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(levelJson);
                 return chunks;
             }
@@ -203,7 +203,7 @@ namespace Library.Engine
             var json = JsonConvert.SerializeObject(chunks,
                 Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
-            var compressed = Native.Compress.Zip(json);
+            var compressed = Native.Compression.Compress(json);
 
             this.Collection[levelNumber].Bytes = compressed;
             Collection[levelNumber].LastEditBackgroundOffset = Core.Display.BackgroundOffset;
@@ -215,7 +215,7 @@ namespace Library.Engine
 
             if (bytes.Length > 0)
             {
-                var json = Native.Compress.Unzip(bytes);
+                var json = Native.Compression.DecompressString(bytes);
                 var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(json);
                 return chunks;
 
@@ -263,7 +263,7 @@ namespace Library.Engine
 
             if (bytes.Length > 0)
             {
-                var json = Native.Compress.Unzip(bytes);
+                var json = Native.Compression.DecompressString(bytes);
                 var chunks = JsonConvert.DeserializeObject<List<LevelChunk>>(json);
 
                 if (_gameAssembly == null)
