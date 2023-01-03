@@ -92,6 +92,8 @@ namespace Library.Engine
 
                 var onScreenTiles = OnScreenTiles();
 
+                //onScreenTiles = onScreenTiles.Where(o => o.Meta.ActorClass != Types.ActorClassName.ActorTerrain);
+
                 List<ActorBase> renderTiles = new List<ActorBase>();
 
                 //Add first layer of tiles.

@@ -1,6 +1,12 @@
 ﻿using Library.Engine;
+using System.Collections.Generic;
+using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
 using System.Windows.Forms;
+using Library.Engine.Types;
+using System.IO;
 
 namespace ScenarioEdit.Engine
 {
@@ -11,16 +17,21 @@ namespace ScenarioEdit.Engine
         {
         }
 
-        public void LoadLevlesAndPopCurrent(string fileName)
+        public void LoadLevlesAndPopCurrent(string scenarioFileName)
         {
-            Levels.Load(fileName);
+            Levels.Load(scenarioFileName);
             PopCurrentLevel();
         }
 
-        public void PushLevelAndSave(string fileName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scenarioFileName"></param>
+        /// <param name="compileTerrain">Used only by the scenario editor, saves the terrain bitmap to a file for quick access.</param>
+        public void PushLevelAndSave(string scenarioFileName)
         {
             PushCurrentLevel();
-            Levels.Save(fileName);
+            Levels.Save(scenarioFileName);
         }
     }
 }

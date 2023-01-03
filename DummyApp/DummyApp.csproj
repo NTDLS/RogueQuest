@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assets\Assets.csproj" />
+    <ProjectReference Include="..\Library\Library.csproj" />
+  </ItemGroup>
 
 </Project>

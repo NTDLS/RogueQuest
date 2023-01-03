@@ -1,9 +1,11 @@
 ﻿using Assets;
+using Library.Engine.Types;
 using Library.Native;
 using Library.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -34,12 +36,13 @@ namespace Library.Engine
         public EngineDisplay Display { get; private set; }
         public object CollectionSemaphore { get; private set; } = new object();
         public object DrawingSemaphore { get; private set; } = new object();
-        public Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
+        public static Color BackgroundColor { get; private set; } = Color.FromArgb(46, 32, 60);
         public ActorController Actors { get; private set; }
 
         #endregion
 
         private Dictionary<string, Bitmap> _bitmapCache = new Dictionary<string, Bitmap>();
+        //private Bitmap _terrainCache = new Bitmap(1,1);
 
         #region Events.
 
@@ -72,6 +75,7 @@ namespace Library.Engine
         public void PopCurrentLevel()
         {
             Levels.PopLevel(State.CurrentLevel);
+            //CacheLevelTerrain();
             Display.DrawingSurface.Invalidate();
         }
 
@@ -89,6 +93,38 @@ namespace Library.Engine
             Levels.PopLevel(levelIndex);
             State.CurrentLevel = levelIndex;
         }
+
+        /*
+        private void CacheLevelTerrain()
+        {
+            var tiles = Actors.Tiles.Where(o => o.Meta.ActorClass == ActorClassName.ActorTerrain).ToList();
+            if (tiles.Any())
+            {
+                var width = tiles.Max(o => o.X) - tiles.Min(o => o.X);
+                var height = tiles.Max(o => o.Y) - tiles.Min(o => o.Y);
+
+                var size = new Size((int)Math.Ceiling(width), (int)Math.Ceiling(height));
+
+                _terrainCache = new Bitmap(size.Width, size.Height);
+
+                var screenDC = Graphics.FromImage(_terrainCache);
+                screenDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                screenDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                screenDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                screenDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                screenDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                screenDC.Clear(BackgroundColor);
+
+                foreach (var tile in tiles)
+                {
+                    Native.Types.DynamicCast(tile, tile.GetType()).Render(screenDC);
+                }
+
+                //_terrainCache.Save($"C:\\Test.png", ImageFormat.Png);
+            }
+        }
+        */
 
         public void DeleteLevel(int levelIndex)
         {
@@ -336,6 +372,24 @@ namespace Library.Engine
                         }
 
                         _ScreenDC.Clear(BackgroundColor);
+
+                        /*
+                        if (_terrainCache.Width > 1)
+                        {
+                            RectangleF window = new RectangleF(0, 0,
+                                Display.DrawingSurface.Width,
+                                Display.DrawingSurface.Height);
+
+                            Rectangle cloneRect = new Rectangle((int)Display.BackgroundOffset.X, (int)Display.BackgroundOffset.Y,
+                                Display.DrawingSurface.Width,
+                                Display.DrawingSurface.Height
+                                );
+
+                            Bitmap cloneBitmap = _terrainCache.Clone(cloneRect, _terrainCache.PixelFormat);
+
+                            _ScreenDC.DrawImage(cloneBitmap, window);
+                        }
+                        */
 
                         Actors.Render(_ScreenDC);
                     }
