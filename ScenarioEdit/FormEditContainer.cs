@@ -165,7 +165,7 @@ namespace ScenarioEdit
             }
         }
 
-        private void AddItemToContainer(string tilePath, int ?quantity = null)
+        private void AddItemToContainer(string tilePath, int? quantity = null)
         {
             var metaData = TileMetadata.GetFreshMetadata(tilePath);
 

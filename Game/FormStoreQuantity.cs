@@ -43,7 +43,7 @@ namespace Game
 
             var timer = new Timer()
             {
-                 Interval = 500,
+                Interval = 500,
             };
 
             timer.Tick += Timer_Tick;

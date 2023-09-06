@@ -70,7 +70,7 @@ namespace Library.Engine
 
             string text = string.Empty;
 
-            foreach (var effect in effects.GroupBy(o=>o.EffectType))
+            foreach (var effect in effects.GroupBy(o => o.EffectType))
             {
                 int val = 0;
 
@@ -106,7 +106,7 @@ namespace Library.Engine
                         break;
                     case ItemEffect.Poison:
                         val = effects.Where(o => o.EffectType == effect.Key).Sum(o => o.Duration) ?? 0;
-                        if(val > 0) text += $"Poison, {val}s\r\n";
+                        if (val > 0) text += $"Poison, {val}s\r\n";
                         break;
                     case ItemEffect.Identify:
                         text += $"Identify\r\n";

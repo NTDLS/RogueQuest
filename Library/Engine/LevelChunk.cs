@@ -1,7 +1,4 @@
-﻿using Library.Engine.Types;
-using Newtonsoft.Json;
-
-namespace Library.Engine
+﻿namespace Library.Engine
 {
     public class LevelChunk
     {

@@ -1047,7 +1047,7 @@ namespace Game
                             && (o.Meta.Prevalence ?? 0) > 0 //Items with a prevalence of 0 are impossible to find or buy. They have to be placed by the map creator.
                             && (o.Meta.Prevalence == 100 || MathUtility.Random.Next(1, 100) <= (int)o.Meta.Prevalence) //Apply the prevalence lottery.
                             && o.Meta.Level <= Core.State.Character.Level //Only show items that are appropriate for the character level.
-                        ).Cast<TileIdentifier>().Select(o=>o.DeriveCopy()));
+                        ).Cast<TileIdentifier>().Select(o => o.DeriveCopy()));
 
                     itemsInStore.ForEach(o => o.Meta.Identify(Core));
                     itemsInStore.RemoveAll(o => o.Meta.Enchantment == EnchantmentType.Cursed);

@@ -1,11 +1,9 @@
 ﻿using Assets;
-using Library.Engine.Types;
 using Library.Native;
 using Library.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -466,7 +464,7 @@ namespace Library.Engine
                     if (spawnerMeta.IsIdentified == true)
                     {
                         tile.Meta.Identify(this);
-                    }                    
+                    }
                 }
 
                 if (tile.Meta.SubType == Types.ActorSubType.Money)

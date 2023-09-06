@@ -2029,7 +2029,7 @@ namespace ScenarioEdit
                     tile.Invalidate();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }

@@ -1,12 +1,6 @@
 ﻿using Library.Engine;
-using System.Collections.Generic;
-using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
 using System.Windows.Forms;
-using Library.Engine.Types;
-using System.IO;
 
 namespace ScenarioEdit.Engine
 {

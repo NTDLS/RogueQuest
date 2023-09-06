@@ -1,9 +1,6 @@
 ﻿using Library.Engine;
 using Library.Types;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 
 namespace Library.Native
 {
@@ -105,7 +102,7 @@ namespace Library.Native
 
         public static bool ChanceIn(int n)
         {
-            return (Random.Next(0, n * 10) % n) == n/2;
+            return (Random.Next(0, n * 10) % n) == n / 2;
         }
 
 

@@ -248,7 +248,7 @@ namespace Game.Engine
                     {
                         var selectedItem = form.SelectedItem;
                         selectedItem.Meta.Identify(Core);
-                        if(selectedItem.Meta.Enchantment == EnchantmentType.Normal) Core.State.IdentifiedItems.Add(selectedItem.Meta.Name);
+                        if (selectedItem.Meta.Enchantment == EnchantmentType.Normal) Core.State.IdentifiedItems.Add(selectedItem.Meta.Name);
 
                         Constants.Alert($"You have identifed this as {selectedItem.Meta.DisplayName}!", "Identified");
                         Core.LogLine($"You have identifed {selectedItem.Meta.DisplayName}!");
@@ -1149,7 +1149,7 @@ namespace Game.Engine
                     }
                 }
 
-                if(!unlocked) Core.LogLine($"You will need a {entry.Meta.DisplayName} key to gain access.", Color.Red);
+                if (!unlocked) Core.LogLine($"You will need a {entry.Meta.DisplayName} key to gain access.", Color.Red);
             }
 
             if (intersections.Where(o => o.Meta.ActorClass == ActorClassName.ActorLevelWarpHidden

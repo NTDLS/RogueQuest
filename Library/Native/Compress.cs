@@ -29,6 +29,6 @@ namespace Library.Native
         }
 
         public static byte[] Compress(string str) => Compress(Encoding.UTF8.GetBytes(str));
-        public static string DecompressString(byte []bytes) => Encoding.UTF8.GetString(Decompress(bytes));
+        public static string DecompressString(byte[] bytes) => Encoding.UTF8.GetString(Decompress(bytes));
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Game.Controls
@@ -18,7 +14,7 @@ namespace Game.Controls
         protected override void OnResize(EventArgs e)
         {
             // Invalidate the control to get a repaint.
-            this.Invalidate(); 
+            this.Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)

@@ -18,7 +18,7 @@ namespace ScenarioEdit
         private ActorClassName[] _tileTypesToShow;
         private ImageList _imageList = new ImageList();
 
-        public EngineCore Core  { get; set; }
+        public EngineCore Core { get; set; }
 
         public FormSelectLevelTile()
         {
@@ -50,7 +50,7 @@ namespace ScenarioEdit
             {
                 LevelName = e.Node.Parent.Text;
                 SelectedTile = e.Node.Tag as LevelChunk;
-                
+
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -99,7 +99,7 @@ namespace ScenarioEdit
                 var parentNode = treeViewTiles.Nodes.Add(level.Name, level.Name, "<Folder>", "<Folder>");
                 parentNode.Nodes.Add("<dummy>");
             }
-        }               
+        }
 
         private void buttonSave_Click(object sender, EventArgs e)
         {

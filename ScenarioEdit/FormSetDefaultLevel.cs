@@ -1,5 +1,5 @@
-﻿using ScenarioEdit.Engine;
-using Library.Engine;
+﻿using Library.Engine;
+using ScenarioEdit.Engine;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,7 +9,7 @@ namespace ScenarioEdit
     public partial class FormSetDefaultLevel : Form
     {
         private ContextMenuStrip _menu = new ContextMenuStrip();
-        public EngineCore Core  { get; set; }
+        public EngineCore Core { get; set; }
 
         public FormSetDefaultLevel()
         {

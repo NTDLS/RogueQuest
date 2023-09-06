@@ -1,8 +1,8 @@
-﻿using Library.Types;
-using Game.Engine;
+﻿using Game.Engine;
+using Library.Engine;
+using Library.Types;
 using System;
 using System.Drawing;
-using Library.Engine;
 
 namespace Game.Actors
 {

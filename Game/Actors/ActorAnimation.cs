@@ -1,12 +1,10 @@
 ﻿using Assets;
-using Game.Classes;
 using Game.Engine;
 using Library.Engine;
 using Library.Engine.Types;
 using Library.Types;
 using System;
 using System.Drawing;
-using static Game.Constants;
 
 namespace Game.Actors
 {
@@ -107,7 +105,7 @@ namespace Game.Actors
                 {
                     if (_playMode.DeleteActorAfterPlay)
                     {
-                        this.QueueForDelete();;
+                        this.QueueForDelete(); ;
                         return;
                     }
 

@@ -1,9 +1,9 @@
-﻿using ScenarioEdit.Engine;
-using Library.Engine;
+﻿using Library.Engine;
+using ScenarioEdit.Engine;
 using System;
-using System.Windows.Forms;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace ScenarioEdit
 {
@@ -12,7 +12,7 @@ namespace ScenarioEdit
         private List<List<LevelChunk>> _allLevelChunks;
         private Button buttonCancel = new Button();
 
-        public EngineCore Core  { get; set; }
+        public EngineCore Core { get; set; }
         public FormScenarioItems()
         {
             InitializeComponent();
@@ -57,7 +57,7 @@ namespace ScenarioEdit
 
             listViewItems.MouseDoubleClick += ListViewItems_MouseDoubleClick;
         }
-        
+
 
         private void ButtonCancel_Click(object sender, EventArgs e)
         {

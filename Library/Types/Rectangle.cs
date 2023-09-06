@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Library.Types
+﻿namespace Library.Types
 {
     public class Rectangle<T>
     {

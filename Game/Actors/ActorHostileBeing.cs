@@ -1,7 +1,6 @@
 ﻿using Game.Engine;
 using Library.Engine;
 using Library.Engine.Types;
-using System.Linq;
 
 namespace Game.Actors
 {

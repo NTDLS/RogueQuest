@@ -993,7 +993,7 @@ namespace Game
                     PopulateContainerFromPack(listViewPlayerPack, pack.Tile);
                 }
             }
-            else    
+            else
             {
                 var selectedItem = listView.SelectedItems[0];
                 var item = selectedItem.Tag as EquipTag;

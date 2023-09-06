@@ -887,7 +887,7 @@ namespace Game
                     return;
                 }
 
-                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll   && inventoryItem.Tile.Meta.TargetType == TargetType.UnidentifiedItem)
+                if (inventoryItem.Tile.Meta.SubType == ActorSubType.Scroll && inventoryItem.Tile.Meta.TargetType == TargetType.UnidentifiedItem)
                 {
                     if (inventoryItem.Tile.Meta.IsConsumable == true)
                     {
@@ -1026,7 +1026,7 @@ namespace Game
             labelGold.Text = $"{core.State.Character.Money:N0}gp";
 
             UpdateQuickSlots();
-            UpdateKnownSpells(); 
+            UpdateKnownSpells();
 
             labelPlayer.ForeColor = Color.Black;
 
