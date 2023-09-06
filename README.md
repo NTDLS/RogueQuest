@@ -1,7 +1,7 @@
 # RougueQuest
 My first foray into Rouge-like gaming. Looking for a Castle of the Winds feel.
 
-This is 100% GDI+ in C# using winforms with netcore 5.0.
+This is 100% GDI+ in C# using winforms with .net 7.0
 
 Includes a game and map editor, all tiles are PNG and maps are json. Building with a hammer - don't ask me why. 🤷‍♂️
 
