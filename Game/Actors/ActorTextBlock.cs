@@ -80,7 +80,7 @@ namespace Game.Actors
             this.Meta.ActorClass = Library.Engine.Types.ActorClassName.ActorDialog;
         }
 
-        public new void Render(Graphics dc)
+        public override void Render(Graphics dc)
         {
             if (Visible)
             {
@@ -88,19 +88,18 @@ namespace Game.Actors
             }
         }
 
-        public new void Invalidate()
+        public override void Invalidate()
         {
             int slop = 3; //This i just to take care of the debuging highlighting rectangles.
 
             var rect = new Rectangle(
                 (int)(X - slop),
                 (int)(Y - slop),
-                (int)(Size.Width + (slop * 2)),
-                (int)(Size.Height + (slop * 2))
+                Size.Width + (slop * 2),
+                Size.Height + (slop * 2)
                 );
 
             Core.Display.DrawingSurface.Invalidate(rect);
         }
-
     }
 }

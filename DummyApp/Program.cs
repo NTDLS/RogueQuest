@@ -61,7 +61,7 @@ namespace DummyApp
 
             foreach (var tile in tiles)
             {
-                Library.Native.Types.DynamicCast(tile, tile.GetType()).Render(screenDC);
+                tile.Render(screenDC);
             }
 
             screenBitmap.Save("C:\\test.png", ImageFormat.Png);

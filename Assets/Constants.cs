@@ -6,7 +6,7 @@ namespace Assets
 {
     public class Constants
     {
-        public const String RegistryKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\NetworkDLS\\Rougue Quest";
+        public const string RegistryKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\NetworkDLS\\Rougue Quest";
         public static string _BaseCommonAssetPath = null;
         public static string _BaseUserAssetPath = null;
 

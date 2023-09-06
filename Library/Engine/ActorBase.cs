@@ -192,7 +192,7 @@ namespace Library.Engine
             return _image;
         }
 
-        public void Invalidate()
+        public virtual void Invalidate()
         {
             int slop = 3; //This i just to take care of the debuging highlighting rectangles.
 
@@ -205,7 +205,7 @@ namespace Library.Engine
             Core.Display.DrawingSurface.Invalidate(rect);
         }
 
-        public void Render(Graphics dc)
+        public virtual void Render(Graphics dc)
         {
             if (Visible && _image != null && !DoNotDraw)
             {
@@ -294,7 +294,6 @@ namespace Library.Engine
                 dc.DrawRectangle(pen, ScreenBounds);
             }
         }
-
 
         private void DrawImage(Graphics dc, Image rawImage, double? angleInDegrees = null)
         {

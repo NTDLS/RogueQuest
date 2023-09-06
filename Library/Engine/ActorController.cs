@@ -12,8 +12,6 @@ namespace Library.Engine
     {
         public ScopedLock Lock { get; set; } = new ScopedLock();
 
-        private Graphics _miniMapDC;
-        private Bitmap _miniMapBitmap;
         private readonly int _miniMapWidth = 350;
         private readonly int _miniMapHeight = 350;
         private Point<double> _miniMapScale;
@@ -64,29 +62,20 @@ namespace Library.Engine
 
                 if (Core.DrawMinimap)
                 {
-                    if (_miniMapBitmap == null && Core.Display.VisibleBounds.Width > 0 && Core.Display.VisibleBounds.Height > 0)
+                    if (EngineDrawingCacheController.Exists(EngineDrawingCacheController.DrawingCacheType.MiniMap) == false)
                     {
-                        double miniMapVisionWidth = Core.Display.VisibleBounds.Width * _miniMapDistance;
-                        double miniMapVisionHeight = Core.Display.VisibleBounds.Height * _miniMapDistance;
+                        var miniMapDc = EngineDrawingCacheController.Create(EngineDrawingCacheController.DrawingCacheType.MiniMap,
+                             new Size(_miniMapWidth, (int)_miniMapHeight));
 
-                        _miniMapBitmap = new Bitmap((int)_miniMapWidth, (int)_miniMapHeight);
+                        if (Core.Display.VisibleBounds.Width > 0 && Core.Display.VisibleBounds.Height > 0)
+                        {
+                            double miniMapVisionWidth = Core.Display.VisibleBounds.Width * _miniMapDistance;
+                            double miniMapVisionHeight = Core.Display.VisibleBounds.Height * _miniMapDistance;
+                            _miniMapScale = new Point<double>((double)_miniMapWidth / miniMapVisionWidth, (double)_miniMapHeight / miniMapVisionHeight);
+                            _miniMapOffset = new Point<double>(_miniMapWidth / 2.0, _miniMapHeight / 2.0);
+                        }
 
-                        _miniMapScale = new Point<double>((double)_miniMapBitmap.Width / miniMapVisionWidth, (double)_miniMapBitmap.Height / miniMapVisionHeight);
-                        _miniMapOffset = new Point<double>(_miniMapWidth / 2.0, _miniMapHeight / 2.0);
-
-                        _miniMapDC = Graphics.FromImage(_miniMapBitmap);
-                        _miniMapDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                        _miniMapDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                        _miniMapDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                        _miniMapDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                        _miniMapDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-
-                        Rectangle rect = new Rectangle(0, 0, _miniMapBitmap.Width, _miniMapBitmap.Height);
-                    }
-
-                    if (_miniMapBitmap != null)
-                    {
-                        _miniMapDC.Clear(Color.Black);
+                        miniMapDc.Graphics.Clear(Color.Black);
                     }
                 }
 
@@ -94,7 +83,7 @@ namespace Library.Engine
 
                 //onScreenTiles = onScreenTiles.Where(o => o.Meta.ActorClass != Types.ActorClassName.ActorTerrain);
 
-                List<ActorBase> renderTiles = new List<ActorBase>();
+                var renderTiles = new List<ActorBase>();
 
                 //Add first layer of tiles.
                 renderTiles.AddRange(onScreenTiles.Where(o => o.Visible == true && o.DoNotDraw == false
@@ -135,32 +124,31 @@ namespace Library.Engine
                         || obj.Meta.ActorClass == Types.ActorClassName.ActorDialog
                         || obj.Meta.ActorClass == Types.ActorClassName.ActorAnimation)
                     {
-                        Native.Types.DynamicCast(obj, obj.GetType()).Render(screenDc);
+                        obj.Render(screenDc);
                     }
                 }
 
                 if (Core.DrawMinimap)
                 {
-                    if (_miniMapBitmap != null)
-                    {
-                        RectangleF miniMapVision = new RectangleF(
-                            (int)(Core.Display.BackgroundOffset.X / _miniMapDistance),
-                            (int)(Core.Display.BackgroundOffset.Y / _miniMapDistance),
-                            (Core.Display.DrawingSurface.Width * _miniMapDistance),
-                            (Core.Display.DrawingSurface.Height * _miniMapDistance)
-                            );
+                    var miniMapDc = EngineDrawingCacheController.Get(EngineDrawingCacheController.DrawingCacheType.MiniMap);
 
-                        var miniMapTiles = Tiles.Where(o => o.Visible == true && o.DoNotDraw == false && o.ReadyForDeletion == false
-                            && miniMapVision.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false
+                    RectangleF miniMapVision = new RectangleF(
+                        (int)(Core.Display.BackgroundOffset.X / _miniMapDistance),
+                        (int)(Core.Display.BackgroundOffset.Y / _miniMapDistance),
+                        (Core.Display.DrawingSurface.Width * _miniMapDistance),
+                        (Core.Display.DrawingSurface.Height * _miniMapDistance)
                         );
 
-                        foreach (var obj in miniMapTiles)
-                        {
-                            Native.Types.DynamicCast(obj, obj.GetType()).RenderMiniMap(_miniMapDC, _miniMapScale, _miniMapOffset);
-                        }
+                    var miniMapTiles = Tiles.Where(o => o.Visible == true && o.DoNotDraw == false && o.ReadyForDeletion == false
+                        && miniMapVision.IntersectsWith(o.Bounds) || o.DrawRealitiveToBackgroundOffset == false
+                    );
 
-                        screenDc.DrawImage(_miniMapBitmap, new Rectangle(0, 0, _miniMapBitmap.Width, _miniMapBitmap.Height));
+                    foreach (var obj in miniMapTiles)
+                    {
+                        obj.RenderMiniMap(miniMapDc.Graphics, _miniMapScale, _miniMapOffset);
                     }
+
+                    screenDc.DrawImage(miniMapDc.Bitmap, new Rectangle(0, 0, miniMapDc.Bitmap.Width, miniMapDc.Bitmap.Height));
                 }
             }
         }
