@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 
 namespace Library.Engine
 {
-    internal static class EngineDrawingCacheController
+    internal static class DrawingCache
     {
         private static readonly Dictionary<DrawingCacheType, DrawingCacheItem> _graphicsCache = new();
 
@@ -44,18 +44,20 @@ namespace Library.Engine
             {
                 if (item.Bitmap.Width != size.Width || item.Bitmap.Height != size.Height)
                 {
-                    throw new System.Exception("Graphics cache bitmap size can not be changed.");
+                    var newInstance = new DrawingCacheItem(size);
+                    _graphicsCache[key] = newInstance;
+                    return newInstance;
                 }
                 return item;
             }
             else
             {
                 var newInstance = new DrawingCacheItem(size);
-                newInstance.Graphics.InterpolationMode = InterpolationMode.Bilinear;
                 _graphicsCache.Add(key, newInstance);
                 return newInstance;
             }
         }
+
         public static DrawingCacheItem Create(DrawingCacheType key, Size size)
         {
             if (_graphicsCache.ContainsKey(key))
@@ -63,7 +65,6 @@ namespace Library.Engine
                 throw new System.Exception("Graphics cache item already exists and can not be recreated.");
             }
             var newInstance = new DrawingCacheItem(size);
-            newInstance.Graphics.InterpolationMode = InterpolationMode.Bilinear;
             _graphicsCache.Add(key, newInstance);
             return newInstance;
         }

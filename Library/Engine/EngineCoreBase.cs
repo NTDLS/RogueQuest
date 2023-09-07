@@ -19,7 +19,7 @@ namespace Library.Engine
         /// <summary>
         /// Whether the map will be slowly revealed to the player.
         /// </summary>
-        public bool BlindPlay { get; set; } = false;
+        public bool BlindPlay { get; set; } = true;
         public int BlindPlayDistance { get; set; } = 200;
         public bool DrawMinimap { get; set; } = false;
         public Levels Levels { get; set; }
@@ -300,11 +300,6 @@ namespace Library.Engine
         public void ResizeDrawingSurface(Size visibleSize)
         {
             Display.ResizeDrawingSurface(visibleSize);
-
-            lock (CollectionSemaphore)
-            {
-                _ScreenBitmap = null;
-            }
         }
 
         public void QueueAllForDelete()
@@ -332,9 +327,6 @@ namespace Library.Engine
             }
         }
 
-        private Bitmap _ScreenBitmap = null;
-        private Graphics _ScreenDC = null;
-
         private Object _LatestFrameLock = new Object();
 
         /// <summary>
@@ -349,6 +341,8 @@ namespace Library.Engine
             bool lockTaken = false;
             var timeout = TimeSpan.FromMilliseconds(1);
 
+            var screenDrawing = DrawingCache.Get(DrawingCache.DrawingCacheType.Screen, new Size(Display.DrawingSurface.Width, Display.DrawingSurface.Height));
+
             try
             {
                 Monitor.TryEnter(DrawingSemaphore, timeout, ref lockTaken);
@@ -357,19 +351,7 @@ namespace Library.Engine
                 {
                     lock (CollectionSemaphore)
                     {
-                        if (_ScreenBitmap == null)
-                        {
-                            _ScreenBitmap = new Bitmap(Display.DrawingSurface.Width, Display.DrawingSurface.Height);
-
-                            _ScreenDC = Graphics.FromImage(_ScreenBitmap);
-                            _ScreenDC.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                            _ScreenDC.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                            _ScreenDC.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                            _ScreenDC.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                            _ScreenDC.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-                        }
-
-                        _ScreenDC.Clear(BackgroundColor);
+                        screenDrawing.Graphics.Clear(BackgroundColor);
 
                         /*
                         if (_terrainCache.Width > 1)
@@ -389,7 +371,7 @@ namespace Library.Engine
                         }
                         */
 
-                        Actors.Render(_ScreenDC);
+                        Actors.Render(screenDrawing.Graphics);
                     }
                 }
             }
@@ -404,7 +386,7 @@ namespace Library.Engine
 
             IsRendering = false;
 
-            return _ScreenBitmap;
+            return screenDrawing.Bitmap;
         }
 
 

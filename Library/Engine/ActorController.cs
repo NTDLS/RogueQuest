@@ -62,9 +62,9 @@ namespace Library.Engine
 
                 if (Core.DrawMinimap)
                 {
-                    if (EngineDrawingCacheController.Exists(EngineDrawingCacheController.DrawingCacheType.MiniMap) == false)
+                    if (DrawingCache.Exists(DrawingCache.DrawingCacheType.MiniMap) == false)
                     {
-                        var miniMapDc = EngineDrawingCacheController.Create(EngineDrawingCacheController.DrawingCacheType.MiniMap,
+                        var miniMapDc = DrawingCache.Create(DrawingCache.DrawingCacheType.MiniMap,
                              new Size(_miniMapWidth, (int)_miniMapHeight));
 
                         if (Core.Display.VisibleBounds.Width > 0 && Core.Display.VisibleBounds.Height > 0)
@@ -130,7 +130,7 @@ namespace Library.Engine
 
                 if (Core.DrawMinimap)
                 {
-                    var miniMapDc = EngineDrawingCacheController.Get(EngineDrawingCacheController.DrawingCacheType.MiniMap);
+                    var miniMapDc = DrawingCache.Get(DrawingCache.DrawingCacheType.MiniMap);
 
                     RectangleF miniMapVision = new RectangleF(
                         (int)(Core.Display.BackgroundOffset.X / _miniMapDistance),

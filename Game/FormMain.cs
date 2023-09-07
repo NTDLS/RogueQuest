@@ -122,7 +122,7 @@ namespace Game
             drawingsurface.Focus();
 
             _core = new EngineCore(drawingsurface, new Size(drawingsurface.Width, drawingsurface.Height));
-            _core.BlindPlay = true;
+
             _core.OnStop += _core_OnStop;
             _core.OnStart += _core_OnStart;
             _core.AfterTick += _core_AfterTick;
