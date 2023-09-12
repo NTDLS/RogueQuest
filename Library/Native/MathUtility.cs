@@ -6,6 +6,31 @@ namespace Library.Native
 {
     public class MathUtility
     {
+        public const double AngleOffsetDegrees = 90.0;
+        public const double AngleOffsetRadians = 1.5707963267948966; //(Math.PI / 180.0) * AngleOffsetDegrees;
+
+        const double DEG_TO_RAD = Math.PI / 180.0;
+        const double RAD_TO_DEG = 180.0 / Math.PI;
+
+        public static double RadiansToDegrees(double rad)
+        {
+            return rad * RAD_TO_DEG;
+        }
+
+        public static double DegreesToRadians(double deg)
+        {
+            return deg * DEG_TO_RAD;
+        }
+
+        public static float RadiansToDegrees(float rad)
+        {
+            return rad * (float)RAD_TO_DEG;
+        }
+
+        public static float DegreesToRadians(float deg)
+        {
+            return deg * (float)DEG_TO_RAD;
+        }
 
         #region Math.
 

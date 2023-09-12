@@ -13,6 +13,47 @@ namespace Library.Engine
         public Point<double> BackgroundOffset { get; set; } = new Point<double>(); //Offset of background, all calls must take into account.
         public RectangleF VisibleBounds { get; private set; }
 
+
+        /// <summary>
+        /// The number of extra pixles to draw beyond the NatrualScreenSize.
+        /// </summary>
+        public Size OverdrawSize { get; private set; }
+
+        /// <summary>
+        /// The total size of the rendering surface (no scaling).
+        /// </summary>
+        public Size TotalCanvasSize { get; private set; }
+
+        /// <summary>
+        /// The size of the screen with no scaling.
+        /// </summary>
+        public Size NatrualScreenSize { get; private set; }
+
+        /// <summary>
+        /// The bounds of the screen with no scaling.
+        /// </summary>
+        public RectangleF NatrualScreenBounds
+        {
+            get
+            {
+                return new RectangleF(OverdrawSize.Width / 2.0f, OverdrawSize.Height / 2.0f,
+                        NatrualScreenSize.Width, NatrualScreenSize.Height
+                );
+            }
+        }
+
+        /// <summary>
+        /// The total bounds of the drawing surface (canvas) natrual + overdraw (with no scaling).
+        /// </summary>
+        public RectangleF TotalScreenBounds
+        {
+            get
+            {
+                return new RectangleF(0, 0, TotalCanvasSize.Width, TotalCanvasSize.Height
+                );
+            }
+        }
+
         private Size _visibleSize;
         public Size VisibleSize
         {
@@ -77,6 +118,17 @@ namespace Library.Engine
             _drawingSurface = drawingSurface;
             _visibleSize = visibleSize;
             VisibleBounds = new RectangleF(0, 0, visibleSize.Width, visibleSize.Height);
+
+
+            int totalSizeX = (int)(visibleSize.Width * 2);
+            int totalSizeY = (int)(visibleSize.Height * 2);
+
+            if (totalSizeX % 2 != 0) totalSizeX++;
+            if (totalSizeY % 2 != 0) totalSizeY++;
+
+            TotalCanvasSize = new Size(totalSizeX, totalSizeY);
+
+            OverdrawSize = new Size(totalSizeX - NatrualScreenSize.Width, totalSizeY - NatrualScreenSize.Height);
         }
 
         public void ResizeDrawingSurface(Size visibleSize)
